@@ -13,6 +13,8 @@ class Vendor(models.Model):
     rating = models.CharField(max_length=20, default="100%")
     profile_url = models.CharField(max_length=255)
     logo = models.CharField(max_length=255, default="/images/logo-placeholder.png")
+    is_trusted = models.BooleanField(default=False, help_text="Mark as trusted vendor for premium display")
+    trust_level = models.IntegerField(default=0, help_text="Priority level (higher = more prominent)")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

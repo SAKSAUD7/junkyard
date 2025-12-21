@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import LeadForm from '../components/LeadForm'
+import TrustedVendors from '../components/TrustedVendors'
 import { useData } from '../hooks/useData'
 
 export default function Home() {
@@ -49,11 +50,11 @@ export default function Home() {
                 {/* Dark Overlay with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-dark-950/95 via-dark-900/90 to-dark-800/85"></div>
 
-                {/* Animated Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/15 via-purple-600/15 to-pink-600/15 animate-gradient"></div>
+                {/* Animated Gradient Overlay - Removed Pink */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-cyan-600/10 to-blue-900/10 animate-gradient"></div>
 
                 {/* Grid Pattern Overlay */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -61,13 +62,13 @@ export default function Home() {
                         {/* Left - Content with Glassmorphism */}
                         <div className="text-center lg:text-left space-y-8 animate-fade-in">
                             {/* Premium Badge */}
-                            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full">
+                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full">
                                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                 <span className="text-white/90 text-sm font-medium">1,018+ Verified Vendors</span>
                             </div>
 
                             {/* Main Heading with Gradient Text */}
-                            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-purple-300 leading-tight">
+                            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-blue-300 leading-tight">
                                 Find Auto Parts
                                 <span className="block text-cyan-400">Near You</span>
                             </h1>
@@ -88,13 +89,13 @@ export default function Home() {
                                     <div className="text-xs text-white/60">States</div>
                                 </div>
                                 <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all duration-300">
-                                    <div className="text-3xl font-bold text-purple-400">24/7</div>
+                                    <div className="text-3xl font-bold text-cyan-400">24/7</div>
                                     <div className="text-xs text-white/60">Support</div>
                                 </div>
                             </div>
 
-                            {/* ZIP Search with Glassmorphism */}
-                            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-glass">
+                            {/* ZIP Search with Glassmorphism - Removed Shadow */}
+                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
                                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                                     <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
@@ -107,11 +108,11 @@ export default function Home() {
                                         value={zipcode}
                                         onChange={(e) => setZipcode(e.target.value)}
                                         placeholder="Enter ZIP Code or Vendor Name"
-                                        className="flex-1 px-6 py-4 bg-white/10 border-2 border-white/20 rounded-2xl text-white placeholder-white/50 focus:border-primary-400 focus:bg-white/20 outline-none transition-all backdrop-blur-sm"
+                                        className="flex-1 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:border-cyan-400 focus:bg-white/10 outline-none transition-all backdrop-blur-sm"
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 hover:from-blue-600 hover:via-cyan-600 hover:to-purple-600 text-white font-bold px-8 py-4 rounded-2xl shadow-glow hover:shadow-glow-lg transition-all duration-300 transform hover:scale-105"
+                                        className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105"
                                     >
                                         Search →
                                     </button>
@@ -119,11 +120,11 @@ export default function Home() {
                             </div>
                         </div>
 
-                        {/* Right - Lead Form with Enhanced Styling */}
+                        {/* Right - Lead Form with Enhanced Styling - Removed Pink Glow */}
                         <div className="lg:mt-0 animate-scale-in">
                             <div className="relative">
-                                {/* Glow Effect */}
-                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-30 animate-pulse-slow"></div>
+                                {/* Glow Effect - Changed to Blue/Cyan */}
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-blue-500/20 rounded-3xl blur-2xl opacity-20"></div>
                                 <div className="relative">
                                     <LeadForm />
                                 </div>
@@ -133,10 +134,13 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* Floating Elements */}
-                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
-                <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+                {/* Floating Elements - Removed or toned down */}
+                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+                <div className="absolute bottom-20 right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
             </div>
+
+            {/* Trusted Vendors Section */}
+            <TrustedVendors />
 
             {/* Featured Vendors - Premium Cards */}
             {sponsoredVendors.length > 0 && (

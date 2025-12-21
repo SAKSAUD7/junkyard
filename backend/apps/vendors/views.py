@@ -21,6 +21,11 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Vendor.objects.all().order_by('id')  # Order by ID
         
+        # Filter for trusted vendors
+        trusted = self.request.query_params.get('trusted', None)
+        if trusted and trusted.lower() == 'true':
+            queryset = queryset.filter(is_trusted=True).order_by('-trust_level', 'id')
+        
         # Filter by state
         state = self.request.query_params.get('state', None)
         if state:

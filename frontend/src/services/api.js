@@ -19,6 +19,14 @@ export const api = {
     return response.json();
   },
 
+  getTrustedVendors: async (limit = 6) => {
+    const response = await fetch(`${API_BASE_URL}/vendors/?trusted=true`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    // Return only the specified limit
+    return Array.isArray(data) ? data.slice(0, limit) : data;
+  },
+
   // Common data
   getMakes: async () => {
     const response = await fetch(`${API_BASE_URL}/common/makes/`);
@@ -26,8 +34,10 @@ export const api = {
     return response.json();
   },
 
-  getModels: async (makeId = null) => {
-    const url = makeId
+  getModels: async (params = {}) => {
+    // Handle both direct makeId and params object from useData hook
+    const makeId = params.makeID || params.makeId || params;
+    const url = makeId && typeof makeId === 'number'
       ? `${API_BASE_URL}/common/models/?makeID=${makeId}`
       : `${API_BASE_URL}/common/models/`;
     const response = await fetch(url);
