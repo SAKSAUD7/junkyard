@@ -1,0 +1,49 @@
+from rest_framework import serializers
+from .models import Make, Model, Part, State, City
+
+
+class MakeSerializer(serializers.ModelSerializer):
+    makeID = serializers.IntegerField(source='make_id')
+    makeName = serializers.CharField(source='make_name')
+    
+    class Meta:
+        model = Make
+        fields = ['makeID', 'makeName']
+
+
+class ModelSerializer(serializers.ModelSerializer):
+    modelID = serializers.IntegerField(source='model_id')
+    modelName = serializers.CharField(source='model_name')
+    makeID = serializers.IntegerField(source='make.make_id', read_only=True)
+    
+    class Meta:
+        model = Model
+        fields = ['modelID', 'modelName', 'makeID']
+
+
+class PartSerializer(serializers.ModelSerializer):
+    partID = serializers.IntegerField(source='part_id')
+    partName = serializers.CharField(source='part_name')
+    
+    class Meta:
+        model = Part
+        fields = ['partID', 'partName']
+
+
+class StateSerializer(serializers.ModelSerializer):
+    stateID = serializers.IntegerField(source='state_id')
+    stateName = serializers.CharField(source='state_name')
+    stateCode = serializers.CharField(source='state_code')
+    
+    class Meta:
+        model = State
+        fields = ['stateID', 'stateName', 'stateCode']
+
+
+class CitySerializer(serializers.ModelSerializer):
+    cityID = serializers.IntegerField(source='city_id')
+    cityName = serializers.CharField(source='city_name')
+    
+    class Meta:
+        model = City
+        fields = ['cityID', 'cityName', 'state']

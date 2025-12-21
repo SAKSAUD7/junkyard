@@ -1,0 +1,557 @@
+[
+    {
+        "partID": 1,
+        "partName": "Engine",
+        "category": "Powertrain"
+    },
+    {
+        "partID": 2,
+        "partName": "Transmission",
+        "category": "Powertrain"
+    },
+    {
+        "partID": 3,
+        "partName": "Alternator",
+        "category": "Electrical"
+    },
+    {
+        "partID": 4,
+        "partName": "Starter",
+        "category": "Electrical"
+    },
+    {
+        "partID": 5,
+        "partName": "Radiator",
+        "category": "Cooling"
+    },
+    {
+        "partID": 6,
+        "partName": "Battery",
+        "category": "Electrical"
+    },
+    {
+        "partID": 7,
+        "partName": "Brakes",
+        "category": "Braking"
+    },
+    {
+        "partID": 8,
+        "partName": "Brake Pads",
+        "category": "Braking"
+    },
+    {
+        "partID": 9,
+        "partName": "Brake Rotors",
+        "category": "Braking"
+    },
+    {
+        "partID": 10,
+        "partName": "Catalytic Converter",
+        "category": "Exhaust"
+    },
+    {
+        "partID": 11,
+        "partName": "Muffler",
+        "category": "Exhaust"
+    },
+    {
+        "partID": 12,
+        "partName": "Exhaust Manifold",
+        "category": "Exhaust"
+    },
+    {
+        "partID": 13,
+        "partName": "Fuel Pump",
+        "category": "Fuel System"
+    },
+    {
+        "partID": 14,
+        "partName": "Fuel Injector",
+        "category": "Fuel System"
+    },
+    {
+        "partID": 15,
+        "partName": "Air Filter",
+        "category": "Air Intake"
+    },
+    {
+        "partID": 16,
+        "partName": "Oil Filter",
+        "category": "Lubrication"
+    },
+    {
+        "partID": 17,
+        "partName": "Water Pump",
+        "category": "Cooling"
+    },
+    {
+        "partID": 18,
+        "partName": "Thermostat",
+        "category": "Cooling"
+    },
+    {
+        "partID": 19,
+        "partName": "Headlights",
+        "category": "Lighting"
+    },
+    {
+        "partID": 20,
+        "partName": "Tail Lights",
+        "category": "Lighting"
+    },
+    {
+        "partID": 21,
+        "partName": "Windshield",
+        "category": "Glass"
+    },
+    {
+        "partID": 22,
+        "partName": "Side Mirror",
+        "category": "Glass"
+    },
+    {
+        "partID": 23,
+        "partName": "Door",
+        "category": "Body"
+    },
+    {
+        "partID": 24,
+        "partName": "Hood",
+        "category": "Body"
+    },
+    {
+        "partID": 25,
+        "partName": "Fender",
+        "category": "Body"
+    },
+    {
+        "partID": 26,
+        "partName": "Bumper",
+        "category": "Body"
+    },
+    {
+        "partID": 27,
+        "partName": "Wheel",
+        "category": "Wheels & Tires"
+    },
+    {
+        "partID": 28,
+        "partName": "Tire",
+        "category": "Wheels & Tires"
+    },
+    {
+        "partID": 29,
+        "partName": "Suspension",
+        "category": "Suspension"
+    },
+    {
+        "partID": 30,
+        "partName": "Shock Absorber",
+        "category": "Suspension"
+    },
+    {
+        "partID": 31,
+        "partName": "Strut",
+        "category": "Suspension"
+    },
+    {
+        "partID": 32,
+        "partName": "Steering Wheel",
+        "category": "Steering"
+    },
+    {
+        "partID": 33,
+        "partName": "Power Steering Pump",
+        "category": "Steering"
+    },
+    {
+        "partID": 34,
+        "partName": "Axle",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 35,
+        "partName": "Differential",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 36,
+        "partName": "Driveshaft",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 37,
+        "partName": "AC Compressor",
+        "category": "HVAC"
+    },
+    {
+        "partID": 38,
+        "partName": "Heater Core",
+        "category": "HVAC"
+    },
+    {
+        "partID": 39,
+        "partName": "Blower Motor",
+        "category": "HVAC"
+    },
+    {
+        "partID": 40,
+        "partName": "Seat",
+        "category": "Interior"
+    },
+    {
+        "partID": 41,
+        "partName": "Airbag",
+        "category": "Safety"
+    },
+    {
+        "partID": 42,
+        "partName": "Antenna",
+        "category": "Electrical"
+    },
+    {
+        "partID": 43,
+        "partName": "Armrest",
+        "category": "Interior"
+    },
+    {
+        "partID": 44,
+        "partName": "Back Glass",
+        "category": "Glass"
+    },
+    {
+        "partID": 45,
+        "partName": "Bed Liner",
+        "category": "Body"
+    },
+    {
+        "partID": 46,
+        "partName": "Belt Tensioner",
+        "category": "Engine"
+    },
+    {
+        "partID": 47,
+        "partName": "Caliper",
+        "category": "Braking"
+    },
+    {
+        "partID": 48,
+        "partName": "Camshaft",
+        "category": "Engine"
+    },
+    {
+        "partID": 49,
+        "partName": "Carburetor",
+        "category": "Fuel System"
+    },
+    {
+        "partID": 50,
+        "partName": "Center Console",
+        "category": "Interior"
+    },
+    {
+        "partID": 51,
+        "partName": "Clutch",
+        "category": "Transmission"
+    },
+    {
+        "partID": 52,
+        "partName": "Coil Spring",
+        "category": "Suspension"
+    },
+    {
+        "partID": 53,
+        "partName": "Computer\/ECU",
+        "category": "Electrical"
+    },
+    {
+        "partID": 54,
+        "partName": "Control Arm",
+        "category": "Suspension"
+    },
+    {
+        "partID": 55,
+        "partName": "Coolant Reservoir",
+        "category": "Cooling"
+    },
+    {
+        "partID": 56,
+        "partName": "Crankshaft",
+        "category": "Engine"
+    },
+    {
+        "partID": 57,
+        "partName": "Cruise Control",
+        "category": "Electrical"
+    },
+    {
+        "partID": 58,
+        "partName": "CV Joint",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 59,
+        "partName": "Dashboard",
+        "category": "Interior"
+    },
+    {
+        "partID": 60,
+        "partName": "Distributor",
+        "category": "Electrical"
+    },
+    {
+        "partID": 61,
+        "partName": "Door Handle",
+        "category": "Body"
+    },
+    {
+        "partID": 62,
+        "partName": "Door Lock",
+        "category": "Body"
+    },
+    {
+        "partID": 63,
+        "partName": "Door Panel",
+        "category": "Interior"
+    },
+    {
+        "partID": 64,
+        "partName": "EGR Valve",
+        "category": "Emissions"
+    },
+    {
+        "partID": 65,
+        "partName": "Emblem",
+        "category": "Body"
+    },
+    {
+        "partID": 66,
+        "partName": "Engine Mount",
+        "category": "Engine"
+    },
+    {
+        "partID": 67,
+        "partName": "Exhaust Pipe",
+        "category": "Exhaust"
+    },
+    {
+        "partID": 68,
+        "partName": "Fan",
+        "category": "Cooling"
+    },
+    {
+        "partID": 69,
+        "partName": "Fog Light",
+        "category": "Lighting"
+    },
+    {
+        "partID": 70,
+        "partName": "Frame",
+        "category": "Body"
+    },
+    {
+        "partID": 71,
+        "partName": "Front Clip",
+        "category": "Body"
+    },
+    {
+        "partID": 72,
+        "partName": "Fuel Tank",
+        "category": "Fuel System"
+    },
+    {
+        "partID": 73,
+        "partName": "Fuse Box",
+        "category": "Electrical"
+    },
+    {
+        "partID": 74,
+        "partName": "Glovebox",
+        "category": "Interior"
+    },
+    {
+        "partID": 75,
+        "partName": "Grille",
+        "category": "Body"
+    },
+    {
+        "partID": 76,
+        "partName": "Hatch",
+        "category": "Body"
+    },
+    {
+        "partID": 77,
+        "partName": "Horn",
+        "category": "Electrical"
+    },
+    {
+        "partID": 78,
+        "partName": "Hubcap",
+        "category": "Wheels & Tires"
+    },
+    {
+        "partID": 79,
+        "partName": "Ignition Coil",
+        "category": "Electrical"
+    },
+    {
+        "partID": 80,
+        "partName": "Intake Manifold",
+        "category": "Engine"
+    },
+    {
+        "partID": 81,
+        "partName": "Liftgate",
+        "category": "Body"
+    },
+    {
+        "partID": 82,
+        "partName": "Master Cylinder",
+        "category": "Braking"
+    },
+    {
+        "partID": 83,
+        "partName": "Mirror",
+        "category": "Glass"
+    },
+    {
+        "partID": 84,
+        "partName": "Oxygen Sensor",
+        "category": "Emissions"
+    },
+    {
+        "partID": 85,
+        "partName": "Parking Brake",
+        "category": "Braking"
+    },
+    {
+        "partID": 86,
+        "partName": "Piston",
+        "category": "Engine"
+    },
+    {
+        "partID": 87,
+        "partName": "Quarter Panel",
+        "category": "Body"
+    },
+    {
+        "partID": 88,
+        "partName": "Rack and Pinion",
+        "category": "Steering"
+    },
+    {
+        "partID": 89,
+        "partName": "Radio",
+        "category": "Electronics"
+    },
+    {
+        "partID": 90,
+        "partName": "Rear Axle",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 91,
+        "partName": "Rocker Panel",
+        "category": "Body"
+    },
+    {
+        "partID": 92,
+        "partName": "Roof",
+        "category": "Body"
+    },
+    {
+        "partID": 93,
+        "partName": "Running Board",
+        "category": "Body"
+    },
+    {
+        "partID": 94,
+        "partName": "Seat Belt",
+        "category": "Safety"
+    },
+    {
+        "partID": 95,
+        "partName": "Shift Knob",
+        "category": "Interior"
+    },
+    {
+        "partID": 96,
+        "partName": "Spark Plug",
+        "category": "Engine"
+    },
+    {
+        "partID": 97,
+        "partName": "Speedometer",
+        "category": "Instruments"
+    },
+    {
+        "partID": 98,
+        "partName": "Spoiler",
+        "category": "Body"
+    },
+    {
+        "partID": 99,
+        "partName": "Steering Column",
+        "category": "Steering"
+    },
+    {
+        "partID": 100,
+        "partName": "Sun Visor",
+        "category": "Interior"
+    },
+    {
+        "partID": 101,
+        "partName": "Sunroof",
+        "category": "Glass"
+    },
+    {
+        "partID": 102,
+        "partName": "Tailgate",
+        "category": "Body"
+    },
+    {
+        "partID": 103,
+        "partName": "Timing Belt",
+        "category": "Engine"
+    },
+    {
+        "partID": 104,
+        "partName": "Timing Chain",
+        "category": "Engine"
+    },
+    {
+        "partID": 105,
+        "partName": "Transfer Case",
+        "category": "Drivetrain"
+    },
+    {
+        "partID": 106,
+        "partName": "Trunk Lid",
+        "category": "Body"
+    },
+    {
+        "partID": 107,
+        "partName": "Turbocharger",
+        "category": "Engine"
+    },
+    {
+        "partID": 108,
+        "partName": "Turn Signal",
+        "category": "Lighting"
+    },
+    {
+        "partID": 109,
+        "partName": "Valve Cover",
+        "category": "Engine"
+    },
+    {
+        "partID": 110,
+        "partName": "Wiper Motor",
+        "category": "Electrical"
+    },
+    {
+        "partID": 111,
+        "partName": "Wiring Harness",
+        "category": "Electrical"
+    }
+]
