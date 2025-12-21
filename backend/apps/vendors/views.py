@@ -10,11 +10,13 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint for vendors/junkyards
     Supports filtering by state, city, zipcode, and search by name
+    Returns all vendors without pagination
     """
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'city', 'state']
+    pagination_class = None  # Disable pagination to return all vendors
 
     def get_queryset(self):
         queryset = Vendor.objects.all()
