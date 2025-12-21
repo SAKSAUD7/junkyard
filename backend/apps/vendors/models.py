@@ -17,7 +17,7 @@ class Vendor(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']  # Order by ID for consistent display
         indexes = [
             models.Index(fields=['state']),
             models.Index(fields=['city']),

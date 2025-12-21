@@ -19,7 +19,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None  # Disable pagination to return all vendors
 
     def get_queryset(self):
-        queryset = Vendor.objects.all()
+        queryset = Vendor.objects.all().order_by('id')  # Order by ID
         
         # Filter by state
         state = self.request.query_params.get('state', None)
