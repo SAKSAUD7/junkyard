@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import LeadForm from '../components/LeadForm'
 import TrustedVendors from '../components/TrustedVendors'
 import { useData } from '../hooks/useData'
+import SponsoredAd from '../components/SponsoredAd'
 
 export default function Home() {
     const navigate = useNavigate()
@@ -37,7 +38,7 @@ export default function Home() {
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
             <Navbar />
 
-            {/* Ultra-Modern Hero Section with Automotive Background */}
+            {/* Industrial Automotive Hero Section */}
             <div className="relative min-h-[90vh] flex items-center overflow-hidden">
                 {/* Background Image */}
                 <div
@@ -47,97 +48,76 @@ export default function Home() {
                     }}
                 ></div>
 
-                {/* Dark Overlay with Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-dark-950/95 via-dark-900/90 to-dark-800/85"></div>
-
-                {/* Animated Gradient Overlay - Removed Pink */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-cyan-600/10 to-blue-900/10 animate-gradient"></div>
-
-                {/* Grid Pattern Overlay */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+                {/* Dark Overlay for Readability */}
+                <div className="absolute inset-0 bg-dark-950/80"></div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-                        {/* Left - Content with Glassmorphism */}
-                        <div className="text-center lg:text-left space-y-8 animate-fade-in">
-                            {/* Premium Badge */}
-                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full">
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span className="text-white/90 text-sm font-medium">1,018+ Verified Vendors</span>
-                            </div>
-
-                            {/* Main Heading with Gradient Text */}
-                            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-blue-300 leading-tight">
-                                Find Auto Parts
-                                <span className="block text-cyan-400">Near You</span>
+                    {/* Centered Logo & Branding */}
+                    <div className="text-center mb-16">
+                        <div className="inline-flex flex-col items-center">
+                            <h1 className="text-6xl md:text-8xl font-black text-white tracking-tight font-display mb-2 drop-shadow-2xl">
+                                JYNM
                             </h1>
+                            <span className="text-orange-500 font-bold text-2xl tracking-widest uppercase font-mono bg-dark-950/50 px-4 py-1 rounded">
+                                JunkYardsNearMe.com
+                            </span>
+                        </div>
+                    </div>
 
-                            <p className="text-xl md:text-2xl text-white/80 font-light max-w-2xl">
-                                Connect with <span className="font-bold text-cyan-400">trusted junkyards</span> nationwide.
-                                Quality parts, competitive prices, instant quotes.
-                            </p>
+                    {/* Sponsored Ad Component (Absolute Positioned) */}
+                    <SponsoredAd />
 
-                            {/* Stats Cards */}
-                            <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
-                                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all duration-300">
-                                    <div className="text-3xl font-bold text-cyan-400">1K+</div>
-                                    <div className="text-xs text-white/60">Vendors</div>
-                                </div>
-                                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all duration-300">
-                                    <div className="text-3xl font-bold text-blue-400">50</div>
-                                    <div className="text-xs text-white/60">States</div>
-                                </div>
-                                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all duration-300">
-                                    <div className="text-3xl font-bold text-cyan-400">24/7</div>
-                                    <div className="text-xs text-white/60">Support</div>
-                                </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+                        {/* Left/Center Content */}
+                        <div className="lg:col-span-8 text-center lg:text-center space-y-8 pt-4">
+
+                            {/* Main Copy */}
+                            <div className="space-y-4">
+                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white/90 leading-tight">
+                                    FOR YOUR <span className="text-orange-500 bg-dark-900/90 px-3 py-1 rounded-md mx-1 shadow-lg border border-orange-500/20">JUNKYARD</span>, AUTO PARTS RECYCLING
+                                    <br className="hidden md:block" /> AND AUTO SALVAGE <span className="text-white font-black border-b-4 border-cyan-500">SEARCH IN SECONDS.</span>
+                                </h2>
+
+                                <h3 className="text-3xl md:text-4xl font-light text-white/80 mt-6">
+                                    LOCATE USED AUTO PARTS <span className="font-script text-orange-500 font-bold text-5xl ml-2 drop-shadow-lg" style={{ fontFamily: 'cursive' }}>near you!</span>
+                                </h3>
                             </div>
 
-                            {/* ZIP Search with Glassmorphism - Removed Shadow */}
-                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
-                                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                    <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                                    </svg>
-                                    Search by Location or Vendor
-                                </h3>
-                                <form onSubmit={handleZipSearch} className="flex flex-col sm:flex-row gap-3">
+                            {/* Divider Line */}
+                            <div className="w-24 h-1 bg-white/20 mx-auto rounded-full"></div>
+
+                            {/* ZIP Search - Styled like image */}
+                            <div className="max-w-2xl mx-auto bg-white/5 backdrop-blur-md p-2 rounded-xl border border-white/10 mt-8">
+                                <form onSubmit={handleZipSearch} className="flex flex-col sm:flex-row gap-2">
                                     <input
                                         type="text"
                                         value={zipcode}
                                         onChange={(e) => setZipcode(e.target.value)}
-                                        placeholder="Enter ZIP Code or Vendor Name"
-                                        className="flex-1 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:border-cyan-400 focus:bg-white/10 outline-none transition-all backdrop-blur-sm"
+                                        placeholder="Your ZIP or Postal Code"
+                                        className="flex-1 px-6 py-4 bg-white text-dark-900 border-2 border-transparent focus:border-cyan-500 rounded-lg text-lg font-bold placeholder-gray-400 outline-none transition-all shadow-inner"
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                                        className="bg-green-600 hover:bg-green-500 text-white font-black text-lg px-8 py-4 rounded-lg shadow-lg hover:shadow-green-500/30 transition-all uppercase tracking-wide transform hover:scale-105"
                                     >
-                                        Search →
+                                        SEARCH. IT'S FREE!
                                     </button>
                                 </form>
                             </div>
                         </div>
 
-                        {/* Right - Lead Form with Enhanced Styling - Removed Pink Glow */}
-                        <div className="lg:mt-0 animate-scale-in">
-                            <div className="relative">
-                                {/* Glow Effect - Changed to Blue/Cyan */}
-                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-blue-500/20 rounded-3xl blur-2xl opacity-20"></div>
-                                <div className="relative">
-                                    <LeadForm />
-                                </div>
-                            </div>
+                        {/* Right - Compact Lead Form */}
+                        <div className="lg:col-span-4 relative z-10">
+                            <LeadForm />
                         </div>
 
                     </div>
                 </div>
-
-                {/* Floating Elements - Removed or toned down */}
-                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
-                <div className="absolute bottom-20 right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
             </div>
+
+
 
             {/* Trusted Vendors Section */}
             <TrustedVendors />

@@ -12,8 +12,17 @@ class Lead(models.Model):
 
     make = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
-    part = models.CharField(max_length=100)
     year = models.IntegerField()
+    part = models.CharField(max_length=100)
+    
+    # Contact Info
+    name = models.CharField(max_length=100, default='')
+    email = models.EmailField(max_length=100, default='')
+    phone = models.CharField(max_length=20, default='')
+    location = models.CharField(max_length=20, default='') # ZIP Code
+
+    
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

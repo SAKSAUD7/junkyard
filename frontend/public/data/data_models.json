@@ -3534,10 +3534,28 @@
         "makeName": "Volvo"
     },
     {
-        "modelID": 590,
+        "modelID": 798,
         "modelName": "V90",
         "makeID": 31,
         "makeName": "Volvo"
+    },
+    {
+        "modelID": 800,
+        "modelName": "Lanos",
+        "makeID": 35,
+        "makeName": "Daewoo"
+    },
+    {
+        "modelID": 801,
+        "modelName": "Leganza",
+        "makeID": 35,
+        "makeName": "Daewoo"
+    },
+    {
+        "modelID": 802,
+        "modelName": "Nubira",
+        "makeID": 35,
+        "makeName": "Daewoo"
     },
     {
         "modelID": 591,
