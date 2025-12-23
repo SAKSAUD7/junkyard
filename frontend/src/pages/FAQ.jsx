@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
+import { getFAQSchema } from '../utils/structuredData';
 
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(null);
@@ -84,8 +86,25 @@ const FAQ = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    // Flatten all FAQs for schema
+    const allFAQs = categories.flatMap(cat =>
+        cat.questions.map(q => ({
+            question: q.q,
+            answer: q.a
+        }))
+    );
+
+    const schema = getFAQSchema(allFAQs);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Frequently Asked Questions - Junkyard & Auto Parts Guide"
+                description="Common questions about finding used auto parts, junkyard services, shipping, returns, warranties, and more. Get answers to your auto salvage questions."
+                schema={schema}
+            />
+
             <Navbar />
 
             {/* Hero Section */}

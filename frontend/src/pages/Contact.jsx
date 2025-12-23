@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -27,6 +28,12 @@ export default function Contact() {
 
     return (
         <div className="min-h-screen bg-[#0f172a] text-white selection:bg-blue-500/30">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Contact Us - Get Help Finding Auto Parts"
+                description="Contact Junkyards Near Me for support. Questions about finding parts, vendor inquiries, or technical support. We're here to help connect you with the right salvage yard."
+            />
+
             <Navbar />
 
             {/* Hero Section */}

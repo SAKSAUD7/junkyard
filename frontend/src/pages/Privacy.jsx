@@ -1,9 +1,16 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
 
 export default function Privacy() {
     return (
         <div className="min-h-screen bg-[#0f172a] text-white selection:bg-blue-500/30">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Privacy Policy - Your Data Protection & Privacy Rights"
+                description="Privacy policy for Junkyards Near Me. Learn how we collect, use, and protect your personal information. COPPA compliant, secure data handling."
+            />
+
             <Navbar />
 
             <div className="relative pt-32 pb-20 overflow-hidden">

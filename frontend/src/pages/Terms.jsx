@@ -1,9 +1,16 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
 
 export default function Terms() {
     return (
         <div className="min-h-screen bg-[#0f172a] text-white selection:bg-purple-500/30">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Terms of Service - User Agreement & Legal Terms"
+                description="Terms and conditions for using Junkyards Near Me. User agreements, disclaimers, copyright policy, and legal information."
+            />
+
             <Navbar />
 
             <div className="relative pt-32 pb-20 overflow-hidden">

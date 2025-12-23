@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useData } from '../hooks/useData';
+import SEO from '../components/SEO';
+import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 export default function BrowseState() {
     const { state } = useParams();
@@ -43,8 +45,33 @@ export default function BrowseState() {
     // Get unique cities in this state
     const cities = [...new Set(stateJunkyards.map(j => j.city))].sort();
 
+    // SEO structured data
+    const schema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            getCollectionPageSchema({
+                name: `Junkyards in ${stateName}`,
+                description: `Find auto salvage yards and used auto parts in ${stateName}`,
+                url: typeof window !== 'undefined' ? window.location.href : '',
+                numberOfItems: stateJunkyards.length
+            }),
+            getBreadcrumbSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Browse States', url: '/browse' },
+                { name: stateName, url: `/browse/${state}` }
+            ])
+        ]
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* SEO Meta Tags */}
+            <SEO
+                title={`Junkyards in ${stateName} - ${stateJunkyards.length} Auto Salvage Yards`}
+                description={`Find ${stateJunkyards.length} verified junkyards in ${stateName}. Search used auto parts from trusted salvage yards across ${cities.length} cities. Free quotes, nationwide shipping available.`}
+                schema={schema}
+            />
+
             <Navbar />
 
             {/* Hero Section */}

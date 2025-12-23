@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const HowItWorks = () => {
     const navigate = useNavigate();
@@ -95,6 +96,12 @@ const HowItWorks = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="How It Works - Find Used Auto Parts in 4 Easy Steps"
+                description="Learn how to find quality used auto parts through our network of verified junkyards. Simple 4-step process: Tell us what you need, we connect you with vendors, receive quotes, get your part."
+            />
+
             <Navbar />
 
             {/* Hero Section */}
