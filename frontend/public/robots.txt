@@ -1,0 +1,16 @@
+# Robots.txt for Junkyards Near Me
+# Pre-launch configuration - allows crawling but can be restricted if needed
+
+User-agent: *
+Allow: /
+
+# Disallow admin and internal pages
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+# Sitemap location
+Sitemap: https://junkyardsnearme.com/sitemap.xml
+
+# Crawl-delay (optional, can be adjusted)
+# Crawl-delay: 1

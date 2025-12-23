@@ -8,11 +8,22 @@ import { useData } from '../hooks/useData'
 import DynamicAd from '../components/DynamicAd'
 import SponsoredAd from '../components/qualityautoparts'
 import SideAd from '../components/SideAd'
+import SEO from '../components/SEO'
+import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 
 export default function Home() {
     const navigate = useNavigate()
     const [zipcode, setZipcode] = useState('')
     const { data: allVendors } = useData('data_junkyards_complete.json')
+
+    // SEO structured data
+    const combinedSchema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            getOrganizationSchema(),
+            getWebsiteSchema()
+        ]
+    };
 
     // Get top rated vendors
     const topVendors = allVendors
@@ -38,6 +49,13 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Find Auto Salvage Yards & Used Auto Parts Near You"
+                description="Search 1,000+ verified junkyards nationwide. Find quality used auto parts by make, model, or location. Free quotes, nationwide shipping. Save up to 80% on OEM parts."
+                schema={combinedSchema}
+            />
+
             <Navbar />
 
             {/* Industrial Automotive Hero Section */}

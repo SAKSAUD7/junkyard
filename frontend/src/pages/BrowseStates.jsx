@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { api } from '../services/api';
 import DynamicAd from '../components/DynamicAd';
+import SEO from '../components/SEO';
+import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 export default function BrowseStates() {
     const [statesData, setStatesData] = useState([]);
@@ -65,8 +67,32 @@ export default function BrowseStates() {
         state.stateCode.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // SEO structured data
+    const schema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            getCollectionPageSchema({
+                name: 'Browse Junkyards by State',
+                description: 'Find auto salvage yards and junkyards across all US states',
+                url: typeof window !== 'undefined' ? window.location.href : '',
+                numberOfItems: statesWithCounts.length
+            }),
+            getBreadcrumbSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Browse States', url: '/browse' }
+            ])
+        ]
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="Browse Junkyards by State - Find Auto Salvage Yards Near You"
+                description={`Find junkyards and auto salvage yards across ${statesWithCounts.length} states. Search ${vendors.length}+ verified vendors nationwide. Free quotes, quality used auto parts.`}
+                schema={schema}
+            />
+
             <Navbar />
 
             {/* Ultra-Modern Hero Section */}
