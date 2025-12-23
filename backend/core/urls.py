@@ -31,6 +31,7 @@ urlpatterns = [
     path("api/leads/", include("apps.leads.urls")),
     path("api/common/", include("apps.common.urls")),
     path("api/ads/", include("apps.ads.urls")),
+    path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
 ]
 
 # Serve media files in development

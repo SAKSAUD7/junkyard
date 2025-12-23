@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { api } from '../services/api';
-import SideAd from '../components/SideAd';
+import DynamicAd from '../components/DynamicAd';
 
 export default function BrowseStates() {
     const [statesData, setStatesData] = useState([]);
@@ -44,6 +44,11 @@ export default function BrowseStates() {
         fetchData();
     }, []);
 
+    // Scroll to top when page loads
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     // Calculate vendor counts per state only when both datasets are loaded
     const statesWithCounts = (statesData.length > 0 && vendors.length > 0) ? statesData.map(state => {
         const count = vendors.filter(v => v.state === state.stateCode).length;
@@ -62,10 +67,6 @@ export default function BrowseStates() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
-            {/* Dynamic Side Ads (Desktop Only) */}
-            <SideAd slot="left_sidebar_ad" page="browse" />
-            <SideAd slot="right_sidebar_ad" page="browse" />
-
             <Navbar />
 
             {/* Ultra-Modern Hero Section */}
@@ -86,6 +87,16 @@ export default function BrowseStates() {
 
                 {/* Grid Pattern Overlay */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+
+                {/* Left Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <DynamicAd slot="left_sidebar_ad" page="browse" />
+                </div>
+
+                {/* Right Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 right-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <DynamicAd slot="right_sidebar_ad" page="browse" />
+                </div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16">
                     <div className="text-center space-y-8 animate-fade-in">

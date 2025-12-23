@@ -45,11 +45,18 @@ INSTALLED_APPS = [
     "apps.leads",
     "apps.common",
     "apps.ads",
+    "apps.yard_submissions",  # New marketplace app
 ]
 
-# Media files (for ad images)
+# Media files (for ad images and submissions)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Email settings (for notifications)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
+DEFAULT_FROM_EMAIL = 'noreply@junkyard.com'
+ADMIN_EMAIL = 'admin@junkyard.com'
+SITE_URL = 'http://localhost:3001'  # Frontend URL
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

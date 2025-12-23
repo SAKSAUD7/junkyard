@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -12,13 +12,18 @@ export default function BrowseState() {
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 24;
 
+    // Scroll to top when page loads or state changes
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [state]);
+
     // Filter junkyards by state
     const stateJunkyards = junkyards?.filter(
         j => j.state.toLowerCase() === state.toLowerCase()
     ) || [];
 
     // Get state full name
-    const stateInfo = states?.find(s => s.stateAbbr.toLowerCase() === state.toLowerCase());
+    const stateInfo = states?.find(s => s.stateCode?.toLowerCase() === state.toLowerCase());
     const stateName = stateInfo?.stateName || state.toUpperCase();
 
     // Filter by search term
@@ -250,8 +255,8 @@ export default function BrowseState() {
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
                                     className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === 1
-                                            ? 'text-white/30 cursor-not-allowed'
-                                            : 'text-white hover:bg-white/10'
+                                        ? 'text-white/30 cursor-not-allowed'
+                                        : 'text-white hover:bg-white/10'
                                         }`}
                                 >
                                     ← Previous
@@ -271,8 +276,8 @@ export default function BrowseState() {
                                                     key={pageNumber}
                                                     onClick={() => paginate(pageNumber)}
                                                     className={`min-w-[40px] px-3 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === pageNumber
-                                                            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-glow'
-                                                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-glow'
+                                                        : 'text-white/70 hover:bg-white/10 hover:text-white'
                                                         }`}
                                                 >
                                                     {pageNumber}
@@ -297,8 +302,8 @@ export default function BrowseState() {
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}
                                     className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === totalPages
-                                            ? 'text-white/30 cursor-not-allowed'
-                                            : 'text-white hover:bg-white/10'
+                                        ? 'text-white/30 cursor-not-allowed'
+                                        : 'text-white hover:bg-white/10'
                                         }`}
                                 >
                                     Next →

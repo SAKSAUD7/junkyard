@@ -7,6 +7,7 @@ import JunkyardDetail from './pages/JunkyardDetail'
 import AllVendors from './pages/AllVendors'
 import VendorDetail from './pages/VendorDetail'
 import QuoteRequest from './pages/QuoteRequest'
+import AddYardPage from './pages/AddYardPage'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/quote" element={<QuoteRequest />} />
+        <Route path="/add-a-yard" element={<AddYardPage />} />
         <Route path="/vendors" element={<AllVendors />} />
         <Route path="/vendors/:id" element={<VendorDetail />} />
         <Route path="/browse" element={<BrowseStates />} />

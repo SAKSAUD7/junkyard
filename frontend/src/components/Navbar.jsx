@@ -53,6 +53,17 @@ export default function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
+
+                        {/* Add Your Yard Link */}
+                        <Link
+                            to="/add-a-yard"
+                            className={`relative px-4 py-2 rounded-lg text-sm font-medium tracking-wide transition-all duration-200 font-mono uppercase ${isActive('/add-a-yard')
+                                ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20'
+                                : 'text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10'
+                                }`}
+                        >
+                            Add Your Yard
+                        </Link>
                     </div>
 
                     {/* CTA Button (Desktop) */}
@@ -104,6 +115,19 @@ export default function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
+
+                        {/* Add Your Yard Link */}
+                        <Link
+                            to="/add-a-yard"
+                            className={`block px-5 py-3 rounded-lg font-mono text-sm uppercase font-bold transition-all duration-300 ${isActive('/add-a-yard')
+                                ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                                : 'text-cyan-400 hover:bg-cyan-500/10'
+                                }`}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            Add Your Yard
+                        </Link>
+
                         <Link
                             to="/#lead-form"
                             className="block bg-primary-600 text-white font-bold text-sm uppercase tracking-wider px-5 py-3 rounded-lg text-center transition-all duration-300 mt-4 border border-primary-500 font-mono"
