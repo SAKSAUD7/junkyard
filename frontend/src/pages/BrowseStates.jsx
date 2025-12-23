@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { api } from '../services/api';
+import SideAd from '../components/SideAd';
 
 export default function BrowseStates() {
     const [statesData, setStatesData] = useState([]);
@@ -61,6 +62,10 @@ export default function BrowseStates() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            {/* Dynamic Side Ads (Desktop Only) */}
+            <SideAd slot="left_sidebar_ad" page="browse" />
+            <SideAd slot="right_sidebar_ad" page="browse" />
+
             <Navbar />
 
             {/* Ultra-Modern Hero Section */}

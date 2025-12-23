@@ -5,7 +5,9 @@ import Footer from '../components/Footer'
 import LeadForm from '../components/LeadForm'
 import TrustedVendors from '../components/TrustedVendors'
 import { useData } from '../hooks/useData'
-import SponsoredAd from '../components/SponsoredAd'
+import DynamicAd from '../components/DynamicAd'
+import SponsoredAd from '../components/qualityautoparts'
+import SideAd from '../components/SideAd'
 
 export default function Home() {
     const navigate = useNavigate()
@@ -39,7 +41,7 @@ export default function Home() {
             <Navbar />
 
             {/* Industrial Automotive Hero Section */}
-            <div className="relative min-h-[90vh] flex items-center overflow-hidden">
+            <div className="relative min-h-[90vh] flex flex-col justify-start pt-12 overflow-hidden">
                 {/* Background Image */}
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -51,66 +53,55 @@ export default function Home() {
                 {/* Dark Overlay for Readability */}
                 <div className="absolute inset-0 bg-dark-950/80"></div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
+                {/* Left Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <SponsoredAd />
+                    <DynamicAd slot="left_sidebar_ad" page="home" />
+                </div>
+
+                {/* Right Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 right-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <DynamicAd slot="right_sidebar_ad" page="home" />
+                </div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
 
                     {/* Centered Logo & Branding */}
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-6">
                         <div className="inline-flex flex-col items-center">
-                            <h1 className="text-6xl md:text-8xl font-black text-white tracking-tight font-display mb-2 drop-shadow-2xl">
+                            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight font-display mb-1 drop-shadow-xl">
                                 JYNM
                             </h1>
-                            <span className="text-orange-500 font-bold text-2xl tracking-widest uppercase font-mono bg-dark-950/50 px-4 py-1 rounded">
+                            <span className="text-orange-500 font-bold text-xs md:text-sm tracking-[0.2em] uppercase font-mono bg-dark-950/50 px-3 py-0.5 rounded">
                                 JunkYardsNearMe.com
                             </span>
                         </div>
                     </div>
 
-                    {/* Sponsored Ad Component (Absolute Positioned) */}
-                    <SponsoredAd />
+                    {/* Main Content Container */}
+                    <div className="flex flex-col items-center gap-8 relative z-10">
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                        {/* Centered Copy */}
+                        <div className="text-center max-w-4xl mx-auto space-y-4 pt-2">
+                            <h2 className="text-xl md:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-xl">
+                                FOR YOUR <span className="text-orange-500 inline-block transform -skew-x-6 mx-1.5 border-2 border-orange-500 px-1.5 py-0.5">JUNKYARD</span>
+                                <br />
+                                AUTO PARTS RECYCLING
+                                <br />
+                                AND AUTO SALVAGE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">SEARCH IN SECONDS.</span>
+                            </h2>
 
-                        {/* Left/Center Content */}
-                        <div className="lg:col-span-8 text-center lg:text-center space-y-8 pt-4">
-
-                            {/* Main Copy */}
-                            <div className="space-y-4">
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white/90 leading-tight">
-                                    FOR YOUR <span className="text-orange-500 bg-dark-900/90 px-3 py-1 rounded-md mx-1 shadow-lg border border-orange-500/20">JUNKYARD</span>, AUTO PARTS RECYCLING
-                                    <br className="hidden md:block" /> AND AUTO SALVAGE <span className="text-white font-black border-b-4 border-cyan-500">SEARCH IN SECONDS.</span>
-                                </h2>
-
-                                <h3 className="text-3xl md:text-4xl font-light text-white/80 mt-6">
-                                    LOCATE USED AUTO PARTS <span className="font-script text-orange-500 font-bold text-5xl ml-2 drop-shadow-lg" style={{ fontFamily: 'cursive' }}>near you!</span>
-                                </h3>
-                            </div>
+                            <h3 className="text-base md:text-lg font-medium text-white/90">
+                                LOCATE USED AUTO PARTS <span className="font-script text-orange-500 font-bold text-2xl ml-1.5 drop-shadow-md" style={{ fontFamily: 'cursive' }}>near you!</span>
+                            </h3>
 
                             {/* Divider Line */}
-                            <div className="w-24 h-1 bg-white/20 mx-auto rounded-full"></div>
-
-                            {/* ZIP Search - Styled like image */}
-                            <div className="max-w-2xl mx-auto bg-white/5 backdrop-blur-md p-2 rounded-xl border border-white/10 mt-8">
-                                <form onSubmit={handleZipSearch} className="flex flex-col sm:flex-row gap-2">
-                                    <input
-                                        type="text"
-                                        value={zipcode}
-                                        onChange={(e) => setZipcode(e.target.value)}
-                                        placeholder="Your ZIP or Postal Code"
-                                        className="flex-1 px-6 py-4 bg-white text-dark-900 border-2 border-transparent focus:border-cyan-500 rounded-lg text-lg font-bold placeholder-gray-400 outline-none transition-all shadow-inner"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="bg-green-600 hover:bg-green-500 text-white font-black text-lg px-8 py-4 rounded-lg shadow-lg hover:shadow-green-500/30 transition-all uppercase tracking-wide transform hover:scale-105"
-                                    >
-                                        SEARCH. IT'S FREE!
-                                    </button>
-                                </form>
-                            </div>
+                            <div className="w-16 h-1 bg-orange-500 mx-auto rounded-full shadow-glow"></div>
                         </div>
 
-                        {/* Right - Compact Lead Form */}
-                        <div className="lg:col-span-4 relative z-10">
-                            <LeadForm />
+                        {/* Horizontal Lead Form ("Two Parts") */}
+                        <div className="w-full max-w-5xl mx-auto">
+                            <LeadForm layout="horizontal" />
                         </div>
 
                     </div>
@@ -123,109 +114,111 @@ export default function Home() {
             <TrustedVendors />
 
             {/* Featured Vendors - Premium Cards */}
-            {sponsoredVendors.length > 0 && (
-                <div className="relative py-20 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-b from-dark-900 to-dark-800"></div>
+            {
+                sponsoredVendors.length > 0 && (
+                    <div className="relative py-20 overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-b from-dark-900 to-dark-800"></div>
 
-                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-12 animate-fade-in">
-                            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30 px-6 py-3 rounded-full mb-6">
-                                <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                                <span className="text-white font-semibold">PREMIUM PARTNERS</span>
+                        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center mb-12 animate-fade-in">
+                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30 px-6 py-3 rounded-full mb-6">
+                                    <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    <span className="text-white font-semibold">PREMIUM PARTNERS</span>
+                                </div>
+
+                                <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 mb-4">
+                                    Top-Rated Vendors
+                                </h2>
+                                <p className="text-xl text-white/60 max-w-2xl mx-auto">
+                                    Verified excellence. Trusted by thousands.
+                                </p>
                             </div>
 
-                            <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 mb-4">
-                                Top-Rated Vendors
-                            </h2>
-                            <p className="text-xl text-white/60 max-w-2xl mx-auto">
-                                Verified excellence. Trusted by thousands.
-                            </p>
-                        </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {sponsoredVendors.map((vendor, index) => (
+                                    <div
+                                        key={vendor.accountID}
+                                        className="group relative"
+                                        onClick={() => navigate(`/vendors/${vendor.slug}`)}
+                                    >
+                                        {/* Card Glow */}
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {sponsoredVendors.map((vendor, index) => (
-                                <div
-                                    key={vendor.accountID}
-                                    className="group relative"
-                                    onClick={() => navigate(`/vendors/${vendor.slug}`)}
-                                >
-                                    {/* Card Glow */}
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
-
-                                    {/* Card */}
-                                    <div className="relative bg-dark-800/90 backdrop-blur-xl border border-yellow-400/30 rounded-3xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
-                                        {/* Premium Badge */}
-                                        <div className="absolute top-4 right-4 z-10">
-                                            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-dark-900 px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                                {index === 0 ? 'TOP RATED' : 'FEATURED'}
-                                            </div>
-                                        </div>
-
-                                        {/* Logo */}
-                                        <div className="aspect-[16/9] bg-gradient-to-br from-dark-700 to-dark-800 p-8 flex items-center justify-center">
-                                            {vendor.logo ? (
-                                                <img
-                                                    src={vendor.logo}
-                                                    alt={vendor.name}
-                                                    className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
-                                                />
-                                            ) : (
-                                                <div className="text-white/20">
-                                                    <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+                                        {/* Card */}
+                                        <div className="relative bg-dark-800/90 backdrop-blur-xl border border-yellow-400/30 rounded-3xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+                                            {/* Premium Badge */}
+                                            <div className="absolute top-4 right-4 z-10">
+                                                <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-dark-900 px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                     </svg>
+                                                    {index === 0 ? 'TOP RATED' : 'FEATURED'}
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
 
-                                        {/* Content */}
-                                        <div className="p-6">
-                                            <h3 className="font-bold text-xl mb-3 text-white line-clamp-2 min-h-[3.5rem] group-hover:text-primary-400 transition-colors">
-                                                {vendor.name}
-                                            </h3>
-
-                                            {/* Rating */}
-                                            <div className="flex items-center gap-2 mb-4">
-                                                <div className="flex items-center gap-1">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <svg
-                                                            key={i}
-                                                            className={`w-5 h-5 ${i < Math.floor(vendor.rating) ? 'text-yellow-400' : 'text-dark-600'}`}
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            {/* Logo */}
+                                            <div className="aspect-[16/9] bg-gradient-to-br from-dark-700 to-dark-800 p-8 flex items-center justify-center">
+                                                {vendor.logo ? (
+                                                    <img
+                                                        src={vendor.logo}
+                                                        alt={vendor.name}
+                                                        className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                ) : (
+                                                    <div className="text-white/20">
+                                                        <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
                                                         </svg>
-                                                    ))}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="p-6">
+                                                <h3 className="font-bold text-xl mb-3 text-white line-clamp-2 min-h-[3.5rem] group-hover:text-primary-400 transition-colors">
+                                                    {vendor.name}
+                                                </h3>
+
+                                                {/* Rating */}
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <div className="flex items-center gap-1">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg
+                                                                key={i}
+                                                                className={`w-5 h-5 ${i < Math.floor(vendor.rating) ? 'text-yellow-400' : 'text-dark-600'}`}
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="font-bold text-white">{vendor.rating.toFixed(1)}</span>
+                                                    <span className="text-sm text-white/50">({vendor.reviewCount})</span>
                                                 </div>
-                                                <span className="font-bold text-white">{vendor.rating.toFixed(1)}</span>
-                                                <span className="text-sm text-white/50">({vendor.reviewCount})</span>
-                                            </div>
 
-                                            {/* Location */}
-                                            <div className="flex items-center gap-2 text-white/60 mb-4">
-                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                                </svg>
-                                                <span className="text-sm font-medium">{vendor.city}, {vendor.state.toUpperCase()}</span>
-                                            </div>
+                                                {/* Location */}
+                                                <div className="flex items-center gap-2 text-white/60 mb-4">
+                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span className="text-sm font-medium">{vendor.city}, {vendor.state.toUpperCase()}</span>
+                                                </div>
 
-                                            <button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow transform hover:scale-105">
-                                                View Details →
-                                            </button>
+                                                <button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow transform hover:scale-105">
+                                                    View Details →
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Top Vendors Grid - Modern Cards */}
             <div className="relative py-20">
@@ -248,24 +241,24 @@ export default function Home() {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 mb-12">
                         {topVendors.map((vendor) => (
                             <div
                                 key={vendor.accountID}
-                                className="group bg-dark-800/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-primary-400/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
+                                className="group bg-dark-800/40 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:border-cyan-400/50 transition-all duration-300 cursor-pointer"
                                 onClick={() => navigate(`/vendors/${vendor.slug}`)}
                             >
                                 {/* Logo */}
-                                <div className="aspect-[16/9] bg-gradient-to-br from-dark-700 to-dark-800 p-6 flex items-center justify-center">
+                                <div className="aspect-square bg-gradient-to-br from-dark-700/50 to-dark-800/50 p-4 flex items-center justify-center">
                                     {vendor.logo ? (
                                         <img
                                             src={vendor.logo}
                                             alt={vendor.name}
-                                            className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
                                         />
                                     ) : (
                                         <div className="text-white/10">
-                                            <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                                            <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
                                             </svg>
                                         </div>
@@ -273,18 +266,18 @@ export default function Home() {
                                 </div>
 
                                 {/* Content */}
-                                <div className="p-6">
-                                    <h3 className="font-bold text-lg mb-3 text-white group-hover:text-primary-400 transition-colors line-clamp-2 min-h-[3.5rem]">
+                                <div className="p-3">
+                                    <h3 className="font-bold text-sm mb-2 text-white group-hover:text-cyan-400 transition-colors line-clamp-2 min-h-[2.5rem]">
                                         {vendor.name}
                                     </h3>
 
                                     {/* Rating */}
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1 mb-2">
+                                        <div className="flex items-center gap-0.5">
                                             {[...Array(5)].map((_, i) => (
                                                 <svg
                                                     key={i}
-                                                    className={`w-4 h-4 ${i < Math.floor(vendor.rating) ? 'text-yellow-400' : 'text-dark-600'}`}
+                                                    className={`w-3 h-3 ${i < Math.floor(vendor.rating) ? 'text-yellow-400' : 'text-dark-600'}`}
                                                     fill="currentColor"
                                                     viewBox="0 0 20 20"
                                                 >
@@ -292,19 +285,18 @@ export default function Home() {
                                                 </svg>
                                             ))}
                                         </div>
-                                        <span className="font-semibold text-white">{vendor.rating.toFixed(1)}</span>
-                                        <span className="text-xs text-white/50">({vendor.reviewCount})</span>
+                                        <span className="text-xs font-semibold text-white">{vendor.rating.toFixed(1)}</span>
                                     </div>
 
                                     {/* Location */}
-                                    <div className="flex items-center gap-2 text-white/60 mb-4">
-                                        <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <div className="flex items-center gap-1 text-white/50 mb-3">
+                                        <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                         </svg>
-                                        <span className="text-sm">{vendor.city}, {vendor.state.toUpperCase()}</span>
+                                        <span className="text-xs truncate">{vendor.city}, {vendor.state.toUpperCase()}</span>
                                     </div>
 
-                                    <button className="w-full bg-white/5 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-cyan-500 border border-white/10 group-hover:border-blue-500 text-white/70 group-hover:text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300">
+                                    <button className="w-full bg-white/5 group-hover:bg-cyan-500/20 border border-white/10 group-hover:border-cyan-500/50 text-white/70 group-hover:text-cyan-400 font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-xs">
                                         View Details
                                     </button>
                                 </div>
@@ -328,6 +320,6 @@ export default function Home() {
             </div>
 
             <Footer />
-        </div>
+        </div >
     )
 }

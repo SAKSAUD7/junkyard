@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useData } from '../hooks/useData';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import DynamicAd from '../components/DynamicAd';
 
 const AllVendors = () => {
     const { data: junkyards } = useData('data_junkyards.json');
@@ -62,6 +63,16 @@ const AllVendors = () => {
 
                 {/* Dark Overlay with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-dark-950/95 via-dark-900/90 to-dark-800/85"></div>
+
+                {/* Left Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <DynamicAd slot="left_sidebar_ad" page="vendors" />
+                </div>
+
+                {/* Right Sidebar Ads - Fixed in Hero */}
+                <div className="absolute top-4 right-4 z-30 flex flex-col gap-4 hidden lg:block">
+                    <DynamicAd slot="right_sidebar_ad" page="vendors" />
+                </div>
 
                 {/* Animated Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/15 via-purple-600/15 to-pink-600/15 animate-gradient"></div>

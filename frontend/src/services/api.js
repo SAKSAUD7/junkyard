@@ -74,6 +74,15 @@ export const api = {
     return response.json();
   },
 
+  // Ads
+  getAds: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${API_BASE_URL}/ads/${queryString ? `?${queryString}` : ''}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  },
+
   // Health check
   healthCheck: async () => {
     const response = await fetch(`${API_BASE_URL}/health/`);

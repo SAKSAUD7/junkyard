@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     "apps.vendors",
     "apps.leads",
     "apps.common",
+    "apps.ads",
 ]
+
+# Media files (for ad images)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -113,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 

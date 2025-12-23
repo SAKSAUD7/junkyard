@@ -30,5 +30,13 @@ urlpatterns = [
     path("api/vendors/", include("apps.vendors.urls")),
     path("api/leads/", include("apps.leads.urls")),
     path("api/common/", include("apps.common.urls")),
+    path("api/ads/", include("apps.ads.urls")),
 ]
+
+# Serve media files in development
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
