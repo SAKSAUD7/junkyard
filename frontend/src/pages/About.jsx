@@ -1,5 +1,7 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
+import { getOrganizationSchema } from '../utils/structuredData'
 
 export default function About() {
     const stats = [
@@ -39,8 +41,16 @@ export default function About() {
         }
     ]
 
+    const organizationSchema = getOrganizationSchema();
+
     return (
         <div className="min-h-screen bg-[#0f172a] text-white selection:bg-blue-500/30">
+            <SEO
+                title="About Us - Junkyards Near Me | The Future of Auto Salvage"
+                description="Learn about Junkyards Near Me - connecting mechanics, enthusiasts, and car owners with over 1,000 verified junkyards across all 50 states. Save up to 70% on quality used auto parts."
+                canonicalUrl="/about"
+                structuredData={[organizationSchema]}
+            />
             <Navbar />
 
             {/* Hero Section */}

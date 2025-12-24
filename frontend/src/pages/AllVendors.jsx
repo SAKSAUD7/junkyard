@@ -4,6 +4,8 @@ import { useData } from '../hooks/useData';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DynamicAd from '../components/DynamicAd';
+import SEO from '../components/SEO';
+import { getCollectionPageSchema } from '../utils/structuredData';
 
 const AllVendors = () => {
     const { data: junkyards } = useData('data_junkyards.json');
@@ -47,8 +49,21 @@ const AllVendors = () => {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    // SEO structured data
+    const collectionSchema = getCollectionPageSchema({
+        name: 'All Auto Salvage Yards',
+        description: `Browse ${filteredVendors.length} verified auto salvage yards across ${states.length} states`,
+        numberOfItems: filteredVendors.length
+    });
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <SEO
+                title={`All Junkyards - Browse ${junkyards?.length || 0} Auto Salvage Yards Nationwide`}
+                description={`Browse our complete directory of ${junkyards?.length || 0} verified auto salvage yards across ${states.length} states. Find used auto parts, compare prices, and connect with local junkyards.`}
+                canonicalUrl="/vendors"
+                structuredData={[collectionSchema]}
+            />
             <Navbar />
 
             {/* Ultra-Modern Hero Section */}

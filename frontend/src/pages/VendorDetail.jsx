@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadForm from '../components/LeadForm';
 import LocationMap from '../components/LocationMap';
+import SEO from '../components/SEO';
+import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 const VendorDetail = () => {
     const { id } = useParams();
@@ -45,8 +47,32 @@ const VendorDetail = () => {
         );
     }
 
+    // SEO structured data
+    const localBusinessSchema = getLocalBusinessSchema({
+        name: vendor.name,
+        address: vendor.address,
+        city: vendor.city,
+        state: vendor.state,
+        zipcode: vendor.zipcode,
+        description: vendor.description,
+        rating: vendor.rating,
+        logo: vendor.logo
+    });
+
+    const breadcrumbSchema = getBreadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Vendors', url: '/vendors' },
+        { name: vendor.name, url: `/vendors/${vendor.id}` }
+    ]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <SEO
+                title={`${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}`}
+                description={vendor.description || `Find used auto parts at ${vendor.name} in ${vendor.city}, ${vendor.state}. ${vendor.rating} customer rating. Get a quote today!`}
+                canonicalUrl={`/vendors/${vendor.id}`}
+                structuredData={[localBusinessSchema, breadcrumbSchema]}
+            />
             <Navbar />
 
             {/* Breadcrumb */}

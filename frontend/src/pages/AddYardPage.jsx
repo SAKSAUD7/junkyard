@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
+import SEO from '../components/SEO';
 
 export default function AddYardPage() {
     const navigate = useNavigate();
@@ -329,6 +330,12 @@ export default function AddYardPage() {
 
     return (
         <>
+            <SEO
+                title="List Your Junkyard - Add Your Auto Salvage Yard | Junkyards Near Me"
+                description="Join our marketplace and reach thousands of customers searching for quality auto parts. List your junkyard or auto salvage yard today."
+                canonicalUrl="/add-a-yard"
+                noindex={true}
+            />
             <Navbar />
             <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 pt-32 pb-20">
                 <div className="max-w-5xl mx-auto px-4">
@@ -359,8 +366,8 @@ export default function AddYardPage() {
                                 <div key={s.number} className="flex items-center flex-1">
                                     <div className="flex flex-col items-center flex-1">
                                         <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center text-xl mb-2 transition-all duration-300 ${step >= s.number
-                                                ? 'bg-gradient-to-br from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/50 scale-110'
-                                                : 'bg-dark-700/50 border border-white/10'
+                                            ? 'bg-gradient-to-br from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/50 scale-110'
+                                            : 'bg-dark-700/50 border border-white/10'
                                             }`}>
                                             {step > s.number ? (
                                                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,8 +385,8 @@ export default function AddYardPage() {
 
                                     {idx < steps.length - 1 && (
                                         <div className={`h-1 flex-1 mx-2 rounded-full transition-all duration-500 ${step > s.number
-                                                ? 'bg-gradient-to-r from-cyan-500 to-blue-500'
-                                                : 'bg-dark-700/50'
+                                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500'
+                                            : 'bg-dark-700/50'
                                             }`} />
                                     )}
                                 </div>
@@ -630,8 +637,8 @@ export default function AddYardPage() {
                                                         type="button"
                                                         onClick={() => handlePaymentToggle(method)}
                                                         className={`px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${formData.payment_methods.includes(method)
-                                                                ? 'bg-cyan-500 text-white border-2 border-cyan-400'
-                                                                : 'bg-dark-700/50 text-white/60 border-2 border-white/10 hover:border-cyan-500/50'
+                                                            ? 'bg-cyan-500 text-white border-2 border-cyan-400'
+                                                            : 'bg-dark-700/50 text-white/60 border-2 border-white/10 hover:border-cyan-500/50'
                                                             }`}
                                                     >
                                                         {method}
@@ -775,8 +782,8 @@ export default function AddYardPage() {
                                                     key={plan.id}
                                                     onClick={() => setFormData(prev => ({ ...prev, subscription_plan: plan.id }))}
                                                     className={`relative cursor-pointer rounded-2xl p-6 transition-all duration-300 ${formData.subscription_plan === plan.id
-                                                            ? 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-2 border-cyan-500 scale-105'
-                                                            : 'bg-dark-700/30 border-2 border-white/10 hover:border-cyan-500/50'
+                                                        ? 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-2 border-cyan-500 scale-105'
+                                                        : 'bg-dark-700/30 border-2 border-white/10 hover:border-cyan-500/50'
                                                         }`}
                                                 >
                                                     {formData.subscription_plan === plan.id && (

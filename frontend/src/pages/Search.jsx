@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useData } from '../hooks/useData';
+import SEO from '../components/SEO';
 
 export default function Search() {
     const [searchParams] = useSearchParams();
@@ -51,8 +52,24 @@ export default function Search() {
         setFilteredJunkyards(filtered);
     }, [junkyards, zipcode]);
 
+    // Dynamic SEO based on search
+    const isNumericSearch = zipcode && /^\d+$/.test(zipcode);
+    const searchType = isNumericSearch ? 'ZIP code' : 'search term';
+    const seoTitle = zipcode
+        ? `${filteredJunkyards.length} Junkyards ${isNumericSearch ? `Near ${zipcode}` : `Matching "${zipcode}"`} | Search Results`
+        : 'Search Junkyards | Find Auto Salvage Yards Near You';
+    const seoDescription = zipcode
+        ? `Found ${filteredJunkyards.length} auto salvage yards ${isNumericSearch ? `near ZIP code ${zipcode}` : `matching "${zipcode}"`}. Browse junkyards, compare prices, and find used auto parts.`
+        : 'Search for auto salvage yards and junkyards near you. Find used auto parts by location, ZIP code, or vendor name.';
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <SEO
+                title={seoTitle}
+                description={seoDescription}
+                canonicalUrl={zipcode ? `/search?zipcode=${zipcode}` : '/search'}
+                noindex={filteredJunkyards.length === 0}
+            />
             <Navbar />
 
             {/* Hero Section */}
