@@ -141,28 +141,28 @@ export default function LeadForm({ layout = 'vertical' }) {
     return (
         <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
             {/* Header */}
-            <div className={`bg-gradient-to-r from-orange-400 to-orange-500 rounded-t-xl p-3 text-center shadow-lg ${isHorizontal ? 'py-3' : ''}`}>
-                <h2 className={`${isHorizontal ? 'text-lg' : 'text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
+            <div className={`bg-gradient-to-r from-orange-400 to-orange-500 rounded-t-xl p-2 md:p-3 text-center shadow-lg ${isHorizontal ? 'py-2 md:py-3' : ''}`}>
+                <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
                     NEED A QUALITY USED PART?
                 </h2>
             </div>
 
             {/* Form Body */}
-            <form onSubmit={handleSubmit} className={`bg-dark-900/95 backdrop-blur-md p-5 rounded-b-xl border border-white/10 shadow-2xl ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-5 p-6' : 'space-y-3'}`}>
+            <form onSubmit={handleSubmit} className={`bg-dark-900/95 backdrop-blur-md p-3 md:p-5 rounded-b-xl border border-white/10 shadow-2xl ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'space-y-2 md:space-y-3'}`}>
 
                 {/* Left Column (Vehicle Info) */}
-                <div className={`space-y-2 ${isHorizontal ? 'border-r border-white/10 pr-6' : ''}`}>
-                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-2 text-xs border-b border-white/10 pb-1">Vehicle Details</h3>}
+                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-white/10 pr-3 md:pr-6' : ''}`}>
+                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Vehicle Details</h3>}
 
                     {/* 1. Make */}
-                    <div className="space-y-1">
-                        <label className="text-xs font-bold text-white uppercase flex justify-between">
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             1. Make <span className="text-orange-500">*</span>
                         </label>
                         <select
                             value={selectedMake}
                             onChange={(e) => { setSelectedMake(e.target.value); setSelectedModel(''); }}
-                            className="w-full bg-white text-dark-900 text-sm font-semibold rounded-md px-3 py-2 border border-gray-300 focus:border-orange-500 outline-none"
+                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none"
                             required
                         >
                             <option value="">Select Make</option>
@@ -171,14 +171,14 @@ export default function LeadForm({ layout = 'vertical' }) {
                     </div>
 
                     {/* 2. Model */}
-                    <div className="space-y-1">
-                        <label className="text-xs font-bold text-white uppercase flex justify-between">
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             2. Model <span className="text-orange-500">*</span>
                         </label>
                         <select
                             value={selectedModel}
                             onChange={(e) => setSelectedModel(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-sm font-semibold rounded-md px-3 py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
                             disabled={!selectedMake}
                             required
                         >
@@ -188,14 +188,14 @@ export default function LeadForm({ layout = 'vertical' }) {
                     </div>
 
                     {/* 3. Year */}
-                    <div className="space-y-1">
-                        <label className="text-xs font-bold text-white uppercase flex justify-between">
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             3. Year <span className="text-orange-500">*</span>
                         </label>
                         <select
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-sm font-semibold rounded-md px-3 py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
                             disabled={!selectedModel}
                             required
                         >
@@ -205,14 +205,14 @@ export default function LeadForm({ layout = 'vertical' }) {
                     </div>
 
                     {/* 4. Part */}
-                    <div className="space-y-1">
-                        <label className="text-xs font-bold text-white uppercase flex justify-between">
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             4. Part <span className="text-orange-500">*</span>
                         </label>
                         <select
                             value={selectedPart}
                             onChange={(e) => setSelectedPart(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-sm font-semibold rounded-md px-3 py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
                             disabled={!selectedMake}
                             required
                         >
@@ -223,63 +223,63 @@ export default function LeadForm({ layout = 'vertical' }) {
                 </div>
 
                 {/* Right Column (Contact Info) */}
-                <div className={`space-y-2 ${isHorizontal ? '' : ''}`}>
-                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-2 text-xs border-b border-white/10 pb-1">Contact Information</h3>}
+                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? '' : ''}`}>
+                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Contact Information</h3>}
 
                     {/* Contact Grid */}
-                    <div className={`grid grid-cols-2 gap-3 ${!isHorizontal ? 'pt-2 border-t border-white/10' : ''}`}>
-                        <div className="col-span-2 space-y-1">
+                    <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-white/10' : ''}`}>
+                        <div className="col-span-2 space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-white/70 uppercase">Name <span className="text-orange-500">*</span></label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={e => setName(e.target.value)}
                                 placeholder="Your Name"
-                                className="w-full bg-white/10 text-white text-sm px-3 py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
                                 required
                             />
                         </div>
 
-                        <div className="col-span-2 space-y-1">
+                        <div className="col-span-2 space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-white/70 uppercase">Email <span className="text-orange-500">*</span></label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 placeholder="Your Email Address"
-                                className="w-full bg-white/10 text-white text-sm px-3 py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
                                 required
                             />
                         </div>
 
-                        <div className="space-y-1">
+                        <div className="space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-white/70 uppercase">Phone <span className="text-orange-500">*</span></label>
                             <input
                                 type="tel"
                                 value={phone}
                                 onChange={e => setPhone(e.target.value)}
                                 placeholder="(555) 555-5555"
-                                className="w-full bg-white/10 text-white text-sm px-3 py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
                                 required
                             />
                         </div>
 
-                        <div className="space-y-1">
+                        <div className="space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-white/70 uppercase">Zip / Location <span className="text-orange-500">*</span></label>
                             <input
                                 type="text"
                                 value={location}
                                 onChange={e => setLocation(e.target.value)}
                                 placeholder="Zip Code"
-                                className="w-full bg-white/10 text-white text-sm px-3 py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
                                 required
                             />
                         </div>
                     </div>
 
                     {/* Security Code */}
-                    <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between gap-3 mt-4">
-                        <div className="bg-white/90 text-dark-900 font-mono font-black text-lg px-3 py-1 rounded tracking-widest select-none bg-opacity-80 decoration-slice shadow-inner w-24 text-center">
+                    <div className="bg-white/5 p-2 md:p-3 rounded-lg border border-white/10 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
+                        <div className="bg-white/90 text-dark-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none bg-opacity-80 decoration-slice shadow-inner w-20 md:w-24 text-center">
                             {securityCode}
                         </div>
                         <input
@@ -287,23 +287,23 @@ export default function LeadForm({ layout = 'vertical' }) {
                             value={userSecurityCode}
                             onChange={e => setUserSecurityCode(e.target.value)}
                             placeholder="ENTER CODE"
-                            className="flex-1 bg-white/10 text-white text-sm px-3 py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30 text-center uppercase font-bold"
+                            className="flex-1 bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30 text-center uppercase font-bold"
                             maxLength={4}
                             required
                         />
                     </div>
 
                     {/* Submit Button */}
-                    <div className="space-y-2 pt-2">
+                    <div className="space-y-1.5 md:space-y-2 pt-1.5 md:pt-2">
                         {submitError && (
-                            <div className="text-red-400 text-xs text-center font-bold bg-red-900/20 p-2 rounded">
+                            <div className="text-red-400 text-[10px] md:text-xs text-center font-bold bg-red-900/20 p-1.5 md:p-2 rounded">
                                 {submitError}
                             </div>
                         )}
                         <button
                             type="submit"
                             disabled={submitting}
-                            className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-sm uppercase rounded-lg shadow-lg hover:shadow-orange-500/20 transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-4 text-base' : 'py-3'}`}
+                            className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-lg hover:shadow-orange-500/20 transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
                         >
                             {submitting ? 'SENDING...' : 'FIND MY PART NOW'}
                         </button>

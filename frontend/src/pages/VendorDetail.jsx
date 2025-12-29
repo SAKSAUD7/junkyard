@@ -92,8 +92,8 @@ const VendorDetail = () => {
                 </div>
             </div>
 
-            {/* Hero Section */}
-            <div className="relative py-16 overflow-hidden">
+            {/* Hero Section - Compact Mobile */}
+            <div className="relative compact-section overflow-hidden">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
 
@@ -101,11 +101,11 @@ const VendorDetail = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Left - Vendor Info */}
                         <div className="lg:col-span-2 space-y-6">
-                            {/* Logo & Name Card */}
-                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                                <div className="flex items-start gap-6">
+                            {/* Logo & Name Card - Compact */}
+                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl compact-card">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 md:gap-6">
                                     {/* Logo */}
-                                    <div className="flex-shrink-0 w-32 h-32 bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-4 flex items-center justify-center">
+                                    <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-dark-700 to-dark-800 rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex items-center justify-center">
                                         {vendor.logo ? (
                                             <img
                                                 src={vendor.logo}
@@ -122,19 +122,19 @@ const VendorDetail = () => {
                                         )}
                                     </div>
 
-                                    {/* Name & Rating */}
-                                    <div className="flex-1">
-                                        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300 mb-4">
+                                    {/* Name & Rating - Compact */}
+                                    <div className="flex-1 min-w-0">
+                                        <h1 className="compact-hero font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300 mb-2 sm:mb-3 md:mb-4 break-words">
                                             {vendor.name}
                                         </h1>
 
-                                        {/* Rating */}
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="flex items-center gap-1">
+                                        {/* Rating - Compact */}
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3 md:mb-4">
+                                            <div className="flex items-center gap-0.5 sm:gap-1">
                                                 {[...Array(5)].map((_, i) => (
                                                     <svg
                                                         key={i}
-                                                        className="w-6 h-6 text-yellow-400"
+                                                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-400"
                                                         fill="currentColor"
                                                         viewBox="0 0 20 20"
                                                     >
@@ -142,8 +142,8 @@ const VendorDetail = () => {
                                                     </svg>
                                                 ))}
                                             </div>
-                                            <span className="text-2xl font-bold text-white">{vendor.rating}</span>
-                                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                                            <span className="compact-title font-bold text-white">{vendor.rating}</span>
+                                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-400 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full compact-text font-semibold">
                                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                 </svg>
@@ -151,12 +151,12 @@ const VendorDetail = () => {
                                             </span>
                                         </div>
 
-                                        {/* Location */}
-                                        <div className="flex items-center gap-2 text-white/80 text-lg">
-                                            <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                        {/* Location - Compact */}
+                                        <div className="flex items-start gap-1.5 sm:gap-2 text-white/80 compact-text">
+                                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                             </svg>
-                                            <span>{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</span>
+                                            <span className="break-words">{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -164,14 +164,14 @@ const VendorDetail = () => {
 
                             {/* Description */}
                             {vendor.description && (
-                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                                    <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                                        <svg className="w-6 h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl compact-card">
+                                    <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4 flex items-center gap-1.5 sm:gap-2">
+                                        <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                         </svg>
                                         About This Vendor
                                     </h2>
-                                    <p className="text-white/70 text-lg leading-relaxed">
+                                    <p className="text-white/70 compact-text leading-relaxed">
                                         {vendor.description}
                                     </p>
                                 </div>
@@ -179,7 +179,7 @@ const VendorDetail = () => {
 
                             {/* Review Snippet */}
                             {vendor.reviewSnippet && (
-                                <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-blue-500/20 rounded-3xl p-8">
+                                <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl md:rounded-3xl compact-card">
                                     <div className="flex items-start gap-4">
                                         <div className="flex-shrink-0">
                                             <svg className="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
@@ -197,7 +197,7 @@ const VendorDetail = () => {
                             {/* Quick Info Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* Location Card */}
-                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl md:rounded-2xl compact-card">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
@@ -213,7 +213,7 @@ const VendorDetail = () => {
                                 </div>
 
                                 {/* State Card */}
-                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl md:rounded-2xl compact-card">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">

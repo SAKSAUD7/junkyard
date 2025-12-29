@@ -2,7 +2,7 @@ import React from 'react';
 
 // Standard Template - Modern Glassmorphism Design
 export const StandardTemplate = ({ ad }) => (
-    <div className="max-w-[220px] sm:max-w-[240px] animate-fade-in group">
+    <div className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] animate-fade-in group">
         <div className="relative">
             {/* Glow Effect */}
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-75 transition-all duration-500"></div>
@@ -10,16 +10,16 @@ export const StandardTemplate = ({ ad }) => (
             {/* Main Card */}
             <div className="relative bg-gradient-to-br from-dark-800/90 via-dark-900/95 to-black/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl overflow-hidden">
                 {ad.show_badge && (
-                    <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 py-1.5 px-3 text-center overflow-hidden">
+                    <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 py-1 sm:py-1.5 px-2 sm:px-3 text-center overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                        <span className="text-[9px] uppercase tracking-widest text-white font-black relative z-10 drop-shadow-lg">
+                        <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-white font-black relative z-10 drop-shadow-lg">
                             ✨ Featured Partner
                         </span>
                     </div>
                 )}
 
-                <div className="p-4">
-                    <h3 className="text-white font-black text-base text-center mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <div className="p-3 sm:p-4">
+                    <h3 className="text-white font-black text-sm sm:text-base text-center mb-2 sm:mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {ad.title}
                     </h3>
                 </div>
@@ -38,12 +38,12 @@ export const StandardTemplate = ({ ad }) => (
                     </div>
                 )}
 
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                     <a
                         href={`${import.meta.env.VITE_API_URL}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-white text-xs font-black py-3 px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
+                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-white text-[10px] sm:text-xs font-black py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'Explore Now'} →
                     </a>
@@ -55,7 +55,7 @@ export const StandardTemplate = ({ ad }) => (
 
 // Minimal Template - Ultra Clean Modern Design
 export const MinimalTemplate = ({ ad }) => (
-    <div className="max-w-[200px] animate-fade-in group">
+    <div className="w-full max-w-[160px] sm:max-w-[180px] md:max-w-[200px] animate-fade-in group">
         <div className="relative">
             {/* Subtle Glow */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-300 to-gray-400 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
@@ -70,8 +70,8 @@ export const MinimalTemplate = ({ ad }) => (
                     </div>
                 )}
 
-                <div className="p-3">
-                    <h3 className="text-gray-900 font-black text-sm text-center mb-2 leading-tight">
+                <div className="p-2 sm:p-3">
+                    <h3 className="text-gray-900 font-black text-xs sm:text-sm text-center mb-1.5 sm:mb-2 leading-tight">
                         {ad.title}
                     </h3>
                 </div>
@@ -89,12 +89,12 @@ export const MinimalTemplate = ({ ad }) => (
                     </div>
                 )}
 
-                <div className="p-3">
+                <div className="p-2 sm:p-3">
                     <a
                         href={`${import.meta.env.VITE_API_URL}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white text-xs font-bold py-2.5 px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                     >
                         {ad.button_text || 'Learn More'} →
                     </a>
@@ -106,7 +106,7 @@ export const MinimalTemplate = ({ ad }) => (
 
 // Premium Template - Luxury Gold Design with Epic Animations
 export const PremiumTemplate = ({ ad }) => (
-    <div className="max-w-[240px] sm:max-w-[260px] animate-fade-in group">
+    <div className="w-full max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] animate-fade-in group">
         <div className="relative">
             {/* Subtle Glow Effect */}
             <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700"></div>
@@ -123,8 +123,8 @@ export const PremiumTemplate = ({ ad }) => (
                     </div>
                 )}
 
-                <div className="p-5">
-                    <h3 className="text-white font-black text-lg text-center mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
+                <div className="p-3 sm:p-4 md:p-5">
+                    <h3 className="text-white font-black text-base sm:text-lg text-center mb-2 sm:mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
                         {ad.title}
                     </h3>
                 </div>
@@ -149,7 +149,7 @@ export const PremiumTemplate = ({ ad }) => (
                         href={`${import.meta.env.VITE_API_URL}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="relative block w-full bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 hover:from-yellow-400 hover:via-amber-300 hover:to-yellow-400 text-gray-900 text-sm font-black py-3.5 px-5 rounded-2xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-110 hover:-translate-y-2 shadow-2xl hover:shadow-yellow-500/80 overflow-hidden group/btn"
+                        className="relative block w-full bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 hover:from-yellow-400 hover:via-amber-300 hover:to-yellow-400 text-gray-900 text-xs sm:text-sm font-black py-2.5 sm:py-3 md:py-3.5 px-3 sm:px-4 md:px-5 rounded-2xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-110 hover:-translate-y-2 shadow-2xl hover:shadow-yellow-500/80 overflow-hidden group/btn"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
                         <span className="relative z-10">{ad.button_text || 'Get Premium Access'} ✨</span>
@@ -162,7 +162,7 @@ export const PremiumTemplate = ({ ad }) => (
 
 // Compact Template - Sleek Micro Design
 export const CompactTemplate = ({ ad }) => (
-    <div className="max-w-[180px] animate-fade-in group">
+    <div className="w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] animate-fade-in group">
         <div className="relative">
             {/* Compact Glow */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-all duration-300"></div>
@@ -205,6 +205,38 @@ export const CompactTemplate = ({ ad }) => (
                         className="block w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 shadow-md hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'View'} →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+// Micro Template - Ultra Compact for Mobile Hero
+export const MicroTemplate = ({ ad }) => (
+    <div className="max-w-[85px] animate-scale-in group">
+        <div className="relative">
+            {/* Main Card */}
+            <div className="relative bg-dark-900/80 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden shadow-lg">
+                <div className="aspect-square relative">
+                    <img
+                        src={ad.image}
+                        alt={ad.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                    {/* Tiny Badge */}
+                    <div className="absolute top-0 right-0 bg-primary-600 text-[6px] font-black text-white px-1 py-0.5 rounded-bl">AD</div>
+                </div>
+
+                <div className="p-1 text-center">
+                    <a
+                        href={`${import.meta.env.VITE_API_URL}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-white/10 hover:bg-white/20 text-[8px] font-bold text-white py-1 rounded transition-colors uppercase"
+                    >
+                        OPEN
                     </a>
                 </div>
             </div>

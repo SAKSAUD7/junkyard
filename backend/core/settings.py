@@ -59,7 +59,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
 DEFAULT_FROM_EMAIL = 'noreply@junkyard.com'
 ADMIN_EMAIL = 'admin@junkyard.com'
-SITE_URL = 'http://localhost:3001'  # Frontend URL
+SITE_URL = 'http://localhost:3000'  # Frontend URL
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -98,7 +98,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
+        "ENGINE": "db_backends.sqlite_custom",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
@@ -147,8 +147,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

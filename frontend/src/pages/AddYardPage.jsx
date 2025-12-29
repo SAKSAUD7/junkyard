@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import MobileAdBanner from '../components/MobileAdBanner';
 import axios from 'axios';
 import SEO from '../components/SEO';
 
@@ -337,54 +339,81 @@ export default function AddYardPage() {
                 noindex={true}
             />
             <Navbar />
-            <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 pt-32 pb-20">
-                <div className="max-w-5xl mx-auto px-4">
-                    {/* Hero Section */}
-                    <div className="text-center mb-16">
-                        <div className="inline-block mb-6">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 blur-2xl opacity-30"></div>
-                                <div className="relative bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl px-6 py-3">
-                                    <span className="text-cyan-400 font-bold text-sm uppercase tracking-wider">Create New Account</span>
-                                </div>
-                            </div>
+
+            {/* Ultra-Modern Hero Section - Compact Mobile */}
+            <div className="relative min-h-[35vh] sm:min-h-[45vh] md:min-h-[60vh] bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 flex items-center overflow-hidden">
+                {/* Background Image */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{
+                        backgroundImage: 'url(https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1920&q=80)',
+                    }}
+                ></div>
+
+                {/* Dark Overlay with Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-dark-950/95 via-dark-900/90 to-dark-800/85"></div>
+
+                {/* Animated Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/15 via-purple-600/15 to-pink-600/15 animate-gradient"></div>
+
+                {/* Grid Pattern Overlay */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+
+                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full compact-section">
+                    <div className="text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
+                        {/* Premium Badge - Compact */}
+                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <span className="text-white/90 compact-text font-medium">Create New Account</span>
                         </div>
 
-                        <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
-                            List Your <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Junkyard</span>
+                        {/* Main Heading with Gradient Text - Compact */}
+                        <h1 className="compact-hero font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-purple-300 leading-tight px-2">
+                            List Your
+                            <span className="block text-cyan-400">Junkyard</span>
                         </h1>
 
-                        <p className="text-white/60 text-xl max-w-2xl mx-auto leading-relaxed">
-                            Join our marketplace and reach thousands of customers searching for quality auto parts
+                        <p className="compact-heading text-white/80 font-light max-w-3xl mx-auto px-2">
+                            Join our marketplace and reach <span className="font-bold text-cyan-400">thousands of customers</span> searching for quality auto parts
                         </p>
                     </div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
+                <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+            </div>
+
+            {/* Form Section */}
+            <div className="bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 compact-section pb-20">
+                <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6">
 
                     {/* Progress Steps */}
-                    <div className="mb-16">
+                    <div className="mb-8 sm:mb-12 md:mb-16">
                         <div className="flex items-center justify-between max-w-4xl mx-auto">
                             {steps.map((s, idx) => (
                                 <div key={s.number} className="flex items-center flex-1">
                                     <div className="flex flex-col items-center flex-1">
-                                        <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center text-xl mb-2 transition-all duration-300 ${step >= s.number
+                                        <div className={`relative w-10 h-10 sm:w-12 md:w-14 sm:h-12 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center text-base sm:text-xl mb-2 transition-all duration-300 ${step >= s.number
                                             ? 'bg-gradient-to-br from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/50 scale-110'
                                             : 'bg-dark-700/50 border border-white/10'
                                             }`}>
                                             {step > s.number ? (
-                                                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-5 h-5 sm:w-6 md:w-7 sm:h-6 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                 </svg>
                                             ) : (
                                                 <span>{s.icon}</span>
                                             )}
                                         </div>
-                                        <span className={`text-xs font-bold transition-colors ${step >= s.number ? 'text-cyan-400' : 'text-white/40'
+                                        <span className={`text-[10px] sm:text-xs font-bold transition-colors ${step >= s.number ? 'text-cyan-400' : 'text-white/40'
                                             }`}>
                                             {s.title}
                                         </span>
                                     </div>
 
                                     {idx < steps.length - 1 && (
-                                        <div className={`h-1 flex-1 mx-2 rounded-full transition-all duration-500 ${step > s.number
+                                        <div className={`h-1 flex-1 mx-0 rounded-full transition-all duration-500 ${step > s.number
                                             ? 'bg-gradient-to-r from-cyan-500 to-blue-500'
                                             : 'bg-dark-700/50'
                                             }`} />
@@ -398,7 +427,7 @@ export default function AddYardPage() {
                     <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 blur-3xl"></div>
 
-                        <div className="relative bg-dark-800/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12">
+                        <div className="relative bg-dark-800/60 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-3xl compact-card md:p-12">
                             <form onSubmit={handleSubmit}>
                                 {/* Step 1: Account Information */}
                                 {step === 1 && (
@@ -931,6 +960,11 @@ export default function AddYardPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Ad Banner */}
+            <MobileAdBanner page="add-yard" />
+
+            <Footer />
         </>
     );
 }
