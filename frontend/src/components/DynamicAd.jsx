@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { api } from '../services/api'
-import { StandardTemplate, MinimalTemplate, PremiumTemplate, CompactTemplate } from './AdTemplates'
+import { StandardTemplate, MinimalTemplate, PremiumTemplate, CompactTemplate, MicroTemplate } from './AdTemplates'
 
-export default function DynamicAd({ slot, page = 'all' }) {
+export default function DynamicAd({ slot, page = 'all', templateOverride = null }) {
     const [ads, setAds] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -44,7 +44,11 @@ export default function DynamicAd({ slot, page = 'all' }) {
     if (ads.length === 0 && loading) return null
 
     const renderTemplate = (ad) => {
-        switch (ad.template_type) {
+        const type = templateOverride || ad.template_type
+
+        switch (type) {
+            case 'micro':
+                return <MicroTemplate key={ad.id} ad={ad} />
             case 'minimal':
                 return <MinimalTemplate key={ad.id} ad={ad} />
             case 'premium':

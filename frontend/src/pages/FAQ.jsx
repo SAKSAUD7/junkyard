@@ -107,8 +107,8 @@ const FAQ = () => {
 
             <Navbar />
 
-            {/* Hero Section */}
-            <div className="relative py-24 overflow-hidden">
+            {/* Hero Section - Compact */}
+            <div className="relative compact-section overflow-hidden">
                 {/* Background Grid */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
 
@@ -124,32 +124,30 @@ const FAQ = () => {
                         <span className="text-white/90 text-sm font-semibold">HELP CENTER</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                    <h1 className="compact-hero font-black text-white mb-2 sm:mb-3 md:mb-4 tracking-tight px-2">
                         Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400">Questions</span>
                     </h1>
-                    <p className="text-xl text-white/60 max-w-2xl mx-auto">
+                    <p className="compact-heading text-white/60 max-w-2xl mx-auto px-2">
                         Everything you need to know about finding and buying used auto parts through our platform.
                     </p>
                 </div>
             </div>
 
-            {/* FAQ Content */}
-            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
-                <div className="space-y-12">
+            <div className="relative max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 compact-section">
+                <div className="space-y-4 sm:space-y-6 md:space-y-8">
                     {categories.map((category, categoryIdx) => (
                         <div key={categoryIdx} className="animate-fade-in" style={{ animationDelay: `${categoryIdx * 100}ms` }}>
-                            {/* Category Header */}
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="p-3 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 rounded-xl text-blue-400">
+                            <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
+                                <div className="p-1.5 sm:p-2 md:p-3 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 rounded-lg md:rounded-xl text-blue-400">
                                     {category.icon}
                                 </div>
-                                <h2 className="text-3xl font-bold text-white">
+                                <h2 className="compact-title font-bold text-white">
                                     {category.name}
                                 </h2>
                             </div>
 
-                            {/* Questions */}
-                            <div className="space-y-4">
+                            {/* Questions - Compact */}
+                            <div className="space-y-2 sm:space-y-3 md:space-y-4">
                                 {category.questions.map((item, questionIdx) => {
                                     const index = `${categoryIdx}-${questionIdx}`;
                                     const isOpen = openIndex === index;
@@ -157,26 +155,26 @@ const FAQ = () => {
                                     return (
                                         <div
                                             key={questionIdx}
-                                            className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-400/30 transition-all duration-300"
+                                            className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl overflow-hidden hover:border-cyan-400/30 transition-all duration-300"
                                         >
                                             <button
                                                 onClick={() => toggleQuestion(categoryIdx, questionIdx)}
-                                                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                                                className="w-full compact-card flex items-center justify-between text-left hover:bg-white/5 transition-colors"
                                             >
-                                                <h3 className="text-lg font-bold text-white pr-8 group-hover:text-cyan-400 transition-colors">
+                                                <h3 className="compact-heading font-bold text-white pr-4 sm:pr-6 md:pr-8 group-hover:text-cyan-400 transition-colors">
                                                     {item.q}
                                                 </h3>
-                                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-cyan-400/20' : ''}`}>
-                                                    <svg className={`w-5 h-5 transition-colors ${isOpen ? 'text-cyan-400' : 'text-white/60'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-white/5 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-cyan-400/20' : ''}`}>
+                                                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isOpen ? 'text-cyan-400' : 'text-white/60'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                                     </svg>
                                                 </div>
                                             </button>
 
                                             <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-                                                <div className="px-6 pb-5 pt-2">
-                                                    <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mb-4"></div>
-                                                    <p className="text-white/70 leading-relaxed">
+                                                <div className="compact-card pt-1 sm:pt-2">
+                                                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mb-2 sm:mb-3 md:mb-4"></div>
+                                                    <p className="text-white/70 leading-relaxed compact-text">
                                                         {item.a}
                                                     </p>
                                                 </div>
@@ -192,22 +190,22 @@ const FAQ = () => {
                 {/* Contact Box */}
                 <div className="mt-20 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl"></div>
-                    <div className="relative bg-dark-800/80 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center">
-                        <div className="inline-flex p-4 bg-cyan-400/10 rounded-2xl mb-6">
-                            <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="relative bg-dark-800/80 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl compact-card text-center">
+                        <div className="inline-flex p-2 sm:p-3 md:p-4 bg-cyan-400/10 rounded-xl md:rounded-2xl mb-3 sm:mb-4 md:mb-6">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-3">Still have questions?</h3>
-                        <p className="text-white/60 mb-8 max-w-md mx-auto">
+                        <h3 className="compact-title font-bold text-white mb-2 sm:mb-3">Still have questions?</h3>
+                        <p className="text-white/60 mb-4 sm:mb-6 md:mb-8 max-w-md mx-auto compact-text">
                             Can't find the answer you're looking for? Our support team is here to help you 24/7.
                         </p>
                         <a
                             href="/contact"
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 transform hover:scale-105"
-                        >
+                            className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg md:rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 transform hover:scale-105 compact-text">
+
                             Contact Support
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </a>
