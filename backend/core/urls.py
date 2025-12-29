@@ -27,8 +27,18 @@ def health_check(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/health/", health_check, name="health_check"),
+    path("api/auth/", include("apps.users.urls")),
     path("api/vendors/", include("apps.vendors.urls")),
     path("api/leads/", include("apps.leads.urls")),
     path("api/common/", include("apps.common.urls")),
+    path("api/ads/", include("apps.ads.urls")),
+    path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
 ]
+
+# Serve media files in development
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

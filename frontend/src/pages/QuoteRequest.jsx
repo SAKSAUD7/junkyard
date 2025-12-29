@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
 
 export default function QuoteRequest() {
     const navigate = useNavigate()
@@ -65,6 +66,12 @@ export default function QuoteRequest() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <SEO
+                title={`Get Quote - ${year} ${make} ${model} ${part} | Junkyards Near Me`}
+                description={`Request an instant quote for ${part} for your ${year} ${make} ${model}. Connect with verified auto salvage yards and get the best prices on used auto parts.`}
+                canonicalUrl="/quote"
+                noindex={true}
+            />
             <Navbar />
 
             <div className="relative py-16 px-4">

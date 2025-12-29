@@ -1,5 +1,7 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
+import { getOrganizationSchema } from '../utils/structuredData'
 
 export default function About() {
     const stats = [
@@ -39,12 +41,20 @@ export default function About() {
         }
     ]
 
+    const organizationSchema = getOrganizationSchema();
+
     return (
         <div className="min-h-screen bg-[#0f172a] text-white selection:bg-blue-500/30">
+            <SEO
+                title="About Us - Junkyards Near Me | The Future of Auto Salvage"
+                description="Learn about Junkyards Near Me - connecting mechanics, enthusiasts, and car owners with over 1,000 verified junkyards across all 50 states. Save up to 70% on quality used auto parts."
+                canonicalUrl="/about"
+                structuredData={[organizationSchema]}
+            />
             <Navbar />
 
-            {/* Hero Section */}
-            <div className="relative pt-32 pb-20 overflow-hidden">
+            {/* Hero Section - Compact */}
+            <div className="relative compact-section overflow-hidden">
                 <div className="absolute inset-0 bg-blue-600/10 blur-[100px] rounded-full mix-blend-screen transform -translate-y-1/2 translate-x-1/2"></div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -54,19 +64,19 @@ export default function About() {
                                 About Us
                             </span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-200">
+                        <h1 className="compact-hero font-black mb-2 sm:mb-3 md:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-200 px-2">
                             The Future of <br />
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400">
                                 Auto Salvage
                             </span>
                         </h1>
-                        <p className="text-xl text-gray-400 leading-relaxed mb-10">
+                        <p className="compact-heading text-gray-400 leading-relaxed mb-4 sm:mb-6 md:mb-8 px-2">
                             We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's best extensive inventory.
                         </p>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    {/* Stats Grid - Compact */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 compact-gap mt-4 sm:mt-6 md:mt-8">
                         {stats.map((stat, index) => (
                             <div key={index} className="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-2xl text-center group hover:bg-white/10 transition-all duration-300">
                                 <div className="text-3xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-1 group-hover:scale-110 transition-transform duration-300">
@@ -79,8 +89,8 @@ export default function About() {
                 </div>
             </div>
 
-            {/* Mission Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            {/* Mission Section - Compact */}
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 compact-section">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <div className="space-y-8">
                         <h2 className="text-4xl font-bold">

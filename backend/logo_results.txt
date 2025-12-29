@@ -1,0 +1,47 @@
+﻿================================================================================
+VENDOR LOGO MATCHING - DATABASE-FIRST APPROACH
+================================================================================
+
+Total vendors in database: 652
+Logo directory: C:\Users\saksa\OneDrive\Desktop\junkyard\junkyard\frontend\public\images\vendors
+Mode: DRY RUN
+
+Total logo files available: 2763
+
+Processing vendors...
+
+[NO MATCH] Auto Recycling Mall
+   Normalized: auto-recycling-mall
+[NO MATCH] C & H Auto Salvage
+   Normalized: c-h-auto-salvage
+[NO MATCH] Wheel City Auto Parts
+   Normalized: wheel-city-auto-parts
+[NO MATCH] Classic Auto Salvage
+   Normalized: classic-auto-salvage
+[NO MATCH] Parson's Auto Parts
+   Normalized: parsons-auto-parts
+[NO MATCH] Arite Used Auto Parts
+   Normalized: arite-used-auto-parts
+[NO MATCH] Bay Auto Parts Inc.
+   Normalized: bay-auto-parts-inc
+[NO MATCH] Carthage Auto Parts Co.
+   Normalized: carthage-auto-parts-co
+[NO MATCH] Chuck & Eddie's Quality Used Auto Parts
+   Normalized: chuck-eddies-quality-used-auto-parts
+[NO MATCH] Gravely Auto Parts
+   Normalized: gravely-auto-parts
+
+================================================================================
+SUMMARY
+================================================================================
+Total vendors processed:     652
+Already had custom logo:     1
+Logos successfully matched:  0
+Vendors without match:       651
+
+DRY RUN MODE - No changes were made
+   Run with --apply to update database
+
+Match rate: 0.0%
+Unused images: 2763 (ignored)
+

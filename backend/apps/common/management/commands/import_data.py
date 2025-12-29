@@ -19,7 +19,7 @@ class Command(BaseCommand):
         with open(os.path.join(data_dir, 'data_makes.json'), 'r', encoding='utf-8') as f:
             makes_data = json.load(f)
             for item in makes_data:
-                Make.objects.get_or_create(
+                Make.objects.update_or_create(
                     make_id=item['makeID'],
                     defaults={'make_name': item['makeName']}
                 )
@@ -32,7 +32,7 @@ class Command(BaseCommand):
             for item in models_data:
                 try:
                     make = Make.objects.get(make_id=item['makeID'])
-                    Model.objects.get_or_create(
+                    Model.objects.update_or_create(
                         model_id=item['modelID'],
                         defaults={
                             'model_name': item['modelName'],
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         with open(os.path.join(data_dir, 'data_parts.json'), 'r', encoding='utf-8') as f:
             parts_data = json.load(f)
             for item in parts_data:
-                Part.objects.get_or_create(
+                Part.objects.update_or_create(
                     part_id=item['partID'],
                     defaults={'part_name': item['partName']}
                 )
@@ -59,7 +59,7 @@ class Command(BaseCommand):
         with open(os.path.join(data_dir, 'data_states.json'), 'r', encoding='utf-8') as f:
             states_data = json.load(f)
             for idx, item in enumerate(states_data, start=1):
-                State.objects.get_or_create(
+                State.objects.update_or_create(
                     state_id=idx,
                     defaults={
                         'state_name': item['stateName'],
@@ -68,13 +68,12 @@ class Command(BaseCommand):
                 )
         self.stdout.write(self.style.SUCCESS(f'✓ Imported {State.objects.count()} states'))
 
-        
         # Import Cities
         self.stdout.write('Importing cities...')
         with open(os.path.join(data_dir, 'data_cities.json'), 'r', encoding='utf-8') as f:
             cities_data = json.load(f)
             for idx, item in enumerate(cities_data, start=1):
-                City.objects.get_or_create(
+                City.objects.update_or_create(
                     city_id=idx,
                     defaults={
                         'city_name': item['cityName'],
@@ -83,13 +82,12 @@ class Command(BaseCommand):
                 )
         self.stdout.write(self.style.SUCCESS(f'✓ Imported {City.objects.count()} cities'))
 
-        
         # Import Vendors/Junkyards
         self.stdout.write('Importing vendors...')
         with open(os.path.join(data_dir, 'data_junkyards.json'), 'r', encoding='utf-8') as f:
             vendors_data = json.load(f)
             for item in vendors_data:
-                Vendor.objects.get_or_create(
+                Vendor.objects.update_or_create(
                     id=item['id'],
                     defaults={
                         'name': item['name'],

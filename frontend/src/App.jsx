@@ -7,6 +7,7 @@ import JunkyardDetail from './pages/JunkyardDetail'
 import AllVendors from './pages/AllVendors'
 import VendorDetail from './pages/VendorDetail'
 import QuoteRequest from './pages/QuoteRequest'
+import AddYardPage from './pages/AddYardPage'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
@@ -16,22 +17,25 @@ import FAQ from './pages/FAQ'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/search" element={<Search />} />
-      <Route path="/quote" element={<QuoteRequest />} />
-      <Route path="/vendors" element={<AllVendors />} />
-      <Route path="/vendors/:id" element={<VendorDetail />} />
-      <Route path="/browse" element={<BrowseStates />} />
-      <Route path="/browse/:state" element={<BrowseState />} />
-      <Route path="/junkyard/:id" element={<JunkyardDetail />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/how-it-works" element={<HowItWorks />} />
-      <Route path="/faq" element={<FAQ />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/quote" element={<QuoteRequest />} />
+        <Route path="/add-a-yard" element={<AddYardPage />} />
+        <Route path="/vendors" element={<AllVendors />} />
+        <Route path="/vendors/:id" element={<VendorDetail />} />
+        <Route path="/browse" element={<BrowseStates />} />
+        <Route path="/browse/:state" element={<BrowseState />} />
+        <Route path="/junkyard/:id" element={<JunkyardDetail />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/faq" element={<FAQ />} />
+      </Routes>
+    </>
   )
 }
 
