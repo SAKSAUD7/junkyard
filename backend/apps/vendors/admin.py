@@ -5,8 +5,8 @@ from .models import Vendor
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
-    list_display = ['name', 'city', 'state', 'logo_preview', 'has_logo', 'is_trusted', 'rating']
-    list_filter = ['state', 'is_trusted', 'trust_level']
+    list_display = ['name', 'city', 'state', 'logo_preview', 'has_logo', 'rating_display', 'is_top_rated', 'is_featured', 'is_trusted']
+    list_filter = ['state', 'is_trusted', 'is_top_rated', 'is_featured', 'rating_stars', 'trust_level']
     search_fields = ['name', 'city', 'state', 'zipcode', 'address']
     ordering = ['name']
     
@@ -15,7 +15,11 @@ class VendorAdmin(admin.ModelAdmin):
             'fields': ('name', 'address', 'city', 'state', 'zipcode')
         }),
         ('Contact & Details', {
-            'fields': ('description', 'review_snippet', 'rating', 'profile_url')
+            'fields': ('description', 'review_snippet', 'profile_url')
+        }),
+        ('Rating & Recognition', {
+            'fields': ('rating_stars', 'rating_percentage', 'is_top_rated', 'is_featured'),
+            'description': 'Control vendor rating display and recognition badges'
         }),
         ('Branding & Logo', {
             'fields': ('logo', 'logo_preview_large'),
@@ -65,8 +69,17 @@ class VendorAdmin(admin.ModelAdmin):
     has_logo.boolean = True
     has_logo.short_description = 'Has Logo'
     
+    def rating_display(self, obj):
+        """Display stars in admin list"""
+        stars = '⭐' * obj.rating_stars
+        return format_html(
+            '<span title="Rating: {1}">{0} ({1})</span>',
+            stars, obj.rating_percentage
+        )
+    rating_display.short_description = 'Rating'
+    
     # Add custom actions
-    actions = ['mark_as_trusted', 'remove_trust']
+    actions = ['mark_as_trusted', 'remove_trust', 'mark_top_rated', 'mark_featured', 'set_5_stars']
     
     def mark_as_trusted(self, request, queryset):
         """Mark selected vendors as trusted"""
@@ -79,3 +92,22 @@ class VendorAdmin(admin.ModelAdmin):
         updated = queryset.update(is_trusted=False, trust_level=0)
         self.message_user(request, f'{updated} vendor(s) trust status removed.')
     remove_trust.short_description = 'Remove trusted status'
+    
+    def mark_top_rated(self, request, queryset):
+        """Mark selected vendors as Top Rated"""
+        updated = queryset.update(is_top_rated=True)
+        self.message_user(request, f'{updated} vendor(s) marked as Top Rated.')
+    mark_top_rated.short_description = 'Mark as Top Rated'
+    
+    def mark_featured(self, request, queryset):
+        """Mark selected vendors as Featured"""
+        updated = queryset.update(is_featured=True)
+        self.message_user(request, f'{updated} vendor(s) marked as Featured.')
+    mark_featured.short_description = 'Mark as Featured'
+    
+    def set_5_stars(self, request, queryset):
+        """Set selected vendors to 5-star rating"""
+        updated = queryset.update(rating_stars=5, rating_percentage=100)
+        self.message_user(request, f'{updated} vendor(s) set to 5 stars - 100%.')
+    set_5_stars.short_description = 'Set 5-star rating to 100 percent'
+

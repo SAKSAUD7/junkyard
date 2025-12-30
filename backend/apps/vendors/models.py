@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Vendor(models.Model):
@@ -10,7 +11,30 @@ class Vendor(models.Model):
     zipcode = models.CharField(max_length=20)
     description = models.TextField(blank=True)
     review_snippet = models.TextField(blank=True)
+    
+    # Old rating field (will be removed in migration)
     rating = models.CharField(max_length=20, default="100%")
+    
+    # New structured rating fields
+    rating_stars = models.IntegerField(
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Star rating (1-5 stars)"
+    )
+    rating_percentage = models.IntegerField(
+        default=100,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        help_text="Rating percentage (0-100%)"
+    )
+    is_top_rated = models.BooleanField(
+        default=False,
+        help_text="Display Top Rated badge"
+    )
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Display Featured badge"
+    )
+    
     profile_url = models.CharField(max_length=255)
     logo = models.CharField(max_length=255, default="/images/logo-placeholder.png")
     is_trusted = models.BooleanField(default=False, help_text="Mark as trusted vendor for premium display")

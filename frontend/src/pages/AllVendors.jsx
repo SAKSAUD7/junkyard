@@ -5,16 +5,39 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DynamicAd from '../components/DynamicAd';
 import MobileAdBanner from '../components/MobileAdBanner';
+import Rating from '../components/Rating';
+import VendorBadges from '../components/VendorBadges';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema } from '../utils/structuredData';
+import { api } from '../services/api';
 
 const AllVendors = () => {
-    const { data: junkyards } = useData('data_junkyards.json');
+    const [junkyards, setJunkyards] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [filteredVendors, setFilteredVendors] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedState, setSelectedState] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 24;
+
+    // Fetch vendors from API
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                setLoading(true);
+                const data = await api.getVendors();
+                setJunkyards(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching vendors:', err);
+                setError('Failed to load vendors. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchVendors();
+    }, []);
 
     // Get unique states
     const states = [...new Set(junkyards?.map(j => j.state) || [])].sort();
@@ -221,7 +244,26 @@ const AllVendors = () => {
             {/* Vendors Grid - Compact Mobile */}
             <div className="relative compact-section">
                 <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-                    {currentVendors.length > 0 ? (
+                    {/* Loading State */}
+                    {loading && (
+                        <div className="flex justify-center items-center py-20">
+                            <div className="text-center">
+                                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mb-4"></div>
+                                <p className="text-white/60">Loading vendors...</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && !loading && (
+                        <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-6 text-center">
+                            <p className="text-red-400 font-semibold mb-2">⚠️ Error</p>
+                            <p className="text-white/70">{error}</p>
+                        </div>
+                    )}
+
+                    {/* Vendor List */}
+                    {!loading && !error && currentVendors.length > 0 ? (
                         <div className="mobile-grid-2 compact-gap">
                             {currentVendors.map((vendor) => (
                                 <Link
@@ -269,21 +311,20 @@ const AllVendors = () => {
                                                 <span className="compact-text font-medium">{vendor.city}, {vendor.state}</span>
                                             </div>
 
-                                            {/* Rating - Compact */}
-                                            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 mb-2 sm:mb-3 md:mb-4">
-                                                <div className="flex items-center flex-wrap gap-0.5 sm:gap-1">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <svg
-                                                            key={i}
-                                                            className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-yellow-400"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                        </svg>
-                                                    ))}
-                                                </div>
-                                                <span className="compact-text font-semibold text-white">{vendor.rating}</span>
+                                            {/* Badges */}
+                                            <VendorBadges
+                                                isTopRated={vendor.is_top_rated}
+                                                isFeatured={vendor.is_featured}
+                                            />
+
+                                            {/* Rating */}
+                                            <div className="mb-2 sm:mb-3 md:mb-4">
+                                                <Rating
+                                                    stars={vendor.rating_stars || 5}
+                                                    percentage={vendor.rating_percentage || 100}
+                                                    size="sm"
+                                                    showPercentage={true}
+                                                />
                                             </div>
 
                                             {/* CTA Button - Compact */}

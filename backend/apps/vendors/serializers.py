@@ -8,5 +8,6 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'address', 'city', 'state', 'zipcode',
             'description', 'review_snippet', 'rating', 'profile_url', 'logo',
-            'is_trusted', 'trust_level'
+            'is_trusted', 'trust_level',
+            'rating_stars', 'rating_percentage', 'is_top_rated', 'is_featured'
         ]
