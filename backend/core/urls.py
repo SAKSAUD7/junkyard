@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from apps.leads.views import hollander_lookup
 
 
 def health_check(request):
@@ -33,7 +34,13 @@ urlpatterns = [
     path("api/common/", include("apps.common.urls")),
     path("api/ads/", include("apps.ads.urls")),
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
+    
+    # Hollander lookup endpoint
+    path("api/hollander/lookup/", hollander_lookup, name="hollander_lookup"),
+    path("api/hollander/", include("apps.hollander.urls")),  # New reference data endpoints
 ]
+
+
 
 # Serve media files in development
 from django.conf import settings
