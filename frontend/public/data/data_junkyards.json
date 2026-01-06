@@ -7878,7 +7878,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/aarons-speedway-auto"
     },
-{
+    {
         "id": 655,
         "name": "Aarons R&D Towing Free Junk Car Removal TM",
         "address": "Dunellen Ave",
@@ -8043,7 +8043,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/abc-used-parts"
     },
- {
+    {
         "id": 670,
         "name": "Abcat Auto Inc.",
         "address": "835 Ecorse Road",
@@ -8208,7 +8208,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/abr-auto-recyclers"
     },
-{
+    {
         "id": 685,
         "name": "Abracadabra Junk Be Gone",
         "address": "464 Tompkins Pl",
@@ -8538,7 +8538,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/ace-auto-wrecking-paramount"
     },
-{
+    {
         "id": 715,
         "name": "Ace German Used Parts",
         "address": "6077 Trapp Avenue",
@@ -8703,7 +8703,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/acres-auto-recycling"
     },
-{
+    {
         "id": 730,
         "name": "Act Auto Wrecking",
         "address": "650 West Hoffman Avenue",
@@ -8758,7 +8758,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/action-auto-parts-marshalltown"
     },
-{
+    {
         "id": 735,
         "name": "Accurate Auto Parts & Recycling, Inc.",
         "address": "1560 Velp Avenue",
@@ -8813,7 +8813,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/ace-auto-salvage-milwaukee-wi"
     },
- {
+    {
         "id": 740,
         "name": "Ace Auto Salvage",
         "address": "419 Poplar Road",
@@ -8978,7 +8978,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/action-truck-parts"
     },
- {
+    {
         "id": 755,
         "name": "Action Used Auto Parts",
         "address": "8150 US Highway 12",
@@ -9033,7 +9033,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/advanced-auto-salvage"
     },
-{
+    {
         "id": 760,
         "name": "Advanced Auto Recyclers",
         "address": "2294 Box Ankle Road",
@@ -9143,7 +9143,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/american-auto-recycling"
     },
- {
+    {
         "id": 770,
         "name": "American Auto Salvage",
         "address": "814 South Alameda Street",
@@ -9198,7 +9198,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/apex-auto-salvage"
     },
- {
+    {
         "id": 775,
         "name": "Apex Auto Recycling",
         "address": "321 Industrial Parkway",
@@ -9253,7 +9253,7 @@
         "rating": "100%",
         "profileUrl": "/vendors/atlantic-auto-salvage"
     },
- {
+    {
         "id": 780,
         "name": "Atlas Auto Salvage",
         "address": "4200 Atlas Road",
@@ -9309,718 +9309,718 @@
         "profileUrl": "/vendors/auto-recyclers-of-america"
     },
     {
-    "id": 785,
-    "name": "Auto Salvage Specialists",
-    "address": "1805 Industrial Drive",
-    "city": "Kansas City",
-    "state": "MO",
-    "zipcode": "",
-    "description": "Supplier of recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/auto-salvage-specialists"
-},
-{
-    "id": 786,
-    "name": "Auto Wrecking Co",
-    "address": "4550 West Jefferson Street",
-    "city": "Phoenix",
-    "state": "AZ",
-    "zipcode": "",
-    "description": "Automobile wrecking and salvage services for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/auto-wrecking-co"
-},
-{
-    "id": 787,
-    "name": "B & B Auto Salvage",
-    "address": "901 South Main Street",
-    "city": "Tulsa",
-    "state": "OK",
-    "zipcode": "",
-    "description": "Family-owned auto salvage business supplying quality used auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/b-and-b-auto-salvage"
-},
-{
-    "id": 788,
-    "name": "Baker Auto Recycling",
-    "address": "602 North Baker Road",
-    "city": "Fayetteville",
-    "state": "NC",
-    "zipcode": "",
-    "description": "Auto recycling facility offering recycled parts and vehicle dismantling services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/baker-auto-recycling"
-},
-{
-    "id": 789,
-    "name": "Best Buy Auto Salvage",
-    "address": "1240 East Market Street",
-    "city": "York",
-    "state": "PA",
-    "zipcode": "",
-    "description": "Supplier of affordable used auto parts for a wide range of vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/best-buy-auto-salvage"
-},
-{
-    "id": 790,
-    "name": "Big City Auto Salvage",
-    "address": "3100 Industrial Road",
-    "city": "Dallas",
-    "state": "TX",
-    "zipcode": "",
-    "description": "Full-service auto salvage yard supplying recycled parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/big-city-auto-salvage"
-},
-{
-    "id": 791,
-    "name": "Blue Ribbon Auto Recycling",
-    "address": "8450 South Cicero Avenue",
-    "city": "Chicago",
-    "state": "IL",
-    "zipcode": "",
-    "description": "Automotive recycling facility offering quality recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/blue-ribbon-auto-recycling"
-},
-{
-    "id": 792,
-    "name": "Budget Auto Salvage",
-    "address": "1225 West 7th Street",
-    "city": "Little Rock",
-    "state": "AR",
-    "zipcode": "",
-    "description": "Supplier of affordable used auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/budget-auto-salvage"
-},
-{
-    "id": 793,
-    "name": "Capital City Auto Parts",
-    "address": "4600 East Broadway Avenue",
-    "city": "Madison",
-    "state": "WI",
-    "zipcode": "",
-    "description": "Used and aftermarket auto parts supplier serving the local market.",
-    "rating": "100%",
-    "profileUrl": "/vendors/capital-city-auto-parts"
-},
-{
-    "id": 794,
-    "name": "Central Auto Recycling",
-    "address": "7800 Central Parkway",
-    "city": "Cincinnati",
-    "state": "OH",
-    "zipcode": "",
-    "description": "Automotive recycling operation providing recycled parts and vehicle dismantling.",
-    "rating": "100%",
-    "profileUrl": "/vendors/central-auto-recycling"
-},
-{
-    "id": 795,
-    "name": "City Wide Auto Salvage",
-    "address": "4100 City Yard Road",
-    "city": "Memphis",
-    "state": "TN",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/city-wide-auto-salvage"
-},
-{
-    "id": 796,
-    "name": "Coastal Auto Recycling",
-    "address": "275 Harbor Industrial Drive",
-    "city": "Norfolk",
-    "state": "VA",
-    "zipcode": "",
-    "description": "Automotive recycling facility serving coastal and regional customers.",
-    "rating": "100%",
-    "profileUrl": "/vendors/coastal-auto-recycling"
-},
-{
-    "id": 797,
-    "name": "Community Auto Parts",
-    "address": "1200 Community Drive",
-    "city": "Baton Rouge",
-    "state": "LA",
-    "zipcode": "",
-    "description": "Supplier of used and aftermarket auto parts for local customers.",
-    "rating": "100%",
-    "profileUrl": "/vendors/community-auto-parts"
-},
-{
-    "id": 798,
-    "name": "Complete Auto Recycling",
-    "address": "6550 Complete Way",
-    "city": "Reno",
-    "state": "NV",
-    "zipcode": "",
-    "description": "Full-service auto recycling and dismantling operation.",
-    "rating": "100%",
-    "profileUrl": "/vendors/complete-auto-recycling"
-},
-{
-    "id": 799,
-    "name": "Continental Auto Salvage",
-    "address": "9000 Continental Avenue",
-    "city": "El Paso",
-    "state": "TX",
-    "zipcode": "",
-    "description": "Automobile salvage yard providing quality recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/continental-auto-salvage"
-},
-  {
-    "id": 800,
-    "name": "Crown Auto Salvage",
-    "address": "5100 Crown Road",
-    "city": "Louisville",
-    "state": "KY",
-    "zipcode": "",
-    "description": "Automobile salvage yard supplying recycled auto parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/crown-auto-salvage"
-},
-{
-    "id": 801,
-    "name": "Custom Auto Recycling",
-    "address": "7400 Custom Parkway",
-    "city": "Aurora",
-    "state": "CO",
-    "zipcode": "",
-    "description": "Auto recycling and dismantling facility serving regional customers.",
-    "rating": "100%",
-    "profileUrl": "/vendors/custom-auto-recycling"
-},
-{
-    "id": 802,
-    "name": "Delta Auto Salvage",
-    "address": "2850 Delta Road",
-    "city": "Jackson",
-    "state": "MS",
-    "zipcode": "",
-    "description": "Supplier of used auto parts and automotive recycling services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/delta-auto-salvage"
-},
-{
-    "id": 803,
-    "name": "Diamond Auto Parts",
-    "address": "1600 Diamond Street",
-    "city": "Birmingham",
-    "state": "AL",
-    "zipcode": "",
-    "description": "Used and aftermarket auto parts supplier for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/diamond-auto-parts"
-},
-{
-    "id": 804,
-    "name": "Direct Auto Recycling",
-    "address": "9200 Direct Lane",
-    "city": "Salt Lake City",
-    "state": "UT",
-    "zipcode": "",
-    "description": "Automotive recycling facility offering environmentally responsible dismantling.",
-    "rating": "100%",
-    "profileUrl": "/vendors/direct-auto-recycling"
-},
-{
-    "id": 805,
-    "name": "Eagle Auto Salvage",
-    "address": "1550 Eagle Drive",
-    "city": "Boise",
-    "state": "ID",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/eagle-auto-salvage"
-},
-{
-    "id": 806,
-    "name": "East Coast Auto Recycling",
-    "address": "3200 Harbor Way",
-    "city": "Newark",
-    "state": "NJ",
-    "zipcode": "",
-    "description": "Automotive recycling facility serving East Coast customers.",
-    "rating": "100%",
-    "profileUrl": "/vendors/east-coast-auto-recycling"
-},
-{
-    "id": 807,
-    "name": "Economy Auto Parts",
-    "address": "8700 Economy Road",
-    "city": "Detroit",
-    "state": "MI",
-    "zipcode": "",
-    "description": "Supplier of affordable used auto parts for cars and light trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/economy-auto-parts"
-},
-{
-    "id": 808,
-    "name": "Elite Auto Salvage",
-    "address": "410 Elite Parkway",
-    "city": "Las Vegas",
-    "state": "NV",
-    "zipcode": "",
-    "description": "Full-service auto salvage yard offering quality recycled parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/elite-auto-salvage"
-},
-{
-    "id": 809,
-    "name": "Express Auto Recycling",
-    "address": "9900 Express Blvd",
-    "city": "San Jose",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Automotive recycling facility specializing in fast vehicle dismantling.",
-    "rating": "100%",
-    "profileUrl": "/vendors/express-auto-recycling"
-},
-{
-    "id": 810,
-    "name": "Fast Track Auto Salvage",
-    "address": "2100 Speedway Drive",
-    "city": "Dayton",
-    "state": "OH",
-    "zipcode": "",
-    "description": "Auto salvage yard providing recycled auto parts for domestic and import vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/fast-track-auto-salvage"
-},
-{
-    "id": 811,
-    "name": "First Choice Auto Recycling",
-    "address": "5600 Choice Lane",
-    "city": "Raleigh",
-    "state": "NC",
-    "zipcode": "",
-    "description": "Automotive recycling facility supplying quality recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/first-choice-auto-recycling"
-},
-{
-    "id": 812,
-    "name": "Five Star Auto Salvage",
-    "address": "4450 Star Avenue",
-    "city": "San Bernardino",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Full-service auto salvage yard offering used parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/five-star-auto-salvage"
-},
-{
-    "id": 813,
-    "name": "Frontier Auto Recycling",
-    "address": "8800 Frontier Road",
-    "city": "Billings",
-    "state": "MT",
-    "zipcode": "",
-    "description": "Automotive recycling operation serving regional customers with recycled parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/frontier-auto-recycling"
-},
-{
-    "id": 814,
-    "name": "Global Auto Salvage",
-    "address": "3000 Global Parkway",
-    "city": "Houston",
-    "state": "TX",
-    "zipcode": "",
-    "description": "Auto salvage and recycling facility supplying parts for a wide range of vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/global-auto-salvage"
-},
- {
-    "id": 815,
-    "name": "Greenway Auto Recycling",
-    "address": "6100 Greenway Drive",
-    "city": "Orlando",
-    "state": "FL",
-    "zipcode": "",
-    "description": "Automotive recycling facility supplying recycled auto parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/greenway-auto-recycling"
-},
-{
-    "id": 816,
-    "name": "Highway Auto Salvage",
-    "address": "7200 Highway 1",
-    "city": "Baton Rouge",
-    "state": "LA",
-    "zipcode": "",
-    "description": "Auto salvage yard offering used and recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/highway-auto-salvage"
-},
-{
-    "id": 817,
-    "name": "Interstate Auto Parts",
-    "address": "9050 Interstate Drive",
-    "city": "Columbia",
-    "state": "SC",
-    "zipcode": "",
-    "description": "Supplier of used and aftermarket auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/interstate-auto-parts"
-},
-{
-    "id": 818,
-    "name": "Iron Horse Auto Salvage",
-    "address": "3300 Iron Horse Road",
-    "city": "Reno",
-    "state": "NV",
-    "zipcode": "",
-    "description": "Full-service auto salvage yard providing recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/iron-horse-auto-salvage"
-},
-{
-    "id": 819,
-    "name": "J & J Auto Recycling",
-    "address": "4100 Industrial Loop",
-    "city": "Fresno",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Auto recycling facility offering dismantling and recycled parts services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/j-and-j-auto-recycling"
-},
-{
-    "id": 820,
-    "name": "Johnson Auto Salvage",
-    "address": "5100 Johnson Road",
-    "city": "Des Moines",
-    "state": "IA",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/johnson-auto-salvage"
-},
-{
-    "id": 821,
-    "name": "King Auto Recycling",
-    "address": "7800 King Parkway",
-    "city": "Charlotte",
-    "state": "NC",
-    "zipcode": "",
-    "description": "Automotive recycling facility offering quality recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/king-auto-recycling"
-},
-{
-    "id": 822,
-    "name": "Lakeside Auto Salvage",
-    "address": "2450 Lakeside Drive",
-    "city": "Cleveland",
-    "state": "OH",
-    "zipcode": "",
-    "description": "Supplier of used auto parts and recycling services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/lakeside-auto-salvage"
-},
-{
-    "id": 823,
-    "name": "Liberty Auto Parts",
-    "address": "3300 Liberty Avenue",
-    "city": "Pittsburgh",
-    "state": "PA",
-    "zipcode": "",
-    "description": "Used and aftermarket auto parts supplier serving the local market.",
-    "rating": "100%",
-    "profileUrl": "/vendors/liberty-auto-parts"
-},
-{
-    "id": 824,
-    "name": "Metro Auto Recycling",
-    "address": "6900 Metro Blvd",
-    "city": "Minneapolis",
-    "state": "MN",
-    "zipcode": "",
-    "description": "Automotive recycling operation providing dismantling and recycled parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/metro-auto-recycling"
-},
-{
-    "id": 825,
-    "name": "Midwest Auto Salvage",
-    "address": "5200 Midwest Drive",
-    "city": "Omaha",
-    "state": "NE",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/midwest-auto-salvage"
-},
-{
-    "id": 826,
-    "name": "Mountain Auto Recycling",
-    "address": "4100 Mountain Road",
-    "city": "Colorado Springs",
-    "state": "CO",
-    "zipcode": "",
-    "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/mountain-auto-recycling"
-},
-{
-    "id": 827,
-    "name": "National Auto Salvage",
-    "address": "8900 National Avenue",
-    "city": "Milwaukee",
-    "state": "WI",
-    "zipcode": "",
-    "description": "Full-service auto salvage and recycling operation.",
-    "rating": "100%",
-    "profileUrl": "/vendors/national-auto-salvage"
-},
-{
-    "id": 828,
-    "name": "Northside Auto Parts",
-    "address": "2750 Northside Road",
-    "city": "Atlanta",
-    "state": "GA",
-    "zipcode": "",
-    "description": "Supplier of used and aftermarket auto parts for cars and light trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/northside-auto-parts"
-},
-{
-    "id": 829,
-    "name": "Pacific Auto Recycling",
-    "address": "3600 Pacific Highway",
-    "city": "San Diego",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Auto recycling facility offering environmentally responsible vehicle dismantling.",
-    "rating": "100%",
-    "profileUrl": "/vendors/pacific-auto-recycling"
-},
-{
-    "id": 830,
-    "name": "Premier Auto Salvage",
-    "address": "6100 Premier Parkway",
-    "city": "Indianapolis",
-    "state": "IN",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying quality recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/premier-auto-salvage"
-},
-{
-    "id": 831,
-    "name": "Quality Auto Recycling",
-    "address": "7400 Quality Road",
-    "city": "Knoxville",
-    "state": "TN",
-    "zipcode": "",
-    "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/quality-auto-recycling"
-},
-{
-    "id": 832,
-    "name": "Rapid Auto Salvage",
-    "address": "3500 Rapid Lane",
-    "city": "Toledo",
-    "state": "OH",
-    "zipcode": "",
-    "description": "Auto salvage yard offering fast service and quality used auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/rapid-auto-salvage"
-},
-{
-    "id": 833,
-    "name": "Reliable Auto Parts",
-    "address": "9200 Reliable Street",
-    "city": "St. Louis",
-    "state": "MO",
-    "zipcode": "",
-    "description": "Supplier of dependable used and aftermarket auto parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/reliable-auto-parts"
-},
-{
-    "id": 834,
-    "name": "Riverside Auto Recycling",
-    "address": "4800 Riverside Drive",
-    "city": "Spokane",
-    "state": "WA",
-    "zipcode": "",
-    "description": "Automotive recycling operation providing recycled auto parts and dismantling services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/riverside-auto-recycling"
-},
-{
-    "id": 835,
-    "name": "Southern Auto Salvage",
-    "address": "6100 Southern Avenue",
-    "city": "Birmingham",
-    "state": "AL",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/southern-auto-salvage"
-},
-{
-    "id": 836,
-    "name": "Statewide Auto Recycling",
-    "address": "8800 State Road",
-    "city": "Tallahassee",
-    "state": "FL",
-    "zipcode": "",
-    "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/statewide-auto-recycling"
-},
-{
-    "id": 837,
-    "name": "Summit Auto Parts",
-    "address": "4200 Summit Drive",
-    "city": "Salt Lake City",
-    "state": "UT",
-    "zipcode": "",
-    "description": "Supplier of used and aftermarket auto parts for cars and light trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/summit-auto-parts"
-},
-{
-    "id": 838,
-    "name": "Superior Auto Salvage",
-    "address": "9500 Superior Road",
-    "city": "Duluth",
-    "state": "MN",
-    "zipcode": "",
-    "description": "Full-service auto salvage yard offering quality recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/superior-auto-salvage"
-},
-{
-    "id": 839,
-    "name": "Top Choice Auto Recycling",
-    "address": "3100 Choice Boulevard",
-    "city": "Plano",
-    "state": "TX",
-    "zipcode": "",
-    "description": "Automotive recycling operation supplying recycled parts for domestic and import vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/top-choice-auto-recycling"
-},
-{
-    "id": 840,
-    "name": "Tri-State Auto Salvage",
-    "address": "7200 Tri-State Parkway",
-    "city": "Cincinnati",
-    "state": "OH",
-    "zipcode": "",
-    "description": "Auto salvage yard serving customers across the tri-state area with recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/tri-state-auto-salvage"
-},
-{
-    "id": 841,
-    "name": "Union Auto Recycling",
-    "address": "4550 Union Road",
-    "city": "Buffalo",
-    "state": "NY",
-    "zipcode": "",
-    "description": "Automotive recycling facility offering dismantling and recycled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/union-auto-recycling"
-},
-{
-    "id": 842,
-    "name": "United Auto Salvage",
-    "address": "9100 United Avenue",
-    "city": "San Antonio",
-    "state": "TX",
-    "zipcode": "",
-    "description": "Supplier of used auto parts and salvage services for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/united-auto-salvage"
-},
-{
-    "id": 843,
-    "name": "Victory Auto Parts",
-    "address": "3600 Victory Blvd",
-    "city": "Burbank",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Used and aftermarket auto parts supplier for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/victory-auto-parts"
-},
-{
-    "id": 844,
-    "name": "West Coast Auto Recycling",
-    "address": "8200 West Coast Drive",
-    "city": "Long Beach",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Automotive recycling facility serving the West Coast region.",
-    "rating": "100%",
-    "profileUrl": "/vendors/west-coast-auto-recycling"
-},
-  {
-    "id": 845,
-    "name": "Westside Auto Salvage",
-    "address": "4550 Westside Road",
-    "city": "Los Angeles",
-    "state": "CA",
-    "zipcode": "",
-    "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
-    "rating": "100%",
-    "profileUrl": "/vendors/westside-auto-salvage"
-},
-{
-    "id": 846,
-    "name": "Wholesale Auto Recycling",
-    "address": "9100 Wholesale Way",
-    "city": "Phoenix",
-    "state": "AZ",
-    "zipcode": "",
-    "description": "Wholesale automotive recycling facility providing dismantled vehicle parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/wholesale-auto-recycling"
-},
-{
-    "id": 847,
-    "name": "Windy City Auto Salvage",
-    "address": "3600 Windy City Ave",
-    "city": "Chicago",
-    "state": "IL",
-    "zipcode": "",
-    "description": "Chicago-based auto salvage yard offering quality recycled auto parts.",
-    "rating": "100%",
-    "profileUrl": "/vendors/windy-city-auto-salvage"
-},
-{
-    "id": 848,
-    "name": "Young's Auto Recycling",
-    "address": "2750 Youngs Road",
-    "city": "Trenton",
-    "state": "NJ",
-    "zipcode": "",
-    "description": "Automotive recycling operation supplying recycled parts for cars and trucks.",
-    "rating": "100%",
-    "profileUrl": "/vendors/youngs-auto-recycling"
-},
-{
-    "id": 849,
-    "name": "Zenith Auto Salvage",
-    "address": "6800 Zenith Drive",
-    "city": "Portland",
-    "state": "OR",
-    "zipcode": "",
-    "description": "Auto salvage yard providing recycled auto parts and vehicle dismantling services.",
-    "rating": "100%",
-    "profileUrl": "/vendors/zenith-auto-salvage"
-}
+        "id": 785,
+        "name": "Auto Salvage Specialists",
+        "address": "1805 Industrial Drive",
+        "city": "Kansas City",
+        "state": "MO",
+        "zipcode": "",
+        "description": "Supplier of recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/auto-salvage-specialists"
+    },
+    {
+        "id": 786,
+        "name": "Auto Wrecking Co",
+        "address": "4550 West Jefferson Street",
+        "city": "Phoenix",
+        "state": "AZ",
+        "zipcode": "",
+        "description": "Automobile wrecking and salvage services for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/auto-wrecking-co"
+    },
+    {
+        "id": 787,
+        "name": "B & B Auto Salvage",
+        "address": "901 South Main Street",
+        "city": "Tulsa",
+        "state": "OK",
+        "zipcode": "",
+        "description": "Family-owned auto salvage business supplying quality used auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/b-and-b-auto-salvage"
+    },
+    {
+        "id": 788,
+        "name": "Baker Auto Recycling",
+        "address": "602 North Baker Road",
+        "city": "Fayetteville",
+        "state": "NC",
+        "zipcode": "",
+        "description": "Auto recycling facility offering recycled parts and vehicle dismantling services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/baker-auto-recycling"
+    },
+    {
+        "id": 789,
+        "name": "Best Buy Auto Salvage",
+        "address": "1240 East Market Street",
+        "city": "York",
+        "state": "PA",
+        "zipcode": "",
+        "description": "Supplier of affordable used auto parts for a wide range of vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/best-buy-auto-salvage"
+    },
+    {
+        "id": 790,
+        "name": "Big City Auto Salvage",
+        "address": "3100 Industrial Road",
+        "city": "Dallas",
+        "state": "TX",
+        "zipcode": "",
+        "description": "Full-service auto salvage yard supplying recycled parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/big-city-auto-salvage"
+    },
+    {
+        "id": 791,
+        "name": "Blue Ribbon Auto Recycling",
+        "address": "8450 South Cicero Avenue",
+        "city": "Chicago",
+        "state": "IL",
+        "zipcode": "",
+        "description": "Automotive recycling facility offering quality recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/blue-ribbon-auto-recycling"
+    },
+    {
+        "id": 792,
+        "name": "Budget Auto Salvage",
+        "address": "1225 West 7th Street",
+        "city": "Little Rock",
+        "state": "AR",
+        "zipcode": "",
+        "description": "Supplier of affordable used auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/budget-auto-salvage"
+    },
+    {
+        "id": 793,
+        "name": "Capital City Auto Parts",
+        "address": "4600 East Broadway Avenue",
+        "city": "Madison",
+        "state": "WI",
+        "zipcode": "",
+        "description": "Used and aftermarket auto parts supplier serving the local market.",
+        "rating": "100%",
+        "profileUrl": "/vendors/capital-city-auto-parts"
+    },
+    {
+        "id": 794,
+        "name": "Central Auto Recycling",
+        "address": "7800 Central Parkway",
+        "city": "Cincinnati",
+        "state": "OH",
+        "zipcode": "",
+        "description": "Automotive recycling operation providing recycled parts and vehicle dismantling.",
+        "rating": "100%",
+        "profileUrl": "/vendors/central-auto-recycling"
+    },
+    {
+        "id": 795,
+        "name": "City Wide Auto Salvage",
+        "address": "4100 City Yard Road",
+        "city": "Memphis",
+        "state": "TN",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/city-wide-auto-salvage"
+    },
+    {
+        "id": 796,
+        "name": "Coastal Auto Recycling",
+        "address": "275 Harbor Industrial Drive",
+        "city": "Norfolk",
+        "state": "VA",
+        "zipcode": "",
+        "description": "Automotive recycling facility serving coastal and regional customers.",
+        "rating": "100%",
+        "profileUrl": "/vendors/coastal-auto-recycling"
+    },
+    {
+        "id": 797,
+        "name": "Community Auto Parts",
+        "address": "1200 Community Drive",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zipcode": "",
+        "description": "Supplier of used and aftermarket auto parts for local customers.",
+        "rating": "100%",
+        "profileUrl": "/vendors/community-auto-parts"
+    },
+    {
+        "id": 798,
+        "name": "Complete Auto Recycling",
+        "address": "6550 Complete Way",
+        "city": "Reno",
+        "state": "NV",
+        "zipcode": "",
+        "description": "Full-service auto recycling and dismantling operation.",
+        "rating": "100%",
+        "profileUrl": "/vendors/complete-auto-recycling"
+    },
+    {
+        "id": 799,
+        "name": "Continental Auto Salvage",
+        "address": "9000 Continental Avenue",
+        "city": "El Paso",
+        "state": "TX",
+        "zipcode": "",
+        "description": "Automobile salvage yard providing quality recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/continental-auto-salvage"
+    },
+    {
+        "id": 800,
+        "name": "Crown Auto Salvage",
+        "address": "5100 Crown Road",
+        "city": "Louisville",
+        "state": "KY",
+        "zipcode": "",
+        "description": "Automobile salvage yard supplying recycled auto parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/crown-auto-salvage"
+    },
+    {
+        "id": 801,
+        "name": "Custom Auto Recycling",
+        "address": "7400 Custom Parkway",
+        "city": "Aurora",
+        "state": "CO",
+        "zipcode": "",
+        "description": "Auto recycling and dismantling facility serving regional customers.",
+        "rating": "100%",
+        "profileUrl": "/vendors/custom-auto-recycling"
+    },
+    {
+        "id": 802,
+        "name": "Delta Auto Salvage",
+        "address": "2850 Delta Road",
+        "city": "Jackson",
+        "state": "MS",
+        "zipcode": "",
+        "description": "Supplier of used auto parts and automotive recycling services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/delta-auto-salvage"
+    },
+    {
+        "id": 803,
+        "name": "Diamond Auto Parts",
+        "address": "1600 Diamond Street",
+        "city": "Birmingham",
+        "state": "AL",
+        "zipcode": "",
+        "description": "Used and aftermarket auto parts supplier for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/diamond-auto-parts"
+    },
+    {
+        "id": 804,
+        "name": "Direct Auto Recycling",
+        "address": "9200 Direct Lane",
+        "city": "Salt Lake City",
+        "state": "UT",
+        "zipcode": "",
+        "description": "Automotive recycling facility offering environmentally responsible dismantling.",
+        "rating": "100%",
+        "profileUrl": "/vendors/direct-auto-recycling"
+    },
+    {
+        "id": 805,
+        "name": "Eagle Auto Salvage",
+        "address": "1550 Eagle Drive",
+        "city": "Boise",
+        "state": "ID",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/eagle-auto-salvage"
+    },
+    {
+        "id": 806,
+        "name": "East Coast Auto Recycling",
+        "address": "3200 Harbor Way",
+        "city": "Newark",
+        "state": "NJ",
+        "zipcode": "",
+        "description": "Automotive recycling facility serving East Coast customers.",
+        "rating": "100%",
+        "profileUrl": "/vendors/east-coast-auto-recycling"
+    },
+    {
+        "id": 807,
+        "name": "Economy Auto Parts",
+        "address": "8700 Economy Road",
+        "city": "Detroit",
+        "state": "MI",
+        "zipcode": "",
+        "description": "Supplier of affordable used auto parts for cars and light trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/economy-auto-parts"
+    },
+    {
+        "id": 808,
+        "name": "Elite Auto Salvage",
+        "address": "410 Elite Parkway",
+        "city": "Las Vegas",
+        "state": "NV",
+        "zipcode": "",
+        "description": "Full-service auto salvage yard offering quality recycled parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/elite-auto-salvage"
+    },
+    {
+        "id": 809,
+        "name": "Express Auto Recycling",
+        "address": "9900 Express Blvd",
+        "city": "San Jose",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Automotive recycling facility specializing in fast vehicle dismantling.",
+        "rating": "100%",
+        "profileUrl": "/vendors/express-auto-recycling"
+    },
+    {
+        "id": 810,
+        "name": "Fast Track Auto Salvage",
+        "address": "2100 Speedway Drive",
+        "city": "Dayton",
+        "state": "OH",
+        "zipcode": "",
+        "description": "Auto salvage yard providing recycled auto parts for domestic and import vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/fast-track-auto-salvage"
+    },
+    {
+        "id": 811,
+        "name": "First Choice Auto Recycling",
+        "address": "5600 Choice Lane",
+        "city": "Raleigh",
+        "state": "NC",
+        "zipcode": "",
+        "description": "Automotive recycling facility supplying quality recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/first-choice-auto-recycling"
+    },
+    {
+        "id": 812,
+        "name": "Five Star Auto Salvage",
+        "address": "4450 Star Avenue",
+        "city": "San Bernardino",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Full-service auto salvage yard offering used parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/five-star-auto-salvage"
+    },
+    {
+        "id": 813,
+        "name": "Frontier Auto Recycling",
+        "address": "8800 Frontier Road",
+        "city": "Billings",
+        "state": "MT",
+        "zipcode": "",
+        "description": "Automotive recycling operation serving regional customers with recycled parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/frontier-auto-recycling"
+    },
+    {
+        "id": 814,
+        "name": "Global Auto Salvage",
+        "address": "3000 Global Parkway",
+        "city": "Houston",
+        "state": "TX",
+        "zipcode": "",
+        "description": "Auto salvage and recycling facility supplying parts for a wide range of vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/global-auto-salvage"
+    },
+    {
+        "id": 815,
+        "name": "Greenway Auto Recycling",
+        "address": "6100 Greenway Drive",
+        "city": "Orlando",
+        "state": "FL",
+        "zipcode": "",
+        "description": "Automotive recycling facility supplying recycled auto parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/greenway-auto-recycling"
+    },
+    {
+        "id": 816,
+        "name": "Highway Auto Salvage",
+        "address": "7200 Highway 1",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zipcode": "",
+        "description": "Auto salvage yard offering used and recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/highway-auto-salvage"
+    },
+    {
+        "id": 817,
+        "name": "Interstate Auto Parts",
+        "address": "9050 Interstate Drive",
+        "city": "Columbia",
+        "state": "SC",
+        "zipcode": "",
+        "description": "Supplier of used and aftermarket auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/interstate-auto-parts"
+    },
+    {
+        "id": 818,
+        "name": "Iron Horse Auto Salvage",
+        "address": "3300 Iron Horse Road",
+        "city": "Reno",
+        "state": "NV",
+        "zipcode": "",
+        "description": "Full-service auto salvage yard providing recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/iron-horse-auto-salvage"
+    },
+    {
+        "id": 819,
+        "name": "J & J Auto Recycling",
+        "address": "4100 Industrial Loop",
+        "city": "Fresno",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Auto recycling facility offering dismantling and recycled parts services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/j-and-j-auto-recycling"
+    },
+    {
+        "id": 820,
+        "name": "Johnson Auto Salvage",
+        "address": "5100 Johnson Road",
+        "city": "Des Moines",
+        "state": "IA",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/johnson-auto-salvage"
+    },
+    {
+        "id": 821,
+        "name": "King Auto Recycling",
+        "address": "7800 King Parkway",
+        "city": "Charlotte",
+        "state": "NC",
+        "zipcode": "",
+        "description": "Automotive recycling facility offering quality recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/king-auto-recycling"
+    },
+    {
+        "id": 822,
+        "name": "Lakeside Auto Salvage",
+        "address": "2450 Lakeside Drive",
+        "city": "Cleveland",
+        "state": "OH",
+        "zipcode": "",
+        "description": "Supplier of used auto parts and recycling services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/lakeside-auto-salvage"
+    },
+    {
+        "id": 823,
+        "name": "Liberty Auto Parts",
+        "address": "3300 Liberty Avenue",
+        "city": "Pittsburgh",
+        "state": "PA",
+        "zipcode": "",
+        "description": "Used and aftermarket auto parts supplier serving the local market.",
+        "rating": "100%",
+        "profileUrl": "/vendors/liberty-auto-parts"
+    },
+    {
+        "id": 824,
+        "name": "Metro Auto Recycling",
+        "address": "6900 Metro Blvd",
+        "city": "Minneapolis",
+        "state": "MN",
+        "zipcode": "",
+        "description": "Automotive recycling operation providing dismantling and recycled parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/metro-auto-recycling"
+    },
+    {
+        "id": 825,
+        "name": "Midwest Auto Salvage",
+        "address": "5200 Midwest Drive",
+        "city": "Omaha",
+        "state": "NE",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/midwest-auto-salvage"
+    },
+    {
+        "id": 826,
+        "name": "Mountain Auto Recycling",
+        "address": "4100 Mountain Road",
+        "city": "Colorado Springs",
+        "state": "CO",
+        "zipcode": "",
+        "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/mountain-auto-recycling"
+    },
+    {
+        "id": 827,
+        "name": "National Auto Salvage",
+        "address": "8900 National Avenue",
+        "city": "Milwaukee",
+        "state": "WI",
+        "zipcode": "",
+        "description": "Full-service auto salvage and recycling operation.",
+        "rating": "100%",
+        "profileUrl": "/vendors/national-auto-salvage"
+    },
+    {
+        "id": 828,
+        "name": "Northside Auto Parts",
+        "address": "2750 Northside Road",
+        "city": "Atlanta",
+        "state": "GA",
+        "zipcode": "",
+        "description": "Supplier of used and aftermarket auto parts for cars and light trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/northside-auto-parts"
+    },
+    {
+        "id": 829,
+        "name": "Pacific Auto Recycling",
+        "address": "3600 Pacific Highway",
+        "city": "San Diego",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Auto recycling facility offering environmentally responsible vehicle dismantling.",
+        "rating": "100%",
+        "profileUrl": "/vendors/pacific-auto-recycling"
+    },
+    {
+        "id": 830,
+        "name": "Premier Auto Salvage",
+        "address": "6100 Premier Parkway",
+        "city": "Indianapolis",
+        "state": "IN",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying quality recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/premier-auto-salvage"
+    },
+    {
+        "id": 831,
+        "name": "Quality Auto Recycling",
+        "address": "7400 Quality Road",
+        "city": "Knoxville",
+        "state": "TN",
+        "zipcode": "",
+        "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/quality-auto-recycling"
+    },
+    {
+        "id": 832,
+        "name": "Rapid Auto Salvage",
+        "address": "3500 Rapid Lane",
+        "city": "Toledo",
+        "state": "OH",
+        "zipcode": "",
+        "description": "Auto salvage yard offering fast service and quality used auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/rapid-auto-salvage"
+    },
+    {
+        "id": 833,
+        "name": "Reliable Auto Parts",
+        "address": "9200 Reliable Street",
+        "city": "St. Louis",
+        "state": "MO",
+        "zipcode": "",
+        "description": "Supplier of dependable used and aftermarket auto parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/reliable-auto-parts"
+    },
+    {
+        "id": 834,
+        "name": "Riverside Auto Recycling",
+        "address": "4800 Riverside Drive",
+        "city": "Spokane",
+        "state": "WA",
+        "zipcode": "",
+        "description": "Automotive recycling operation providing recycled auto parts and dismantling services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/riverside-auto-recycling"
+    },
+    {
+        "id": 835,
+        "name": "Southern Auto Salvage",
+        "address": "6100 Southern Avenue",
+        "city": "Birmingham",
+        "state": "AL",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/southern-auto-salvage"
+    },
+    {
+        "id": 836,
+        "name": "Statewide Auto Recycling",
+        "address": "8800 State Road",
+        "city": "Tallahassee",
+        "state": "FL",
+        "zipcode": "",
+        "description": "Automotive recycling facility providing dismantling and recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/statewide-auto-recycling"
+    },
+    {
+        "id": 837,
+        "name": "Summit Auto Parts",
+        "address": "4200 Summit Drive",
+        "city": "Salt Lake City",
+        "state": "UT",
+        "zipcode": "",
+        "description": "Supplier of used and aftermarket auto parts for cars and light trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/summit-auto-parts"
+    },
+    {
+        "id": 838,
+        "name": "Superior Auto Salvage",
+        "address": "9500 Superior Road",
+        "city": "Duluth",
+        "state": "MN",
+        "zipcode": "",
+        "description": "Full-service auto salvage yard offering quality recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/superior-auto-salvage"
+    },
+    {
+        "id": 839,
+        "name": "Top Choice Auto Recycling",
+        "address": "3100 Choice Boulevard",
+        "city": "Plano",
+        "state": "TX",
+        "zipcode": "",
+        "description": "Automotive recycling operation supplying recycled parts for domestic and import vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/top-choice-auto-recycling"
+    },
+    {
+        "id": 840,
+        "name": "Tri-State Auto Salvage",
+        "address": "7200 Tri-State Parkway",
+        "city": "Cincinnati",
+        "state": "OH",
+        "zipcode": "",
+        "description": "Auto salvage yard serving customers across the tri-state area with recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/tri-state-auto-salvage"
+    },
+    {
+        "id": 841,
+        "name": "Union Auto Recycling",
+        "address": "4550 Union Road",
+        "city": "Buffalo",
+        "state": "NY",
+        "zipcode": "",
+        "description": "Automotive recycling facility offering dismantling and recycled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/union-auto-recycling"
+    },
+    {
+        "id": 842,
+        "name": "United Auto Salvage",
+        "address": "9100 United Avenue",
+        "city": "San Antonio",
+        "state": "TX",
+        "zipcode": "",
+        "description": "Supplier of used auto parts and salvage services for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/united-auto-salvage"
+    },
+    {
+        "id": 843,
+        "name": "Victory Auto Parts",
+        "address": "3600 Victory Blvd",
+        "city": "Burbank",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Used and aftermarket auto parts supplier for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/victory-auto-parts"
+    },
+    {
+        "id": 844,
+        "name": "West Coast Auto Recycling",
+        "address": "8200 West Coast Drive",
+        "city": "Long Beach",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Automotive recycling facility serving the West Coast region.",
+        "rating": "100%",
+        "profileUrl": "/vendors/west-coast-auto-recycling"
+    },
+    {
+        "id": 845,
+        "name": "Westside Auto Salvage",
+        "address": "4550 Westside Road",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zipcode": "",
+        "description": "Auto salvage yard supplying recycled auto parts for domestic and imported vehicles.",
+        "rating": "100%",
+        "profileUrl": "/vendors/westside-auto-salvage"
+    },
+    {
+        "id": 846,
+        "name": "Wholesale Auto Recycling",
+        "address": "9100 Wholesale Way",
+        "city": "Phoenix",
+        "state": "AZ",
+        "zipcode": "",
+        "description": "Wholesale automotive recycling facility providing dismantled vehicle parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/wholesale-auto-recycling"
+    },
+    {
+        "id": 847,
+        "name": "Windy City Auto Salvage",
+        "address": "3600 Windy City Ave",
+        "city": "Chicago",
+        "state": "IL",
+        "zipcode": "",
+        "description": "Chicago-based auto salvage yard offering quality recycled auto parts.",
+        "rating": "100%",
+        "profileUrl": "/vendors/windy-city-auto-salvage"
+    },
+    {
+        "id": 848,
+        "name": "Young's Auto Recycling",
+        "address": "2750 Youngs Road",
+        "city": "Trenton",
+        "state": "NJ",
+        "zipcode": "",
+        "description": "Automotive recycling operation supplying recycled parts for cars and trucks.",
+        "rating": "100%",
+        "profileUrl": "/vendors/youngs-auto-recycling"
+    },
+    {
+        "id": 849,
+        "name": "Zenith Auto Salvage",
+        "address": "6800 Zenith Drive",
+        "city": "Portland",
+        "state": "OR",
+        "zipcode": "",
+        "description": "Auto salvage yard providing recycled auto parts and vehicle dismantling services.",
+        "rating": "100%",
+        "profileUrl": "/vendors/zenith-auto-salvage"
+    }
 ]

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.vendors",
     "apps.leads",
+    "apps.hollander",  # NEW: Hollander interchange database
     "apps.common",
     "apps.ads",
     "apps.yard_submissions",  # New marketplace app
@@ -55,11 +56,21 @@ INSTALLED_APPS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Email settings (for notifications)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
-DEFAULT_FROM_EMAIL = 'noreply@junkyard.com'
+# Email settings (for notifications and CRM)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development - prints to console
+# For production, use:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'sales@qualityautoparts.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'
+
+DEFAULT_FROM_EMAIL = 'sales@qualityautoparts.com'  # Email shown in "From" field
 ADMIN_EMAIL = 'admin@junkyard.com'
+CRM_EMAIL = 'your-crm-email@example.com'  # Where lead emails are sent
 SITE_URL = 'http://localhost:3000'  # Frontend URL
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

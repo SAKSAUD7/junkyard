@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useData } from '../hooks/useData'
+import { api } from '../services/api'
+
+// US States list
+const US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
 
 export default function LeadForm({ layout = 'vertical' }) {
     const navigate = useNavigate()
@@ -11,12 +21,19 @@ export default function LeadForm({ layout = 'vertical' }) {
     const [selectedModel, setSelectedModel] = useState('')
     const [selectedPart, setSelectedPart] = useState('')
     const [selectedYear, setSelectedYear] = useState('')
+    const [availableYears, setAvailableYears] = useState([])
 
     // Contact Info
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [phone, setPhone] = useState('')
-    const [location, setLocation] = useState('')
+    const [state, setState] = useState('')
+    const [zip, setZip] = useState('')
+
+    // NEW: Part Options and Hollander
+    const [options, setOptions] = useState('')
+    const [hollanderNumber, setHollanderNumber] = useState('')
+    const [loadingHollander, setLoadingHollander] = useState(false)
 
     // Security
     const [securityCode, setSecurityCode] = useState('')
@@ -45,11 +62,92 @@ export default function LeadForm({ layout = 'vertical' }) {
     const filteredModels = filteredModelsData || []
 
     // Dynamic Year Range (1990 - 2026)
-    const getFilteredYears = () => {
-        const currentYear = new Date().getFullYear() + 1
-        return Array.from({ length: 37 }, (_, i) => currentYear - i)
-    }
-    const filteredYears = getFilteredYears()
+    // Dynamic Year Fetching
+    useEffect(() => {
+        const fetchYears = async () => {
+            if (selectedMake && selectedModel && filteredModels.length > 0) {
+                // Find model ID from name
+                const modelObj = filteredModels.find(m => m.modelName === selectedModel)
+                if (modelObj) {
+                    try {
+                        const years = await api.getYears({
+                            makeID: selectedMake,
+                            modelID: modelObj.modelID
+                        })
+                        setAvailableYears(years)
+                    } catch (err) {
+                        console.error("Failed to fetch years", err)
+                        setAvailableYears([])
+                    }
+                }
+            } else {
+                setAvailableYears([])
+            }
+        }
+
+        // Reset year when model changes
+        if (selectedYear && !availableYears.includes(parseInt(selectedYear))) {
+            // Optional: clear selected year if not in new list
+            // But valid years might not be loaded yet, so handle carefully.
+            // For now, let's just fetch.
+        }
+
+        fetchYears()
+    }, [selectedMake, selectedModel, filteredModels])
+
+    // NEW: Lookup Hollander number when vehicle + part selected
+    useEffect(() => {
+        const lookupHollander = async () => {
+            if (selectedYear && selectedMake && selectedModel && selectedPart) {
+                setLoadingHollander(true)
+
+                const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
+                const partObj = parts.find(p => p.partID === parseInt(selectedPart))
+
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/lookup/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            year: parseInt(selectedYear),
+                            make: makeObj?.makeName || '',
+                            make_id: makeObj?.makeID || null,
+                            model: selectedModel,
+                            part_type: partObj?.partName || '',
+                            part_id: partObj?.partID || null
+                        })
+                    })
+
+                    if (response.ok) {
+                        const data = await response.json()
+                        if (data.results && data.results.length > 0) {
+                            const result = data.results[0]
+                            setHollanderNumber(result.hollander_number)
+                            // Also set Options from the API response
+                            setOptions(result.options || '')
+                        } else {
+                            setHollanderNumber('Not Found')
+                            setOptions('')
+                        }
+                    } else {
+                        setHollanderNumber('Not Found')
+                        setOptions('')
+                    }
+                } catch (error) {
+                    console.error('Hollander lookup error:', error)
+                    setHollanderNumber('Not Available')
+                    setOptions('')
+                }
+
+                setLoadingHollander(false)
+            } else {
+                setHollanderNumber('')
+                setOptions('')
+            }
+        }
+
+        lookupHollander()
+    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, parts])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -59,7 +157,7 @@ export default function LeadForm({ layout = 'vertical' }) {
             setSubmitError('Please select all vehicle details.')
             return
         }
-        if (!name || !email || !phone || !location) {
+        if (!name || !email || !phone || !state || !zip) {
             setSubmitError('Please fill in all contact information.')
             return
         }
@@ -81,11 +179,14 @@ export default function LeadForm({ layout = 'vertical' }) {
             name,
             email,
             phone,
-            location
+            state,
+            zip,
+            options: options || '',
+            hollander_number: hollanderNumber || ''
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/leads/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/leads/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -111,7 +212,10 @@ export default function LeadForm({ layout = 'vertical' }) {
         setName('')
         setEmail('')
         setPhone('')
-        setLocation('')
+        setState('')
+        setZip('')
+        setOptions('')
+        setHollanderNumber('')
         setUserSecurityCode('')
         generateSecurityCode()
     }
@@ -200,7 +304,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             required
                         >
                             <option value="">Select Year</option>
-                            {filteredYears.map(y => <option key={y} value={y}>{y}</option>)}
+                            {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
 
@@ -219,6 +323,36 @@ export default function LeadForm({ layout = 'vertical' }) {
                             <option value="">Select OEM Part</option>
                             {parts?.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
                         </select>
+                    </div>
+
+                    {/* 5. Options (Auto-populated from Hollander) */}
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
+                            5. Options
+                            {loadingHollander && <span className="text-orange-500 text-[8px]">(Loading...)</span>}
+                        </label>
+                        <input
+                            type="text"
+                            value={options}
+                            readOnly
+                            placeholder="Auto-populated from part specs"
+                            className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
+                        />
+                    </div>
+
+                    {/* Hollander Number (Auto-populated) */}
+                    <div className="space-y-0.5 md:space-y-1">
+                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
+                            Hollander #
+                            {loadingHollander && <span className="text-orange-500 text-[8px]">(Looking up...)</span>}
+                        </label>
+                        <input
+                            type="text"
+                            value={hollanderNumber}
+                            readOnly
+                            placeholder="Auto-populated"
+                            className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
+                        />
                     </div>
                 </div>
 
@@ -252,7 +386,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             />
                         </div>
 
-                        <div className="space-y-0.5 md:space-y-1">
+                        <div className="col-span-2 space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-white/70 uppercase">Phone <span className="text-orange-500">*</span></label>
                             <input
                                 type="tel"
@@ -265,11 +399,24 @@ export default function LeadForm({ layout = 'vertical' }) {
                         </div>
 
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">Zip / Location <span className="text-orange-500">*</span></label>
+                            <label className="text-[10px] font-bold text-white/70 uppercase">State <span className="text-orange-500">*</span></label>
+                            <select
+                                value={state}
+                                onChange={e => setState(e.target.value)}
+                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none"
+                                required
+                            >
+                                <option value="">State</option>
+                                {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] font-bold text-white/70 uppercase">Zip <span className="text-orange-500">*</span></label>
                             <input
                                 type="text"
-                                value={location}
-                                onChange={e => setLocation(e.target.value)}
+                                value={zip}
+                                onChange={e => setZip(e.target.value)}
                                 placeholder="Zip Code"
                                 className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
                                 required
