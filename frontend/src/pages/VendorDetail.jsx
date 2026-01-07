@@ -1,5 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useData } from '../hooks/useData';
+import { useState, useEffect } from 'react';
+import { api } from '../services/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadForm from '../components/LeadForm';
@@ -10,12 +11,29 @@ import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structured
 const VendorDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { data: junkyards } = useData('data_junkyards.json');
+    const [vendor, setVendor] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Find the vendor by ID
-    const vendor = junkyards?.find(j => j.id === parseInt(id));
+    useEffect(() => {
+        const fetchVendor = async () => {
+            try {
+                setLoading(true);
+                const data = await api.getVendors();
+                const foundVendor = data.find(v => v.id === parseInt(id));
+                setVendor(foundVendor);
+                setError(foundVendor ? null : 'Vendor not found');
+            } catch (err) {
+                console.error('Error fetching vendor:', err);
+                setError('Failed to load vendor');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchVendor();
+    }, [id]);
 
-    if (!junkyards) {
+    if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 flex items-center justify-center">
                 <div className="text-white text-xl">Loading...</div>
@@ -23,7 +41,15 @@ const VendorDetail = () => {
         );
     }
 
-    if (!vendor) {
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 flex items-center justify-center">
+                <div className="text-white text-xl">Loading vendor details...</div>
+            </div>
+        );
+    }
+
+    if (error || !vendor) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
                 <Navbar />

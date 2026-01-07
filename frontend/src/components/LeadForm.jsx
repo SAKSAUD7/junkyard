@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useData } from '../hooks/useData'
 import { api } from '../services/api'
 
 // US States list
@@ -14,14 +13,25 @@ const US_STATES = [
 
 export default function LeadForm({ layout = 'vertical' }) {
     const navigate = useNavigate()
-    const { data: makes } = useData('data_makes.json')
-    const { data: parts } = useData('data_parts.json')
 
+    // -- State --
+    // Lists
+    const [makes, setMakes] = useState([])
+    const [models, setModels] = useState([])
+    const [years, setYears] = useState([])
+    const [parts, setParts] = useState([])
+
+    // Selections
     const [selectedMake, setSelectedMake] = useState('')
     const [selectedModel, setSelectedModel] = useState('')
-    const [selectedPart, setSelectedPart] = useState('')
     const [selectedYear, setSelectedYear] = useState('')
-    const [availableYears, setAvailableYears] = useState([])
+    const [selectedPart, setSelectedPart] = useState('')
+
+    // Loading States
+    const [loadingMakes, setLoadingMakes] = useState(false)
+    const [loadingModels, setLoadingModels] = useState(false)
+    const [loadingYears, setLoadingYears] = useState(false)
+    const [loadingParts, setLoadingParts] = useState(false)
 
     // Contact Info
     const [name, setName] = useState('')
@@ -30,7 +40,7 @@ export default function LeadForm({ layout = 'vertical' }) {
     const [state, setState] = useState('')
     const [zip, setZip] = useState('')
 
-    // NEW: Part Options and Hollander
+    // Hollander / Options
     const [options, setOptions] = useState('')
     const [hollanderNumber, setHollanderNumber] = useState('')
     const [loadingHollander, setLoadingHollander] = useState(false)
@@ -55,53 +65,123 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     useEffect(() => {
         generateSecurityCode()
+        // Load initial Makes
+        loadMakes()
     }, [])
 
-    // Dependent query: fetch models when make changes
-    const { data: filteredModelsData } = useData('data_models.json', { makeID: selectedMake ? parseInt(selectedMake) : null })
-    const filteredModels = filteredModelsData || []
+    // -- API Loaders --
 
-    // Dynamic Year Range (1990 - 2026)
-    // Dynamic Year Fetching
+    const loadMakes = async () => {
+        setLoadingMakes(true)
+        try {
+            const data = await api.getMakes()
+            setMakes(data || [])
+        } catch (err) {
+            console.error("Failed to load makes", err)
+        } finally {
+            setLoadingMakes(false)
+        }
+    }
+
+    // When Make Changes -> Load Models
     useEffect(() => {
-        const fetchYears = async () => {
-            if (selectedMake && selectedModel && filteredModels.length > 0) {
-                // Find model ID from name
-                const modelObj = filteredModels.find(m => m.modelName === selectedModel)
-                if (modelObj) {
-                    try {
-                        const years = await api.getYears({
-                            makeID: selectedMake,
-                            modelID: modelObj.modelID
-                        })
-                        setAvailableYears(years)
-                    } catch (err) {
-                        console.error("Failed to fetch years", err)
-                        setAvailableYears([])
-                    }
-                }
-            } else {
-                setAvailableYears([])
+        if (!selectedMake) {
+            setModels([])
+            setYears([])
+            setParts([])
+            return
+        }
+
+        const loadModels = async () => {
+            setLoadingModels(true)
+            try {
+                // selectedMake is ID here
+                const data = await api.getModels({ make_id: selectedMake })
+                setModels(data || [])
+            } catch (err) {
+                console.error("Failed to load models", err)
+            } finally {
+                setLoadingModels(false)
             }
         }
+        loadModels()
 
-        // Reset year when model changes
-        if (selectedYear && !availableYears.includes(parseInt(selectedYear))) {
-            // Optional: clear selected year if not in new list
-            // But valid years might not be loaded yet, so handle carefully.
-            // For now, let's just fetch.
+        // Reset downstream
+        setSelectedModel('')
+        setSelectedYear('')
+        setSelectedPart('')
+    }, [selectedMake])
+
+    // When Model Changes -> Load Years
+    useEffect(() => {
+        if (!selectedMake || !selectedModel) {
+            setYears([])
+            setParts([])
+            return
         }
 
-        fetchYears()
-    }, [selectedMake, selectedModel, filteredModels])
+        const loadYears = async () => {
+            setLoadingYears(true)
+            try {
+                const data = await api.getYears({
+                    make_id: selectedMake,
+                    model_id: selectedModel
+                })
+                setYears(data || [])
+            } catch (err) {
+                console.error("Failed to load years", err)
+            } finally {
+                setLoadingYears(false)
+            }
+        }
+        loadYears()
 
-    // NEW: Lookup Hollander number when vehicle + part selected
+        // Reset downstream
+        setSelectedYear('')
+        setSelectedPart('')
+    }, [selectedModel])
+
+
+    // When Year Changes -> Load Parts (Filtered)
+    useEffect(() => {
+        if (!selectedMake || !selectedModel || !selectedYear) {
+            setParts([])
+            return
+        }
+
+        const loadParts = async () => {
+            setLoadingParts(true)
+            try {
+                const data = await api.getParts({
+                    make_id: selectedMake,
+                    model_id: selectedModel,
+                    year: selectedYear
+                })
+                setParts(data || [])
+            } catch (err) {
+                console.error("Failed to load parts", err)
+                // Fallback to all parts? Maybe better to show empty if none found
+                // setParts([])
+            } finally {
+                setLoadingParts(false)
+            }
+        }
+        loadParts()
+
+        // Reset downstream
+        setSelectedPart('')
+    }, [selectedYear])
+
+
+    // Lookup Hollander number when Everything Selected
     useEffect(() => {
         const lookupHollander = async () => {
             if (selectedYear && selectedMake && selectedModel && selectedPart) {
                 setLoadingHollander(true)
 
+                // Find names for API payload
                 const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
+                const modelObj = models.find(m => m.modelID === parseInt(selectedModel))
                 const partObj = parts.find(p => p.partID === parseInt(selectedPart))
 
                 try {
@@ -111,10 +191,10 @@ export default function LeadForm({ layout = 'vertical' }) {
                         body: JSON.stringify({
                             year: parseInt(selectedYear),
                             make: makeObj?.makeName || '',
-                            make_id: makeObj?.makeID || null,
-                            model: selectedModel,
+                            make_id: selectedMake,
+                            model: modelObj?.modelName || '', // We need model string for lookup logic sometimes, but ID is safer if backend supports it
                             part_type: partObj?.partName || '',
-                            part_id: partObj?.partID || null
+                            part_id: selectedPart
                         })
                     })
 
@@ -123,7 +203,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                         if (data.results && data.results.length > 0) {
                             const result = data.results[0]
                             setHollanderNumber(result.hollander_number)
-                            // Also set Options from the API response
+                            // Clean up options if array or string
                             setOptions(result.options || '')
                         } else {
                             setHollanderNumber('Not Found')
@@ -147,7 +227,7 @@ export default function LeadForm({ layout = 'vertical' }) {
         }
 
         lookupHollander()
-    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, parts])
+    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, models, parts])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -262,10 +342,11 @@ export default function LeadForm({ layout = 'vertical' }) {
                     <div className="space-y-0.5 md:space-y-1">
                         <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             1. Make <span className="text-orange-500">*</span>
+                            {loadingMakes && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
                         </label>
                         <select
                             value={selectedMake}
-                            onChange={(e) => { setSelectedMake(e.target.value); setSelectedModel(''); }}
+                            onChange={(e) => setSelectedMake(e.target.value)}
                             className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none"
                             required
                         >
@@ -278,6 +359,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                     <div className="space-y-0.5 md:space-y-1">
                         <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             2. Model <span className="text-orange-500">*</span>
+                            {loadingModels && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
                         </label>
                         <select
                             value={selectedModel}
@@ -287,7 +369,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             required
                         >
                             <option value="">Select Model</option>
-                            {filteredModels.map(m => <option key={m.modelID} value={m.modelName}>{m.modelName}</option>)}
+                            {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
                         </select>
                     </div>
 
@@ -295,6 +377,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                     <div className="space-y-0.5 md:space-y-1">
                         <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             3. Year <span className="text-orange-500">*</span>
+                            {loadingYears && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
                         </label>
                         <select
                             value={selectedYear}
@@ -304,7 +387,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             required
                         >
                             <option value="">Select Year</option>
-                            {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
 
@@ -312,16 +395,17 @@ export default function LeadForm({ layout = 'vertical' }) {
                     <div className="space-y-0.5 md:space-y-1">
                         <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
                             4. Part <span className="text-orange-500">*</span>
+                            {loadingParts && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
                         </label>
                         <select
                             value={selectedPart}
                             onChange={(e) => setSelectedPart(e.target.value)}
                             className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedMake}
+                            disabled={!selectedYear}
                             required
                         >
-                            <option value="">Select OEM Part</option>
-                            {parts?.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                            <option value="">Select Part</option>
+                            {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
                         </select>
                     </div>
 

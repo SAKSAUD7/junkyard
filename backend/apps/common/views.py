@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from .models import Make, Model, Part, State, City
+from apps.hollander.models import Make, Model, PartType, State
 from .serializers import (
     MakeSerializer, ModelSerializer, PartSerializer,
-    StateSerializer, CitySerializer
+    StateSerializer
 )
 
 
@@ -30,7 +30,7 @@ class ModelViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PartViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for auto parts"""
-    queryset = Part.objects.all()
+    queryset = PartType.objects.all()
     serializer_class = PartSerializer
 
 
@@ -38,9 +38,3 @@ class StateViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for states"""
     queryset = State.objects.all()
     serializer_class = StateSerializer
-
-
-class CityViewSet(viewsets.ReadOnlyModelViewSet):
-    """API endpoint for cities"""
-    queryset = City.objects.all()
-    serializer_class = CitySerializer

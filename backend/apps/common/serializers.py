@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Make, Model, Part, State, City
+from apps.hollander.models import Make, Model, PartType, State
 
 
 class MakeSerializer(serializers.ModelSerializer):
@@ -26,24 +26,14 @@ class PartSerializer(serializers.ModelSerializer):
     partName = serializers.CharField(source='part_name')
     
     class Meta:
-        model = Part
+        model = PartType
         fields = ['partID', 'partName']
 
 
 class StateSerializer(serializers.ModelSerializer):
-    stateID = serializers.IntegerField(source='state_id')
-    stateName = serializers.CharField(source='state_name')
     stateCode = serializers.CharField(source='state_code')
+    stateName = serializers.CharField(source='name')
     
     class Meta:
         model = State
-        fields = ['stateID', 'stateName', 'stateCode']
-
-
-class CitySerializer(serializers.ModelSerializer):
-    cityID = serializers.IntegerField(source='city_id')
-    cityName = serializers.CharField(source='city_name')
-    
-    class Meta:
-        model = City
-        fields = ['cityID', 'cityName', 'state']
+        fields = ['id', 'stateCode', 'stateName']

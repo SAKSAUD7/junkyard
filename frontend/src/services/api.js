@@ -35,13 +35,16 @@ export const api = {
   },
 
   getModels: async (params = {}) => {
-    // Handle both direct makeId and params object from useData hook
-    const makeId = params.makeID || params.makeId || params;
+    // Handle all case variations: direct ID, params object with makeID/makeId/make_id
+    let makeId = params;
+    if (typeof params === 'object' && params !== null) {
+      makeId = params.makeID || params.makeId || params.make_id;
+    }
 
     // Use the hollander endpoint
     const url = makeId && (typeof makeId === 'number' || typeof makeId === 'string')
       ? `${API_BASE_URL}/hollander/models/?make_id=${makeId}`
-      : `${API_BASE_URL}/hollander/models/`; // Should return empty if no make
+      : `${API_BASE_URL}/hollander/models/`;
 
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,8 +52,8 @@ export const api = {
   },
 
   getYears: async (params = {}) => {
-    const makeId = params.makeID || params.makeId;
-    const modelId = params.modelID || params.modelId;
+    const makeId = params.makeID || params.makeId || params.make_id;
+    const modelId = params.modelID || params.modelId || params.model_id;
 
     if (!makeId || !modelId) return [];
 
@@ -60,8 +63,10 @@ export const api = {
     return response.json();
   },
 
-  getParts: async () => {
-    const response = await fetch(`${API_BASE_URL}/hollander/parts/`);
+  getParts: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${API_BASE_URL}/hollander/parts/${queryString ? `?${queryString}` : ''}`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();
   },

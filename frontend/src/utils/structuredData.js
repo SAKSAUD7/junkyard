@@ -82,7 +82,9 @@ export const getLocalBusinessSchema = (business) => ({
     ...(business.rating && {
         aggregateRating: {
             '@type': 'AggregateRating',
-            ratingValue: business.rating.replace('%', '') / 20, // Convert 100% to 5.0
+            ratingValue: typeof business.rating === 'number'
+                ? business.rating / 20  // If number (e.g., 4.8), convert to 5-star scale
+                : parseFloat(String(business.rating).replace('%', '')) / 20, // If string "100%"
             bestRating: '5',
             worstRating: '1'
         }

@@ -2,7 +2,7 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
-from .models import Vendor
+from apps.hollander.models import Vendor
 from .serializers import VendorSerializer
 
 
@@ -21,10 +21,10 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Vendor.objects.all().order_by('id')  # Order by ID
         
-        # Filter for trusted vendors
+        # Filter for trusted vendors (Mock Logic: just active for now)
         trusted = self.request.query_params.get('trusted', None)
         if trusted and trusted.lower() == 'true':
-            queryset = queryset.filter(is_trusted=True).order_by('-trust_level', 'id')
+            queryset = queryset.filter(is_active=True).order_by('id')
         
         # Filter by state
         state = self.request.query_params.get('state', None)
@@ -40,7 +40,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         zipcode = self.request.query_params.get('zipcode', None)
         if zipcode:
             # Match first 3 digits for area-based search
-            queryset = queryset.filter(zipcode__startswith=zipcode[:3])
+            queryset = queryset.filter(zip_code__startswith=zipcode[:3])
         
         # Search by name
         search = self.request.query_params.get('search', None)
