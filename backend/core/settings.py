@@ -56,19 +56,18 @@ INSTALLED_APPS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Email settings (for notifications and CRM)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development - prints to console
-# For production, use:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'sales@qualityautoparts.com'
-# EMAIL_HOST_PASSWORD = 'your-app-password'
+# Email settings - SendGrid SMTP (Production)
+import os
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Console (for debugging)
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')  # Load from environment variable
 
-DEFAULT_FROM_EMAIL = 'sales@qualityautoparts.com'  # Email shown in "From" field
-ADMIN_EMAIL = 'admin@junkyard.com'
-CRM_EMAIL = 'your-crm-email@example.com'  # Where lead emails are sent
+DEFAULT_FROM_EMAIL = 'saqeeb.khan20011@gmail.com'  # Sender email (VERIFIED in SendGrid!)
+LEAD_NOTIFICATION_EMAIL = 'saksaud7411@gmail.com'  # Recipient email (TO)
 SITE_URL = 'http://localhost:3000'  # Frontend URL
 
 

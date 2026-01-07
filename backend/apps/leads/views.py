@@ -31,40 +31,37 @@ class LeadViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         
-        # 2. Construct Legacy Email Format
-        # (Preserving existing email logic exactly)
-        subject = f"New Lead: {data['year']} {data['make']} {data['model']} - {data['part']}"
-        
-        message = f"""
-New Lead Received from Website:
-
-Vehicle: {data['year']} {data['make']} {data['model']}
-Part: {data['part']}
-Hollander #: {data.get('hollander_number', 'N/A')}
-Options: {data.get('options', 'N/A')}
-
-Customer:
-Name: {data['name']}
-Email: {data['email']}
-Phone: {data['phone']}
-State: {data.get('state', 'N/A')}
-Zip: {data.get('zip', 'N/A')}
-
-Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-        """
-        
-        # 3. Send Email
+        # 2. Send Email Notification using HTML Template
         try:
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.CONTACT_EMAIL],
-                fail_silently=False,
+            from django.template.loader import render_to_string
+            from django.core.mail import EmailMultiAlternatives
+            from django.utils import timezone
+            
+            # Prepare context for email template
+            context = {
+                'lead': serializer.instance,
+                'from_email': settings.DEFAULT_FROM_EMAIL,
+                'sent_date': timezone.now().strftime('%m/%d/%Y %I:%M %p CST'),
+            }
+            
+            # Render HTML and plain text versions
+            html_content = render_to_string('emails/lead_notification.html', context)
+            text_content = render_to_string('emails/lead_notification.txt', context)
+            
+            # Create email with both HTML and plain text
+            subject = f"New Lead: {data['year']} {data['make']} {data['model']} - {data['part']}"
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[settings.LEAD_NOTIFICATION_EMAIL],
             )
+            email.attach_alternative(html_content, "text/html")
+            email.send(fail_silently=False)
+            
         except Exception as e:
-            # Log error but don't fail the request
-            print(f"Failed to send email: {e}")
+            # Log error but don't fail the lead creation
+            print(f"Email sending failed: {str(e)}")
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
