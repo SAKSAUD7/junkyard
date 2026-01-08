@@ -76,4 +76,43 @@
   .mobile-grid-3 {
     @apply grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6;
   }
+
+  /* Skeleton loader */
+  .skeleton {
+    @apply animate-pulse bg-gray-700/50 rounded-md;
+  }
+}
+
+@layer utilities {
+
+  /* Animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.4s ease-out;
+  }
 }

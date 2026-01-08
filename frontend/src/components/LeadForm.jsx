@@ -357,7 +357,7 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     if (isSuccess) {
         return (
-            <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-dark-900/95 backdrop-blur-md p-8 rounded-xl border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px]`}>
+            <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-dark-900/95 backdrop-blur-md p-8 rounded-xl border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px] animate-fade-in`}>
                 <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-glow-lg animate-scale-in">
                     <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -378,235 +378,248 @@ export default function LeadForm({ layout = 'vertical' }) {
     const isHorizontal = layout === 'horizontal'
 
     return (
-        <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
-            {/* Header */}
-            <div className={`bg-gradient-to-r from-orange-400 to-orange-500 rounded-t-xl p-2 md:p-3 text-center shadow-lg ${isHorizontal ? 'py-2 md:py-3' : ''}`}>
-                <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
-                    NEED A QUALITY USED PART?
-                </h2>
-            </div>
-
-            {/* Form Body */}
-            <form onSubmit={handleSubmit} className={`bg-dark-900/95 backdrop-blur-md p-3 md:p-5 rounded-b-xl border border-white/10 shadow-2xl ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'space-y-2 md:space-y-3'}`}>
-
-                {/* Left Column (Vehicle Info) */}
-                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-white/10 pr-3 md:pr-6' : ''}`}>
-                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Vehicle Details</h3>}
-
-                    {/* 1. Make */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
-                            1. Make <span className="text-orange-500">*</span>
-                            {loadingMakes && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedMake}
-                            onChange={(e) => setSelectedMake(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none"
-                            required
-                        >
-                            <option value="">Select Make</option>
-                            {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
-                        </select>
-                    </div>
-
-                    {/* 2. Model */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
-                            2. Model <span className="text-orange-500">*</span>
-                            {loadingModels && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedModel}
-                            onChange={(e) => setSelectedModel(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedMake}
-                            required
-                        >
-                            <option value="">Select Model</option>
-                            {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
-                        </select>
-                    </div>
-
-                    {/* 3. Year */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
-                            3. Year <span className="text-orange-500">*</span>
-                            {loadingYears && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedModel}
-                            required
-                        >
-                            <option value="">Select Year</option>
-                            {years.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                        <p className="text-[9px] md:text-[10px] text-white/50 mt-0.5">
-                            💡 Best results for 2010-2024 vehicles
-                        </p>
-                    </div>
-
-                    {/* 4. Part */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
-                            4. Part <span className="text-orange-500">*</span>
-                            {loadingParts && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedPart}
-                            onChange={(e) => setSelectedPart(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedYear}
-                            required
-                        >
-                            <option value="">Select Part</option>
-                            {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                        </select>
-                    </div>
-
-                    {/* 5. Options (Auto-populated from Hollander) */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
-                            5. Options
-                            {loadingHollander && <span className="text-orange-500 text-[8px]">(Loading...)</span>}
-                        </label>
-                        <input
-                            type="text"
-                            value={options}
-                            readOnly
-                            placeholder="Auto-populated from part specs"
-                            className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
-                        />
-                    </div>
-
-                    {/* Hollander Number (Auto-populated) */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
-                            Hollander #
-                            {loadingHollander && (
-                                <span className="flex items-center gap-1 text-orange-500 text-[8px]">
-                                    <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Finding part numbers...
-                                </span>
-                            )}
-                        </label>
-                        <input
-                            type="text"
-                            value={hollanderNumber}
-                            readOnly
-                            placeholder="Auto-populated"
-                            className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
-                        />
+        <>
+            {/* Loading Overlay */}
+            {submitting && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+                    <div className="bg-dark-900/95 backdrop-blur-md p-8 rounded-2xl border border-white/20 shadow-2xl text-center">
+                        <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mb-4"></div>
+                        <p className="text-white text-lg font-semibold">Submitting your request...</p>
+                        <p className="text-white/60 text-sm mt-2">Please wait</p>
                     </div>
                 </div>
+            )}
 
-                {/* Right Column (Contact Info) */}
-                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? '' : ''}`}>
-                    {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Contact Information</h3>}
+            <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
+                {/* Header */}
+                <div className={`bg-gradient-to-r from-orange-400 to-orange-500 rounded-t-xl p-2 md:p-3 text-center shadow-lg ${isHorizontal ? 'py-2 md:py-3' : ''}`}>
+                    <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
+                        NEED A QUALITY USED PART?
+                    </h2>
+                </div>
 
-                    {/* Contact Grid */}
-                    <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-white/10' : ''}`}>
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">Name <span className="text-orange-500">*</span></label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="Your Name"
-                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
-                                required
-                            />
-                        </div>
+                {/* Form Body */}
+                <form onSubmit={handleSubmit} className={`bg-dark-900/95 backdrop-blur-md p-3 md:p-5 rounded-b-xl border border-white/10 shadow-2xl ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'space-y-2 md:space-y-3'}`}>
 
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">Email <span className="text-orange-500">*</span></label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                placeholder="Your Email Address"
-                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
-                                required
-                            />
-                        </div>
+                    {/* Left Column (Vehicle Info) */}
+                    <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-white/10 pr-3 md:pr-6' : ''}`}>
+                        {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Vehicle Details</h3>}
 
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">Phone <span className="text-orange-500">*</span></label>
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={e => setPhone(e.target.value)}
-                                placeholder="(555) 555-5555"
-                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
-                                required
-                            />
-                        </div>
-
+                        {/* 1. Make */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">State <span className="text-orange-500">*</span></label>
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
+                                1. Make <span className="text-orange-500">*</span>
+                                {loadingMakes && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
+                            </label>
                             <select
-                                value={state}
-                                onChange={e => setState(e.target.value)}
-                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none"
+                                value={selectedMake}
+                                onChange={(e) => setSelectedMake(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none"
                                 required
                             >
-                                <option value="">Select State</option>
-                                {US_STATES.map(s => <option key={s.code} value={s.code}>{s.name}</option>)}
+                                <option value="">Select Make</option>
+                                {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
                             </select>
                         </div>
 
+                        {/* 2. Model */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-white/70 uppercase">Zip <span className="text-orange-500">*</span></label>
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
+                                2. Model <span className="text-orange-500">*</span>
+                                {loadingModels && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
+                            </label>
+                            <select
+                                value={selectedModel}
+                                onChange={(e) => setSelectedModel(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                                disabled={!selectedMake}
+                                required
+                            >
+                                <option value="">Select Model</option>
+                                {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
+                            </select>
+                        </div>
+
+                        {/* 3. Year */}
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
+                                3. Year <span className="text-orange-500">*</span>
+                                {loadingYears && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
+                            </label>
+                            <select
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                                disabled={!selectedModel}
+                                required
+                            >
+                                <option value="">Select Year</option>
+                                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                            <p className="text-[9px] md:text-[10px] text-white/50 mt-0.5">
+                                💡 Best results for 2010-2024 vehicles
+                            </p>
+                        </div>
+
+                        {/* 4. Part */}
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex justify-between">
+                                4. Part <span className="text-orange-500">*</span>
+                                {loadingParts && <span className="text-[9px] text-orange-400 lowercase animate-pulse">loading...</span>}
+                            </label>
+                            <select
+                                value={selectedPart}
+                                onChange={(e) => setSelectedPart(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+                                disabled={!selectedYear}
+                                required
+                            >
+                                <option value="">Select Part</option>
+                                {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                            </select>
+                        </div>
+
+                        {/* 5. Options (Auto-populated from Hollander) */}
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
+                                5. Options
+                                {loadingHollander && <span className="text-orange-500 text-[8px]">(Loading...)</span>}
+                            </label>
                             <input
                                 type="text"
-                                value={zip}
-                                onChange={e => setZip(e.target.value)}
-                                placeholder="Zip Code"
-                                className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
-                                required
+                                value={options}
+                                readOnly
+                                placeholder="Auto-populated from part specs"
+                                className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
+                            />
+                        </div>
+
+                        {/* Hollander Number (Auto-populated) */}
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-white uppercase flex items-center gap-1">
+                                Hollander #
+                                {loadingHollander && (
+                                    <span className="flex items-center gap-1 text-orange-500 text-[8px]">
+                                        <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Finding part numbers...
+                                    </span>
+                                )}
+                            </label>
+                            <input
+                                type="text"
+                                value={hollanderNumber}
+                                readOnly
+                                placeholder="Auto-populated"
+                                className="w-full bg-gray-700/50 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 outline-none cursor-not-allowed"
                             />
                         </div>
                     </div>
 
-                    {/* Security Code */}
-                    <div className="bg-white/5 p-2 md:p-3 rounded-lg border border-white/10 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
-                        <div className="bg-white/90 text-dark-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none bg-opacity-80 decoration-slice shadow-inner w-20 md:w-24 text-center">
-                            {securityCode}
-                        </div>
-                        <input
-                            type="text"
-                            value={userSecurityCode}
-                            onChange={e => setUserSecurityCode(e.target.value)}
-                            placeholder="ENTER CODE"
-                            className="flex-1 bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30 text-center uppercase font-bold"
-                            maxLength={4}
-                            required
-                        />
-                    </div>
+                    {/* Right Column (Contact Info) */}
+                    <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? '' : ''}`}>
+                        {isHorizontal && <h3 className="text-orange-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Contact Information</h3>}
 
-                    {/* Submit Button */}
-                    <div className="space-y-1.5 md:space-y-2 pt-1.5 md:pt-2">
-                        {submitError && (
-                            <div className="text-red-400 text-[10px] md:text-xs text-center font-bold bg-red-900/20 p-1.5 md:p-2 rounded">
-                                {submitError}
+                        {/* Contact Grid */}
+                        <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-white/10' : ''}`}>
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-white/70 uppercase">Name <span className="text-orange-500">*</span></label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder="Your Name"
+                                    className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                    required
+                                />
                             </div>
-                        )}
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-lg hover:shadow-orange-500/20 transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
-                        >
-                            {submitting ? 'SENDING...' : 'FIND MY PART NOW'}
-                        </button>
+
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-white/70 uppercase">Email <span className="text-orange-500">*</span></label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder="Your Email Address"
+                                    className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-white/70 uppercase">Phone <span className="text-orange-500">*</span></label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    placeholder="(555) 555-5555"
+                                    className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-white/70 uppercase">State <span className="text-orange-500">*</span></label>
+                                <select
+                                    value={state}
+                                    onChange={e => setState(e.target.value)}
+                                    className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none"
+                                    required
+                                >
+                                    <option value="">Select State</option>
+                                    {US_STATES.map(s => <option key={s.code} value={s.code}>{s.name}</option>)}
+                                </select>
+                            </div>
+
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-white/70 uppercase">Zip <span className="text-orange-500">*</span></label>
+                                <input
+                                    type="text"
+                                    value={zip}
+                                    onChange={e => setZip(e.target.value)}
+                                    placeholder="Zip Code"
+                                    className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Security Code */}
+                        <div className="bg-white/5 p-2 md:p-3 rounded-lg border border-white/10 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
+                            <div className="bg-white/90 text-dark-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none bg-opacity-80 decoration-slice shadow-inner w-20 md:w-24 text-center">
+                                {securityCode}
+                            </div>
+                            <input
+                                type="text"
+                                value={userSecurityCode}
+                                onChange={e => setUserSecurityCode(e.target.value)}
+                                placeholder="ENTER CODE"
+                                className="flex-1 bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none placeholder-white/30 text-center uppercase font-bold"
+                                maxLength={4}
+                                required
+                            />
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="space-y-1.5 md:space-y-2 pt-1.5 md:pt-2">
+                            {submitError && (
+                                <div className="text-red-400 text-[10px] md:text-xs text-center font-bold bg-red-900/20 p-1.5 md:p-2 rounded">
+                                    {submitError}
+                                </div>
+                            )}
+                            <button
+                                type="submit"
+                                disabled={submitting}
+                                className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-lg hover:shadow-orange-500/20 transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
+                            >
+                                {submitting ? 'SENDING...' : 'FIND MY PART NOW'}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
+        </>
     )
 }
