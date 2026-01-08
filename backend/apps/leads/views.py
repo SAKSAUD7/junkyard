@@ -17,7 +17,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     serializer_class = LeadSerializer
     
     def create(self, request, *args, **kwargs):
-        """Create a new lead and send CRM email in exact legacy format"""
+        """Create a new lead and send confirmation email to user"""
         data = request.data
         
         # 0. Basic Validation
@@ -29,39 +29,17 @@ class LeadViewSet(viewsets.ModelViewSet):
         # 1. Save to DB
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        lead = serializer.save()  # Save and get the lead instance
         
-        # 2. Send Email Notification using HTML Template
+        # 2. Send Confirmation Email ONLY to User (not to CRM)
         try:
-            from django.template.loader import render_to_string
-            from django.core.mail import EmailMultiAlternatives
-            from django.utils import timezone
-            
-            # Prepare context for email template
-            context = {
-                'lead': serializer.instance,
-                'from_email': settings.DEFAULT_FROM_EMAIL,
-                'sent_date': timezone.now().strftime('%m/%d/%Y %I:%M %p CST'),
-            }
-            
-            # Render HTML and plain text versions
-            html_content = render_to_string('emails/lead_notification.html', context)
-            text_content = render_to_string('emails/lead_notification.txt', context)
-            
-            # Create email with both HTML and plain text
-            subject = f"New Lead: {data['year']} {data['make']} {data['model']} - {data['part']}"
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[settings.LEAD_NOTIFICATION_EMAIL],
-            )
-            email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=False)
-            
+            from .email_service import send_user_confirmation_email
+            send_user_confirmation_email(lead)
         except Exception as e:
-            # Log error but don't fail the lead creation
-            print(f"Email sending failed: {str(e)}")
+            # Log error but don't fail the request
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to send user confirmation email: {e}")
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

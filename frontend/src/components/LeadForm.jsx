@@ -65,82 +65,75 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     useEffect(() => {
         generateSecurityCode()
-        // Load initial Makes
-        loadMakes()
+        // Load data from static JSON files
+        loadStaticData()
     }, [])
 
-    // -- API Loaders --
-
-    const loadMakes = async () => {
-        setLoadingMakes(true)
+    // Load all static data
+    const loadStaticData = async () => {
         try {
-            const data = await api.getMakes()
-            setMakes(data || [])
+            // Load Makes
+            const makesRes = await fetch('/data/data_makes.json')
+            const makesData = await makesRes.json()
+            setMakes(makesData || [])
+
+            // Load ALL Models (we'll filter by make client-side)
+            const modelsRes = await fetch('/data/data_models.json')
+            const modelsData = await modelsRes.json()
+            window.allModels = modelsData || [] // Store globally for filtering
+
+            // Load Parts
+            const partsRes = await fetch('/data/data_parts.json')
+            const partsData = await partsRes.json()
+            setParts(partsData || [])
         } catch (err) {
-            console.error("Failed to load makes", err)
-        } finally {
-            setLoadingMakes(false)
+            console.error("Failed to load static data", err)
         }
     }
 
-    // When Make Changes -> Load Models
+    // When Make Changes -> Filter Models
     useEffect(() => {
         if (!selectedMake) {
             setModels([])
             setYears([])
-            setParts([])
             return
         }
 
-        const loadModels = async () => {
-            setLoadingModels(true)
-            try {
-                // selectedMake is ID here
-                const data = await api.getModels({ make_id: selectedMake })
-                setModels(data || [])
-            } catch (err) {
-                console.error("Failed to load models", err)
-            } finally {
-                setLoadingModels(false)
-            }
+        // Filter models for selected make
+        const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
+        if (makeObj && window.allModels) {
+            const filtered = window.allModels.filter(model =>
+                model.makeName === makeObj.makeName ||
+                model.makeID === makeObj.makeID
+            )
+            setModels(filtered)
         }
-        loadModels()
 
         // Reset downstream
         setSelectedModel('')
         setSelectedYear('')
         setSelectedPart('')
-    }, [selectedMake])
+    }, [selectedMake, makes])
 
-    // When Model Changes -> Load Years
+    // When Model Changes -> Generate Years
     useEffect(() => {
         if (!selectedMake || !selectedModel) {
             setYears([])
-            setParts([])
             return
         }
 
-        const loadYears = async () => {
-            setLoadingYears(true)
-            try {
-                const data = await api.getYears({
-                    make_id: selectedMake,
-                    model_id: selectedModel
-                })
-                setYears(data || [])
-            } catch (err) {
-                console.error("Failed to load years", err)
-            } finally {
-                setLoadingYears(false)
-            }
+        // Generate year range (1990 to current year)
+        const currentYear = new Date().getFullYear()
+        const yearList = []
+        for (let y = currentYear; y >= 1990; y--) {
+            yearList.push(y)
         }
-        loadYears()
+        setYears(yearList)
 
         // Reset downstream
         setSelectedYear('')
         setSelectedPart('')
-    }, [selectedModel])
-
+    }, [selectedModel, selectedMake])
 
     // When Year Changes -> Load Parts (Filtered)
     useEffect(() => {

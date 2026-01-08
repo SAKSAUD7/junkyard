@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -200,6 +201,28 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+# ==============================================================================
+# EMAIL CONFIGURATION
+# ==============================================================================
+# Email backend configuration
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+
+# SMTP Settings (works with Gmail, SendGrid, or any SMTP provider)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')  # Gmail default
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))  # TLS port
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')  # Your email
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # App password or SMTP password
+
+# Email addresses
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'sales@qualityautoparts.com')
+LEAD_NOTIFICATION_EMAILS = os.getenv('LEAD_NOTIFICATION_EMAILS', 'sales@qualityautoparts.com').split(',')
+
+# For development/testing - use console backend to print emails to console
+if DEBUG and not EMAIL_HOST_USER:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Import database signals to disable foreign key constraints
 import core.db_signals  # noqa
