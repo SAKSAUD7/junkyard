@@ -2,13 +2,58 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 
-// US States list
+// US States with full names and sample ZIP codes
 const US_STATES = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    { code: 'AL', name: 'Alabama', zip: '35004' },
+    { code: 'AK', name: 'Alaska', zip: '99501' },
+    { code: 'AZ', name: 'Arizona', zip: '85001' },
+    { code: 'AR', name: 'Arkansas', zip: '72201' },
+    { code: 'CA', name: 'California', zip: '90001' },
+    { code: 'CO', name: 'Colorado', zip: '80201' },
+    { code: 'CT', name: 'Connecticut', zip: '06101' },
+    { code: 'DE', name: 'Delaware', zip: '19901' },
+    { code: 'FL', name: 'Florida', zip: '32003' },
+    { code: 'GA', name: 'Georgia', zip: '30002' },
+    { code: 'HI', name: 'Hawaii', zip: '96801' },
+    { code: 'ID', name: 'Idaho', zip: '83254' },
+    { code: 'IL', name: 'Illinois', zip: '60007' },
+    { code: 'IN', name: 'Indiana', zip: '46001' },
+    { code: 'IA', name: 'Iowa', zip: '50001' },
+    { code: 'KS', name: 'Kansas', zip: '66002' },
+    { code: 'KY', name: 'Kentucky', zip: '40003' },
+    { code: 'LA', name: 'Louisiana', zip: '70001' },
+    { code: 'ME', name: 'Maine', zip: '04032' },
+    { code: 'MD', name: 'Maryland', zip: '20601' },
+    { code: 'MA', name: 'Massachusetts', zip: '01001' },
+    { code: 'MI', name: 'Michigan', zip: '48001' },
+    { code: 'MN', name: 'Minnesota', zip: '55001' },
+    { code: 'MS', name: 'Mississippi', zip: '38601' },
+    { code: 'MO', name: 'Missouri', zip: '63005' },
+    { code: 'MT', name: 'Montana', zip: '59001' },
+    { code: 'NE', name: 'Nebraska', zip: '68001' },
+    { code: 'NV', name: 'Nevada', zip: '89001' },
+    { code: 'NH', name: 'New Hampshire', zip: '03031' },
+    { code: 'NJ', name: 'New Jersey', zip: '07001' },
+    { code: 'NM', name: 'New Mexico', zip: '87001' },
+    { code: 'NY', name: 'New York', zip: '10001' },
+    { code: 'NC', name: 'North Carolina', zip: '27006' },
+    { code: 'ND', name: 'North Dakota', zip: '58001' },
+    { code: 'OH', name: 'Ohio', zip: '43001' },
+    { code: 'OK', name: 'Oklahoma', zip: '73001' },
+    { code: 'OR', name: 'Oregon', zip: '97001' },
+    { code: 'PA', name: 'Pennsylvania', zip: '15001' },
+    { code: 'RI', name: 'Rhode Island', zip: '02801' },
+    { code: 'SC', name: 'South Carolina', zip: '29001' },
+    { code: 'SD', name: 'South Dakota', zip: '57001' },
+    { code: 'TN', name: 'Tennessee', zip: '37010' },
+    { code: 'TX', name: 'Texas', zip: '75001' },
+    { code: 'UT', name: 'Utah', zip: '84003' },
+    { code: 'VT', name: 'Vermont', zip: '05001' },
+    { code: 'VA', name: 'Virginia', zip: '20101' },
+    { code: 'WA', name: 'Washington', zip: '98001' },
+    { code: 'WV', name: 'West Virginia', zip: '24701' },
+    { code: 'WI', name: 'Wisconsin', zip: '53001' },
+    { code: 'WY', name: 'Wyoming', zip: '82001' }
 ]
 
 export default function LeadForm({ layout = 'vertical' }) {
@@ -68,6 +113,16 @@ export default function LeadForm({ layout = 'vertical' }) {
         // Load initial Makes
         loadMakes()
     }, [])
+
+    // Auto-populate ZIP code when state changes
+    useEffect(() => {
+        if (state) {
+            const selectedState = US_STATES.find(s => s.code === state)
+            if (selectedState && !zip) {
+                setZip(selectedState.zip)
+            }
+        }
+    }, [state])
 
     // -- API Loaders --
 
@@ -490,8 +545,8 @@ export default function LeadForm({ layout = 'vertical' }) {
                                 className="w-full bg-white/10 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/20 focus:border-orange-500 outline-none"
                                 required
                             >
-                                <option value="">State</option>
-                                {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                                <option value="">Select State</option>
+                                {US_STATES.map(s => <option key={s.code} value={s.code}>{s.name}</option>)}
                             </select>
                         </div>
 

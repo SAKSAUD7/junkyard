@@ -11,13 +11,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+dotenv_path = BASE_DIR / '.env'
+load_dotenv(dotenv_path)
+
+# Manually read .env file if environment variable not set (fallback)
+if not os.environ.get('SENDGRID_API_KEY'):
+    try:
+        with open(dotenv_path, 'r') as f:
+            for line in f:
+                if line.startswith('SENDGRID_API_KEY='):
+                    key_value = line.strip().split('=', 1)[1]
+                    os.environ['SENDGRID_API_KEY'] = key_value
+                    break
+    except Exception as e:
+        print(f"Warning: Could not load .env file: {e}")
 
 
 # Quick-start development settings - unsuitable for production
@@ -61,7 +75,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email settings - SendGrid SMTP (Production)
-import os
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Console (for debugging)
 EMAIL_HOST = 'smtp.sendgrid.net'
