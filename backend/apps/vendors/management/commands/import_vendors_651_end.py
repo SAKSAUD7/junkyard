@@ -1,7 +1,7 @@
 import json
 import os
 from django.core.management.base import BaseCommand
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 
 class Command(BaseCommand):
     help = 'Import vendors from data_junkyards.json (entries 651 to end)'

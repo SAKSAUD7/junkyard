@@ -16,7 +16,7 @@ Usage:
     python manage.py shell < match_vendor_logos.py
 """
 
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 import os
 import re
 from pathlib import Path

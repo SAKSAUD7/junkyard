@@ -4,7 +4,7 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 
 # Search for Classic Auto Salvage
 vendor = Vendor.objects.filter(name__icontains='classic auto salvage').first()

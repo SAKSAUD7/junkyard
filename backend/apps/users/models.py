@@ -34,7 +34,7 @@ class VendorProfile(models.Model):
     """Link users to vendors for dashboard access"""
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='vendor_profile')
-    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='profiles')
+    vendor = models.ForeignKey('hollander.Vendor', on_delete=models.CASCADE, related_name='profiles')
     is_owner = models.BooleanField(default=False)
     can_edit = models.BooleanField(default=True)
     can_respond_reviews = models.BooleanField(default=True)

@@ -2,7 +2,7 @@ import json
 import os
 from django.core.management.base import BaseCommand
 from apps.common.models import Make, Model, Part, State, City
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 
 
 class Command(BaseCommand):

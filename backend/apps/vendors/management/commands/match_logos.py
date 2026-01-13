@@ -2,7 +2,7 @@
 Match vendor logos from frontend to database vendors
 """
 from django.core.management.base import BaseCommand
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 import os
 import re
 from pathlib import Path

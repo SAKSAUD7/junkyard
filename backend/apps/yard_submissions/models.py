@@ -68,7 +68,7 @@ class YardSubmission(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     admin_notes = models.TextField(blank=True, help_text="Internal admin notes")
     created_vendor = models.ForeignKey(
-        'vendors.Vendor', 
+        'hollander.Vendor', 
         null=True, 
         blank=True, 
         on_delete=models.SET_NULL,

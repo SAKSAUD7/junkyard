@@ -96,7 +96,7 @@ Review at: {settings.SITE_URL}/admin/yard_submissions/yardsubmission/{submission
             )
         
         # Check for duplicate vendors
-        from apps.vendors.models import Vendor
+        from apps.hollander.models import Vendor
         existing = Vendor.objects.filter(
             name__iexact=submission.business_name,
             city__iexact=submission.city
@@ -164,7 +164,7 @@ Review at: {settings.SITE_URL}/admin/yard_submissions/yardsubmission/{submission
     
     def create_vendor_from_submission(self, submission):
         """Create a Vendor from approved submission"""
-        from apps.vendors.models import Vendor
+        from apps.hollander.models import Vendor
         from django.utils.text import slugify
         
         # Generate slug

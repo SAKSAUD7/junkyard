@@ -72,7 +72,7 @@ class YardSubmissionAdmin(admin.ModelAdmin):
     
     def approve_and_create_vendor(self, request, queryset):
         """Approve submissions and create vendors"""
-        from apps.vendors.models import Vendor
+        from apps.hollander.models import Vendor
         
         approved_count = 0
         skipped_count = 0

@@ -12,7 +12,7 @@ Usage:
 """
 
 from django.core.management.base import BaseCommand
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 from django.conf import settings
 from pathlib import Path
 import os

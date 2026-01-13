@@ -3,7 +3,7 @@ Import vendor logos from data_junkyards.json
 Database-first approach using existing JSON data
 """
 from django.core.management.base import BaseCommand
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 import json
 from pathlib import Path
 import os
