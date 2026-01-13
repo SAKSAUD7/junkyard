@@ -2,7 +2,7 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
-from apps.hollander.models import Vendor
+from .models import Vendor
 from .serializers import VendorSerializer
 
 
@@ -40,7 +40,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         zipcode = self.request.query_params.get('zipcode', None)
         if zipcode:
             # Match first 3 digits for area-based search
-            queryset = queryset.filter(zip_code__startswith=zipcode[:3])
+            queryset = queryset.filter(zipcode__startswith=zipcode[:3])
         
         # Search by name
         search = self.request.query_params.get('search', None)
@@ -52,3 +52,35 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
             )
         
         return queryset
+
+    @action(detail=False, methods=['get'])
+    def suggest_zipcodes(self, request):
+        """
+        Return a list of detailed location info for autocomplete.
+        Returns format: {
+            "zipcode": "12345",
+            "city": "City Name", 
+            "state": "ST",
+            "display": "12345 - City Name, ST"
+        }
+        """
+        prefix = request.query_params.get('prefix', '')
+        if not prefix or len(prefix) < 2:
+            return Response([])
+        
+        # Get vendors with zipcodes starting with prefix
+        # We need distinct locations, so we group by zipcode, city, state
+        matches = Vendor.objects.filter(
+            zipcode__startswith=prefix
+        ).values('zipcode', 'city', 'state').distinct().order_by('zipcode')[:10]
+        
+        results = []
+        for m in matches:
+            results.append({
+                "zipcode": m['zipcode'],
+                "city": m['city'],
+                "state": m['state'],
+                "display": f"{m['zipcode']} - {m['city']}, {m['state']}"
+            })
+            
+        return Response(results)

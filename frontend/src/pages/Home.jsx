@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import LeadForm from '../components/LeadForm'
 import TrustedVendors from '../components/TrustedVendors'
 import { useData } from '../hooks/useData'
+import { api } from '../services/api'
 import DynamicAd from '../components/DynamicAd'
 import SponsoredAd from '../components/qualityautoparts'
 import SideAd from '../components/SideAd'
@@ -15,6 +16,8 @@ import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData
 export default function Home() {
     const navigate = useNavigate()
     const [zipcode, setZipcode] = useState('')
+    const [suggestions, setSuggestions] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
     const carouselRef = useRef(null)
     const { data: allVendors } = useData('data_junkyards_complete.json')
 
@@ -72,6 +75,24 @@ export default function Home() {
         e.preventDefault()
         if (zipcode) {
             navigate(`/search?zipcode=${zipcode}`)
+        }
+    }
+
+    const handleZipChange = async (e) => {
+        const val = e.target.value
+        setZipcode(val)
+
+        if (val.length >= 2) {
+            try {
+                const results = await api.suggestZipcodes(val)
+                setSuggestions(results)
+                setShowSuggestions(true)
+            } catch (err) {
+                console.error(err)
+            }
+        } else {
+            setSuggestions([])
+            setShowSuggestions(false)
         }
     }
 
@@ -144,8 +165,8 @@ export default function Home() {
                             <div className="w-16 h-1 bg-orange-500 mx-auto rounded-full shadow-glow"></div>
 
                             {/* Zip Code Search Bar */}
-                            <div className="w-full max-w-md mx-auto mt-6 px-4">
-                                <form onSubmit={handleZipSearch} className="relative group">
+                            <div className="w-full max-w-md mx-auto mt-6 px-4 relative">
+                                <form onSubmit={handleZipSearch} className="relative group z-20">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                         <svg className="h-5 w-5 text-gray-400 group-focus-within:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -156,7 +177,8 @@ export default function Home() {
                                         className="block w-full pl-12 pr-28 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all shadow-xl"
                                         placeholder="Enter Zip Code..."
                                         value={zipcode}
-                                        onChange={(e) => setZipcode(e.target.value)}
+                                        onChange={handleZipChange}
+                                        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                         maxLength={5}
                                     />
                                     <button
@@ -169,6 +191,30 @@ export default function Home() {
                                         </svg>
                                     </button>
                                 </form>
+
+                                {/* Autocomplete Dropdown */}
+                                {showSuggestions && suggestions.length > 0 && (
+                                    <div className="absolute top-full left-4 right-4 mt-2 z-10">
+                                        <div className="bg-dark-900/95 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+                                            {suggestions.map((s, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 flex items-center justify-between group"
+                                                    onClick={() => {
+                                                        setZipcode(s.zipcode)
+                                                        setShowSuggestions(false)
+                                                        navigate(`/search?zipcode=${s.zipcode}`)
+                                                    }}
+                                                >
+                                                    <span className="font-mono text-cyan-400 font-bold">{s.zipcode}</span>
+                                                    <span className="text-sm text-white/60 group-hover:text-white transition-colors">{s.city}, {s.state}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <p className="text-white/40 text-xs text-center mt-3">
                                     Search thousands of junkyards instantly
                                 </p>
