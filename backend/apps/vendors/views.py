@@ -25,6 +25,16 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         trusted = self.request.query_params.get('trusted', None)
         if trusted and trusted.lower() == 'true':
             queryset = queryset.filter(is_active=True).order_by('id')
+
+        # Filter for featured vendors
+        featured = self.request.query_params.get('featured', None)
+        if featured and featured.lower() == 'true':
+            queryset = queryset.filter(is_featured=True)
+
+        # Filter for top rated vendors
+        top_rated = self.request.query_params.get('top_rated', None)
+        if top_rated and top_rated.lower() == 'true':
+            queryset = queryset.filter(is_top_rated=True)
         
         # Filter by state
         state = self.request.query_params.get('state', None)

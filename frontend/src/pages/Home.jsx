@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import LeadForm from '../components/LeadForm'
 import TrustedVendors from '../components/TrustedVendors'
-import { useData } from '../hooks/useData'
 import { api } from '../services/api'
 import DynamicAd from '../components/DynamicAd'
 import SponsoredAd from '../components/qualityautoparts'
@@ -19,8 +18,8 @@ export default function Home() {
     const [suggestions, setSuggestions] = useState([])
     const [showSuggestions, setShowSuggestions] = useState(false)
     const carouselRef = useRef(null)
-    const { data: allVendors } = useData('data_junkyards_complete.json')
-
+    const [sponsoredVendors, setSponsoredVendors] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const combinedSchema = {
         '@context': 'https://schema.org',
@@ -30,25 +29,20 @@ export default function Home() {
         ]
     };
 
-    // Get top rated vendors
-    const topVendors = allVendors
-        ?.filter(v => {
-            if (typeof v.rating === 'string' && v.rating.includes('%')) {
-                return parseFloat(v.rating) >= 90; // Consider 90%+ as top rated
+    // Fetch data from API
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const featured = await api.getFeaturedVendors()
+                setSponsoredVendors(featured)
+            } catch (error) {
+                console.error('Error fetching home data:', error)
+            } finally {
+                setLoading(false)
             }
-            return parseFloat(v.rating) >= 4.5;
-        })
-        ?.sort((a, b) => {
-            const rA = parseFloat(a.rating) || 0;
-            const rB = parseFloat(b.rating) || 0;
-            return rB - rA;
-        })
-        ?.slice(0, 6) || []
-
-    // Get sponsored vendors (top 8 with highest ratings)
-    const sponsoredVendors = allVendors
-        ?.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
-        .slice(0, 8) || []
+        }
+        fetchData()
+    }, [])
 
     // Auto-scroll carousel every 3 seconds
     useEffect(() => {
@@ -250,7 +244,7 @@ export default function Home() {
                                 </div>
 
                                 <h2 className="compact-title font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 mb-2 px-2 sm:px-3">
-                                    Top-Rated Vendors
+                                    Featured Vendors
                                 </h2>
                                 <p className="compact-text text-white/60 max-w-2xl mx-auto px-3 sm:px-4">
                                     Verified excellence. Trusted by thousands.
@@ -338,7 +332,7 @@ export default function Home() {
                                     onClick={() => navigate('/vendors')}
                                     className="inline-flex items-center gap-3 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white font-black px-10 py-5 rounded-2xl transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl group"
                                 >
-                                    <span>EXPLORE ALL {allVendors?.length || ''} VENDORS</span>
+                                    <span>EXPLORE ALL VENDORS</span>
                                     <svg className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>

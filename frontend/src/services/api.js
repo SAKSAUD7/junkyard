@@ -27,6 +27,20 @@ export const api = {
     return Array.isArray(data) ? data.slice(0, limit) : data;
   },
 
+  getFeaturedVendors: async (limit = 8) => {
+    const response = await fetch(`${API_BASE_URL}/vendors/?featured=true`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return Array.isArray(data) ? data.slice(0, limit) : data;
+  },
+
+  getTopRatedVendors: async (limit = 6) => {
+    const response = await fetch(`${API_BASE_URL}/vendors/?top_rated=true`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return Array.isArray(data) ? data.slice(0, limit) : data;
+  },
+
   suggestZipcodes: async (prefix) => {
     const response = await fetch(`${API_BASE_URL}/vendors/suggest_zipcodes/?prefix=${prefix}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
