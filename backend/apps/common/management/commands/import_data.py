@@ -86,7 +86,24 @@ class Command(BaseCommand):
         self.stdout.write('Importing vendors...')
         with open(os.path.join(data_dir, 'data_junkyards.json'), 'r', encoding='utf-8') as f:
             vendors_data = json.load(f)
-            for item in vendors_data:
+            for idx, item in enumerate(vendors_data):
+                # Parse rating
+                rating_str = item.get('rating', '100%').strip('%')
+                try:
+                    rating_pct = int(rating_str)
+                except ValueError:
+                    rating_pct = 0
+                
+                # Calculate stars
+                rating_stars = round((rating_pct / 100) * 5)
+                if rating_stars < 1: rating_stars = 1
+
+                # Determine flags
+                is_top_rated = rating_pct >= 90
+                # Mark first 24 as featured for demo purposes, plus any really good ones
+                is_featured = idx < 24 or (rating_pct == 100 and idx % 5 == 0)
+                is_trusted = is_top_rated
+
                 Vendor.objects.update_or_create(
                     id=item['id'],
                     defaults={
@@ -98,6 +115,11 @@ class Command(BaseCommand):
                         'description': item.get('description', ''),
                         'review_snippet': item.get('reviewSnippet', ''),
                         'rating': item.get('rating', '100%'),
+                        'rating_percentage': rating_pct,
+                        'rating_stars': rating_stars,
+                        'is_top_rated': is_top_rated,
+                        'is_featured': is_featured,
+                        'is_trusted': is_trusted,
                         'profile_url': item.get('profileUrl', ''),
                         'logo': item.get('logo', '/images/logo-placeholder.png')
                     }
