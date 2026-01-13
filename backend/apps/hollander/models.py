@@ -117,6 +117,21 @@ class Vendor(models.Model):
     phone = models.CharField(max_length=50, blank=True, default='')
     email = models.EmailField(blank=True, default='')
     website = models.URLField(blank=True, default='')
+    
+    # UI/Frontend Fields
+    description = models.TextField(blank=True, default='')
+    review_snippet = models.TextField(blank=True, default='')
+    profile_url = models.CharField(max_length=255, blank=True, default='')
+    logo = models.CharField(max_length=255, default="/images/logo-placeholder.png")
+    
+    rating = models.CharField(max_length=20, default="100%")
+    rating_stars = models.IntegerField(default=5)
+    rating_percentage = models.IntegerField(default=100)
+    
+    is_top_rated = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
+    is_trusted = models.BooleanField(default=False)
+
     is_active = models.BooleanField(default=True)
     
     class Meta:
