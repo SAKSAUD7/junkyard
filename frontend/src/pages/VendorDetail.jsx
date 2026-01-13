@@ -9,7 +9,8 @@ import SEO from '../components/SEO';
 import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 const VendorDetail = () => {
-    const { id } = useParams();
+    const params = useParams();
+    const { id } = params;
     const navigate = useNavigate();
     const [vendor, setVendor] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -20,9 +21,24 @@ const VendorDetail = () => {
             try {
                 setLoading(true);
                 const data = await api.getVendors();
-                const foundVendor = data.find(v => v.id === parseInt(id));
-                setVendor(foundVendor);
-                setError(foundVendor ? null : 'Vendor not found');
+
+                let targetId = id;
+                // Support legacy URLs: /junkyards/:state/:slug
+                // Slug format: ID-SLUG (e.g., 6481441-1-morgan-highway-auto-parts)
+                if (!targetId && params.slug) {
+                    const match = params.slug.match(/^(\d+)-/);
+                    if (match && match[1]) {
+                        targetId = match[1];
+                    }
+                }
+
+                if (targetId) {
+                    const foundVendor = data.find(v => v.id === parseInt(targetId));
+                    setVendor(foundVendor);
+                    setError(foundVendor ? null : 'Vendor not found');
+                } else {
+                    setError('Invalid vendor ID');
+                }
             } catch (err) {
                 console.error('Error fetching vendor:', err);
                 setError('Failed to load vendor');
@@ -31,7 +47,7 @@ const VendorDetail = () => {
             }
         };
         fetchVendor();
-    }, [id]);
+    }, [id, params.slug]);
 
     if (loading) {
         return (

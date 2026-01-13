@@ -1,23 +1,38 @@
+import { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Search from './pages/Search'
-import BrowseStates from './pages/BrowseStates'
-import BrowseState from './pages/BrowseState'
-import JunkyardDetail from './pages/JunkyardDetail'
-import AllVendors from './pages/AllVendors'
-import VendorDetail from './pages/VendorDetail'
-import QuoteRequest from './pages/QuoteRequest'
-import AddYardPage from './pages/AddYardPage'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Privacy from './pages/Privacy'
-import Terms from './pages/Terms'
-import HowItWorks from './pages/HowItWorks'
-import FAQ from './pages/FAQ'
+
+// Lazy load all pages for better performance (Code Splitting)
+const Home = lazy(() => import('./pages/Home'))
+const Search = lazy(() => import('./pages/Search'))
+const BrowseStates = lazy(() => import('./pages/BrowseStates'))
+const BrowseState = lazy(() => import('./pages/BrowseState'))
+const JunkyardDetail = lazy(() => import('./pages/JunkyardDetail'))
+const AllVendors = lazy(() => import('./pages/AllVendors'))
+const VendorDetail = lazy(() => import('./pages/VendorDetail'))
+const QuoteRequest = lazy(() => import('./pages/QuoteRequest'))
+const AddYardPage = lazy(() => import('./pages/AddYardPage'))
+const About = lazy(() => import('./pages/About'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Terms = lazy(() => import('./pages/Terms'))
+const HowItWorks = lazy(() => import('./pages/HowItWorks'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+
+// Import specialized components
+
+// Loading Fallback Component
+const PageLoader = () => (
+  <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+    <div className="text-center">
+      <div className="inline-block w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p className="text-white/60 font-medium">Loading...</p>
+    </div>
+  </div>
+)
 
 function App() {
   return (
-    <>
+    <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
@@ -34,8 +49,17 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
+
+        {/* SEO: Legacy URL Redirects */}
+        {/* Captures pattern: /junkyards/:state/:slug */}
+        {/* Example: /junkyards/pennsylvania/6481441-1-morgan-highway-auto-parts-scranton-pa */}
+        <Route path="/junkyards/:state/:slug" element={<VendorDetail />} />
+
+        {/* Legacy pagination redirects (optional, redirect to main vendors list) */}
+        <Route path="/junkyards" element={<AllVendors />} />
+
       </Routes>
-    </>
+    </Suspense>
   )
 }
 

@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadForm from '../components/LeadForm';
 import LocationMap from '../components/LocationMap';
+import SEO from '../components/SEO';
+import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 const JunkyardDetail = () => {
     const { id } = useParams();
@@ -46,8 +48,32 @@ const JunkyardDetail = () => {
         );
     }
 
+    const localBusinessSchema = vendor ? getLocalBusinessSchema({
+        name: vendor.name,
+        address: vendor.address,
+        city: vendor.city,
+        state: vendor.state,
+        zipcode: vendor.zipcode,
+        description: vendor.description,
+        rating: vendor.rating,
+        logo: vendor.logo,
+        id: vendor.id
+    }) : null;
+
+    const breadcrumbSchema = vendor ? getBreadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Browse', url: '/browse' },
+        { name: vendor.name, url: `/junkyard/${vendor.id}` }
+    ]) : null;
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <SEO
+                title={vendor ? `${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}` : 'Junkyard Details'}
+                description={vendor?.description || `Find used auto parts at ${vendor?.name}.`}
+                canonicalUrl={`/junkyard/${id}`}
+                structuredData={[localBusinessSchema, breadcrumbSchema]}
+            />
             <Navbar />
 
             {/* Breadcrumb */}
