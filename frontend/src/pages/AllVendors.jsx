@@ -82,7 +82,7 @@ const AllVendors = () => {
         <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
             <SEO
                 title={`All Junkyards - Browse ${junkyards?.length || 0} Auto Salvage Yards Nationwide`}
-                description={`Browse our complete directory of ${junkyards?.length || 0} verified auto salvage yards across ${states.length} states. Find used auto parts, compare prices, and connect with local junkyards.`}
+                description={`Browse our complete directory of ${junkyards?.length || 0} verified auto salvage yards across ${states.length} states.Find used auto parts, compare prices, and connect with local junkyards.`}
                 canonicalUrl="/vendors"
                 structuredData={[collectionSchema]}
             />
@@ -296,10 +296,10 @@ const AllVendors = () => {
                                 <button
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === 1
-                                        ? 'text-white/30 cursor-not-allowed'
-                                        : 'text-white hover:bg-white/10'
-                                        }`}
+                                    className={`px - 4 py - 2 rounded - xl font - semibold transition - all duration - 300 ${currentPage === 1
+                                            ? 'text-white/30 cursor-not-allowed'
+                                            : 'text-white hover:bg-white/10'
+                                        } `}
                                 >
                                     ← Previous
                                 </button>
@@ -318,10 +318,10 @@ const AllVendors = () => {
                                                 <button
                                                     key={pageNumber}
                                                     onClick={() => paginate(pageNumber)}
-                                                    className={`min-w-[40px] px-3 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === pageNumber
-                                                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-glow'
-                                                        : 'text-white/70 hover:bg-white/10 hover:text-white'
-                                                        }`}
+                                                    className={`min - w - [40px] px - 3 py - 2 rounded - xl font - semibold transition - all duration - 300 ${currentPage === pageNumber
+                                                            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-glow'
+                                                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                                        } `}
                                                 >
                                                     {pageNumber}
                                                 </button>
@@ -344,10 +344,10 @@ const AllVendors = () => {
                                 <button
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPage === totalPages
-                                        ? 'text-white/30 cursor-not-allowed'
-                                        : 'text-white hover:bg-white/10'
-                                        }`}
+                                    className={`px - 4 py - 2 rounded - xl font - semibold transition - all duration - 300 ${currentPage === totalPages
+                                            ? 'text-white/30 cursor-not-allowed'
+                                            : 'text-white hover:bg-white/10'
+                                        } `}
                                 >
                                     Next →
                                 </button>

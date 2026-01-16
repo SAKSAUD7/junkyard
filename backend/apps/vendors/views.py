@@ -21,7 +21,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Vendor.objects.all().order_by('id')  # Order by ID
         
-        # Filter for trusted vendors (Mock Logic: just active for now)
+        # Filter for trusted vendors
         trusted = self.request.query_params.get('trusted', None)
         if trusted and trusted.lower() == 'true':
             queryset = queryset.filter(is_active=True).order_by('id')
@@ -35,7 +35,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         top_rated = self.request.query_params.get('top_rated', None)
         if top_rated and top_rated.lower() == 'true':
             queryset = queryset.filter(is_top_rated=True)
-        
+
         # Filter by state
         state = self.request.query_params.get('state', None)
         if state:
@@ -46,7 +46,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         if city:
             queryset = queryset.filter(city__iexact=city)
         
-        # Filter by zipcode (matches first 3 digits)
+        # Filter by zipcode (matches first 3 digits) - use zip_code field
         zipcode = self.request.query_params.get('zipcode', None)
         if zipcode:
             # Match first 3 digits for area-based search

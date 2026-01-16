@@ -12,9 +12,9 @@ export default function Navbar() {
 
     const navLinks = [
         { path: '/', label: 'Home' },
-        { path: '/vendors', label: 'Vendors' },
+        { path: '/junkyards', label: 'Vendors' },  // OLD URL for SEO
         { path: '/browse', label: 'Browse' },
-        { path: '/about', label: 'About' },
+        { path: '/about-us', label: 'About' },  // OLD URL for SEO
     ]
 
     return (

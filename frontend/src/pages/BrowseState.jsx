@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { api } from '../services/api';
 import { useData } from '../hooks/useData';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
@@ -10,16 +11,42 @@ import MobileAdBanner from '../components/MobileAdBanner';
 
 export default function BrowseState() {
     const { state } = useParams();
-    const { data: junkyards, loading } = useData('data_junkyards.json');
+    const [searchParams] = useSearchParams();
+    const initialSearch = searchParams.get('search') || '';
+
+    const [junkyards, setJunkyards] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { data: states } = useData('data_states.json');
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(initialSearch);
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 24;
+
+    // Fetch vendors from API
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                setLoading(true);
+                const data = await api.getVendors();
+                setJunkyards(data);
+            } catch (err) {
+                console.error('Error fetching vendors:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchVendors();
+    }, []);
 
     // Scroll to top when page loads or state changes
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [state]);
+
+    // Sync search term with URL
+    useEffect(() => {
+        const query = searchParams.get('search') || '';
+        setSearchTerm(query);
+    }, [searchParams]);
 
     // Filter junkyards by state
     const stateJunkyards = junkyards?.filter(
@@ -30,10 +57,11 @@ export default function BrowseState() {
     const stateInfo = states?.find(s => s.stateCode?.toLowerCase() === state.toLowerCase());
     const stateName = stateInfo?.stateName || state.toUpperCase();
 
-    // Filter by search term
+    // Filter by search term (name, city, or zipcode)
     const filteredJunkyards = stateJunkyards.filter(junkyard =>
         junkyard.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        junkyard.city.toLowerCase().includes(searchTerm.toLowerCase())
+        junkyard.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (junkyard.zipcode && junkyard.zipcode.toString().includes(searchTerm))
     );
 
     // Pagination

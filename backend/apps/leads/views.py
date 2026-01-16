@@ -36,6 +36,16 @@ class LeadViewSet(viewsets.ModelViewSet):
             from django.template.loader import render_to_string
             from django.core.mail import EmailMultiAlternatives
             from django.utils import timezone
+            import traceback
+            
+            print("="*80)
+            print("ATTEMPTING TO SEND EMAIL...")
+            print(f"From: {settings.DEFAULT_FROM_EMAIL}")
+            print(f"To: {settings.LEAD_NOTIFICATION_EMAIL}")
+            print(f"Backend: {settings.EMAIL_BACKEND}")
+            print(f"Host: {settings.EMAIL_HOST}")
+            print(f"API Key Set: {'Yes' if settings.EMAIL_HOST_PASSWORD else 'No'}")
+            print("="*80)
             
             # Prepare context for email template
             context = {
@@ -49,7 +59,10 @@ class LeadViewSet(viewsets.ModelViewSet):
             text_content = render_to_string('emails/lead_notification.txt', context)
             
             # Create email with both HTML and plain text
+            # Remove any special characters that might cause encoding issues
             subject = f"New Lead: {data['year']} {data['make']} {data['model']} - {data['part']}"
+            subject = subject.encode('ascii', 'ignore').decode('ascii')  # Remove non-ASCII chars
+            
             email = EmailMultiAlternatives(
                 subject=subject,
                 body=text_content,
@@ -57,11 +70,22 @@ class LeadViewSet(viewsets.ModelViewSet):
                 to=[settings.LEAD_NOTIFICATION_EMAIL],
             )
             email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=False)
+            email.encoding = 'utf-8'  # Explicitly set encoding
+            
+            print(f"Sending email with subject: {subject}")
+            result = email.send(fail_silently=False)
+            print(f"SUCCESS: Email sent successfully! Result: {result}")
+            print("="*80)
             
         except Exception as e:
-            # Log error but don't fail the lead creation
-            print(f"Email sending failed: {str(e)}")
+            # Log error with full traceback
+            import traceback
+            error_msg = f"Email sending failed: {str(e)}\n{traceback.format_exc()}"
+            print("="*80)
+            print("EMAIL ERROR:")
+            print(error_msg)
+            print("="*80)
+            # Don't fail the lead creation, but log the error
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

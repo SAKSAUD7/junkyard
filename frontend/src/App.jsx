@@ -19,6 +19,7 @@ const HowItWorks = lazy(() => import('./pages/HowItWorks'))
 const FAQ = lazy(() => import('./pages/FAQ'))
 
 // Import specialized components
+// LegacyRedirect not needed - using old URLs directly for SEO
 
 // Loading Fallback Component
 const PageLoader = () => (
@@ -50,13 +51,24 @@ function App() {
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
 
-        {/* SEO: Legacy URL Redirects */}
-        {/* Captures pattern: /junkyards/:state/:slug */}
-        {/* Example: /junkyards/pennsylvania/6481441-1-morgan-highway-auto-parts-scranton-pa */}
+        {/* SEO: Legacy URL Redirects from old junkyardsnearme.com */}
+        {/* Old vendor pages: /junkyards/:state/:slug */}
         <Route path="/junkyards/:state/:slug" element={<VendorDetail />} />
 
-        {/* Legacy pagination redirects (optional, redirect to main vendors list) */}
+        {/* Old main listing: /junkyards */}
         <Route path="/junkyards" element={<AllVendors />} />
+
+        {/* Old rating pages: /rate-junkyard/:slug */}
+        <Route path="/rate-junkyard/:slug" element={<VendorDetail />} />
+
+        {/* Old location browsing: /junkyards-by-location */}
+        <Route path="/junkyards-by-location" element={<BrowseStates />} />
+
+        {/* Old about page: /about-us */}
+        <Route path="/about-us" element={<About />} />
+
+        {/* Old terms page: /terms-and-conditions */}
+        <Route path="/terms-and-conditions" element={<Terms />} />
 
       </Routes>
     </Suspense>

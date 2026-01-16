@@ -29,9 +29,23 @@ export default function Home() {
 
     // Auto-scroll carousel removed as Featured Vendors section is removed
 
-    const handleZipSearch = (e) => {
+    const handleZipSearch = async (e) => {
         e.preventDefault()
-        if (zipcode) {
+        if (!zipcode) return
+
+        try {
+            // Try to find the state for this zip code to redirect to browse page
+            const results = await api.suggestZipcodes(zipcode)
+            if (results && results.length > 0) {
+                // Use the first match to get the state
+                const match = results[0]
+                navigate(`/browse/${match.state}?search=${zipcode}`)
+            } else {
+                // Fallback to generic search if state not found
+                navigate(`/search?zipcode=${zipcode}`)
+            }
+        } catch (error) {
+            console.error("Search redirect error:", error)
             navigate(`/search?zipcode=${zipcode}`)
         }
     }
@@ -159,10 +173,11 @@ export default function Home() {
                                                     key={i}
                                                     type="button"
                                                     className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 flex items-center justify-between group"
-                                                    onClick={() => {
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault(); // Prevent input blur
                                                         setZipcode(s.zipcode)
                                                         setShowSuggestions(false)
-                                                        navigate(`/search?zipcode=${s.zipcode}`)
+                                                        navigate(`/browse/${s.state}?search=${s.zipcode}`)
                                                     }}
                                                 >
                                                     <span className="font-mono text-cyan-400 font-bold">{s.zipcode}</span>

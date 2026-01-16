@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 
@@ -110,8 +110,7 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     useEffect(() => {
         generateSecurityCode()
-        // Load initial Makes
-        loadMakes()
+        // DON'T load makes on mount - wait for user to click dropdown
     }, [])
 
     // Auto-populate ZIP code when state changes
@@ -127,6 +126,9 @@ export default function LeadForm({ layout = 'vertical' }) {
     // -- API Loaders --
 
     const loadMakes = async () => {
+        // Only load if not already loaded
+        if (makes.length > 0 || loadingMakes) return
+
         setLoadingMakes(true)
         try {
             const data = await api.getMakes()
@@ -138,7 +140,7 @@ export default function LeadForm({ layout = 'vertical' }) {
         }
     }
 
-    // When Make Changes -> Load Models
+    // When Make Changes -> Load Models (with debouncing)
     useEffect(() => {
         if (!selectedMake) {
             setModels([])
@@ -147,27 +149,32 @@ export default function LeadForm({ layout = 'vertical' }) {
             return
         }
 
-        const loadModels = async () => {
-            setLoadingModels(true)
-            try {
-                // selectedMake is ID here
-                const data = await api.getModels({ make_id: selectedMake })
-                setModels(data || [])
-            } catch (err) {
-                console.error("Failed to load models", err)
-            } finally {
-                setLoadingModels(false)
+        // Debounce to prevent rapid API calls
+        const timeoutId = setTimeout(() => {
+            const loadModels = async () => {
+                setLoadingModels(true)
+                try {
+                    // selectedMake is ID here
+                    const data = await api.getModels({ make_id: selectedMake })
+                    setModels(data || [])
+                } catch (err) {
+                    console.error("Failed to load models", err)
+                } finally {
+                    setLoadingModels(false)
+                }
             }
-        }
-        loadModels()
+            loadModels()
+        }, 100) // 100ms debounce
 
         // Reset downstream
         setSelectedModel('')
         setSelectedYear('')
         setSelectedPart('')
+
+        return () => clearTimeout(timeoutId)
     }, [selectedMake])
 
-    // When Model Changes -> Load Years
+    // When Model Changes -> Load Years (with debouncing)
     useEffect(() => {
         if (!selectedMake || !selectedModel) {
             setYears([])
@@ -175,56 +182,62 @@ export default function LeadForm({ layout = 'vertical' }) {
             return
         }
 
-        const loadYears = async () => {
-            setLoadingYears(true)
-            try {
-                const data = await api.getYears({
-                    make_id: selectedMake,
-                    model_id: selectedModel
-                })
-                setYears(data || [])
-            } catch (err) {
-                console.error("Failed to load years", err)
-            } finally {
-                setLoadingYears(false)
+        const timeoutId = setTimeout(() => {
+            const loadYears = async () => {
+                setLoadingYears(true)
+                try {
+                    const data = await api.getYears({
+                        make_id: selectedMake,
+                        model_id: selectedModel
+                    })
+                    setYears(data || [])
+                } catch (err) {
+                    console.error("Failed to load years", err)
+                } finally {
+                    setLoadingYears(false)
+                }
             }
-        }
-        loadYears()
+            loadYears()
+        }, 100) // 100ms debounce
 
         // Reset downstream
         setSelectedYear('')
         setSelectedPart('')
+
+        return () => clearTimeout(timeoutId)
     }, [selectedModel])
 
 
-    // When Year Changes -> Load Parts (Filtered)
+    // When Year Changes -> Load Parts (Filtered, with debouncing)
     useEffect(() => {
         if (!selectedMake || !selectedModel || !selectedYear) {
             setParts([])
             return
         }
 
-        const loadParts = async () => {
-            setLoadingParts(true)
-            try {
-                const data = await api.getParts({
-                    make_id: selectedMake,
-                    model_id: selectedModel,
-                    year: selectedYear
-                })
-                setParts(data || [])
-            } catch (err) {
-                console.error("Failed to load parts", err)
-                // Fallback to all parts? Maybe better to show empty if none found
-                // setParts([])
-            } finally {
-                setLoadingParts(false)
+        const timeoutId = setTimeout(() => {
+            const loadParts = async () => {
+                setLoadingParts(true)
+                try {
+                    const data = await api.getParts({
+                        make_id: selectedMake,
+                        model_id: selectedModel,
+                        year: selectedYear
+                    })
+                    setParts(data || [])
+                } catch (err) {
+                    console.error("Failed to load parts", err)
+                } finally {
+                    setLoadingParts(false)
+                }
             }
-        }
-        loadParts()
+            loadParts()
+        }, 100) // 100ms debounce
 
         // Reset downstream
         setSelectedPart('')
+
+        return () => clearTimeout(timeoutId)
     }, [selectedYear])
 
 
@@ -355,6 +368,27 @@ export default function LeadForm({ layout = 'vertical' }) {
         generateSecurityCode()
     }
 
+    // Memoize dropdown options for performance
+    const makeOptions = useMemo(() =>
+        makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>),
+        [makes]
+    )
+
+    const modelOptions = useMemo(() =>
+        models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>),
+        [models]
+    )
+
+    const yearOptions = useMemo(() =>
+        years.map(y => <option key={y} value={y}>{y}</option>),
+        [years]
+    )
+
+    const partOptions = useMemo(() =>
+        parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>),
+        [parts]
+    )
+
     if (isSuccess) {
         return (
             <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-dark-900/95 backdrop-blur-md p-8 rounded-xl border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px] animate-fade-in`}>
@@ -414,11 +448,12 @@ export default function LeadForm({ layout = 'vertical' }) {
                             <select
                                 value={selectedMake}
                                 onChange={(e) => setSelectedMake(e.target.value)}
+                                onFocus={loadMakes}
                                 className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none"
                                 required
                             >
                                 <option value="">Select Make</option>
-                                {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
+                                {makeOptions}
                             </select>
                         </div>
 
@@ -436,7 +471,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                                 required
                             >
                                 <option value="">Select Model</option>
-                                {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
+                                {modelOptions}
                             </select>
                         </div>
 
@@ -454,7 +489,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                                 required
                             >
                                 <option value="">Select Year</option>
-                                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                                {yearOptions}
                             </select>
                             <p className="text-[9px] md:text-[10px] text-white/50 mt-0.5">
                                 💡 Best results for 2010-2024 vehicles
@@ -475,7 +510,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                                 required
                             >
                                 <option value="">Select Part</option>
-                                {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                                {partOptions}
                             </select>
                         </div>
 
