@@ -2,7 +2,7 @@
 Utility functions for lead assignment to vendors
 """
 
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 
 
 def assign_lead_to_vendors(lead):

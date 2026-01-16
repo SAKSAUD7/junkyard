@@ -6,7 +6,7 @@ from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
 
-from apps.vendors.models import Vendor
+from apps.hollander.models import Vendor
 from apps.leads.models import Lead
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours

@@ -38,7 +38,7 @@ class Lead(models.Model):
     
     # Vendor Assignment - NEW for Vendor Portal
     assigned_vendors = models.ManyToManyField(
-        'vendors.Vendor',
+        'hollander.Vendor',
         related_name='assigned_leads',
         blank=True,
         help_text="Vendors this lead is assigned to"

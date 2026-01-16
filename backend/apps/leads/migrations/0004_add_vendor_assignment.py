@@ -7,13 +7,13 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('leads', '0003_lead_hollander_number_lead_options_lead_state_and_more'),
-        ('vendors', '0006_vendor_inventory_preferences_vendor_is_active'),
+        ('hollander', '0002_vendor_partpricing_make_ref_partpricing_model_ref_and_more'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='lead',
             name='assigned_vendors',
-            field=models.ManyToManyField(blank=True, help_text='Vendors this lead is assigned to', related_name='assigned_leads', to='vendors.vendor'),
+            field=models.ManyToManyField(blank=True, help_text='Vendors this lead is assigned to', related_name='assigned_leads', to='hollander.vendor'),
         ),
     ]

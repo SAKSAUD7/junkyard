@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('leads', '0003_lead_hollander_number_lead_options_lead_state_and_more'),
-        ('vendors', '0006_vendor_inventory_preferences_vendor_is_active'),
+        ('hollander', '0002_vendor_partpricing_make_ref_partpricing_model_ref_and_more'),
     ]
 
     operations = [
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('open_time', models.TimeField(blank=True, null=True)),
                 ('close_time', models.TimeField(blank=True, null=True)),
                 ('notes', models.CharField(blank=True, max_length=200)),
-                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='business_hours', to='vendors.vendor')),
+                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='business_hours', to='hollander.vendor')),
             ],
             options={
                 'db_table': 'vendor_business_hours',
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inventory_items', to='vendors.vendor')),
+                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inventory_items', to='hollander.vendor')),
             ],
             options={
                 'db_table': 'vendor_inventory',
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                 ('read_at', models.DateTimeField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('lead', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='leads.lead')),
-                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to='vendors.vendor')),
+                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to='hollander.vendor')),
             ],
             options={
                 'db_table': 'vendor_notifications',

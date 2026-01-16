@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Search from './pages/Search'
 import BrowseStates from './pages/BrowseStates'
@@ -54,11 +54,13 @@ function App() {
         } />
 
         <Route path="/vendors" element={<AllVendors />} />
+        <Route path="/junkyards" element={<Navigate to="/vendors" replace />} /> {/* Legacy SEO Redirect */}
         <Route path="/vendors/:id" element={<VendorDetail />} />
         <Route path="/browse" element={<BrowseStates />} />
         <Route path="/browse/:state" element={<BrowseState />} />
         <Route path="/junkyard/:id" element={<JunkyardDetail />} />
         <Route path="/about" element={<About />} />
+        <Route path="/about-us" element={<Navigate to="/about" replace />} /> {/* Legacy SEO Redirect */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />

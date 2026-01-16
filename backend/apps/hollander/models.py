@@ -133,6 +133,7 @@ class Vendor(models.Model):
     is_trusted = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
+    inventory_preferences = models.JSONField(blank=True, default=dict, help_text='Inventory management settings')
     
     class Meta:
         db_table = 'hollander_vendor'

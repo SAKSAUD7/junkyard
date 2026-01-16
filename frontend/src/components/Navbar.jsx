@@ -50,9 +50,9 @@ export default function Navbar() {
 
     const navLinks = [
         { path: '/', label: 'Home' },
-        { path: '/junkyards', label: 'Vendors' },  // OLD URL for SEO
+        { path: '/vendors', label: 'Vendors' },
         { path: '/browse', label: 'Browse' },
-        { path: '/about-us', label: 'About' },  // OLD URL for SEO
+        { path: '/about', label: 'About' },  // OLD URL for SEO
     ]
 
     return (

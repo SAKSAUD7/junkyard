@@ -11,7 +11,7 @@ class VendorInventory(models.Model):
         ('part', 'Part'),
     ]
     
-    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='inventory_items')
+    vendor = models.ForeignKey('hollander.Vendor', on_delete=models.CASCADE, related_name='inventory_items')
     item_type = models.CharField(max_length=10, choices=ITEM_TYPE_CHOICES)
     
     # Hierarchical structure
@@ -67,7 +67,7 @@ class VendorNotification(models.Model):
         ('account', 'Account Notification'),
     ]
     
-    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='notifications')
+    vendor = models.ForeignKey('hollander.Vendor', on_delete=models.CASCADE, related_name='notifications')
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES)
     title = models.CharField(max_length=200)
     message = models.TextField()
@@ -106,7 +106,7 @@ class VendorBusinessHours(models.Model):
         (6, 'Sunday'),
     ]
     
-    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='business_hours')
+    vendor = models.ForeignKey('hollander.Vendor', on_delete=models.CASCADE, related_name='business_hours')
     day_of_week = models.IntegerField(choices=DAY_CHOICES)
     
     is_open = models.BooleanField(default=True)

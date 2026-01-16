@@ -17,7 +17,7 @@ def notify_vendors_on_new_lead(sender, instance, created, **kwargs):
         # Get vendors that match the lead criteria
         # For now, notify all active vendors
         # TODO: Implement smart matching based on inventory
-        from apps.vendors.models import Vendor
+        from apps.hollander.models import Vendor
         
         active_vendors = Vendor.objects.filter(is_active=True)
         
