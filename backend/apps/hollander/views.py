@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Make, Model, PartPricing, PartType, HollanderMakeModelRef, HollanderIndex, HollanderPartRef
+from .models import Make, Model, PartPricing, PartType, HollanderMakeModelRef, HollanderIndex, HollanderPartRef, Zipcode
 from django.db.models import Q, Min, Max
 
 # ==========================================
@@ -244,3 +244,23 @@ def get_parts(request):
 
     data = [{'partID': p.part_id, 'partName': p.part_name} for p in parts]
     return Response(data)
+
+
+@api_view(['GET'])
+def search_pincodes(request):
+    """
+    Search for pincodes and return matching results with exact state.
+    Query parameter: q (search query)
+    Returns: List of {postal_code, city_name, state_abbr}
+    """
+    query = request.query_params.get('q', '').strip()
+    
+    if not query or len(query) < 1:
+        return Response([])
+    
+    # Search for pincodes that start with the query (exact match, no substring replication)
+    zipcodes = Zipcode.objects.filter(
+        postal_code__startswith=query
+    ).values('postal_code', 'city_name', 'state_abbr').distinct()[:10]
+    
+    return Response(list(zipcodes))

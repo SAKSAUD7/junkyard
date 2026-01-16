@@ -4,7 +4,7 @@ import SEO from '../components/SEO'
 
 export default function Privacy() {
     return (
-        <div className="min-h-screen bg-[#0f172a] text-white selection:bg-blue-500/30">
+        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50 text-gray-700 selection:bg-blue-100">
             {/* SEO Meta Tags */}
             <SEO
                 title="Privacy Policy - Your Data Protection & Privacy Rights"
@@ -13,26 +13,26 @@ export default function Privacy() {
 
             <Navbar />
 
-            <div className="relative compact-section overflow-hidden">
+            <div className="relative compact-section overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
                 {/* Background Grid */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
-                <div className="absolute inset-0 bg-blue-600/5 blur-[120px] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-white/5 blur-[120px] pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="mb-12 text-center">
-                        <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full mb-6">
-                            <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full mb-6">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white/90 text-sm font-semibold">LEGAL</span>
+                            <span className="text-white text-sm font-semibold">LEGAL</span>
                         </div>
-                        <h1 className="compact-hero font-black mb-2 sm:mb-3 md:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-200 px-2">
+                        <h1 className="compact-hero font-black mb-2 sm:mb-3 md:mb-4 text-white px-2">
                             Privacy Policy
                         </h1>
-                        <p className="text-gray-400">Last updated: {new Date().toLocaleDateString()}</p>
+                        <p className="text-white/80">Last updated: {new Date().toLocaleDateString()}</p>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl compact-card space-y-3 sm:space-y-4 md:space-y-6 text-gray-300 leading-relaxed">
+                    <div className="bg-white shadow-xl border border-gray-100 rounded-2xl md:rounded-3xl compact-card space-y-3 sm:space-y-4 md:space-y-6 text-gray-600 leading-relaxed -mt-8 relative z-20">
                         <section>
                             <p className="mb-3 sm:mb-4 md:mb-6 compact-text">
                                 Your privacy is very important to us. Accordingly, Junkyards Near Me has developed this Policy in order for you to understand how we collect, use, communicate and disclose and make use of personal information. The following outlines our privacy policy.
@@ -52,7 +52,7 @@ export default function Privacy() {
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">How do we protect your information?</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">How do we protect your information?</h2>
                             <p className="mb-2 sm:mb-3 md:mb-4 compact-text">
                                 We implement a variety of security measures to maintain the safety of your personal information when you place an order for services.
                             </p>
@@ -65,7 +65,7 @@ export default function Privacy() {
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">Do we use cookies?</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Do we use cookies?</h2>
                             <p className="mb-2 sm:mb-3 md:mb-4 compact-text">
                                 Yes. Cookies are small files that a site or its service provider transfers to your computer's hard drive through your Web browser (if you allow) that enables the site's or service provider's systems to recognize your browser and capture and remember certain information.
                             </p>
@@ -78,7 +78,7 @@ export default function Privacy() {
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">Do we disclose any information to outside parties?</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Do we disclose any information to outside parties?</h2>
                             <p className="mb-2 sm:mb-3 md:mb-4 compact-text">
                                 Junkyards Near Me does not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our website, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety.
                             </p>
@@ -88,28 +88,28 @@ export default function Privacy() {
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">Children's Online Privacy Protection Act Compliance</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Children's Online Privacy Protection Act Compliance</h2>
                             <p className="compact-text">
                                 Junkyards Near Me is in compliance with the requirements of COPPA (Children's Online Privacy Protection Act); we do not collect any information from anyone under 13 years of age. Our website, products and services are all directed to people who are at least 13 years old or older.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">English Language</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">English Language</h2>
                             <p className="compact-text">
                                 The English version of this Privacy Policy governs. All disputes, claims and causes of action (and related proceedings) will be communicated in English.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">Your Consent</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Your Consent</h2>
                             <p className="compact-text">
                                 By using our site, you consent to our privacy policy.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="compact-title font-bold text-white mb-2 sm:mb-3 md:mb-4">Changes to our Privacy Policy</h2>
+                            <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Changes to our Privacy Policy</h2>
                             <p className="compact-text">
                                 If we make a material change to our privacy policies and procedures as to the collection, use or disclosure of your Personal Information, we will post a notice of those changes on our Website or notify you by email (sent to the email address specified in your account) to keep you aware of what information we collect, how we use it and under what circumstances we may disclose it, prior to the change becoming effective. You are bound by changes to the Privacy Policy when you use the site after those changes have been posted. Junkyards Near Me encourages you to periodically review this page for the latest information on our privacy practices.
                             </p>

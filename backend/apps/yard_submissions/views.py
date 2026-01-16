@@ -34,9 +34,9 @@ class YardSubmissionViewSet(viewsets.ModelViewSet):
         return YardSubmissionSerializer
     
     def get_permissions(self):
-        """Allow public POST, require admin for everything else"""
+        """Require authentication for create, admin for everything else"""
         if self.action == 'create':
-            return [permissions.AllowAny()]
+            return [permissions.IsAuthenticated()]
         return [IsAdminUser()]
     
     def create(self, request, *args, **kwargs):

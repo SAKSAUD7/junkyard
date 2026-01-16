@@ -39,6 +39,11 @@ class Vendor(models.Model):
     logo = models.CharField(max_length=255, default="/images/logo-placeholder.png")
     is_trusted = models.BooleanField(default=False, help_text="Mark as trusted vendor for premium display")
     trust_level = models.IntegerField(default=0, help_text="Priority level (higher = more prominent)")
+    
+    # Vendor portal fields
+    is_active = models.BooleanField(default=True, help_text="Vendor account active status")
+    inventory_preferences = models.JSONField(default=dict, blank=True, help_text="Inventory management settings")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

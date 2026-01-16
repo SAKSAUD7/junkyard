@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/common/", include("apps.common.urls")),
     path("api/ads/", include("apps.ads.urls")),
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
+    path("api/vendor/", include("apps.vendor_portal.urls")),  # Vendor portal API
     
     # Hollander lookup endpoint
     path("api/hollander/lookup/", hollander_lookup, name="hollander_lookup"),

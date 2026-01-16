@@ -6,4 +6,5 @@ urlpatterns = [
     path('models/', views.get_models, name='get_models'),
     path('years/', views.get_years, name='get_years'),
     path('parts/', views.get_parts, name='get_parts'),
+    path('pincodes/search/', views.search_pincodes, name='search_pincodes'),
 ]

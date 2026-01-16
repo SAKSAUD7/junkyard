@@ -97,7 +97,7 @@ const FAQ = () => {
     const schema = getFAQSchema(allFAQs);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
             {/* SEO Meta Tags */}
             <SEO
                 title="Frequently Asked Questions - Junkyard & Auto Parts Guide"
@@ -108,26 +108,26 @@ const FAQ = () => {
             <Navbar />
 
             {/* Hero Section - Compact */}
-            <div className="relative compact-section overflow-hidden">
+            <div className="relative compact-section overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
                 {/* Background Grid */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
 
                 {/* Glow Effects */}
-                <div className="absolute top-0 left-1/3 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-                <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute top-0 left-1/3 w-96 h-96 bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full mb-8">
-                        <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full mb-8">
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-white/90 text-sm font-semibold">HELP CENTER</span>
+                        <span className="text-white text-sm font-semibold">HELP CENTER</span>
                     </div>
 
                     <h1 className="compact-hero font-black text-white mb-2 sm:mb-3 md:mb-4 tracking-tight px-2">
-                        Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400">Questions</span>
+                        Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-teal-100">Questions</span>
                     </h1>
-                    <p className="compact-heading text-white/60 max-w-2xl mx-auto px-2">
+                    <p className="compact-heading text-white/90 font-light max-w-2xl mx-auto px-2">
                         Everything you need to know about finding and buying used auto parts through our platform.
                     </p>
                 </div>
@@ -138,10 +138,10 @@ const FAQ = () => {
                     {categories.map((category, categoryIdx) => (
                         <div key={categoryIdx} className="animate-fade-in" style={{ animationDelay: `${categoryIdx * 100}ms` }}>
                             <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
-                                <div className="p-1.5 sm:p-2 md:p-3 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 rounded-lg md:rounded-xl text-blue-400">
+                                <div className="p-1.5 sm:p-2 md:p-3 bg-blue-100 rounded-lg md:rounded-xl text-blue-600">
                                     {category.icon}
                                 </div>
-                                <h2 className="compact-title font-bold text-white">
+                                <h2 className="compact-title font-bold text-gray-900">
                                     {category.name}
                                 </h2>
                             </div>
@@ -155,17 +155,17 @@ const FAQ = () => {
                                     return (
                                         <div
                                             key={questionIdx}
-                                            className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl overflow-hidden hover:border-cyan-400/30 transition-all duration-300"
+                                            className="group bg-white border border-gray-200 rounded-xl md:rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300"
                                         >
                                             <button
                                                 onClick={() => toggleQuestion(categoryIdx, questionIdx)}
-                                                className="w-full compact-card flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                                                className="w-full compact-card flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                                             >
-                                                <h3 className="compact-heading font-bold text-white pr-4 sm:pr-6 md:pr-8 group-hover:text-cyan-400 transition-colors">
+                                                <h3 className="compact-heading font-bold text-gray-900 pr-4 sm:pr-6 md:pr-8 group-hover:text-blue-600 transition-colors">
                                                     {item.q}
                                                 </h3>
-                                                <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-white/5 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-cyan-400/20' : ''}`}>
-                                                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isOpen ? 'text-cyan-400' : 'text-white/60'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-blue-100' : ''}`}>
+                                                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isOpen ? 'text-blue-600' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                                     </svg>
                                                 </div>
@@ -173,8 +173,8 @@ const FAQ = () => {
 
                                             <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
                                                 <div className="compact-card pt-1 sm:pt-2">
-                                                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mb-2 sm:mb-3 md:mb-4"></div>
-                                                    <p className="text-white/70 leading-relaxed compact-text">
+                                                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full mb-2 sm:mb-3 md:mb-4"></div>
+                                                    <p className="text-gray-600 leading-relaxed compact-text">
                                                         {item.a}
                                                     </p>
                                                 </div>
@@ -189,20 +189,20 @@ const FAQ = () => {
 
                 {/* Contact Box */}
                 <div className="mt-20 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl"></div>
-                    <div className="relative bg-dark-800/80 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl compact-card text-center">
-                        <div className="inline-flex p-2 sm:p-3 md:p-4 bg-cyan-400/10 rounded-xl md:rounded-2xl mb-3 sm:mb-4 md:mb-6">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-teal-500/10 blur-3xl"></div>
+                    <div className="relative bg-white border border-gray-200 rounded-2xl md:rounded-3xl compact-card text-center shadow-xl">
+                        <div className="inline-flex p-2 sm:p-3 md:p-4 bg-blue-100 rounded-xl md:rounded-2xl mb-3 sm:mb-4 md:mb-6">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="compact-title font-bold text-white mb-2 sm:mb-3">Still have questions?</h3>
-                        <p className="text-white/60 mb-4 sm:mb-6 md:mb-8 max-w-md mx-auto compact-text">
+                        <h3 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3">Still have questions?</h3>
+                        <p className="text-gray-600 mb-4 sm:mb-6 md:mb-8 max-w-md mx-auto compact-text">
                             Can't find the answer you're looking for? Our support team is here to help you 24/7.
                         </p>
                         <a
                             href="/contact"
-                            className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg md:rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 transform hover:scale-105 compact-text">
+                            className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg md:rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 compact-text">
 
                             Contact Support
                             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

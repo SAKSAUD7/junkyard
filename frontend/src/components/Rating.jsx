@@ -8,7 +8,10 @@ export default function Rating({
     stars = 5,
     percentage = 100,
     showPercentage = true,
-    size = 'md'
+    size = 'md',
+    theme = 'dark', // 'light' or 'dark'
+    showValue = false,
+    value = 0
 }) {
     // Size variants for responsive design
     const sizes = {
@@ -18,13 +21,14 @@ export default function Rating({
     };
 
     const sizeClass = sizes[size] || sizes.md;
+    const isLight = theme === 'light';
 
     // Render stars (filled based on rating_stars from backend)
     const renderStars = () => {
         return [...Array(5)].map((_, index) => (
             <svg
                 key={index}
-                className={`${sizeClass} ${index < stars ? 'text-yellow-400' : 'text-gray-600'
+                className={`${sizeClass} ${index < stars ? 'text-yellow-400' : isLight ? 'text-gray-300' : 'text-gray-600'
                     }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -40,8 +44,13 @@ export default function Rating({
                 {renderStars()}
             </div>
             {showPercentage && (
-                <span className="text-xs sm:text-sm text-white/70 font-medium">
+                <span className={`text-xs sm:text-sm font-medium ${isLight ? 'text-gray-700' : 'text-white/70'}`}>
                     {percentage}%
+                </span>
+            )}
+            {showValue && (
+                <span className={`text-xs sm:text-sm font-bold ${isLight ? 'text-gray-900' : 'text-white'}`}>
+                    {value}
                 </span>
             )}
         </div>
