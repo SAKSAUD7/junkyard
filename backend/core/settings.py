@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "apps.common",
     "apps.ads",
     "apps.yard_submissions",  # New marketplace app
+    "apps.vendor_portal",  # NEW: Vendor portal
 ]
 
 # Media files (for ad images and submissions)
@@ -176,6 +177,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3001",  # Vite dev server alternate port
+    "http://127.0.0.1:3001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

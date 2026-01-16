@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { api } from '../services/api';
@@ -9,11 +9,21 @@ import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 export default function BrowseStates() {
+    const [searchParams] = useSearchParams();
+    const stateParam = searchParams.get('state'); // Get state from URL parameter
+
     const [statesData, setStatesData] = useState([]);
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Set search term from URL parameter when component mounts
+    useEffect(() => {
+        if (stateParam) {
+            setSearchTerm(stateParam);
+        }
+    }, [stateParam]);
 
     // Fetch data from backend API
     useEffect(() => {
@@ -62,11 +72,26 @@ export default function BrowseStates() {
     }).filter(state => state.junkyardCount > 0) // Only show states with vendors
         .sort((a, b) => b.junkyardCount - a.junkyardCount) : []; // Sort by count descending
 
-    // Filter states by search term
-    const filteredStates = statesWithCounts.filter(state =>
-        state.stateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        state.stateCode.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filter states by search term (exact match for state code, partial match for state name)
+    const filteredStates = statesWithCounts.filter(state => {
+        const searchLower = searchTerm.toLowerCase().trim();
+
+        // If no search term, show all states
+        if (!searchLower) {
+            return true;
+        }
+
+        const stateCodeLower = state.stateCode.toLowerCase();
+        const stateNameLower = state.stateName.toLowerCase();
+
+        // If search term is 2 characters or less, do exact match on state code
+        if (searchLower.length <= 2) {
+            return stateCodeLower === searchLower;
+        }
+
+        // Otherwise, do partial match on state name
+        return stateNameLower.includes(searchLower);
+    });
 
     // SEO structured data
     const schema = {
@@ -86,7 +111,7 @@ export default function BrowseStates() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
             {/* SEO Meta Tags */}
             <SEO
                 title="Browse Junkyards by State - Find Auto Salvage Yards Near You"
@@ -96,26 +121,10 @@ export default function BrowseStates() {
 
             <Navbar />
 
-            {/* Ultra-Modern Hero Section - Compact Mobile */}
-            <div className="relative min-h-[35vh] sm:min-h-[45vh] md:min-h-[60vh] flex items-center overflow-hidden">
-                {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{
-                        backgroundImage: 'url(https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=80)',
-                    }}
-                ></div>
+            {/* Modern Hero Section - Light Theme */}
+            <div className="relative min-h-[35vh] sm:min-h-[45vh] md:min-h-[60vh] flex items-center overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
 
-                {/* Dark Overlay with Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-dark-950/95 via-dark-900/90 to-dark-800/85"></div>
-
-                {/* Animated Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/15 via-purple-600/15 to-pink-600/15 animate-gradient"></div>
-
-                {/* Grid Pattern Overlay */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
-
-                {/* Desktop Sidebar Ads - Fixed in Hero */}
+                {/* Desktop Sidebar Ads */}
                 <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden xl:block">
                     <DynamicAd slot="left_sidebar_ad" page="browse" />
                 </div>
@@ -127,21 +136,21 @@ export default function BrowseStates() {
                 <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full compact-section">
                     <div className="text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
                         {/* Premium Badge - Compact */}
-                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
+                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
                             <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white/90 compact-text font-medium">
+                            <span className="text-white compact-text font-medium">
                                 {statesWithCounts?.length || 0} States • {vendors?.length || 0} Verified Junkyards
                             </span>
                         </div>
 
-                        {/* Main Heading with Gradient Text - Compact */}
-                        <h1 className="compact-hero font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-purple-300 leading-tight px-2">
+                        {/* Main Heading - Compact */}
+                        <h1 className="compact-hero font-black text-white leading-tight px-2">
                             Browse by
-                            <span className="block text-cyan-400">Location</span>
+                            <span className="block">Location</span>
                         </h1>
 
-                        <p className="compact-heading text-white/80 font-light max-w-3xl mx-auto px-2">
-                            Find <span className="font-bold text-cyan-400">quality auto parts</span> from trusted salvage yards.
+                        <p className="compact-heading text-white/90 font-light max-w-3xl mx-auto px-2">
+                            Find <span className="font-bold">quality auto parts</span> from trusted salvage yards.
                             Select your state to discover local junkyards.
                         </p>
 
@@ -149,7 +158,7 @@ export default function BrowseStates() {
                         <div className="max-w-2xl mx-auto">
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                                     </svg>
                                 </div>
@@ -158,16 +167,12 @@ export default function BrowseStates() {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="Search for a state..."
-                                    className="w-full pl-10 sm:pl-12 md:pl-14 pr-3 sm:pr-4 py-2.5 sm:py-3 md:py-4 lg:py-5 bg-white/10 border-2 border-white/20 rounded-lg md:rounded-2xl text-white compact-text placeholder-white/50 focus:border-cyan-400 focus:bg-white/20 outline-none transition-all backdrop-blur-sm"
+                                    className="w-full pl-10 sm:pl-12 md:pl-14 pr-3 sm:pr-4 py-2.5 sm:py-3 md:py-4 lg:py-5 bg-white border-2 border-white/50 rounded-lg md:rounded-xl text-gray-900 compact-text placeholder-gray-500 focus:border-white focus:ring-2 focus:ring-white/50 outline-none transition-all shadow-md"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Floating Elements */}
-                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
-                <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
             </div>
 
 
@@ -210,47 +215,44 @@ export default function BrowseStates() {
                                     to={`/browse/${state.stateCode.toLowerCase()}`}
                                     className="group relative"
                                 >
-                                    {/* Card Glow Effect */}
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
-
                                     {/* Card - Compact */}
-                                    <div className="relative bg-dark-800/50 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-2xl compact-card transform transition-all duration-500 hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-2xl hover:border-cyan-400/50">
+                                    <div className="relative bg-white border border-gray-200 rounded-lg md:rounded-xl compact-card transform transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-blue-300">
                                         {/* State Icon - Compact */}
-                                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4 group-hover:scale-105 md:group-hover:scale-110 transition-transform duration-300">
+                                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-blue-600 to-teal-600 rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4 group-hover:scale-105 transition-transform duration-200">
                                             <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                             </svg>
                                         </div>
 
                                         {/* State Name - Compact */}
-                                        <h3 className="compact-heading font-bold text-white mb-1 sm:mb-1.5 md:mb-2 group-hover:text-cyan-400 transition-colors">
+                                        <h3 className="compact-heading font-bold text-gray-900 mb-1 sm:mb-1.5 md:mb-2 group-hover:text-blue-600 transition-colors">
                                             {state.stateName}
                                         </h3>
 
                                         {/* State Abbreviation - Compact */}
-                                        <p className="text-white/50 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 md:mb-3">
+                                        <p className="text-gray-600 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 md:mb-3">
                                             {state.stateCode}
                                         </p>
 
                                         {/* Junkyard Count */}
                                         <div className="flex items-center gap-2">
-                                            <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                                            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
                                                 <div
-                                                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+                                                    className="h-full bg-gradient-to-r from-blue-600 to-teal-600 transition-all duration-500"
                                                     style={{ width: `${Math.min((state.junkyardCount / Math.max(...(statesWithCounts?.map(s => s.junkyardCount) || [1]))) * 100, 100)}%` }}
                                                 ></div>
                                             </div>
-                                            <span className="text-cyan-400 font-bold compact-heading">
+                                            <span className="text-blue-600 font-bold compact-heading">
                                                 {state.junkyardCount}
                                             </span>
                                         </div>
-                                        <p className="text-white/60 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
+                                        <p className="text-gray-600 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
                                             {state.junkyardCount === 1 ? 'junkyard' : 'junkyards'}
                                         </p>
 
                                         {/* Arrow Icon */}
-                                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                             </svg>
                                         </div>

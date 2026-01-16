@@ -35,6 +35,14 @@ class Lead(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Vendor Assignment - NEW for Vendor Portal
+    assigned_vendors = models.ManyToManyField(
+        'vendors.Vendor',
+        related_name='assigned_leads',
+        blank=True,
+        help_text="Vendors this lead is assigned to"
+    )
 
     class Meta:
         ordering = ['-created_at']

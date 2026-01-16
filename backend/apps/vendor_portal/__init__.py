@@ -1,0 +1,1 @@
+# Vendor Portal Django App

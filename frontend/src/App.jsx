@@ -1,44 +1,58 @@
-import { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Search from './pages/Search'
+import BrowseStates from './pages/BrowseStates'
+import BrowseState from './pages/BrowseState'
+import JunkyardDetail from './pages/JunkyardDetail'
+import AllVendors from './pages/AllVendors'
+import VendorDetail from './pages/VendorDetail'
+import QuoteRequest from './pages/QuoteRequest'
+import AddYardPage from './pages/AddYardPage'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import HowItWorks from './pages/HowItWorks'
+import FAQ from './pages/FAQ'
+import SignIn from './pages/SignIn'
+import SignUp from './pages/SignUp'
 
-// Lazy load all pages for better performance (Code Splitting)
-const Home = lazy(() => import('./pages/Home'))
-const Search = lazy(() => import('./pages/Search'))
-const BrowseStates = lazy(() => import('./pages/BrowseStates'))
-const BrowseState = lazy(() => import('./pages/BrowseState'))
-const JunkyardDetail = lazy(() => import('./pages/JunkyardDetail'))
-const AllVendors = lazy(() => import('./pages/AllVendors'))
-const VendorDetail = lazy(() => import('./pages/VendorDetail'))
-const QuoteRequest = lazy(() => import('./pages/QuoteRequest'))
-const AddYardPage = lazy(() => import('./pages/AddYardPage'))
-const About = lazy(() => import('./pages/About'))
-const Contact = lazy(() => import('./pages/Contact'))
-const Privacy = lazy(() => import('./pages/Privacy'))
-const Terms = lazy(() => import('./pages/Terms'))
-const HowItWorks = lazy(() => import('./pages/HowItWorks'))
-const FAQ = lazy(() => import('./pages/FAQ'))
+// Auth Components
+import ProtectedRoute from './components/ProtectedRoute'
 
-// Import specialized components
-// LegacyRedirect not needed - using old URLs directly for SEO
-
-// Loading Fallback Component
-const PageLoader = () => (
-  <div className="min-h-screen bg-dark-950 flex items-center justify-center">
-    <div className="text-center">
-      <div className="inline-block w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p className="text-white/60 font-medium">Loading...</p>
-    </div>
-  </div>
-)
+// Vendor Portal Imports
+import { VendorAuthProvider } from './contexts/VendorAuthContext'
+import ProtectedVendorRoute from './components/vendor/ProtectedRoute'
+import VendorLayout from './layouts/VendorLayout'
+import VendorLogin from './pages/vendor/Login'
+import VendorForgotPassword from './pages/vendor/ForgotPassword'
+import VendorDashboard from './pages/vendor/Dashboard'
+import VendorProfile from './pages/vendor/Profile'
+import VendorInventory from './pages/vendor/Inventory'
+import VendorLeads from './pages/vendor/Leads'
+import VendorLeadDetail from './pages/vendor/LeadDetail'
+import VendorNotifications from './pages/vendor/Notifications'
 
 function App() {
   return (
-    <Suspense fallback={<PageLoader />}>
+    <>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/quote" element={<QuoteRequest />} />
-        <Route path="/add-a-yard" element={<AddYardPage />} />
+
+        {/* Auth Routes */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+
+        {/* Protected Routes */}
+        <Route path="/add-a-yard" element={
+          <ProtectedRoute>
+            <AddYardPage />
+          </ProtectedRoute>
+        } />
+
         <Route path="/vendors" element={<AllVendors />} />
         <Route path="/vendors/:id" element={<VendorDetail />} />
         <Route path="/browse" element={<BrowseStates />} />
@@ -51,27 +65,35 @@ function App() {
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
 
-        {/* SEO: Legacy URL Redirects from old junkyardsnearme.com */}
-        {/* Old vendor pages: /junkyards/:state/:slug */}
-        <Route path="/junkyards/:state/:slug" element={<VendorDetail />} />
+        {/* Vendor Portal Routes */}
+        <Route path="/vendor/login" element={
+          <VendorAuthProvider>
+            <VendorLogin />
+          </VendorAuthProvider>
+        } />
+        <Route path="/vendor/forgot-password" element={
+          <VendorAuthProvider>
+            <VendorForgotPassword />
+          </VendorAuthProvider>
+        } />
 
-        {/* Old main listing: /junkyards */}
-        <Route path="/junkyards" element={<AllVendors />} />
-
-        {/* Old rating pages: /rate-junkyard/:slug */}
-        <Route path="/rate-junkyard/:slug" element={<VendorDetail />} />
-
-        {/* Old location browsing: /junkyards-by-location */}
-        <Route path="/junkyards-by-location" element={<BrowseStates />} />
-
-        {/* Old about page: /about-us */}
-        <Route path="/about-us" element={<About />} />
-
-        {/* Old terms page: /terms-and-conditions */}
-        <Route path="/terms-and-conditions" element={<Terms />} />
-
+        {/* Protected Vendor Routes */}
+        <Route path="/vendor/*" element={
+          <VendorAuthProvider>
+            <ProtectedVendorRoute>
+              <VendorLayout />
+            </ProtectedVendorRoute>
+          </VendorAuthProvider>
+        }>
+          <Route path="dashboard" element={<VendorDashboard />} />
+          <Route path="profile" element={<VendorProfile />} />
+          <Route path="inventory" element={<VendorInventory />} />
+          <Route path="leads" element={<VendorLeads />} />
+          <Route path="leads/:id" element={<VendorLeadDetail />} />
+          <Route path="notifications" element={<VendorNotifications />} />
+        </Route>
       </Routes>
-    </Suspense>
+    </>
   )
 }
 

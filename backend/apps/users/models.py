@@ -38,6 +38,8 @@ class VendorProfile(models.Model):
     is_owner = models.BooleanField(default=False)
     can_edit = models.BooleanField(default=True)
     can_respond_reviews = models.BooleanField(default=True)
+    can_manage_inventory = models.BooleanField(default=True, help_text="Can manage vendor inventory")
+    last_login_ip = models.CharField(max_length=45, blank=True, help_text="Last login IP for security")
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
