@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useData } from '../hooks/useData';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DynamicAd from '../components/DynamicAd';
@@ -12,13 +11,17 @@ import { getCollectionPageSchema } from '../utils/structuredData';
 import { api } from '../services/api';
 
 const AllVendors = () => {
-    const [junkyards, setJunkyards] = useState([]);
+    const [vendors, setVendors] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [filteredVendors, setFilteredVendors] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedState, setSelectedState] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
+
+    // URL Params for shareable state
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentPage = parseInt(searchParams.get('page') || '1');
+    const searchTerm = searchParams.get('search') || '';
+    const selectedState = searchParams.get('state') || '';
+
     const vendorsPerPage = 24;
 
     // Fetch vendors from API
@@ -26,8 +29,25 @@ const AllVendors = () => {
         const fetchVendors = async () => {
             try {
                 setLoading(true);
-                const data = await api.getVendors();
-                setJunkyards(data);
+                // Prepare params
+                const params = {
+                    page: currentPage,
+                    page_size: vendorsPerPage
+                };
+                if (searchTerm) params.search = searchTerm;
+                if (selectedState) params.state = selectedState;
+
+                const data = await api.getVendors(params);
+
+                // Handle paginated response
+                if (data.results) {
+                    setVendors(data.results);
+                    setTotalCount(data.count);
+                } else {
+                    // Fallback if API structure differs (shouldn't happen with new backend)
+                    setVendors(Array.isArray(data) ? data : []);
+                    setTotalCount(Array.isArray(data) ? data.length : 0);
+                }
                 setError(null);
             } catch (err) {
                 console.error('Error fetching vendors:', err);
@@ -36,56 +56,68 @@ const AllVendors = () => {
                 setLoading(false);
             }
         };
-        fetchVendors();
+
+        // Debounce search slightly to avoid excessive API calls
+        const timer = setTimeout(() => {
+            fetchVendors();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [currentPage, searchTerm, selectedState]);
+
+    // Update filters and reset to page 1
+    const handleSearchChange = (e) => {
+        setSearchParams({ search: e.target.value, state: selectedState, page: 1 });
+    };
+
+    const handleStateChange = (e) => {
+        setSearchParams({ search: searchTerm, state: e.target.value, page: 1 });
+    };
+
+    const handleClearFilters = () => {
+        setSearchParams({ page: 1 });
+    };
+
+    const paginate = (pageNumber) => {
+        setSearchParams({ search: searchTerm, state: selectedState, page: pageNumber });
+        window.scrollTo(0, 0);
+    };
+
+    const totalPages = Math.ceil(totalCount / vendorsPerPage);
+
+    // Get unique states (We need a separate API call for this now, or hardcode/fetch once)
+    // Ideally use api.getStates() but for now let's use a Common list or fetch separate.
+    // Existing code derived it from full list. Let's fetch common states if possible or use a static list.
+    // For simplicity/robustness, let's load states efficiently.
+    const [availableStates, setAvailableStates] = useState([]);
+    useEffect(() => {
+        const loadStates = async () => {
+            try {
+                // Use the optimized common/states endpoint if available or hollander states
+                // Fallback: standard US states list
+                const states = [
+                    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+                ];
+                setAvailableStates(states);
+            } catch (e) { console.error(e); }
+        };
+        loadStates();
     }, []);
 
-    // Get unique states
-    const states = [...new Set(junkyards?.map(j => j.state) || [])].sort();
-
-    useEffect(() => {
-        if (!junkyards) return;
-
-        let filtered = junkyards;
-
-        // Filter by search term
-        if (searchTerm) {
-            filtered = filtered.filter(vendor =>
-                vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                vendor.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                vendor.state.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        // Filter by state
-        if (selectedState) {
-            filtered = filtered.filter(vendor => vendor.state === selectedState);
-        }
-
-        setFilteredVendors(filtered);
-        setCurrentPage(1); // Reset to first page when filters change
-    }, [junkyards, searchTerm, selectedState]);
-
-    // Pagination
-    const indexOfLastVendor = currentPage * vendorsPerPage;
-    const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
-    const currentVendors = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
-    const totalPages = Math.ceil(filteredVendors.length / vendorsPerPage);
-
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // SEO structured data
     const collectionSchema = getCollectionPageSchema({
         name: 'All Auto Salvage Yards',
-        description: `Browse ${filteredVendors.length} verified auto salvage yards across ${states.length} states`,
-        numberOfItems: filteredVendors.length
+        description: `Browse ${totalCount} verified auto salvage yards`,
+        numberOfItems: totalCount
     });
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
             <SEO
-                title={`All Junkyards - Browse ${junkyards?.length || 0} Auto Salvage Yards Nationwide`}
-                description={`Browse our complete directory of ${junkyards?.length || 0} verified auto salvage yards across ${states.length} states. Find used auto parts, compare prices, and connect with local junkyards.`}
-                canonicalUrl="/vendors"
+                title={`All Junkyards - Browse ${totalCount} Auto Salvage Yards Nationwide`}
+                description={`Browse our complete directory of ${totalCount} verified auto salvage yards. Find used auto parts, compare prices, and connect with local junkyards.`}
+                canonicalUrl={`/vendors${currentPage > 1 ? `?page=${currentPage}` : ''}`}
                 structuredData={[collectionSchema]}
             />
             <Navbar />
@@ -106,7 +138,7 @@ const AllVendors = () => {
                         {/* Premium Badge */}
                         <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
                             <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white text-xs sm:text-sm font-medium text-gray-500">{junkyards?.length || 0} Verified Auto Salvage Yards</span>
+                            <span className="text-white text-xs sm:text-sm font-medium text-gray-500">{totalCount}+ Verified Auto Salvage Yards</span>
                         </div>
 
                         {/* Main Heading - Mobile First */}
@@ -123,11 +155,11 @@ const AllVendors = () => {
                         {/* Stats Cards */}
                         <div className="grid grid-cols-2 md:grid-cols-4 compact-gap max-w-4xl mx-auto">
                             <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg md:rounded-xl compact-card hover:bg-white/30 transition-all duration-200">
-                                <div className="compact-title font-bold text-white">{junkyards?.length || 0}</div>
+                                <div className="compact-title font-bold text-white">{totalCount}</div>
                                 <div className="text-[10px] sm:text-xs text-white/80">Total Vendors</div>
                             </div>
                             <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg md:rounded-xl compact-card hover:bg-white/30 transition-all duration-200">
-                                <div className="compact-title font-bold text-white">{states.length}</div>
+                                <div className="compact-title font-bold text-white">{availableStates.length}+</div>
                                 <div className="text-[10px] sm:text-xs text-white/80">States</div>
                             </div>
                             <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg md:rounded-xl compact-card hover:bg-white/30 transition-all duration-200">
@@ -158,7 +190,7 @@ const AllVendors = () => {
                                 <input
                                     type="text"
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={handleSearchChange}
                                     placeholder="Search by name, city, or state..."
                                     className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 md:py-4 bg-white border-2 border-gray-300 rounded-lg md:rounded-xl text-gray-900 compact-text placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                                 />
@@ -174,11 +206,11 @@ const AllVendors = () => {
                             </div>
                             <select
                                 value={selectedState}
-                                onChange={(e) => setSelectedState(e.target.value)}
+                                onChange={handleStateChange}
                                 className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 md:py-4 bg-white border-2 border-gray-300 rounded-lg md:rounded-xl text-gray-900 compact-text focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all appearance-none cursor-pointer"
                             >
                                 <option value="">All States</option>
-                                {states.map(state => (
+                                {availableStates.map(state => (
                                     <option key={state} value={state}>{state}</option>
                                 ))}
                             </select>
@@ -198,15 +230,12 @@ const AllVendors = () => {
                                 <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
                             </svg>
                             <span className="font-semibold">
-                                Showing {indexOfFirstVendor + 1}-{Math.min(indexOfLastVendor, filteredVendors.length)} of {filteredVendors.length} junkyards
+                                Showing {vendors.length > 0 ? (currentPage - 1) * vendorsPerPage + 1 : 0}-{Math.min(currentPage * vendorsPerPage, totalCount)} of {totalCount} junkyards
                             </span>
                         </div>
                         {(searchTerm || selectedState) && (
                             <button
-                                onClick={() => {
-                                    setSearchTerm('');
-                                    setSelectedState('');
-                                }}
+                                onClick={handleClearFilters}
                                 className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-1 transition-colors">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -240,9 +269,9 @@ const AllVendors = () => {
                     )}
 
                     {/* Vendor List */}
-                    {!loading && !error && currentVendors.length > 0 ? (
+                    {!loading && !error && vendors.length > 0 ? (
                         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
-                            {currentVendors.map((vendor) => (
+                            {vendors.map((vendor) => (
                                 <Link
                                     key={vendor.id}
                                     to={`/vendors/${vendor.id}`}
@@ -320,13 +349,10 @@ const AllVendors = () => {
                                     <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">No vendors found</h3>
-                            <p className="text-white/60 mb-6">Try adjusting your search or filters</p>
+                            <h3 className="text-2xl font-bold text-gray-400 mb-2">No vendors found</h3>
+                            <p className="text-gray-400 mb-6">Try adjusting your search or filters</p>
                             <button
-                                onClick={() => {
-                                    setSearchTerm('');
-                                    setSelectedState('');
-                                }}
+                                onClick={handleClearFilters}
                                 className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow"
                             >
                                 Clear All Filters

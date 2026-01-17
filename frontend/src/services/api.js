@@ -13,6 +13,12 @@ export const api = {
     return response.json();
   },
 
+  getStateCounts: async () => {
+    const response = await fetch(`${API_BASE_URL}/vendors/state_counts/`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  },
+
   getVendor: async (id) => {
     const response = await fetch(`${API_BASE_URL}/vendors/${id}/`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -23,22 +29,25 @@ export const api = {
     const response = await fetch(`${API_BASE_URL}/vendors/?trusted=true`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
-    // Return only the specified limit
-    return Array.isArray(data) ? data.slice(0, limit) : data;
+    // Handle paginated or list response
+    const vendors = data.results || (Array.isArray(data) ? data : []);
+    return vendors.slice(0, limit);
   },
 
   getFeaturedVendors: async (limit = 8) => {
     const response = await fetch(`${API_BASE_URL}/vendors/?featured=true`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
-    return Array.isArray(data) ? data.slice(0, limit) : data;
+    const vendors = data.results || (Array.isArray(data) ? data : []);
+    return vendors.slice(0, limit);
   },
 
   getTopRatedVendors: async (limit = 6) => {
     const response = await fetch(`${API_BASE_URL}/vendors/?top_rated=true`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
-    return Array.isArray(data) ? data.slice(0, limit) : data;
+    const vendors = data.results || (Array.isArray(data) ? data : []);
+    return vendors.slice(0, limit);
   },
 
   suggestZipcodes: async (prefix) => {

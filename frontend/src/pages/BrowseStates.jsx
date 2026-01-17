@@ -13,10 +13,10 @@ export default function BrowseStates() {
     const stateParam = searchParams.get('state'); // Get state from URL parameter
 
     const [statesData, setStatesData] = useState([]);
-    const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [totalVendors, setTotalVendors] = useState(0);
 
     // Set search term from URL parameter when component mounts
     useEffect(() => {
@@ -30,22 +30,33 @@ export default function BrowseStates() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                console.log('Fetching states and vendors from backend API...');
-
-                // Fetch both states and vendors from backend
-                const [statesResponse, vendorsResponse] = await Promise.all([
+                // Fetch states list and vendor counts per state
+                const [statesResponse, countsResponse] = await Promise.all([
                     api.getStates(),
-                    api.getVendors()
+                    api.getStateCounts()
                 ]);
 
-                // Handle paginated response for states
-                const states = statesResponse.results || statesResponse;
-                setStatesData(states);
+                // Handle paginated response for states if necessary (usually api.getStates is a list)
+                const statesList = statesResponse.results || statesResponse;
 
-                // Vendors API returns all vendors without pagination
-                setVendors(vendorsResponse);
+                // Merge states with their counts
+                // statesList is [{ stateCode: 'AL', stateName: 'Alabama' }, ...]
+                // countsResponse is { 'AL': 10, 'AK': 2, ... }
 
-                console.log(`Loaded ${states.length} states and ${vendorsResponse.length} vendors from API`);
+                let total = 0;
+                const mergedData = statesList.map(state => {
+                    const count = countsResponse[state.stateCode] || 0;
+                    total += count;
+                    return {
+                        ...state,
+                        junkyardCount: count
+                    };
+                })
+                    .filter(state => state.junkyardCount > 0) // Only show states with vendors
+                    .sort((a, b) => b.junkyardCount - a.junkyardCount); // Sort by count descending
+
+                setStatesData(mergedData);
+                setTotalVendors(total);
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching data from API:', err);
@@ -62,18 +73,8 @@ export default function BrowseStates() {
         window.scrollTo(0, 0);
     }, []);
 
-    // Calculate vendor counts per state only when both datasets are loaded
-    const statesWithCounts = (statesData.length > 0 && vendors.length > 0) ? statesData.map(state => {
-        const count = vendors.filter(v => v.state === state.stateCode).length;
-        return {
-            ...state,
-            junkyardCount: count
-        };
-    }).filter(state => state.junkyardCount > 0) // Only show states with vendors
-        .sort((a, b) => b.junkyardCount - a.junkyardCount) : []; // Sort by count descending
-
     // Filter states by search term (exact match for state code, partial match for state name)
-    const filteredStates = statesWithCounts.filter(state => {
+    const filteredStates = statesData.filter(state => {
         const searchLower = searchTerm.toLowerCase().trim();
 
         // If no search term, show all states
@@ -101,7 +102,7 @@ export default function BrowseStates() {
                 name: 'Browse Junkyards by State',
                 description: 'Find auto salvage yards and junkyards across all US states',
                 url: typeof window !== 'undefined' ? window.location.href : '',
-                numberOfItems: statesWithCounts.length
+                numberOfItems: statesData.length
             }),
             getBreadcrumbSchema([
                 { name: 'Home', url: '/' },
@@ -115,7 +116,7 @@ export default function BrowseStates() {
             {/* SEO Meta Tags */}
             <SEO
                 title="Browse Junkyards by State - Find Auto Salvage Yards Near You"
-                description={`Find junkyards and auto salvage yards across ${statesWithCounts.length} states. Search ${vendors.length}+ verified vendors nationwide. Free quotes, quality used auto parts.`}
+                description={`Find junkyards and auto salvage yards across ${statesData.length} states. Search ${totalVendors}+ verified vendors nationwide. Free quotes, quality used auto parts.`}
                 schema={schema}
             />
 
@@ -139,7 +140,7 @@ export default function BrowseStates() {
                         <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
                             <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span className="text-white compact-text font-medium">
-                                {statesWithCounts?.length || 0} States • {vendors?.length || 0} Verified Junkyards
+                                {statesData?.length || 0} States • {totalVendors}+ Verified Junkyards
                             </span>
                         </div>
 
@@ -239,7 +240,7 @@ export default function BrowseStates() {
                                             <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
                                                 <div
                                                     className="h-full bg-gradient-to-r from-blue-600 to-teal-600 transition-all duration-500"
-                                                    style={{ width: `${Math.min((state.junkyardCount / Math.max(...(statesWithCounts?.map(s => s.junkyardCount) || [1]))) * 100, 100)}%` }}
+                                                    style={{ width: `${Math.min((state.junkyardCount / Math.max(...(statesData?.map(s => s.junkyardCount) || [1]))) * 100, 100)}%` }}
                                                 ></div>
                                             </div>
                                             <span className="text-blue-600 font-bold compact-heading">

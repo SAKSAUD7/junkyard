@@ -98,7 +98,7 @@ export default function Navbar() {
                         {!(isAuthenticated && user?.user_type === 'vendor') && (
                             <Link
                                 to={isAuthenticated ? "/add-a-yard" : `/signin?returnUrl=${encodeURIComponent('/add-a-yard')}`}
-                                className={`relative px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 ${isActive('/add-a-yard')
+                                className={`relative px-3 py-2 lg:px-5 lg:py-2.5 rounded-lg text-sm font-bold transition-all duration-200 ${isActive('/add-a-yard')
                                     ? 'text-white bg-gradient-to-r from-teal-600 to-blue-600 shadow-md'
                                     : 'text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 shadow-sm hover:shadow-md'
                                     }`}
@@ -111,7 +111,7 @@ export default function Navbar() {
                         {!(isAuthenticated && user?.user_type === 'vendor') && (
                             <Link
                                 to="/vendor/login"
-                                className="relative px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow-md flex items-center gap-2"
+                                className="relative px-3 py-2 lg:px-5 lg:py-2.5 rounded-lg text-sm font-bold transition-all duration-200 text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow-md flex items-center gap-2"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -271,7 +271,7 @@ export default function Navbar() {
                         {!(isAuthenticated && user?.user_type === 'vendor') && (
                             <Link
                                 to={isAuthenticated ? "/add-a-yard" : `/signin?returnUrl=${encodeURIComponent('/add-a-yard')}`}
-                                className={`block px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 ${isActive('/add-a-yard')
+                                className={`block px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 text-center ${isActive('/add-a-yard')
                                     ? 'bg-gradient-to-r from-teal-600 to-blue-600 text-white shadow-md'
                                     : 'text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 shadow-sm'
                                     }`}
@@ -285,7 +285,7 @@ export default function Navbar() {
                         {!(isAuthenticated && user?.user_type === 'vendor') && (
                             <Link
                                 to="/vendor/login"
-                                className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 text-white bg-blue-600 hover:bg-blue-700 shadow-sm"
+                                className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 text-white bg-blue-600 hover:bg-blue-700 shadow-sm"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

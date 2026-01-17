@@ -16,6 +16,7 @@ import HowItWorks from './pages/HowItWorks'
 import FAQ from './pages/FAQ'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import Profile from './pages/Profile'
 
 // Auth Components
 import ProtectedRoute from './components/ProtectedRoute'
@@ -66,6 +67,11 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
 
         {/* Vendor Portal Routes */}
         <Route path="/vendor/login" element={

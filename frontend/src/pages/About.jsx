@@ -14,19 +14,23 @@ export default function About() {
     useEffect(() => {
         const fetchCounts = async () => {
             try {
-                const [vendorsResponse, statesResponse] = await Promise.all([
-                    api.getVendors(),
-                    api.getStates()
+                // Fetch basic vendor info (just for count) and efficient state counts
+                // api.getVendors({ page_size: 1 }) will be fast and return total count
+                const [vendorsResponse, stateCountsResponse] = await Promise.all([
+                    api.getVendors({ page_size: 1 }),
+                    api.getStateCounts()
                 ])
 
-                setVendorCount(vendorsResponse.length || 0)
+                // Handle vendors count (paginated response vs array)
+                const totalVendors = vendorsResponse.count !== undefined
+                    ? vendorsResponse.count
+                    : (Array.isArray(vendorsResponse) ? vendorsResponse.length : 0);
 
-                // Count states with at least one vendor
-                const states = statesResponse.results || statesResponse
-                const statesWithVendors = states.filter(state =>
-                    vendorsResponse.some(v => v.state === state.stateCode)
-                )
-                setStateCount(statesWithVendors.length || 0)
+                setVendorCount(totalVendors)
+
+                // Count states that have at least one vendor
+                const activeStatesCount = Object.keys(stateCountsResponse).length || 0
+                setStateCount(activeStatesCount)
 
                 setLoading(false)
             } catch (error) {

@@ -4,6 +4,13 @@ from rest_framework.response import Response
 from django.db.models import Q
 from apps.hollander.models import Vendor
 from .serializers import VendorSerializer
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Count
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 24
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 class VendorViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,7 +23,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = VendorSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'city', 'state']
-    pagination_class = None  # Disable pagination to return all vendors
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         queryset = Vendor.objects.all().order_by('id')  # Order by ID
@@ -94,3 +101,18 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
             })
             
         return Response(results)
+
+    @action(detail=False, methods=['get'])
+    def state_counts(self, request):
+        """
+        Return the count of vendors per state.
+        This provides efficient data for the Browse by State page without fetching all records.
+        """
+        counts = Vendor.objects.values('state').annotate(
+            vendor_count=Count('id')
+        ).order_by('state')
+        
+        # Transform into a dictionary or list format easy for frontend
+        # Let's return a object { "CA": 150, "NY": 120, ... }
+        data = {item['state']: item['vendor_count'] for item in counts if item['state']}
+        return Response(data)
