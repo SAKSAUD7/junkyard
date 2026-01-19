@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
+import { api } from '../services/api'
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -18,12 +19,16 @@ export default function Contact() {
         })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // Simulate form submission
-        console.log('Contact Form Submitted:', formData)
-        alert('Thank you for your message! We will get back to you shortly.')
-        setFormData({ name: '', email: '', subject: '', message: '' })
+        try {
+            await api.sendContactMessage(formData)
+            alert('Thank you for your message! We will get back to you shortly.')
+            setFormData({ name: '', email: '', subject: '', message: '' })
+        } catch (error) {
+            console.error('Error sending message:', error)
+            alert('Failed to send message. Please try again later.')
+        }
     }
 
     return (

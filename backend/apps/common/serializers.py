@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.hollander.models import Make, Model, PartType, State
+from .models import ContactMessage
 
 
 class MakeSerializer(serializers.ModelSerializer):
@@ -37,3 +38,11 @@ class StateSerializer(serializers.ModelSerializer):
     class Meta:
         model = State
         fields = ['id', 'stateCode', 'stateName']
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ['id', 'name', 'email', 'subject', 'message', 'is_read', 'created_at']
+        read_only_fields = ['is_read', 'created_at']
+

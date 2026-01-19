@@ -4,6 +4,7 @@ import authService from '../services/authService';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    const [token, setToken] = useState(localStorage.getItem('access_token'));
     const [user, setUser] = useState(null);
     const [vendorProfile, setVendorProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -13,6 +14,9 @@ export const AuthProvider = ({ children }) => {
         // Check if user is logged in on mount
         const initAuth = async () => {
             try {
+                const storedToken = localStorage.getItem('access_token');
+                setToken(storedToken);
+
                 if (authService.isAuthenticated()) {
                     const storedUser = authService.getStoredUser();
                     const storedVendorProfile = authService.getStoredVendorProfile();
@@ -43,6 +47,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await authService.register(userData);
             setUser(response.user);
+            setToken(response.tokens.access);
             setIsAuthenticated(true);
             return response;
         } catch (error) {
@@ -54,6 +59,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await authService.login(email, password);
             setUser(response.user);
+            setToken(response.tokens.access);
             setVendorProfile(response.vendor_profile || null);
             setIsAuthenticated(true);
             return response;
@@ -67,6 +73,7 @@ export const AuthProvider = ({ children }) => {
             await authService.logout();
         } finally {
             setUser(null);
+            setToken(null);
             setVendorProfile(null);
             setIsAuthenticated(false);
         }
@@ -83,6 +90,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const value = {
+        token,
         user,
         vendorProfile,
         loading,

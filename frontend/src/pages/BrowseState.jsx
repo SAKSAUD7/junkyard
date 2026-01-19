@@ -27,9 +27,12 @@ export default function BrowseState() {
             try {
                 setLoading(true);
                 const data = await api.getVendors();
-                setJunkyards(data);
+                // Handle both paginated (data.results) and non-paginated (data) responses
+                const vendorsList = data.results || (Array.isArray(data) ? data : []);
+                setJunkyards(vendorsList);
             } catch (err) {
                 console.error('Error fetching vendors:', err);
+                setJunkyards([]); // Set empty array on error
             } finally {
                 setLoading(false);
             }

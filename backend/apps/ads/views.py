@@ -48,3 +48,15 @@ class AdClickView(APIView):
         Advertisement.objects.filter(pk=pk).update(clicks=F('clicks') + 1)
         
         return redirect(ad.redirect_url)
+
+from rest_framework import viewsets, permissions
+
+class AdvertisementViewSet(viewsets.ModelViewSet):
+    """
+    Admin ViewSet for managing advertisements.
+    Only accessible by admin users.
+    """
+    queryset = Advertisement.objects.all()
+    serializer_class = AdvertisementSerializer
+    permission_classes = [permissions.IsAdminUser]
+

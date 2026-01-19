@@ -82,7 +82,7 @@ def import_yard_makes():
             YardMake.objects.bulk_create(batch, ignore_conflicts=True)
         created += len(batch)
     
-    print(f"\n✅ Yard-Make Import Complete:")
+    print(f"\n[OK] Yard-Make Import Complete:")
     print(f"   Created: {created}")
     print(f"   Skipped: {skipped}")
     print(f"   Errors: {errors}")
@@ -151,7 +151,7 @@ def import_yard_parts():
             YardPart.objects.bulk_create(batch, ignore_conflicts=True)
         created += len(batch)
     
-    print(f"\n✅ Yard-Part Import Complete:")
+    print(f"\n[OK] Yard-Part Import Complete:")
     print(f"   Created: {created}")
     print(f"   Skipped: {skipped}")
     print(f"   Errors: {errors}")
@@ -169,7 +169,7 @@ if __name__ == "__main__":
         import_yard_parts()
         
         print("\n" + "=" * 60)
-        print("✅ ALL RELATIONSHIP IMPORTS COMPLETE")
+        print("[OK] ALL RELATIONSHIP IMPORTS COMPLETE")
         print("=" * 60)
         print(f"\nFinal Stats:")
         print(f"  Vendors in DB: {Vendor.objects.count()}")
@@ -177,6 +177,6 @@ if __name__ == "__main__":
         print(f"  Yard-Part Relationships: {YardPart.objects.count()}")
         
     except Exception as e:
-        print(f"\n❌ Error during import: {e}")
+        print(f"\n[ERROR] Error during import: {e}")
         import traceback
         traceback.print_exc()

@@ -34,6 +34,16 @@ import VendorLeads from './pages/vendor/Leads'
 import VendorLeadDetail from './pages/vendor/LeadDetail'
 import VendorNotifications from './pages/vendor/Notifications'
 
+// Admin Portal Imports
+import AdminProtectedRoute from './components/admin/ProtectedRoute'
+import AdminLayout from './layouts/AdminLayout'
+import AdminDashboard from './pages/admin/Dashboard'
+import AdminMessages from './pages/admin/Messages'
+import AdminLeads from './pages/admin/Leads'
+import AdminVendors from './pages/admin/Vendors'
+import AdminAds from './pages/admin/Ads'
+import AdminSettings from './pages/admin/Settings'
+
 function App() {
   return (
     <>
@@ -99,6 +109,22 @@ function App() {
           <Route path="leads" element={<VendorLeads />} />
           <Route path="leads/:id" element={<VendorLeadDetail />} />
           <Route path="notifications" element={<VendorNotifications />} />
+        </Route>
+
+        {/* Admin Portal Routes */}
+        <Route path="/admin-portal/*" element={
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        }>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="messages" element={<AdminMessages />} />
+          <Route path="leads" element={<AdminLeads />} />
+          <Route path="vendors" element={<AdminVendors />} />
+          <Route path="ads" element={<AdminAds />} />
+          <Route path="settings" element={<AdminSettings />} />
+          {/* Default redirect to dashboard */}
+          <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
       </Routes>
     </>

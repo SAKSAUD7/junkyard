@@ -21,6 +21,14 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
+    # Allow read-only for public, admin for others. 
+    # But wait, this is ReadOnlyModelViewSet. We might need a separate Admin ViewSet or override permissions.
+    # The existing ViewSet is for public consumption (browsing vendors).
+    # I should create a separate AdminVendorViewSet or use conditional permissions.
+    # Let's keep this as public and make a new Admin one or use conditional permissions.
+    # For now, let's assume the public one is fine and I'll make a new one for Admin management if needed.
+    # Actually, the user wants me to BUILD everything. 
+    # Let's add an AdminVendorViewSet for full management in the same file.
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'city', 'state']
     pagination_class = StandardResultsSetPagination
@@ -116,3 +124,91 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         # Let's return a object { "CA": 150, "NY": 120, ... }
         data = {item['state']: item['vendor_count'] for item in counts if item['state']}
         return Response(data)
+
+from rest_framework import permissions
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
+import csv
+
+class AdminVendorViewSet(viewsets.ModelViewSet):
+    """
+    Admin ViewSet for full vendor management.
+    """
+    queryset = Vendor.objects.all().order_by('id')
+    serializer_class = VendorSerializer
+    permission_classes = [permissions.IsAdminUser]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'city', 'state', 'email']
+    filterset_fields = ['is_active', 'state']
+    
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export vendors to CSV file.
+        Supports filtering by is_active and state via query params.
+        """
+        # Get filtered queryset
+        queryset = self.get_queryset()
+        
+        # Apply filters from query params
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active.lower() == 'true')
+        
+        state_filter = request.query_params.get('state')
+        if state_filter:
+            queryset = queryset.filter(state=state_filter)
+        
+        search = request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                name__icontains=search
+            ) | queryset.filter(
+                email__icontains=search
+            ) | queryset.filter(
+                city__icontains=search
+            )
+        
+        # Create CSV response
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="vendors_export.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'ID',
+            'Vendor Name',
+            'Email',
+            'Phone',
+            'Address',
+            'City',
+            'State',
+            'Zip Code',
+            'Status',
+            'Featured',
+            'Top Rated',
+            'Created Date'
+        ])
+        
+        # Write data rows
+        for vendor in queryset:
+            writer.writerow([
+                vendor.id,
+                vendor.name,
+                vendor.email or '',
+                vendor.phone or '',
+                vendor.address or '',
+                vendor.city,
+                vendor.state,
+                vendor.zip_code,
+                'Active' if vendor.is_active else 'Inactive',
+                'Yes' if vendor.is_featured else 'No',
+                'Yes' if vendor.is_top_rated else 'No',
+                vendor.created_at.strftime('%Y-%m-%d') if hasattr(vendor, 'created_at') else ''
+            ])
+        
+        return response
+
+
