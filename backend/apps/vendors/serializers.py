@@ -13,6 +13,16 @@ class VendorSerializer(serializers.ModelSerializer):
             'description', 'review_snippet', 'rating', 
             'rating_stars', 'rating_percentage', 
             'is_top_rated', 'is_featured', 'profile_url', 'logo',
-            'is_trusted'
+            'is_top_rated', 'is_featured', 'profile_url', 'logo',
+            'is_trusted', 'is_active', 'username'
         ]
+
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        # Get the first associated vendor profile and return its username
+        profile = obj.profiles.first()
+        if profile and profile.user:
+            return profile.user.username
+        return None
 

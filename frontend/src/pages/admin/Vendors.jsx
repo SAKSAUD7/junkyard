@@ -1,15 +1,75 @@
-
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
-import { MagnifyingGlassIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import {
+    MagnifyingGlassIcon,
+    PencilSquareIcon,
+    TrashIcon,
+    PowerIcon,
+    KeyIcon,
+    UserCircleIcon,
+    BuildingStorefrontIcon,
+    MapPinIcon,
+    PhoneIcon,
+    EnvelopeIcon,
+    XCircleIcon,
+    CheckCircleIcon,
+    LinkIcon,
+    ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+
+// Simple Toast Component
+const Toast = ({ message, type, onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 5000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    const bgColors = {
+        success: 'bg-green-50 border-green-200 text-green-800',
+        error: 'bg-red-50 border-red-200 text-red-800',
+        info: 'bg-blue-50 border-blue-200 text-blue-800'
+    };
+
+    const icons = {
+        success: <CheckCircleIcon className="h-5 w-5 text-green-500" />,
+        error: <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />,
+        info: <div className="h-5 w-5 text-blue-500">i</div>
+    };
+
+    return (
+        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border ${bgColors[type] || bgColors.info} animate-in slide-in-from-right duration-300`}>
+            {icons[type]}
+            <p className="text-sm font-medium">{message}</p>
+            <button onClick={onClose} className="ml-2 hover:opacity-70">
+                <XCircleIcon className="h-4 w-4" />
+            </button>
+        </div>
+    );
+};
 
 export default function AdminVendors() {
     const { token } = useContext(AuthContext);
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalVendors, setTotalVendors] = useState(0);
+    const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', 'inactive'
+
+    // Edit & Modal States
     const [editingVendor, setEditingVendor] = useState(null);
+    const [resetCredentials, setResetCredentials] = useState(null);
+    const [exporting, setExporting] = useState(false);
+
+    // Toast State
+    const [toast, setToast] = useState(null);
+
+    // Stats State
+    const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -19,83 +79,115 @@ export default function AdminVendors() {
         zip_code: ''
     });
 
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalVendors, setTotalVendors] = useState(0);
+    const showToast = (message, type = 'info') => {
+        setToast({ message, type });
+    };
 
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [exporting, setExporting] = useState(false);
-
+    // Initial Load & Search
     useEffect(() => {
         fetchVendors(page);
-    }, [token, page, statusFilter]); // Re-fetch when page OR status changes
+    }, [token, page, activeTab]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (page !== 1) setPage(1);
+            else fetchVendors(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
 
     const fetchVendors = async (pageNo) => {
         setLoading(true);
         try {
             const params = { page: pageNo, search: searchTerm };
-            if (statusFilter !== 'all') {
-                params.is_active = statusFilter === 'active';
+            if (activeTab !== 'all') {
+                params.is_active = activeTab === 'active';
             }
             const data = await api.getAdminVendors(token, params);
             setVendors(data.results || data);
-            setTotalVendors(data.count || 0);
-            setTotalPages(Math.ceil((data.count || 0) / 100)); // Assuming default page size is 100
+
+            const count = data.count || 0;
+            setTotalVendors(count);
+            setTotalPages(Math.ceil(count / 100));
+
         } catch (error) {
             console.error('Error fetching vendors:', error);
+            showToast('Failed to load vendors', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        if (page !== 1) setPage(1);
-    };
+    const handleSearch = (e) => setSearchTerm(e.target.value);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchVendors(1);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [searchTerm]);
+    // --- Actions ---
 
     const handleExport = async () => {
         setExporting(true);
         try {
             const params = {};
-            if (statusFilter !== 'all') params.is_active = statusFilter === 'active';
+            if (activeTab !== 'all') params.is_active = activeTab === 'active';
             if (searchTerm) params.search = searchTerm;
-
             const blob = await api.exportVendors(token, params);
-
-            // Create download link
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `vendors_export_${new Date().toISOString().split('T')[0]}.csv`;
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-
-            // Show success message (you can add toast notification here)
-            alert('Vendors exported successfully!');
+            window.URL.revokeObjectURL(url);
+            showToast('Export successful!', 'success');
         } catch (error) {
-            alert('Failed to export vendors');
+            showToast('Failed to export vendors', 'error');
         } finally {
             setExporting(false);
         }
     };
 
-
     const toggleStatus = async (vendor) => {
-        if (!window.confirm(`Are you sure you want to ${vendor.is_active ? 'deactivate' : 'activate'} this vendor?`)) return;
+        const action = vendor.is_active ? 'deactivate' : 'activate';
+        // Only confirm for deactivation to prevent accidental shutdowns
+        if (vendor.is_active && !window.confirm(`Are you sure you want to deactivate ${vendor.name}? This will revoke their portal access.`)) return;
+
         try {
-            await api.updateVendor(token, vendor.id, { is_active: !vendor.is_active });
-            fetchVendors(page);
+            // Optimistic update
+            setVendors(prev => prev.map(v => v.id === vendor.id ? { ...v, is_active: !v.is_active } : v));
+
+            const response = await api.updateVendor(token, vendor.id, { is_active: !vendor.is_active });
+
+            if (!vendor.is_active && response.credentials) {
+                setResetCredentials({ vendorName: vendor.name, ...response.credentials });
+                showToast(`Vendor activated! Credentials generated for ${response.credentials.username}`, 'success');
+            } else if (!vendor.is_active) {
+                showToast('Vendor activated successfully!', 'success');
+            } else {
+                showToast('Vendor deactivated.', 'info');
+            }
+
+            fetchVendors(page); // Sync to be sure
         } catch (error) {
-            alert('Failed to update vendor status');
+            console.error(error);
+            showToast(`Failed to ${action} vendor: ${error.message || 'Unknown error'}`, 'error');
+            fetchVendors(page); // Revert
+        }
+    };
+
+    const handleResetPassword = async (vendor) => {
+        if (!window.confirm(`Reset password for ${vendor.name}? This will generate a new temporary password.`)) return;
+        try {
+            const response = await api.resetVendorPassword(token, vendor.id);
+            setResetCredentials({
+                vendorName: vendor.name,
+                username: response.username,
+                email: response.email,
+                temp_password: response.temp_password
+            });
+            showToast('Password reset successful', 'success');
+        } catch (error) {
+            console.error(error);
+            showToast(`Failed to reset password: ${error.message || 'Error'}`, 'error');
         }
     };
 
@@ -116,229 +208,364 @@ export default function AdminVendors() {
         try {
             await api.updateVendor(token, editingVendor.id, formData);
             setEditingVendor(null);
+            showToast('Vendor details updated successfully', 'success');
             fetchVendors(page);
         } catch (error) {
-            alert('Failed to update vendor details');
+            console.error(error);
+            const msg = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+            showToast(`Failed to update vendor: ${msg}`, 'error');
         }
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-bold text-gray-900">Vendor Management</h1>
+        <div className="min-h-screen bg-gray-50 pb-12">
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-                <div className="flex gap-3 w-full sm:w-auto flex-wrap">
-                    <button
-                        onClick={handleExport}
-                        disabled={exporting || vendors.length === 0}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-2"
-                    >
-                        {exporting ? (
-                            <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                Exporting...
-                            </>
-                        ) : (
-                            <>
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Export CSV
-                            </>
-                        )}
-                    </button>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-                    <select
-                        className="border rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={statusFilter}
-                        onChange={(e) => {
-                            setStatusFilter(e.target.value);
-                            setPage(1); // Reset to page 1 on filter change
-                        }}
-                    >
-                        <option value="all">All Vendors</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-
-                    <div className="relative flex-1 sm:flex-none">
-                        <input
-                            type="text"
-                            placeholder="Search vendors..."
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            value={searchTerm}
-                            onChange={handleSearch}
-                        />
-                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                {/* Header & Stats */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Vendor Management</h1>
+                        <p className="text-sm text-gray-500 mt-1">Manage automotive recyclers and their portal access.</p>
+                    </div>
+                    <div className="flex gap-4">
+                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
+                            <p className="text-xs text-gray-500 font-medium uppercase">Total Vendors</p>
+                            <p className="text-2xl font-bold text-gray-900">{totalVendors}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {loading ? (
-                            <tr><td colSpan="5" className="px-6 py-4 text-center">Loading...</td></tr>
-                        ) : vendors.length === 0 ? (
-                            <tr><td colSpan="5" className="px-6 py-4 text-center">No vendors found</td></tr>
-                        ) : (
-                            vendors.map((vendor) => (
-                                <tr key={vendor.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="font-medium text-gray-900">{vendor.name}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {vendor.city}, {vendor.state} {vendor.zip_code}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div>{vendor.email}</div>
-                                        <div className="text-xs">{vendor.phone}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${vendor.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                            {vendor.is_active ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-3">
-                                        <button
-                                            onClick={() => handleEditClick(vendor)}
-                                            className="text-blue-600 hover:text-blue-900 font-medium"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => toggleStatus(vendor)}
-                                            className={`${vendor.is_active ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'}`}
-                                        >
-                                            {vendor.is_active ? 'Deactivate' : 'Activate'}
-                                        </button>
-                                    </td>
+                {/* Toolbar */}
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 justify-between items-center">
+
+                    {/* Tabs */}
+                    <div className="flex bg-gray-100 p-1 rounded-lg self-start">
+                        {['all', 'active', 'inactive'].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab
+                                        ? 'bg-white text-gray-900 shadow-sm'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Search & Actions */}
+                    <div className="flex gap-3 w-full md:w-auto">
+                        <div className="relative flex-1 md:w-64">
+                            <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search by name, email, zip..."
+                                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                            />
+                        </div>
+                        <button
+                            onClick={handleExport}
+                            disabled={exporting}
+                            className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors"
+                        >
+                            {exporting ? 'Exporting...' : 'Export CSV'}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Main Table Card */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[220px]">Vendor</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[150px]">Location</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Contact Info</th>
+                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">Status</th>
+                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[140px]">Actions</th>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-100">
+                                {loading ? (
+                                    <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-400">Loading vendor data...</td></tr>
+                                ) : vendors.length === 0 ? (
+                                    <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-400">No vendors found.</td></tr>
+                                ) : (
+                                    vendors.map((vendor) => (
+                                        <tr key={vendor.id} className="hover:bg-gray-50 transition-colors group">
 
-                {/* Pagination Controls */}
-                <div className="bg-white px-4 py-3 border-t border-gray-200 flex items-center justify-between sm:px-6">
-                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                        <div>
-                            <p className="text-sm text-gray-700">
-                                Showing page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span> ({totalVendors} total users)
-                            </p>
-                        </div>
-                        <div>
-                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                <button
-                                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                                    disabled={page === 1}
-                                    className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${page === 1 ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-50'}`}
-                                >
-                                    Previous
-                                </button>
-                                <button
-                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                    disabled={page === totalPages}
-                                    className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${page === totalPages ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-50'}`}
-                                >
-                                    Next
-                                </button>
-                            </nav>
-                        </div>
+                                            {/* Vendor Name & Username */}
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <div className="h-10 w-10 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                                        <BuildingStorefrontIcon className="h-5 w-5" />
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate max-w-[180px]" title={vendor.name}>
+                                                            {vendor.name}
+                                                        </div>
+                                                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5" title="Username">
+                                                            <UserCircleIcon className="h-3 w-3" />
+                                                            {vendor.username || "No Access"}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            {/* Location */}
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col">
+                                                    <div className="text-sm text-gray-900 flex items-center gap-1">
+                                                        <MapPinIcon className="h-3.5 w-3.5 text-gray-400" />
+                                                        {vendor.city || "Unknown City"}, {vendor.state}
+                                                    </div>
+                                                    <span className="text-xs text-gray-400 ml-5">{vendor.zip_code}</span>
+                                                </div>
+                                            </td>
+
+                                            {/* Contact */}
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-2 text-sm text-gray-600" title={vendor.email}>
+                                                        <EnvelopeIcon className="h-3.5 w-3.5 text-gray-400" />
+                                                        <span className="truncate max-w-[180px]">{vendor.email}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                        <PhoneIcon className="h-3.5 w-3.5 text-gray-400" />
+                                                        <span>{vendor.phone}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            {/* Status */}
+                                            <td className="px-6 py-4 text-center">
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${vendor.is_active
+                                                        ? 'bg-green-50 text-green-700 border-green-200'
+                                                        : 'bg-red-50 text-red-700 border-red-200'
+                                                    }`}>
+                                                    <span className={`h-1.5 w-1.5 rounded-full ${vendor.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                                    {vendor.is_active ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+
+                                            {/* Actions */}
+                                            <td className="px-6 py-4 text-right whitespace-nowrap">
+                                                <div className="flex justify-end items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => handleEditClick(vendor)}
+                                                        className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                                        title="Edit Details"
+                                                    >
+                                                        <PencilSquareIcon className="h-5 w-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleResetPassword(vendor)}
+                                                        className="p-1.5 rounded-lg text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                                                        title="Reset Password"
+                                                    >
+                                                        <KeyIcon className="h-5 w-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => toggleStatus(vendor)}
+                                                        className={`p-1.5 rounded-lg transition-colors ${vendor.is_active
+                                                                ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                                                                : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                                                            }`}
+                                                        title={vendor.is_active ? "Deactivate Account" : "Activate Account"}
+                                                    >
+                                                        <PowerIcon className="h-5 w-5" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+
+            {/* --- Modals --- */}
 
             {/* Edit Modal */}
             {editingVendor && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-lg w-full p-6">
-                        <h2 className="text-xl font-bold mb-4">Edit Vendor</h2>
-                        <form onSubmit={handleUpdate} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Name</label>
-                                <input
-                                    type="text"
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                    value={formData.name}
-                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                                    <input
-                                        type="email"
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.email}
-                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Phone</label>
-                                    <input
-                                        type="text"
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.phone}
-                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="col-span-1">
-                                    <label className="block text-sm font-medium text-gray-700">City</label>
-                                    <input
-                                        type="text"
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.city}
-                                        onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">State</label>
-                                    <input
-                                        type="text"
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.state}
-                                        onChange={e => setFormData({ ...formData, state: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Zip</label>
-                                    <input
-                                        type="text"
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.zip_code}
-                                        onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
-                                    />
+                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden transform transition-all scale-100">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="text-lg font-semibold text-gray-900">Edit Vendor Profile</h3>
+                            <button onClick={() => setEditingVendor(null)} className="text-gray-400 hover:text-gray-500">
+                                <XCircleIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdate} className="p-6 space-y-6">
+                            {/* Company Info */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company Details</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.name}
+                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                        <input
+                                            type="email"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.email}
+                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex justify-end space-x-3 mt-6">
+
+                            {/* Location Info */}
+                            <div className="space-y-4 pt-4 border-t border-gray-100">
+                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
+                                <div className="grid grid-cols-6 gap-4">
+                                    <div className="col-span-6 md:col-span-3">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.city}
+                                            onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="col-span-3 md:col-span-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.state}
+                                            onChange={e => setFormData({ ...formData, state: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="col-span-3 md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.zip_code}
+                                            onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                                 <button
                                     type="button"
                                     onClick={() => setEditingVendor(null)}
-                                    className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
+                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
                                 >
                                     Save Changes
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Credentials Modal - Enhanced */}
+            {resetCredentials && (
+                <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform animate-in fade-in zoom-in duration-200">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 flex justify-between items-center">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                <KeyIcon className="h-6 w-6 text-blue-200" />
+                                Credentials Generated
+                            </h2>
+                            <button
+                                onClick={() => setResetCredentials(null)}
+                                className="text-blue-100 hover:text-white transition-colors"
+                            >
+                                <XCircleIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
+                                <div className="text-blue-600 flex-shrink-0 mt-0.5">
+                                    <CheckCircleIcon className="w-5 h-5" />
+                                </div>
+                                <p className="text-sm text-blue-800">
+                                    Copy these credentials now. The password will not be visible again.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="text-center pb-2 border-b border-gray-100">
+                                    <h3 className="text-lg font-bold text-gray-900">{resetCredentials.vendorName}</h3>
+                                    <p className="text-sm text-gray-500">Access Credentials</p>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.username); showToast('Username copied!', 'success') }}>
+                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Username</label>
+                                        <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.username}</code>
+                                    </div>
+
+                                    <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.email); showToast('Email copied!', 'success') }}>
+                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Login Email</label>
+                                        <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.email}</code>
+                                    </div>
+
+                                    <div className="group bg-yellow-50 hover:bg-yellow-50/80 border border-yellow-200 rounded-xl p-4 cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.temp_password); showToast('Password copied!', 'success') }}>
+                                        <label className="text-xs font-bold text-yellow-700 uppercase tracking-wider block mb-1 flex justify-between">
+                                            New Password
+                                            <span className="text-[10px] bg-yellow-200/50 px-1.5 py-0.5 rounded text-yellow-800">CLICK TO COPY</span>
+                                        </label>
+                                        <code className="text-xl font-bold font-mono text-gray-900 block tracking-wider">{resetCredentials.temp_password}</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-100">
+                            <a
+                                href="/vendor/login"
+                                target="_blank"
+                                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
+                            >
+                                <LinkIcon className="h-3 w-3" />
+                                Go to Vendor Login
+                            </a>
+                            <button
+                                onClick={() => setResetCredentials(null)}
+                                className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium shadow-sm transition-transform active:scale-95"
+                            >
+                                Done
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

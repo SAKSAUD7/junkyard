@@ -35,6 +35,16 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error('Auth initialization error:', error);
+
+                // If it's a 401, clear local storage to prevent infinite loop
+                if (error.response?.status === 401 || error.message.includes('401')) {
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    localStorage.removeItem('user');
+                    setToken(null);
+                    setUser(null);
+                    setVendorProfile(null);
+                }
             } finally {
                 setLoading(false);
             }

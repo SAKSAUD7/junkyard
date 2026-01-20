@@ -22,6 +22,9 @@ const VendorDetail = () => {
                 setLoading(true);
                 const data = await api.getVendors();
 
+                // Handle paginated response
+                const vendors = data.results || (Array.isArray(data) ? data : []);
+
                 let targetId = id;
                 // Support legacy URLs: /junkyards/:state/:slug
                 // Slug format: ID-SLUG (e.g., 6481441-1-morgan-highway-auto-parts)
@@ -33,7 +36,7 @@ const VendorDetail = () => {
                 }
 
                 if (targetId) {
-                    const foundVendor = data.find(v => v.id === parseInt(targetId));
+                    const foundVendor = vendors.find(v => v.id === parseInt(targetId));
                     setVendor(foundVendor);
                     setError(foundVendor ? null : 'Vendor not found');
                 } else {

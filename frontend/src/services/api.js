@@ -226,6 +226,22 @@ export const api = {
     return response.json();
   },
 
+  resetVendorPassword: async (token, id) => {
+    const response = await fetch(`${API_BASE_URL}/vendors/manage/${id}/reset_password/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: '{}'
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  },
+
   getAdminAds: async (token, params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await fetch(`${API_BASE_URL}/ads/manage/${queryString ? `?${queryString}` : ''}`, {

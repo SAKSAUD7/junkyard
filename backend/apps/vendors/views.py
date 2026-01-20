@@ -142,6 +142,86 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'city', 'state', 'email']
     filterset_fields = ['is_active', 'state']
     
+    def update(self, request, *args, **kwargs):
+        """
+        Override update to create user account when vendor is activated.
+        """
+        from django.contrib.auth import get_user_model
+        import secrets
+        
+        User = get_user_model()
+        vendor = self.get_object()
+        was_active = vendor.is_active
+        
+        # Perform the update
+        response = super().update(request, *args, **kwargs)
+        
+        # Refresh vendor from DB to get updated data
+        vendor.refresh_from_db()
+        
+        # If vendor was just activated and doesn't have a user account
+        if not was_active and vendor.is_active and vendor.email:
+            # Check if user already exists
+            existing_user = User.objects.filter(email=vendor.email).first()
+            
+            if not existing_user:
+                # Generate username from email
+                username = vendor.email.split('@')[0]
+                base_username = username
+                counter = 1
+                
+                # Ensure unique username
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                
+                # Generate random password
+                temp_password = secrets.token_urlsafe(12)
+                
+                # Create user account
+                user = User.objects.create_user(
+                    username=username,
+                    email=vendor.email,
+                    password=temp_password,
+                    is_vendor=True,
+                    is_active=True
+                )
+                
+                # TODO: Send email with credentials
+                # For now, log the credentials (in production, send email)
+                print(f"Vendor activated: {vendor.name}")
+                print(f"Username: {username}")
+                print(f"Temporary Password: {temp_password}")
+                print(f"Email: {vendor.email}")
+                
+                # Add success message to response
+                response.data['message'] = f'Vendor activated! User account created with username: {username}'
+                response.data['credentials'] = {
+                    'username': username,
+                    'temp_password': temp_password,
+                    'email': vendor.email
+                }
+            else:
+                user = existing_user
+                print(f"User already exists for {vendor.email}")
+
+            # Ensure VendorProfile exists (if user doesn't already have one)
+            from apps.users.models import VendorProfile
+            if not hasattr(user, 'vendor_profile'):
+                VendorProfile.objects.create(
+                    user=user,
+                    vendor=vendor,
+                    is_owner=True,
+                    can_edit=True,
+                    can_respond_reviews=True,
+                    can_manage_inventory=True
+                )
+                print(f"VendorProfile created for user {user.username} and vendor {vendor.name}")
+            else:
+                print(f"User {user.username} already has a vendor profile")
+        
+        return response
+    
     @action(detail=False, methods=['get'])
     def export_csv(self, request):
         """
@@ -210,5 +290,38 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
             ])
         
         return response
+
+    @action(detail=True, methods=['post'])
+    def reset_password(self, request, pk=None):
+        """
+        Reset the password for the vendor's user account.
+        """
+        import secrets
+        vendor = self.get_object()
+        
+        # Find associated user via VendorProfile
+        profile = vendor.profiles.first()
+        if not profile or not profile.user:
+            return Response(
+                {'error': 'No user account found for this vendor. Please activate the vendor first.'},
+                status=404
+            )
+            
+        user = profile.user
+        
+        # Generate new password
+        temp_password = secrets.token_urlsafe(12)
+        user.set_password(temp_password)
+        user.save()
+        
+        # Log (or send email in future)
+        print(f"Password reset for vendor {vendor.name} (User: {user.username})")
+        
+        return Response({
+            'message': 'Password reset successfully',
+            'username': user.username,
+            'temp_password': temp_password,
+            'email': user.email
+        })
 
 

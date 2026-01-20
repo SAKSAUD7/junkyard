@@ -113,24 +113,6 @@ const VendorLogin = () => {
                     </div>
                 )}
 
-                {/* Demo Credentials Info */}
-                <div style={{
-                    backgroundColor: '#dbeafe',
-                    border: '1px solid #3b82f6',
-                    color: '#1e40af',
-                    padding: '0.75rem',
-                    borderRadius: 'var(--vendor-radius)',
-                    marginBottom: '1rem',
-                    fontSize: '0.875rem'
-                }}>
-                    <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-                        🔑 Demo Credentials
-                    </div>
-                    <div style={{ fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-                        <div><strong>Email:</strong> vendor@test.com</div>
-                        <div><strong>Password:</strong> vendor123</div>
-                    </div>
-                </div>
 
                 {/* Login Form */}
                 <form onSubmit={handleSubmit}>

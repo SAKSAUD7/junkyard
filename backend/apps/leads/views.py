@@ -89,23 +89,75 @@ class LeadViewSet(viewsets.ModelViewSet):
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from apps.hollander.models import Vendor
+from django.views.decorators.csrf import csrf_exempt
+from apps.hollander.models import HollanderInterchange
 
-@require_http_methods(["GET"])
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
 def hollander_lookup(request):
     """
-    Lookup vendors by Hollander interchange number.
-    This is a placeholder for future Hollander integration.
+    Lookup Hollander interchange number based on vehicle details.
+    Queries the HollanderInterchange table for matching records.
+    Accepts: year, make, model, part_type (and their IDs)
     """
-    interchange_number = request.GET.get('interchange_number', '')
+    # Handle both GET and POST requests
+    if request.method == 'POST':
+        import json
+        try:
+            data = json.loads(request.body)
+            year = data.get('year', '')
+            make = data.get('make', '')
+            model = data.get('model', '')
+            part_type = data.get('part_type', '')
+        except:
+            year = make = model = part_type = ''
+    else:
+        year = request.GET.get('year', '')
+        make = request.GET.get('make', '')
+        model = request.GET.get('model', '')
+        part_type = request.GET.get('part_type', '')
     
-    if not interchange_number:
-        return JsonResponse({'error': 'interchange_number parameter is required'}, status=400)
-    
-    # Placeholder response - will be implemented when Hollander data is integrated
-    return JsonResponse({
-        'interchange_number': interchange_number,
-        'vendors': [],
-        'message': 'Hollander lookup functionality coming soon'
-    })
+    # Query the Hollander database
+    try:
+        year_int = int(year) if year else 0
+        
+        # Build query - match year range, make, model, and part type
+        queryset = HollanderInterchange.objects.filter(
+            year_start__lte=year_int,
+            year_end__gte=year_int,
+            make__iexact=make,
+            model__iexact=model,
+            part_type__iexact=part_type
+        )
+        
+        # Get first matching result
+        result = queryset.first()
+        
+        if result:
+            return JsonResponse({
+                'results': [{
+                    'hollander_number': result.hollander_number,
+                    'options': result.options or '',
+                    'year_start': result.year_start,
+                    'year_end': result.year_end,
+                    'make': result.make,
+                    'model': result.model,
+                    'part_type': result.part_type,
+                    'notes': result.notes or ''
+                }]
+            })
+        else:
+            # No match found
+            return JsonResponse({
+                'results': [],
+                'message': f'No Hollander number found for {year} {make} {model} - {part_type}'
+            })
+            
+    except Exception as e:
+        # Error during lookup
+        return JsonResponse({
+            'results': [],
+            'error': str(e),
+            'message': 'Error looking up Hollander number'
+        })
 

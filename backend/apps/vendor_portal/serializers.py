@@ -39,6 +39,7 @@ class VendorProfileUpdateSerializer(serializers.ModelSerializer):
     """Vendor profile management"""
     
     business_hours = VendorBusinessHoursSerializer(many=True, read_only=True)
+    zipcode = serializers.CharField(source='zip_code')
     
     class Meta:
         model = Vendor
