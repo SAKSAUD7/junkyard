@@ -236,26 +236,34 @@ export const api = {
   },
 
   createAd: async (token, data) => {
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    // Only set Content-Type for JSON, let browser set it for FormData
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_BASE_URL}/ads/manage/`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+      headers,
+      body: data instanceof FormData ? data : JSON.stringify(data)
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();
   },
 
   updateAd: async (token, id, data) => {
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    // Only set Content-Type for JSON, let browser set it for FormData
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_BASE_URL}/ads/manage/${id}/`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+      headers,
+      body: data instanceof FormData ? data : JSON.stringify(data)
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();

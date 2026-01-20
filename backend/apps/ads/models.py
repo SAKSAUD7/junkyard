@@ -17,7 +17,7 @@ class Advertisement(models.Model):
     title = models.CharField(max_length=255)
     slot = models.CharField(max_length=50, choices=SLOT_CHOICES)
     page = models.CharField(max_length=50, choices=PAGE_CHOICES, default='all', help_text="Select which page this ad appears on")
-    image = models.ImageField(upload_to='ads/')
+    image = models.ImageField(upload_to='ads/', blank=True, null=True)
     redirect_url = models.URLField(help_text="URL to redirect to when clicked")
     
     # Template customization

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import '../../styles/vendor.css';
 
 const VendorLogin = () => {
@@ -28,200 +30,111 @@ const VendorLogin = () => {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'var(--vendor-bg-secondary)',
-            padding: '1rem',
-            position: 'relative'
-        }}>
-            {/* Back to Home Button */}
-            <Link
-                to="/"
-                style={{
-                    position: 'absolute',
-                    top: '1.5rem',
-                    left: '1.5rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--vendor-primary)',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    padding: '0.5rem 1rem',
-                    borderRadius: 'var(--vendor-radius)',
-                    backgroundColor: 'white',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                    transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                }}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to Home
-            </Link>
+        <>
+            <Navbar />
 
-            <div style={{
-                width: '100%',
-                maxWidth: '400px',
-                backgroundColor: 'var(--vendor-bg-primary)',
-                borderRadius: 'var(--vendor-radius-lg)',
-                boxShadow: 'var(--vendor-shadow-lg)',
-                padding: '2rem'
-            }}>
-                {/* Logo/Header */}
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <h1 style={{
-                        fontSize: '1.875rem',
-                        fontWeight: 700,
-                        color: 'var(--vendor-primary)',
-                        margin: '0 0 0.5rem 0'
-                    }}>
-                        JYNM Vendor Portal
-                    </h1>
-                    <p style={{
-                        color: 'var(--vendor-text-secondary)',
-                        fontSize: '0.875rem',
-                        margin: 0
-                    }}>
-                        Sign in to manage your listings and leads
-                    </p>
-                </div>
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 pt-24 pb-20">
+                <div className="max-w-md mx-auto px-4">
+                    <div className="bg-white rounded-2xl shadow-lg p-8">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl font-black text-gray-900 mb-2">
+                                JYNM Vendor Portal
+                            </h1>
+                            <p className="text-gray-600">
+                                Sign in to manage your listings and leads
+                            </p>
+                        </div>
 
-                {/* Error Message */}
-                {error && (
-                    <div style={{
-                        backgroundColor: '#fee2e2',
-                        color: '#991b1b',
-                        padding: '0.75rem',
-                        borderRadius: 'var(--vendor-radius)',
-                        marginBottom: '1rem',
-                        fontSize: '0.875rem'
-                    }}>
-                        {error}
+                        {/* Error Message */}
+                        {error && (
+                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600">{error}</p>
+                            </div>
+                        )}
+
+                        {/* Demo Credentials Info */}
+                        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div className="font-semibold text-blue-900 mb-2">
+                                🔑 Demo Credentials
+                            </div>
+                            <div className="text-sm text-blue-800 font-mono">
+                                <div><strong>Email:</strong> vendor@test.com</div>
+                                <div><strong>Password:</strong> vendor123</div>
+                            </div>
+                        </div>
+
+
+                        {/* Login Form */}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+                                    Email Address
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    placeholder="vendor@example.com"
+                                    autoComplete="email"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    placeholder="••••••••"
+                                    autoComplete="current-password"
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between text-sm">
+                                <Link
+                                    to="/vendor/forgot-password"
+                                    className="text-blue-600 hover:text-blue-700 font-medium"
+                                >
+                                    Forgot password?
+                                </Link>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loading ? 'Signing in...' : 'Sign In'}
+                            </button>
+                        </form>
+
+                        {/* Footer */}
+                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                            <p className="text-sm text-gray-600">
+                                Need help? Contact support at{' '}
+                                <a
+                                    href="mailto:support@jynm.com"
+                                    className="text-blue-600 hover:text-blue-700 font-medium"
+                                >
+                                    support@jynm.com
+                                </a>
+                            </p>
+                        </div>
                     </div>
-                )}
-
-                {/* Demo Credentials Info */}
-                <div style={{
-                    backgroundColor: '#dbeafe',
-                    border: '1px solid #3b82f6',
-                    color: '#1e40af',
-                    padding: '0.75rem',
-                    borderRadius: 'var(--vendor-radius)',
-                    marginBottom: '1rem',
-                    fontSize: '0.875rem'
-                }}>
-                    <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-                        🔑 Demo Credentials
-                    </div>
-                    <div style={{ fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-                        <div><strong>Email:</strong> vendor@test.com</div>
-                        <div><strong>Password:</strong> vendor123</div>
-                    </div>
-                </div>
-
-                {/* Login Form */}
-                <form onSubmit={handleSubmit}>
-                    <div className="vendor-form-group">
-                        <label className="vendor-form-label" htmlFor="email">
-                            Email Address
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            className="vendor-form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            placeholder="vendor@example.com"
-                            autoComplete="email"
-                        />
-                    </div>
-
-                    <div className="vendor-form-group">
-                        <label className="vendor-form-label" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            className="vendor-form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="••••••••"
-                            autoComplete="current-password"
-                        />
-                    </div>
-
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '1.5rem'
-                    }}>
-                        <Link
-                            to="/vendor/forgot-password"
-                            style={{
-                                fontSize: '0.875rem',
-                                color: 'var(--vendor-primary)',
-                                textDecoration: 'none'
-                            }}
-                        >
-                            Forgot password?
-                        </Link>
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="vendor-btn vendor-btn-primary"
-                        disabled={loading}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            fontSize: '1rem',
-                            fontWeight: 600
-                        }}
-                    >
-                        {loading ? 'Signing in...' : 'Sign In'}
-                    </button>
-                </form>
-
-                {/* Footer */}
-                <div style={{
-                    marginTop: '1.5rem',
-                    paddingTop: '1.5rem',
-                    borderTop: '1px solid var(--vendor-border)',
-                    textAlign: 'center'
-                }}>
-                    <p style={{
-                        fontSize: '0.875rem',
-                        color: 'var(--vendor-text-secondary)',
-                        margin: 0
-                    }}>
-                        Need help? Contact support at{' '}
-                        <a
-                            href="mailto:support@jynm.com"
-                            style={{ color: 'var(--vendor-primary)', textDecoration: 'none' }}
-                        >
-                            support@jynm.com
-                        </a>
-                    </p>
                 </div>
             </div>
-        </div>
+
+            <Footer />
+        </>
     );
 };
 

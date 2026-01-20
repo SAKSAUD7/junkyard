@@ -9,7 +9,7 @@ export default function SignIn() {
     const [searchParams] = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/';
     const navigate = useNavigate();
-    const { login, isAuthenticated } = useContext(AuthContext);
+    const { login, isAuthenticated, user } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -18,12 +18,24 @@ export default function SignIn() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Redirect if already authenticated
+    // Role-based redirect after authentication
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate(returnUrl);
+        if (isAuthenticated && user) {
+            // Determine redirect based on user role
+            let redirectPath = returnUrl;
+
+            if (user.is_superuser || user.user_type === 'admin') {
+                // Admin users go to admin dashboard
+                redirectPath = '/admin-portal/dashboard';
+            } else if (user.user_type === 'vendor') {
+                // Vendor users go to vendor dashboard
+                redirectPath = '/vendor/dashboard';
+            }
+            // Regular users use returnUrl or default to home
+
+            navigate(redirectPath);
         }
-    }, [isAuthenticated, navigate, returnUrl]);
+    }, [isAuthenticated, user, navigate, returnUrl]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
