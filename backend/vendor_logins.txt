@@ -1,0 +1,23 @@
+==================================================
+VENDOR LOGIN CREDENTIALS
+==================================================
+Vendor:   #1 A.B.C. Auto Parts
+Email:    1abcautoparts_1496@example.com
+Password: vendor123
+------------------------------
+Vendor:   #1 Auto
+Email:    1auto_1497@example.com
+Password: vendor123
+------------------------------
+Vendor:   #1 Auto Parts
+Email:    1autoparts_1498@example.com
+Password: vendor123
+------------------------------
+Vendor:   #1 Morgan Highway Auto Parts
+Email:    1morganhighwayautoparts_788@example.com
+Password: vendor123
+------------------------------
+Vendor:   #1 Tow Junk Cars for Cash
+Email:    1towjunkcarsforcash_654@example.com
+Password: vendor123
+------------------------------
