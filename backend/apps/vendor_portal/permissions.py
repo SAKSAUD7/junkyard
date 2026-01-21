@@ -17,6 +17,7 @@ class IsVendorUser(permissions.BasePermission):
 class IsVendorOwner(permissions.BasePermission):
     """
     Permission check: User must own the vendor profile being accessed
+    AND vendor must be active
     """
     
     def has_permission(self, request, view):
@@ -26,7 +27,10 @@ class IsVendorOwner(permissions.BasePermission):
         
         # Check if user has a vendor profile
         try:
-            request.user.vendor_profile
+            vendor_profile = request.user.vendor_profile
+            # Check if vendor is active
+            if not vendor_profile.vendor.is_active:
+                return False
             return True
         except:
             return False

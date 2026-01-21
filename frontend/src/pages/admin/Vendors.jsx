@@ -61,6 +61,7 @@ export default function AdminVendors() {
 
     // Edit & Modal States
     const [editingVendor, setEditingVendor] = useState(null);
+    const [creatingVendor, setCreatingVendor] = useState(false);
     const [resetCredentials, setResetCredentials] = useState(null);
     const [exporting, setExporting] = useState(false);
 
@@ -71,12 +72,26 @@ export default function AdminVendors() {
     const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
 
     const [formData, setFormData] = useState({
+        yard_id: '',
         name: '',
-        email: '',
-        phone: '',
+        description: '',
+        review_snippet: '',
+        address: '',
         city: '',
         state: '',
-        zip_code: ''
+        zip_code: '',
+        phone: '',
+        email: '',
+        website: '',
+        profile_url: '',
+        logo: '/images/logo-placeholder.png',
+        rating: '100%',
+        rating_stars: 5,
+        rating_percentage: 100,
+        is_top_rated: false,
+        is_featured: false,
+        is_trusted: false,
+        is_active: false
     });
 
     const showToast = (message, type = 'info') => {
@@ -96,11 +111,14 @@ export default function AdminVendors() {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
+    // Stats are loaded from the API during fetchVendors
+    // No need for reactive calculation here
+
 
     const fetchVendors = async (pageNo) => {
         setLoading(true);
         try {
-            const params = { page: pageNo, search: searchTerm };
+            const params = { page: pageNo, page_size: 50, search: searchTerm };
             if (activeTab !== 'all') {
                 params.is_active = activeTab === 'active';
             }
@@ -109,7 +127,20 @@ export default function AdminVendors() {
 
             const count = data.count || 0;
             setTotalVendors(count);
-            setTotalPages(Math.ceil(count / 100));
+            setTotalPages(Math.ceil(count / 50));
+
+            // Fetch accurate stats for all vendors
+            const [allVendorsData, activeVendorsData, inactiveVendorsData] = await Promise.all([
+                api.getAdminVendors(token, { page_size: 1 }).catch(() => ({ count: 0 })),
+                api.getAdminVendors(token, { page_size: 1, is_active: true }).catch(() => ({ count: 0 })),
+                api.getAdminVendors(token, { page_size: 1, is_active: false }).catch(() => ({ count: 0 }))
+            ]);
+
+            setStats({
+                total: allVendorsData.count || 0,
+                active: activeVendorsData.count || 0,
+                inactive: inactiveVendorsData.count || 0
+            });
 
         } catch (error) {
             console.error('Error fetching vendors:', error);
@@ -191,12 +222,54 @@ export default function AdminVendors() {
         }
     };
 
+    const handleCreateClick = () => {
+        setCreatingVendor(true);
+        setFormData({
+            yard_id: '',
+            name: '',
+            description: '',
+            review_snippet: '',
+            address: '',
+            city: '',
+            state: '',
+            zip_code: '',
+            phone: '',
+            email: '',
+            website: '',
+            profile_url: '',
+            logo: '/images/logo-placeholder.png',
+            rating: '100%',
+            rating_stars: 5,
+            rating_percentage: 100,
+            is_top_rated: false,
+            is_featured: false,
+            is_trusted: false,
+            is_active: false
+        });
+    };
+
+    const handleCreate = async (e) => {
+        e.preventDefault();
+        try {
+            await api.createVendor(token, formData);
+            setCreatingVendor(false);
+            showToast('Vendor created successfully!', 'success');
+            fetchVendors(1);
+            setPage(1);
+        } catch (error) {
+            console.error(error);
+            const msg = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+            showToast(`Failed to create vendor: ${msg}`, 'error');
+        }
+    };
+
     const handleEditClick = (vendor) => {
         setEditingVendor(vendor);
         setFormData({
             name: vendor.name,
             email: vendor.email || '',
             phone: vendor.phone || '',
+            address: vendor.address || '',
             city: vendor.city || '',
             state: vendor.state || '',
             zip_code: vendor.zip_code || ''
@@ -231,8 +304,16 @@ export default function AdminVendors() {
                     </div>
                     <div className="flex gap-4">
                         <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
-                            <p className="text-xs text-gray-500 font-medium uppercase">Total Vendors</p>
-                            <p className="text-2xl font-bold text-gray-900">{totalVendors}</p>
+                            <p className="text-xs text-gray-500 font-medium uppercase">Total</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                        </div>
+                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
+                            <p className="text-xs text-gray-500 font-medium uppercase">Active</p>
+                            <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                        </div>
+                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
+                            <p className="text-xs text-gray-500 font-medium uppercase">Inactive</p>
+                            <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
                         </div>
                     </div>
                 </div>
@@ -247,8 +328,8 @@ export default function AdminVendors() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                                        ? 'bg-white text-gray-900 shadow-sm'
-                                        : 'text-gray-500 hover:text-gray-700'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-700'
                                     }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -269,9 +350,18 @@ export default function AdminVendors() {
                             />
                         </div>
                         <button
+                            onClick={handleCreateClick}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center gap-2 transition-colors shadow-sm whitespace-nowrap"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Vendor
+                        </button>
+                        <button
                             onClick={handleExport}
                             disabled={exporting}
-                            className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors"
+                            className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
                         >
                             {exporting ? 'Exporting...' : 'Export CSV'}
                         </button>
@@ -346,8 +436,8 @@ export default function AdminVendors() {
                                             {/* Status */}
                                             <td className="px-6 py-4 text-center">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${vendor.is_active
-                                                        ? 'bg-green-50 text-green-700 border-green-200'
-                                                        : 'bg-red-50 text-red-700 border-red-200'
+                                                    ? 'bg-green-50 text-green-700 border-green-200'
+                                                    : 'bg-red-50 text-red-700 border-red-200'
                                                     }`}>
                                                     <span className={`h-1.5 w-1.5 rounded-full ${vendor.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
                                                     {vendor.is_active ? 'Active' : 'Inactive'}
@@ -374,8 +464,8 @@ export default function AdminVendors() {
                                                     <button
                                                         onClick={() => toggleStatus(vendor)}
                                                         className={`p-1.5 rounded-lg transition-colors ${vendor.is_active
-                                                                ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                                                                : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                                                            ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                                                            : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
                                                             }`}
                                                         title={vendor.is_active ? "Deactivate Account" : "Activate Account"}
                                                     >
@@ -389,10 +479,361 @@ export default function AdminVendors() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination Controls */}
+                    {!loading && vendors.length > 0 && (
+                        <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50">
+                            <div className="text-sm text-gray-600">
+                                Showing <span className="font-semibold">{((page - 1) * 50) + 1}</span>–<span className="font-semibold">{Math.min(page * 50, totalVendors)}</span> of <span className="font-semibold">{totalVendors}</span> vendors
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setPage(page - 1)}
+                                    disabled={page === 1}
+                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-gray-300 text-gray-700 hover:bg-gray-100 disabled:hover:bg-white"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="hidden sm:flex items-center gap-1">
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        let pageNum;
+                                        if (totalPages <= 5) {
+                                            pageNum = i + 1;
+                                        } else if (page <= 3) {
+                                            pageNum = i + 1;
+                                        } else if (page >= totalPages - 2) {
+                                            pageNum = totalPages - 4 + i;
+                                        } else {
+                                            pageNum = page - 2 + i;
+                                        }
+                                        return (
+                                            <button
+                                                key={pageNum}
+                                                onClick={() => setPage(pageNum)}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${page === pageNum
+                                                    ? 'bg-blue-600 text-white border-blue-600'
+                                                    : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                                                    }`}
+                                            >
+                                                {pageNum}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="sm:hidden text-sm text-gray-600 px-3">
+                                    Page {page} of {totalPages}
+                                </div>
+
+                                <button
+                                    onClick={() => setPage(page + 1)}
+                                    disabled={page === totalPages}
+                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-gray-300 text-gray-700 hover:bg-gray-100 disabled:hover:bg-white"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* --- Modals --- */}
+
+            {/* Create Vendor Modal */}
+            {creatingVendor && (
+                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden transform transition-all scale-100">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-50">
+                            <h3 className="text-lg font-semibold text-gray-900">Add New Vendor</h3>
+                            <button onClick={() => setCreatingVendor(false)} className="text-gray-400 hover:text-gray-500">
+                                <XCircleIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        <div className="p-6 max-h-[70vh] overflow-y-auto">
+                            <form onSubmit={handleCreate} className="space-y-6" id="create-vendor-form">
+                                {/* Basic Info */}
+                                <div className="space-y-4">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Basic Information</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Company Name <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.name}
+                                                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                                placeholder="ABC Auto Recyclers"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Legacy Yard ID</label>
+                                            <input
+                                                type="number"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.yard_id}
+                                                onChange={e => setFormData({ ...formData, yard_id: e.target.value })}
+                                                placeholder="Optional"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Profile URL Slug</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.profile_url}
+                                                onChange={e => setFormData({ ...formData, profile_url: e.target.value })}
+                                                placeholder="abc-auto-recyclers"
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                            <textarea
+                                                rows="3"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.description}
+                                                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                                placeholder="Brief description of the vendor's services..."
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Review Snippet</label>
+                                            <textarea
+                                                rows="2"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.review_snippet}
+                                                onChange={e => setFormData({ ...formData, review_snippet: e.target.value })}
+                                                placeholder="Featured review or testimonial..."
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Contact Info */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact Information</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                            <input
+                                                type="email"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.email}
+                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                                placeholder="contact@example.com"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.phone}
+                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                                placeholder="(555) 123-4567"
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                                            <input
+                                                type="url"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.website}
+                                                onChange={e => setFormData({ ...formData, website: e.target.value })}
+                                                placeholder="https://example.com"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Location */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
+                                    <div className="col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.address}
+                                            onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                            placeholder="123 Main Street"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-6 gap-4">
+                                        <div className="col-span-6 md:col-span-3">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                City <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.city}
+                                                onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                                placeholder="Phoenix"
+                                            />
+                                        </div>
+                                        <div className="col-span-3 md:col-span-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                State <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                maxLength="2"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border uppercase"
+                                                value={formData.state}
+                                                onChange={e => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                                                placeholder="AZ"
+                                            />
+                                        </div>
+                                        <div className="col-span-3 md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                ZIP <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.zip_code}
+                                                onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
+                                                placeholder="85001"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Profile & Branding */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile & Branding</h4>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                                        <input
+                                            type="text"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                            value={formData.logo}
+                                            onChange={e => setFormData({ ...formData, logo: e.target.value })}
+                                            placeholder="/images/logo-placeholder.png"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">Path to vendor logo image</p>
+                                    </div>
+                                </div>
+
+                                {/* Rating & Trust */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating & Trust Badges</h4>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Stars (1-5)</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="5"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.rating_stars}
+                                                onChange={e => setFormData({ ...formData, rating_stars: parseInt(e.target.value) || 5 })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating %</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.rating_percentage}
+                                                onChange={e => setFormData({ ...formData, rating_percentage: parseInt(e.target.value) || 100 })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Text</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.rating}
+                                                onChange={e => setFormData({ ...formData, rating: e.target.value })}
+                                                placeholder="100%"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-4">
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                checked={formData.is_top_rated}
+                                                onChange={e => setFormData({ ...formData, is_top_rated: e.target.checked })}
+                                            />
+                                            <span className="text-sm text-gray-700">Top Rated</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                checked={formData.is_featured}
+                                                onChange={e => setFormData({ ...formData, is_featured: e.target.checked })}
+                                            />
+                                            <span className="text-sm text-gray-700">Featured</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                checked={formData.is_trusted}
+                                                onChange={e => setFormData({ ...formData, is_trusted: e.target.checked })}
+                                            />
+                                            <span className="text-sm text-gray-700">Trusted Vendor</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* Status */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</h4>
+                                    <div className="flex items-center gap-3">
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={formData.is_active}
+                                                onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
+                                            />
+                                            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            <span className="ml-3 text-sm font-medium text-gray-700">
+                                                {formData.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </label>
+                                        <p className="text-xs text-gray-500">(Inactive vendors hidden from public)</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Form Footer */}
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setCreatingVendor(false)}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                form="create-vendor-form"
+                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
+                            >
+                                Create Vendor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Edit Modal */}
             {editingVendor && (

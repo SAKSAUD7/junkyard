@@ -76,6 +76,11 @@ export const vendorAuth = {
             throw new Error('Access denied. Vendor account required.');
         }
 
+        // Check if vendor is active
+        if (response.data.vendor_profile?.vendor?.is_active === false) {
+            throw new Error('Your account is inactive. Please contact support.');
+        }
+
         // Store tokens and user data
         localStorage.setItem('vendor_access_token', response.data.tokens.access);
         localStorage.setItem('vendor_refresh_token', response.data.tokens.refresh);

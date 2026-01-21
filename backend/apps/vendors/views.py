@@ -34,7 +34,8 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = Vendor.objects.all().order_by('id')  # Order by ID
+        # Only show active vendors in public API
+        queryset = Vendor.objects.filter(is_active=True).order_by('id')
         
         # Filter for trusted vendors
         trusted = self.request.query_params.get('trusted', None)

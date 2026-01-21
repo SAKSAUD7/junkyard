@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import PasswordInput from '../PasswordInput';
 
 const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
     const [email, setEmail] = useState(formData.email || '');
@@ -190,13 +191,12 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                         Password
                     </label>
-                    <input
+                    <PasswordInput
                         id="password"
-                        type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onBlur={() => handleBlur('password')}
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'
                             }`}
                     />
@@ -210,13 +210,12 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                         Confirm Password
                     </label>
-                    <input
+                    <PasswordInput
                         id="confirmPassword"
-                        type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        onBlur={() => handleBlur('confirmPassword')}
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                             }`}
                     />

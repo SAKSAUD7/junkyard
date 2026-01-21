@@ -68,6 +68,25 @@ export default function AdminLayout() {
                     <span className="font-bold text-gray-900">Admin Portal</span>
                 </div>
 
+                {/* Desktop Header with Date */}
+                <div className="hidden md:block bg-white border-b border-gray-200 px-8 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <span className="text-gray-700 text-base font-semibold">
+                                {new Date().toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                })}
+                            </span>
+                        </div>
+                        <div className="text-base text-gray-600">
+                            Welcome, <span className="font-bold text-gray-900">{user?.username || 'Admin'}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                     <Outlet />
                 </main>

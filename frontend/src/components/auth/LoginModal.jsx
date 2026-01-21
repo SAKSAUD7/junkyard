@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
+import PasswordInput from '../PasswordInput';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPassword }) => {
     const [email, setEmail] = useState('');
@@ -197,12 +198,10 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                                 <label htmlFor="login-password" className="block text-base font-medium text-gray-700 mb-2.5">
                                     Password
                                 </label>
-                                <input
+                                <PasswordInput
                                     id="login-password"
-                                    type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    onBlur={() => handleBlur('password')}
                                     placeholder="••••••••"
                                     style={{
                                         padding: '1.5rem 1.75rem',
