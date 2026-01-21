@@ -74,6 +74,7 @@ class VendorNotification(models.Model):
     
     # Optional link to related object
     lead = models.ForeignKey('leads.Lead', on_delete=models.CASCADE, null=True, blank=True)
+    vendor_lead = models.ForeignKey('leads.VendorLead', on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')
     
     # Status
     is_read = models.BooleanField(default=False)

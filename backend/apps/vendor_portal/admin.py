@@ -12,10 +12,21 @@ class VendorInventoryAdmin(admin.ModelAdmin):
 
 @admin.register(VendorNotification)
 class VendorNotificationAdmin(admin.ModelAdmin):
-    list_display = ['vendor', 'notification_type', 'title', 'is_read', 'created_at']
+    list_display = ['vendor', 'notification_type', 'title', 'lead', 'vendor_lead', 'get_state', 'is_read', 'created_at']
     list_filter = ['notification_type', 'is_read', 'vendor']
     search_fields = ['title', 'message', 'vendor__name']
+    readonly_fields = ['lead', 'vendor_lead', 'created_at']
     ordering = ['-created_at']
+    
+    def get_state(self, obj):
+        """Display the state from vendor_lead or lead"""
+        if obj.vendor_lead:
+            return obj.vendor_lead.state
+        elif obj.lead:
+            return obj.lead.state if hasattr(obj.lead, 'state') else '-'
+        return '-'
+    get_state.short_description = 'State'
+    get_state.admin_order_field = 'vendor_lead__state'
 
 
 @admin.register(VendorBusinessHours)

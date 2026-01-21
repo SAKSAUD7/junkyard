@@ -3,8 +3,27 @@ from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
-from .models import Lead
-from .serializers import LeadSerializer
+from .models import Lead, VendorLead
+from .serializers import LeadSerializer, VendorLeadSerializer
+
+
+class VendorLeadViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for vendor leads management.
+    - POST (create): Public access (anyone can submit a vendor lead)
+    - GET, PUT, PATCH, DELETE: Admin only access
+    """
+    queryset = VendorLead.objects.all().order_by('-created_at')
+    serializer_class = VendorLeadSerializer
+    
+    def get_permissions(self):
+        """
+        Allow public POST (create vendor lead), require admin for everything else
+        """
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
 
 
 class LeadViewSet(viewsets.ModelViewSet):

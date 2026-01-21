@@ -11,6 +11,7 @@ export default function AdminLayout() {
     const navigation = [
         { name: 'Dashboard', href: '/admin-portal/dashboard', icon: '📊' },
         { name: 'Leads', href: '/admin-portal/leads', icon: '📋' },
+        { name: 'Vendor Leads', href: '/admin-portal/vendor-leads', icon: '🚚' },
         { name: 'Vendors', href: '/admin-portal/vendors', icon: '🏢' },
         { name: 'Ads', href: '/admin-portal/ads', icon: '📢' },
         { name: 'Messages', href: '/admin-portal/messages', icon: '✉️' },
@@ -37,8 +38,8 @@ export default function AdminLayout() {
                             key={item.name}
                             to={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive(item.href)
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                                 }`}
                         >
                             <span className="text-xl">{item.icon}</span>

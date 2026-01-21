@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
 from apps.hollander.views import hollander_lookup
+from apps.leads.urls import vendor_leads_urlpatterns
 
 
 def health_check(request):
@@ -31,6 +32,7 @@ urlpatterns = [
     path("api/auth/", include("apps.users.urls")),
     path("api/vendors/", include("apps.vendors.urls")),
     path("api/leads/", include("apps.leads.urls")),
+    path("api/vendor-leads/", include(vendor_leads_urlpatterns)),  # Vendor leads endpoint
     path("api/common/", include("apps.common.urls")),
     path("api/ads/", include("apps.ads.urls")),
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API

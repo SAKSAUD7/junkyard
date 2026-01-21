@@ -5,9 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
+from itertools import chain
 
 from apps.hollander.models import Vendor
-from apps.leads.models import Lead
+from apps.leads.models import Lead, VendorLead
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours
 from .serializers import (
@@ -15,6 +16,7 @@ from .serializers import (
     VendorProfileUpdateSerializer,
     VendorInventorySerializer,
     VendorLeadSerializer,
+    VendorLeadForPortalSerializer,
     LeadStatusUpdateSerializer,
     VendorNotificationSerializer,
     VendorBusinessHoursSerializer
@@ -39,13 +41,32 @@ class VendorDashboardView(APIView):
         # Get lead statistics - filtered by vendor assignment
         vendor_leads = Lead.objects.filter(assigned_vendors=vendor)
         
+        # Get vendor leads matching vendor's state
+        state_vendor_leads = VendorLead.objects.filter(state__iexact=vendor.state)
+        
+        # Combine counts
+        total_leads = vendor_leads.count() + state_vendor_leads.count()
+        new_leads = vendor_leads.filter(status='new').count() + state_vendor_leads.filter(status='new').count()
+        contacted_leads = vendor_leads.filter(status='contacted').count() + state_vendor_leads.filter(status='contacted').count()
+        converted_leads = vendor_leads.filter(status='converted').count() + state_vendor_leads.filter(status='converted').count()
+        closed_leads = vendor_leads.filter(status='closed').count() + state_vendor_leads.filter(status='closed').count()
+        
+        # Get recent leads from both sources
+        recent_regular = list(vendor_leads.order_by('-created_at')[:3])
+        recent_vendor = list(state_vendor_leads.order_by('-created_at')[:3])
+        recent_combined = sorted(
+            recent_regular + recent_vendor,
+            key=lambda x: x.created_at,
+            reverse=True
+        )[:5]
+        
         dashboard_data = {
-            'total_leads': vendor_leads.count(),
-            'new_leads': vendor_leads.filter(status='new').count(),
-            'contacted_leads': vendor_leads.filter(status='contacted').count(),
-            'converted_leads': vendor_leads.filter(status='converted').count(),
-            'closed_leads': vendor_leads.filter(status='closed').count(),
-            'recent_leads': vendor_leads.order_by('-created_at')[:5],
+            'total_leads': total_leads,
+            'new_leads': new_leads,
+            'contacted_leads': contacted_leads,
+            'converted_leads': converted_leads,
+            'closed_leads': closed_leads,
+            'recent_leads': recent_combined,
             'account_status': 'Active' if getattr(vendor, 'is_active', True) else 'Inactive',
             'unread_notifications': VendorNotification.objects.filter(
                 vendor=vendor, 
@@ -171,37 +192,73 @@ class VendorInventoryDetailView(generics.RetrieveUpdateDestroyAPIView):
             return VendorInventory.objects.none()
 
 
-class VendorLeadListView(generics.ListAPIView):
+class VendorLeadListView(APIView):
     """
-    GET: List all leads for vendor (paginated, filtered)
+    GET: List all leads for vendor (both regular leads and vendor leads)
     """
     permission_classes = [IsAuthenticated, IsVendorUser, IsVendorOwner]
-    serializer_class = VendorLeadSerializer
     
-    def get_queryset(self):
-        # Filter leads by vendor assignment
+    def get(self, request):
         try:
-            vendor = self.request.user.vendor_profile.vendor
-            queryset = Lead.objects.filter(assigned_vendors=vendor)
-        except:
-            queryset = Lead.objects.none()
-        
-        # Apply filters
-        status_filter = self.request.query_params.get('status', None)
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        
-        search = self.request.query_params.get('search', None)
-        if search:
-            queryset = queryset.filter(
-                Q(name__icontains=search) |
-                Q(email__icontains=search) |
-                Q(make__icontains=search) |
-                Q(model__icontains=search) |
-                Q(part__icontains=search)
+            vendor = request.user.vendor_profile.vendor
+            
+            # Get regular leads assigned to vendor
+            regular_leads = Lead.objects.filter(assigned_vendors=vendor)
+            
+            # Get vendor leads matching vendor's state
+            vendor_leads = VendorLead.objects.filter(
+                state__iexact=vendor.state
             )
-        
-        return queryset.order_by('-created_at')
+            
+            # Apply status filter if provided
+            status_filter = request.query_params.get('status', None)
+            if status_filter:
+                regular_leads = regular_leads.filter(status=status_filter)
+                vendor_leads = vendor_leads.filter(status=status_filter)
+            
+            # Apply search filter if provided
+            search = request.query_params.get('search', None)
+            if search:
+                regular_leads = regular_leads.filter(
+                    Q(name__icontains=search) |
+                    Q(email__icontains=search) |
+                    Q(make__icontains=search) |
+                    Q(model__icontains=search) |
+                    Q(part__icontains=search)
+                )
+                vendor_leads = vendor_leads.filter(
+                    Q(name__icontains=search) |
+                    Q(email__icontains=search) |
+                    Q(make__icontains=search) |
+                    Q(model__icontains=search)
+                )
+            
+            # Serialize both types
+            regular_leads_data = VendorLeadSerializer(
+                regular_leads.order_by('-created_at'), 
+                many=True
+            ).data
+            
+            vendor_leads_data = VendorLeadForPortalSerializer(
+                vendor_leads.order_by('-created_at'), 
+                many=True
+            ).data
+            
+            # Combine and sort by created_at
+            combined_leads = list(regular_leads_data) + list(vendor_leads_data)
+            combined_leads.sort(key=lambda x: x['created_at'], reverse=True)
+            
+            return Response({
+                'results': combined_leads,
+                'count': len(combined_leads)
+            })
+            
+        except Exception as e:
+            return Response({
+                'error': str(e),
+                'results': [],
+                'count': 0
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VendorLeadDetailView(generics.RetrieveUpdateAPIView):

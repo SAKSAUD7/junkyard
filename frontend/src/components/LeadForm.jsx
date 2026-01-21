@@ -15,6 +15,9 @@ export default function LeadForm({ layout = 'vertical' }) {
     const navigate = useNavigate()
 
     // -- State --
+    // Lead Type Toggle
+    const [leadType, setLeadType] = useState('quality_auto_parts') // 'quality_auto_parts' | 'vendor'
+
     // Lists
     const [makes, setMakes] = useState([])
     const [models, setModels] = useState([])
@@ -142,9 +145,10 @@ export default function LeadForm({ layout = 'vertical' }) {
     }, [selectedModel])
 
 
-    // When Year Changes -> Load Parts (Filtered)
+    // When Year Changes -> Load Parts (Filtered) - ONLY FOR QUALITY AUTO PARTS
     useEffect(() => {
-        if (!selectedMake || !selectedModel || !selectedYear) {
+        // Skip for Vendor type or missing dependencies
+        if (leadType === 'vendor' || !selectedMake || !selectedModel || !selectedYear) {
             setParts([])
             return
         }
@@ -160,8 +164,6 @@ export default function LeadForm({ layout = 'vertical' }) {
                 setParts(data || [])
             } catch (err) {
                 console.error("Failed to load parts", err)
-                // Fallback to all parts? Maybe better to show empty if none found
-                // setParts([])
             } finally {
                 setLoadingParts(false)
             }
@@ -170,11 +172,13 @@ export default function LeadForm({ layout = 'vertical' }) {
 
         // Reset downstream
         setSelectedPart('')
-    }, [selectedYear])
+    }, [selectedYear, leadType])
 
 
-    // Lookup Hollander number when Everything Selected
+    // Lookup Hollander number when Everything Selected (ONLY FOR QUALITY AUTO PARTS)
     useEffect(() => {
+        if (leadType === 'vendor') return
+
         const lookupHollander = async () => {
             if (selectedYear && selectedMake && selectedModel && selectedPart) {
                 setLoadingHollander(true)
@@ -192,7 +196,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             year: parseInt(selectedYear),
                             make: makeObj?.makeName || '',
                             make_id: selectedMake,
-                            model: modelObj?.modelName || '', // We need model string for lookup logic sometimes, but ID is safer if backend supports it
+                            model: modelObj?.modelName || '',
                             part_type: partObj?.partName || '',
                             part_id: selectedPart
                         })
@@ -227,16 +231,27 @@ export default function LeadForm({ layout = 'vertical' }) {
         }
 
         lookupHollander()
-    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, models, parts])
+    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, models, parts, leadType])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setSubmitError(null)
 
-        if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
-            setSubmitError('Please select all vehicle details.')
-            return
+        // Validation based on Lead Type
+        if (leadType === 'quality_auto_parts') {
+            if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
+                setSubmitError('Please select all vehicle details.')
+                return
+            }
+        } else {
+            // Vendor Lead Validation
+            if (!selectedMake || !selectedModel || !selectedYear) {
+                setSubmitError('Please select vehicle details.')
+                return
+            }
         }
+
+        // Common Validation
         if (!name || !email || !phone || !state || !zip) {
             setSubmitError('Please fill in all contact information.')
             return
@@ -251,22 +266,43 @@ export default function LeadForm({ layout = 'vertical' }) {
         const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
         const partObj = parts.find(p => p.partID === parseInt(selectedPart))
 
-        const payload = {
-            make: makeObj ? makeObj.makeName : 'Unknown',
-            model: selectedModel,
-            part: partObj ? partObj.partName : 'Unknown',
-            year: parseInt(selectedYear),
-            name,
-            email,
-            phone,
-            state,
-            zip,
-            options: options || '',
-            hollander_number: hollanderNumber || ''
+        // Determine endpoint and payload based on lead type
+        let endpoint, payload;
+
+        if (leadType === 'vendor') {
+            // Vendor Lead - separate endpoint, no part fields
+            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/vendor-leads/`;
+            payload = {
+                make: makeObj ? makeObj.makeName : 'Unknown',
+                model: selectedModel,
+                year: parseInt(selectedYear),
+                name,
+                email,
+                phone,
+                state,
+                zip
+            };
+        } else {
+            // Quality Auto Parts Lead - original endpoint
+            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/leads/`;
+            payload = {
+                make: makeObj ? makeObj.makeName : 'Unknown',
+                model: selectedModel,
+                year: parseInt(selectedYear),
+                part: partObj ? partObj.partName : 'Unknown',
+                lead_type: leadType,
+                name,
+                email,
+                phone,
+                state,
+                zip,
+                options: options || '',
+                hollander_number: hollanderNumber || ''
+            };
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/leads/`, {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -285,6 +321,8 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     const handleReset = () => {
         setIsSuccess(false)
+        // Keep selected tab? Or reset? Usually keep tab. 
+        // Reset fields only.
         setSelectedMake('')
         setSelectedModel('')
         setSelectedPart('')
@@ -298,6 +336,17 @@ export default function LeadForm({ layout = 'vertical' }) {
         setHollanderNumber('')
         setUserSecurityCode('')
         generateSecurityCode()
+    }
+
+    const handleTypeChange = (type) => {
+        setLeadType(type)
+        // Optional: Reset partial progress when switching to avoid weird state?
+        // Let's keep data if compatible (Make/Model/Year), clear Part if switching to Vendor
+        if (type === 'vendor') {
+            setSelectedPart('')
+            setHollanderNumber('')
+            setOptions('')
+        }
     }
 
     if (isSuccess) {
@@ -327,12 +376,29 @@ export default function LeadForm({ layout = 'vertical' }) {
             {/* Header */}
             <div className={`bg-gradient-to-r from-blue-600 to-teal-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''}`}>
                 <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
-                    NEED A QUALITY USED PART?
+                    {leadType === 'quality_auto_parts' ? 'NEED A QUALITY USED PART?' : 'FIND JUNKYARD VENDORS'}
                 </h2>
             </div>
 
-            {/* Form Body */}
-            <form onSubmit={handleSubmit} className={`bg-white p-3 md:p-5 rounded-b-xl border border-gray-200 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'space-y-2 md:space-y-3'}`}>
+            <form onSubmit={handleSubmit} className={`bg-white p-3 md:p-5 rounded-b-xl border border-gray-200 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'flex flex-col gap-3'}`}>
+
+                {/* Toggle Buttons (Full Width) */}
+                <div className={`${isHorizontal ? 'col-span-2' : ''} grid grid-cols-2 gap-2 mb-2`}>
+                    <button
+                        type="button"
+                        onClick={() => handleTypeChange('quality_auto_parts')}
+                        className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                    >
+                        Quality Auto Parts
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleTypeChange('vendor')}
+                        className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                    >
+                        Junkyard Vendors
+                    </button>
+                </div>
 
                 {/* Left Column (Vehicle Info) */}
                 <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-gray-200 pr-3 md:pr-6' : ''}`}>
@@ -391,57 +457,62 @@ export default function LeadForm({ layout = 'vertical' }) {
                         </select>
                     </div>
 
-                    {/* 4. Part */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                            4. Part <span className="text-blue-600">*</span>
-                            {loadingParts && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedPart}
-                            onChange={(e) => setSelectedPart(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedYear}
-                            required
-                        >
-                            <option value="">Select Part</option>
-                            {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                        </select>
-                    </div>
+                    {/* FIELDS SPECIFIC TO QUALITY AUTO PARTS */}
+                    {leadType === 'quality_auto_parts' && (
+                        <>
+                            {/* 4. Part */}
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                    4. Part <span className="text-blue-600">*</span>
+                                    {loadingParts && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                                </label>
+                                <select
+                                    value={selectedPart}
+                                    onChange={(e) => setSelectedPart(e.target.value)}
+                                    className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                    disabled={!selectedYear}
+                                    required
+                                >
+                                    <option value="">Select Part</option>
+                                    {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                                </select>
+                            </div>
 
-                    {/* 5. Options (Auto-populated from Hollander) */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
-                            5. Options
-                            {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
-                        </label>
-                        <input
-                            type="text"
-                            value={options}
-                            readOnly
-                            placeholder="Auto-populated from part specs"
-                            className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
-                        />
-                    </div>
+                            {/* 5. Options */}
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                    5. Options
+                                    {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
+                                </label>
+                                <input
+                                    type="text"
+                                    value={options}
+                                    readOnly
+                                    placeholder="Auto-populated from part specs"
+                                    className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                />
+                            </div>
 
-                    {/* Hollander Number (Auto-populated) */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
-                            Hollander #
-                            {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
-                        </label>
-                        <input
-                            type="text"
-                            value={hollanderNumber}
-                            readOnly
-                            placeholder="Auto-populated"
-                            className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
-                        />
-                    </div>
+                            {/* Hollander Number */}
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                    Hollander #
+                                    {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
+                                </label>
+                                <input
+                                    type="text"
+                                    value={hollanderNumber}
+                                    readOnly
+                                    placeholder="Auto-populated"
+                                    className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Right Column (Contact Info) */}
-                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? '' : ''}`}>
+                <div className={`space-y-1.5 md:space-y-2`}>
                     {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Contact Information</h3>}
 
                     {/* Contact Grid */}
@@ -536,7 +607,7 @@ export default function LeadForm({ layout = 'vertical' }) {
                             disabled={submitting}
                             className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
                         >
-                            {submitting ? 'SENDING...' : 'FIND MY PART NOW'}
+                            {submitting ? 'SENDING...' : (leadType === 'vendor' ? 'FIND VENDOR' : 'FIND MY PART NOW')}
                         </button>
                     </div>
                 </div>

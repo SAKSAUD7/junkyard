@@ -33,6 +33,14 @@ class Lead(models.Model):
     location = models.CharField(max_length=20, default='', blank=True)
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    
+    # NEW: Lead Type for separate forms
+    LEAD_TYPE_CHOICES = [
+        ('quality_auto_parts', 'Quality Auto Parts'),
+        ('vendor', 'Junkyard Vendor'),
+    ]
+    lead_type = models.CharField(max_length=50, choices=LEAD_TYPE_CHOICES, default='quality_auto_parts')
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -50,3 +58,38 @@ class Lead(models.Model):
     def __str__(self):
         return f"{self.year} {self.make} {self.model} - {self.part}"
 
+class VendorLead(models.Model):
+    """
+    Separate model for Junkyard Vendor leads.
+    Stores leads from the 'Junkyard Vendors' form tab.
+    """
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('contacted', 'Contacted'),
+        ('converted', 'Converted'),
+        ('closed', 'Closed'),
+    ]
+
+    # Vehicle Info (No Part or Hollander needed)
+    make = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    year = models.IntegerField()
+    
+    # Contact Info
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone = models.CharField(max_length=20)
+    state = models.CharField(max_length=2)
+    zip = models.CharField(max_length=10)
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Vendor Lead"
+        verbose_name_plural = "Vendor Leads"
+
+    def __str__(self):
+        return f"Vendor Inquiry: {self.year} {self.make} {self.model} - {self.name}"

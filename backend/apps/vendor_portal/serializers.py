@@ -1,10 +1,42 @@
 from rest_framework import serializers
 from apps.hollander.models import Vendor
-from apps.leads.models import Lead
+from apps.leads.models import Lead, VendorLead
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours
 from django.db.models import Count, Q
 from datetime import datetime, timedelta
+
+
+class VendorLeadForPortalSerializer(serializers.ModelSerializer):
+    """Serializer for VendorLead in vendor portal"""
+    
+    customer_name = serializers.CharField(source='name', read_only=True)
+    customer_email = serializers.EmailField(source='email', read_only=True)
+    customer_phone = serializers.CharField(source='phone', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    # Add part field as empty string for consistency with regular leads
+    part = serializers.SerializerMethodField()
+    options = serializers.SerializerMethodField()
+    hollander_number = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = VendorLead
+        fields = [
+            'id', 'make', 'model', 'year', 'part', 'options', 'hollander_number',
+            'customer_name', 'customer_email', 'customer_phone',
+            'state', 'zip', 'status', 'status_display', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
+    
+    def get_part(self, obj):
+        return "General Vendor Inquiry"
+    
+    def get_options(self, obj):
+        return ""
+    
+    def get_hollander_number(self, obj):
+        return ""
 
 
 class VendorDashboardSerializer(serializers.Serializer):

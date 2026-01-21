@@ -40,9 +40,11 @@ import AdminLayout from './layouts/AdminLayout'
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminMessages from './pages/admin/Messages'
 import AdminLeads from './pages/admin/Leads'
+import AdminVendorLeads from './pages/admin/VendorLeads'
 import AdminVendors from './pages/admin/Vendors'
 import AdminAds from './pages/admin/Ads'
 import AdminSettings from './pages/admin/Settings'
+
 
 function App() {
   return (
@@ -120,6 +122,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="messages" element={<AdminMessages />} />
           <Route path="leads" element={<AdminLeads />} />
+          <Route path="vendor-leads" element={<AdminVendorLeads />} />
           <Route path="vendors" element={<AdminVendors />} />
           <Route path="ads" element={<AdminAds />} />
           <Route path="settings" element={<AdminSettings />} />
