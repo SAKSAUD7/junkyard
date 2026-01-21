@@ -4,6 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import PasswordInput from '../components/PasswordInput';
 
 export default function SignIn() {
     const [searchParams] = useSearchParams();
@@ -108,10 +109,9 @@ export default function SignIn() {
                                 <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
                                     Password
                                 </label>
-                                <input
+                                <PasswordInput
                                     id="password"
                                     name="password"
-                                    type="password"
                                     required
                                     value={formData.password}
                                     onChange={handleChange}

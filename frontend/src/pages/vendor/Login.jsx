@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import PasswordInput from '../../components/PasswordInput';
 import '../../styles/vendor.css';
 
 const VendorLogin = () => {
@@ -87,9 +88,8 @@ const VendorLogin = () => {
                                 <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
                                     Password
                                 </label>
-                                <input
+                                <PasswordInput
                                     id="password"
-                                    type="password"
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}

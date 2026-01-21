@@ -16,6 +16,7 @@ import HowItWorks from './pages/HowItWorks'
 import FAQ from './pages/FAQ'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import ForgotPassword from './pages/ForgotPassword'
 import Profile from './pages/Profile'
 
 // Auth Components
@@ -56,6 +57,7 @@ function App() {
         {/* Auth Routes */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Routes */}
         <Route path="/add-a-yard" element={

@@ -213,6 +213,22 @@ export const api = {
     return response.json();
   },
 
+  createVendor: async (token, data) => {
+    const response = await fetch(`${API_BASE_URL}/vendors/manage/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || `HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  },
+
   updateVendor: async (token, id, data) => {
     const response = await fetch(`${API_BASE_URL}/vendors/manage/${id}/`, {
       method: 'PATCH',
