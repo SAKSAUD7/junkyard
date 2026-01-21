@@ -374,4 +374,80 @@ def hollander_lookup(request):
         return Response({'results': []}, status=500)
 
 
+@api_view(['GET'])
+def zipcode_lookup(request):
+    """
+    Lookup city and state information by zip code.
+    GET /api/zipcode/lookup/?zip=12345
+    """
+    zip_code = request.GET.get('zip', '').strip()
+    
+    if not zip_code:
+        return Response({
+            'error': 'Zip code is required',
+            'found': False
+        }, status=400)
+    
+    try:
+        # Lookup zipcode in database
+        zipcode_obj = Zipcode.objects.filter(postal_code=zip_code).first()
+        
+        if zipcode_obj:
+            return Response({
+                'found': True,
+                'zip': zipcode_obj.postal_code,
+                'city': zipcode_obj.city_name,
+                'state': zipcode_obj.state_abbr,
+                'county': zipcode_obj.county_name or ''
+            })
+        else:
+            return Response({
+                'found': False,
+                'zip': zip_code,
+                'message': 'Zip code not found in database'
+            })
+            
+    except Exception as e:
+        return Response({
+            'error': str(e),
+            'found': False
+        }, status=500)
 
+
+@api_view(['GET'])
+def get_zipcodes_by_state(request):
+    """
+    Get all zipcodes for a given state.
+    GET /api/zipcodes/state/?state=IL
+    Returns a list of zipcodes with city names.
+    """
+    state_code = request.GET.get('state', '').strip().upper()
+    
+    if not state_code:
+        return Response({
+            'error': 'State code is required',
+            'zipcodes': []
+        }, status=400)
+    
+    try:
+        # Get zipcodes for the state, ordered by city name
+        zipcodes = Zipcode.objects.filter(
+            state_abbr__iexact=state_code
+        ).order_by('city_name', 'postal_code').values(
+            'postal_code', 'city_name'
+        )
+        
+        # Limit to 1000 results to avoid overwhelming the response
+        zipcodes_list = list(zipcodes[:1000])
+        
+        return Response({
+            'state': state_code,
+            'count': len(zipcodes_list),
+            'zipcodes': zipcodes_list
+        })
+        
+    except Exception as e:
+        return Response({
+            'error': str(e),
+            'zipcodes': []
+        }, status=500)

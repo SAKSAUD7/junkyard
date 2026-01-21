@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 
-// US States list
+// US States and Canadian Provinces (from zipcode database)
 const US_STATES = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    'AA', 'AB', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'BC',
+    'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FM', 'GA', 'GU', 'HI',
+    'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MB', 'MD',
+    'ME', 'MH', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NB', 'NC',
+    'ND', 'NE', 'NH', 'NJ', 'NL', 'NM', 'NS', 'NT', 'NU', 'NV',
+    'NY', 'OH', 'OK', 'ON', 'OR', 'PA', 'PE', 'PR', 'PW', 'QC',
+    'RI', 'SC', 'SD', 'SK', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT',
+    'WA', 'WI', 'WV', 'WY', 'YT'
 ]
 
 export default function LeadForm({ layout = 'vertical' }) {
@@ -42,6 +45,10 @@ export default function LeadForm({ layout = 'vertical' }) {
     const [phone, setPhone] = useState('')
     const [state, setState] = useState('')
     const [zip, setZip] = useState('')
+    const [loadingZipcode, setLoadingZipcode] = useState(false)
+    const [zipcodeCity, setZipcodeCity] = useState('')
+    const [zipcodes, setZipcodes] = useState([])
+    const [loadingZipcodes, setLoadingZipcodes] = useState(false)
 
     // Hollander / Options
     const [options, setOptions] = useState('')
@@ -71,6 +78,67 @@ export default function LeadForm({ layout = 'vertical' }) {
         // Load initial Makes
         loadMakes()
     }, [])
+
+    // Zipcode Lookup
+    const handleZipChange = async (zipValue) => {
+        setZip(zipValue)
+
+        // Only lookup if we have a 5-digit zip
+        if (zipValue.length === 5) {
+            setLoadingZipcode(true)
+            try {
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
+                )
+                const data = await response.json()
+
+                if (data.found) {
+                    setState(data.state)
+                    setZipcodeCity(data.city)
+                } else {
+                    // Clear state if zip not found
+                    setZipcodeCity('')
+                }
+            } catch (error) {
+                console.error('Zipcode lookup error:', error)
+            } finally {
+                setLoadingZipcode(false)
+            }
+
+            // Load zipcodes when state changes
+            const handleStateChange = async (stateValue) => {
+                setState(stateValue)
+                setZip('') // Clear zip when state changes
+                setZipcodeCity('')
+
+                if (stateValue) {
+                    setLoadingZipcodes(true)
+                    try {
+                        const response = await fetch(
+                            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
+                        )
+                        const data = await response.json()
+
+                        if (data.zipcodes) {
+                            setZipcodes(data.zipcodes)
+                        } else {
+                            setZipcodes([])
+                        }
+                    } catch (error) {
+                        console.error('Error loading zipcodes:', error)
+                        setZipcodes([])
+                    } finally {
+                        setLoadingZipcodes(false)
+                    }
+                } else {
+                    setZipcodes([])
+                }
+            }
+        } else {
+            // Clear city if zip is incomplete
+            setZipcodeCity('')
+        }
+    }
 
     // -- API Loaders --
 
@@ -557,25 +625,67 @@ export default function LeadForm({ layout = 'vertical' }) {
                             <label className="text-[10px] font-bold text-gray-700 uppercase">State <span className="text-blue-600">*</span></label>
                             <select
                                 value={state}
-                                onChange={e => setState(e.target.value)}
+                                onChange={e => handleStateChange(e.target.value)}
                                 className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
                                 required
                             >
                                 <option value="">State</option>
                                 {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
+                            {loadingZipcodes && (
+                                <p className="text-xs text-blue-600 mt-1">Loading zipcodes...</p>
+                            )}
                         </div>
 
                         <div className="space-y-0.5 md:space-y-1">
                             <label className="text-[10px] font-bold text-gray-700 uppercase">Zip <span className="text-blue-600">*</span></label>
-                            <input
-                                type="text"
-                                value={zip}
-                                onChange={e => setZip(e.target.value)}
-                                placeholder="Zip Code"
-                                className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
-                                required
-                            />
+                            {zipcodes.length > 0 ? (
+                                // Show dropdown if zipcodes are loaded
+                                <select
+                                    value={zip}
+                                    onChange={e => {
+                                        const selectedZip = e.target.value
+                                        setZip(selectedZip)
+                                        // Find and set city
+                                        const zipObj = zipcodes.find(z => z.postal_code === selectedZip)
+                                        if (zipObj) {
+                                            setZipcodeCity(zipObj.city_name)
+                                        }
+                                    }}
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                                    required
+                                >
+                                    <option value="">Select Zip Code</option>
+                                    {zipcodes.map(zipcode => (
+                                        <option key={zipcode.postal_code} value={zipcode.postal_code}>
+                                            {zipcode.postal_code} - {zipcode.city_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                // Show text input if no zipcodes loaded
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={zip}
+                                        onChange={e => handleZipChange(e.target.value)}
+                                        placeholder="Zip Code"
+                                        maxLength="5"
+                                        className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
+                                        required
+                                    />
+                                    {loadingZipcode && (
+                                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {zipcodeCity && (
+                                <p className="text-xs text-green-600 mt-1">
+                                    📍 {zipcodeCity}, {state}
+                                </p>
+                            )}
                         </div>
                     </div>
 

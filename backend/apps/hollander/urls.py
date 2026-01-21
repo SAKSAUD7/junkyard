@@ -8,4 +8,6 @@ urlpatterns = [
     path('parts/', views.get_parts, name='get_parts'),
     path('pincodes/search/', views.search_pincodes, name='search_pincodes'),
     path('lookup/', views.hollander_lookup, name='hollander_lookup'),
+    path('zipcode/lookup/', views.zipcode_lookup, name='zipcode_lookup'),
+    path('zipcodes/state/', views.get_zipcodes_by_state, name='get_zipcodes_by_state'),
 ]
