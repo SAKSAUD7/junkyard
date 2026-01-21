@@ -20,6 +20,7 @@ export default function AdminVendorLeads() {
     const [selectedLead, setSelectedLead] = useState(null);
     const [toast, setToast] = useState(null);
     const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
         fetchVendorLeads();
@@ -44,6 +45,41 @@ export default function AdminVendorLeads() {
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
+    };
+
+    const handleExport = async () => {
+        setExporting(true);
+        try {
+            const params = new URLSearchParams();
+            if (statusFilter !== 'all') params.append('status', statusFilter);
+            if (searchTerm) params.append('search', searchTerm);
+
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/vendor-leads/export_csv/?${params}`,
+                {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }
+            );
+
+            if (!response.ok) throw new Error('Export failed');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vendor_leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            showToast('Vendor leads exported successfully');
+        } catch (error) {
+            console.error('Export error:', error);
+            showToast('Failed to export vendor leads', 'error');
+        } finally {
+            setExporting(false);
+        }
     };
 
     const handleStatusUpdate = async (leadId, newStatus) => {
@@ -135,6 +171,26 @@ export default function AdminVendorLeads() {
                         />
                         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
                     </div>
+
+                    <button
+                        onClick={handleExport}
+                        disabled={exporting}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                    >
+                        {exporting ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                Exporting...
+                            </>
+                        ) : (
+                            <>
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Export CSV
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
 

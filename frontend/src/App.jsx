@@ -44,6 +44,7 @@ import AdminLeads from './pages/admin/Leads'
 import AdminVendorLeads from './pages/admin/VendorLeads'
 import AdminVendors from './pages/admin/Vendors'
 import AdminAds from './pages/admin/Ads'
+import AdminPartPricing from './pages/admin/PartPricing'
 import AdminSettings from './pages/admin/Settings'
 
 
@@ -127,6 +128,7 @@ function App() {
           <Route path="vendor-leads" element={<AdminVendorLeads />} />
           <Route path="vendors" element={<AdminVendors />} />
           <Route path="ads" element={<AdminAds />} />
+          <Route path="pricing" element={<AdminPartPricing />} />
           <Route path="settings" element={<AdminSettings />} />
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />

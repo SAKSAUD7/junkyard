@@ -109,7 +109,7 @@ export default function Home() {
                             <div className="text-center mb-2 sm:mb-3">
                                 <p className="text-xs sm:text-base text-white/70">Or search by vehicle details</p>
                             </div>
-                            <LeadForm layout="horizontal" />
+                            <LeadForm layout="horizontal" mode="quality_auto_parts" enableSteps={true} />
                         </div>
 
                     </div>

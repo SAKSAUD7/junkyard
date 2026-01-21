@@ -1,0 +1,30 @@
+{
+  "audit_timestamp": "2026-01-22T02:18:40.360755",
+  "summary": {
+    "total_vendors": 1850,
+    "active_vendors": 1850,
+    "fully_complete_vendors": 0,
+    "completeness_percentage": 0.0
+  },
+  "logos": {
+    "with_real_logo": 0,
+    "with_placeholder": 1850,
+    "without_logo": 0,
+    "percentage_complete": 0.0
+  },
+  "descriptions": {
+    "with_description": 424,
+    "with_quality_description": 9,
+    "without_description": 1426,
+    "percentage_complete": 22.9
+  },
+  "ratings": {
+    "total_ratings": 930,
+    "vendors_with_ratings": 420,
+    "vendors_with_review_snippet": 57,
+    "vendors_with_rating_stars": 1850,
+    "vendors_with_rating_percentage": 1850,
+    "vendors_without_ratings": 1430,
+    "percentage_complete": 22.7
+  }
+}

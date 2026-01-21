@@ -328,6 +328,32 @@ const VendorProfile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Review Snippet (Read-only) */}
+            {profile?.review_snippet && (
+                <div className="vendor-card" style={{ marginTop: 'var(--vendor-spacing-xl)' }}>
+                    <h3 className="vendor-card-title">Featured Review</h3>
+                    <div className="vendor-card-body">
+                        <div style={{
+                            backgroundColor: '#f9fafb',
+                            padding: 'var(--vendor-spacing-lg)',
+                            borderRadius: 'var(--vendor-radius)',
+                            borderLeft: '4px solid var(--vendor-primary)',
+                            fontStyle: 'italic',
+                            color: 'var(--vendor-text-secondary)'
+                        }}>
+                            "{profile.review_snippet}"
+                        </div>
+                        <p style={{
+                            marginTop: 'var(--vendor-spacing-md)',
+                            fontSize: '0.75rem',
+                            color: 'var(--vendor-text-secondary)'
+                        }}>
+                            This review snippet is displayed on your public vendor profile.
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

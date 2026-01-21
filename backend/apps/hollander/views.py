@@ -1,6 +1,10 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAdminUser, AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Make, Model, PartPricing, PartType, HollanderMakeModelRef, HollanderIndex, HollanderPartRef, Zipcode
+from .serializers import PartPricingSerializer
 from django.db.models import Q, Min, Max
 
 # ==========================================
@@ -451,3 +455,94 @@ def get_zipcodes_by_state(request):
             'error': str(e),
             'zipcodes': []
         }, status=500)
+
+
+class PartPricingViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for Part Pricing management.
+    Provides CRUD operations for part pricing data.
+    """
+    queryset = PartPricing.objects.all().order_by('-id')
+    serializer_class = PartPricingSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    
+    # Filtering
+    filterset_fields = {
+        'make': ['exact', 'icontains'],
+        'model': ['exact', 'icontains'],
+        'part_name': ['exact', 'icontains'],
+        'year_start': ['exact', 'gte', 'lte'],
+        'year_end': ['exact', 'gte', 'lte'],
+    }
+    
+    # Search
+    search_fields = ['hollander_number', 'make', 'model', 'part_name']
+    
+    # Ordering
+    ordering_fields = ['hollander_number', 'make', 'model', 'year_start', 'new_price']
+    
+    # Pagination
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Additional custom filters
+        hollander = self.request.query_params.get('hollander_number', None)
+        if hollander:
+            queryset = queryset.filter(hollander_number__icontains=hollander)
+        
+        return queryset
+    
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """Export all pricing data to CSV"""
+        import csv
+        from django.http import HttpResponse
+        
+        # Get filtered queryset
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        # Create CSV response
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="part_pricing_export.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'ID', 'Hollander Number', 'Make', 'Model', 'Part Name',
+            'Year Start', 'Year End', 'New Price', 'WOW Price', 'CTS Price',
+            'Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5',
+            'Option 6', 'Option 7', 'Option 8', 'Option 9', 'Option 10', 'Option 11',
+            'Created At', 'Updated At'
+        ])
+        
+        # Write data rows
+        for item in queryset:
+            writer.writerow([
+                item.id,
+                item.hollander_number,
+                item.make,
+                item.model,
+                item.part_name,
+                item.year_start,
+                item.year_end,
+                item.new_price or '',
+                item.wow_price or '',
+                item.cts_price or '',
+                item.option1,
+                item.option2,
+                item.option3,
+                item.option4,
+                item.option5,
+                item.option6,
+                item.option7,
+                item.option8,
+                item.option9,
+                item.option10,
+                item.option11,
+                item.created_at.strftime('%Y-%m-%d %H:%M:%S') if item.created_at else '',
+                item.updated_at.strftime('%Y-%m-%d %H:%M:%S') if item.updated_at else '',
+            ])
+        
+        return response

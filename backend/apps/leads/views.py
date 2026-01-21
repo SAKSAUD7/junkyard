@@ -23,6 +23,72 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+    
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export vendor leads to CSV file.
+        Supports filtering by status via query params.
+        """
+        # Get filtered queryset
+        queryset = self.get_queryset()
+        
+        # Apply status filter if provided
+        status = request.query_params.get('status')
+        if status and status != 'all':
+            queryset = queryset.filter(status=status)
+        
+        # Apply search filter if provided
+        search = request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                name__icontains=search
+            ) | queryset.filter(
+                email__icontains=search
+            ) | queryset.filter(
+                make__icontains=search
+            )
+        
+        # Create CSV response
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="vendor_leads_export.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'ID',
+            'Date Created',
+            'Status',
+            'Customer Name',
+            'Email',
+            'Phone',
+            'State',
+            'ZIP Code',
+            'Year',
+            'Make',
+            'Model',
+            'Inquiry Type'
+        ])
+        
+        # Write data rows
+        for lead in queryset:
+            writer.writerow([
+                lead.id,
+                lead.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                lead.status or 'new',
+                lead.name,
+                lead.email,
+                lead.phone,
+                lead.state or '',
+                lead.zip or '',
+                lead.year,
+                lead.make,
+                lead.model,
+                lead.inquiry_type or 'General Vendor Inquiry'
+            ])
+        
+        return response
 
 
 
@@ -101,14 +167,14 @@ class LeadViewSet(viewsets.ModelViewSet):
                 lead.name,
                 lead.email,
                 lead.phone,
-                lead.zipcode or '',
+                lead.zip or '',
                 lead.year,
                 lead.make,
                 lead.model,
-                lead.vin or '',
+                getattr(lead, 'vin', '') or '',
                 lead.part,
-                lead.condition or '',
-                lead.notes or ''
+                getattr(lead, 'condition', '') or '',
+                getattr(lead, 'notes', '') or ''
             ])
         
         return response

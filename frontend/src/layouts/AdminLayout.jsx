@@ -14,6 +14,7 @@ export default function AdminLayout() {
         { name: 'Vendor Leads', href: '/admin-portal/vendor-leads', icon: '🚚' },
         { name: 'Vendors', href: '/admin-portal/vendors', icon: '🏢' },
         { name: 'Ads', href: '/admin-portal/ads', icon: '📢' },
+        { name: 'Part Pricing', href: '/admin-portal/pricing', icon: '💰' },
         { name: 'Messages', href: '/admin-portal/messages', icon: '✉️' },
         { name: 'Settings', href: '/admin-portal/settings', icon: '⚙️' },
     ];

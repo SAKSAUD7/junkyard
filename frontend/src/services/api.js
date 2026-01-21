@@ -188,10 +188,21 @@ export const api = {
 
   exportLeads: async (token, params = {}) => {
     const queryString = new URLSearchParams(params).toString();
-    const response = await fetch(`${API_BASE_URL}/leads/export_csv/${queryString ? `?${queryString}` : ''}`, {
+    const url = `${API_BASE_URL}/leads/export_csv/?${queryString}`;
+    console.log('Exporting leads from:', url);
+
+    const response = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    console.log('Export response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Export error response:', errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     return response.blob();
   },
 

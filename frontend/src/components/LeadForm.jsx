@@ -14,12 +14,16 @@ const US_STATES = [
     'WA', 'WI', 'WV', 'WY', 'YT'
 ]
 
-export default function LeadForm({ layout = 'vertical' }) {
+export default function LeadForm({ layout = 'vertical', mode = null, vendorName = null, enableSteps = false }) {
     const navigate = useNavigate()
 
     // -- State --
     // Lead Type Toggle
-    const [leadType, setLeadType] = useState('quality_auto_parts') // 'quality_auto_parts' | 'vendor'
+    // If mode is provided, use it. Otherwise default to 'quality_auto_parts'
+    const [leadType, setLeadType] = useState(mode || 'quality_auto_parts')
+
+    // Steps State
+    const [currentStep, setCurrentStep] = useState(1)
 
     // Lists
     const [makes, setMakes] = useState([])
@@ -49,6 +53,7 @@ export default function LeadForm({ layout = 'vertical' }) {
     const [zipcodeCity, setZipcodeCity] = useState('')
     const [zipcodes, setZipcodes] = useState([])
     const [loadingZipcodes, setLoadingZipcodes] = useState(false)
+    const [showZipSuggestions, setShowZipSuggestions] = useState(false)
 
     // Hollander / Options
     const [options, setOptions] = useState('')
@@ -79,6 +84,13 @@ export default function LeadForm({ layout = 'vertical' }) {
         loadMakes()
     }, [])
 
+    // If mode prop changes (unlikely but good practice), update state
+    useEffect(() => {
+        if (mode) setLeadType(mode)
+    }, [mode])
+
+    // ... (rest of methods)
+
     // Zipcode Lookup
     const handleZipChange = async (zipValue) => {
         setZip(zipValue)
@@ -104,39 +116,39 @@ export default function LeadForm({ layout = 'vertical' }) {
             } finally {
                 setLoadingZipcode(false)
             }
-
-            // Load zipcodes when state changes
-            const handleStateChange = async (stateValue) => {
-                setState(stateValue)
-                setZip('') // Clear zip when state changes
-                setZipcodeCity('')
-
-                if (stateValue) {
-                    setLoadingZipcodes(true)
-                    try {
-                        const response = await fetch(
-                            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
-                        )
-                        const data = await response.json()
-
-                        if (data.zipcodes) {
-                            setZipcodes(data.zipcodes)
-                        } else {
-                            setZipcodes([])
-                        }
-                    } catch (error) {
-                        console.error('Error loading zipcodes:', error)
-                        setZipcodes([])
-                    } finally {
-                        setLoadingZipcodes(false)
-                    }
-                } else {
-                    setZipcodes([])
-                }
-            }
         } else {
             // Clear city if zip is incomplete
             setZipcodeCity('')
+        }
+    }
+
+    // Load zipcodes when state changes
+    const handleStateChange = async (stateValue) => {
+        setState(stateValue)
+        setZip('') // Clear zip when state changes
+        setZipcodeCity('')
+
+        if (stateValue) {
+            setLoadingZipcodes(true)
+            try {
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
+                )
+                const data = await response.json()
+
+                if (data.zipcodes) {
+                    setZipcodes(data.zipcodes)
+                } else {
+                    setZipcodes([])
+                }
+            } catch (error) {
+                console.error('Error loading zipcodes:', error)
+                setZipcodes([])
+            } finally {
+                setLoadingZipcodes(false)
+            }
+        } else {
+            setZipcodes([])
         }
     }
 
@@ -348,7 +360,11 @@ export default function LeadForm({ layout = 'vertical' }) {
                 email,
                 phone,
                 state,
-                zip
+                zip,
+                // Add vendor ID if context available? The legacy form might not expect it, 
+                // but usually vendor leads should account for WHO. 
+                // However, user asked to remove vendor-specific UI from home.
+                // If this is a generic 'find a vendor' lead, it goes to admin usually.
             };
         } else {
             // Quality Auto Parts Lead - original endpoint
@@ -389,6 +405,7 @@ export default function LeadForm({ layout = 'vertical' }) {
 
     const handleReset = () => {
         setIsSuccess(false)
+        setCurrentStep(1)
         // Keep selected tab? Or reset? Usually keep tab. 
         // Reset fields only.
         setSelectedMake('')
@@ -407,6 +424,7 @@ export default function LeadForm({ layout = 'vertical' }) {
     }
 
     const handleTypeChange = (type) => {
+        if (mode) return // Prevent change if locked
         setLeadType(type)
         // Optional: Reset partial progress when switching to avoid weird state?
         // Let's keep data if compatible (Make/Model/Year), clear Part if switching to Vendor
@@ -415,6 +433,29 @@ export default function LeadForm({ layout = 'vertical' }) {
             setHollanderNumber('')
             setOptions('')
         }
+    }
+
+    // Step Navigation Handlers
+    const handleNext = () => {
+        // Validate Step 1
+        if (leadType === 'quality_auto_parts') {
+            if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
+                setSubmitError('Please select all vehicle details.')
+                return
+            }
+        } else {
+            if (!selectedMake || !selectedModel || !selectedYear) {
+                setSubmitError('Please select vehicle details.')
+                return
+            }
+        }
+        setSubmitError(null)
+        setCurrentStep(2)
+    }
+
+    const handleBack = () => {
+        setSubmitError(null)
+        setCurrentStep(1)
     }
 
     if (isSuccess) {
@@ -437,291 +478,380 @@ export default function LeadForm({ layout = 'vertical' }) {
         )
     }
 
-    const isHorizontal = layout === 'horizontal'
+    // Calculate layout class for step mode
+    const isHorizontal = layout === 'horizontal' && !enableSteps;
+
+    // Step Visibility Logic
+    const showVehicleDetails = !enableSteps || currentStep === 1;
+    const showContactInfo = !enableSteps || currentStep === 2;
 
     return (
         <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
             {/* Header */}
-            <div className={`bg-gradient-to-r from-blue-600 to-teal-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''}`}>
-                <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight`}>
+            <div className={`bg-gradient-to-r from-blue-600 to-teal-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''} flex justify-between items-center px-4`}>
+                <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight flex-1`}>
                     {leadType === 'quality_auto_parts' ? 'NEED A QUALITY USED PART?' : 'FIND JUNKYARD VENDORS'}
                 </h2>
+                {enableSteps && (
+                    <span className="text-white/80 text-[10px] uppercase font-bold tracking-wider">
+                        Step {currentStep} of 2
+                    </span>
+                )}
             </div>
 
             <form onSubmit={handleSubmit} className={`bg-white p-3 md:p-5 rounded-b-xl border border-gray-200 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'flex flex-col gap-3'}`}>
 
                 {/* Toggle Buttons (Full Width) */}
-                <div className={`${isHorizontal ? 'col-span-2' : ''} grid grid-cols-2 gap-2 mb-2`}>
-                    <button
-                        type="button"
-                        onClick={() => handleTypeChange('quality_auto_parts')}
-                        className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
-                    >
-                        Quality Auto Parts
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handleTypeChange('vendor')}
-                        className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
-                    >
-                        Junkyard Vendors
-                    </button>
-                </div>
+                {/* Only show toggle if mode is NOT locked */}
+                {!mode && (
+                    <div className={`${isHorizontal ? 'col-span-2' : ''} grid grid-cols-2 gap-2 mb-2`}>
+                        <button
+                            type="button"
+                            onClick={() => handleTypeChange('quality_auto_parts')}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                        >
+                            Quality Auto Parts
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleTypeChange('vendor')}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                        >
+                            Junkyard Vendors
+                        </button>
+                    </div>
+                )}
+
+                {/* Step Indicator Text (Optional) */}
+                {enableSteps && currentStep === 1 && (
+                    <div className="text-center text-xs text-gray-500 font-semibold uppercase tracking-wide pb-2 border-b border-gray-100 mb-2">
+                        Vehicle Details
+                    </div>
+                )}
+                {enableSteps && currentStep === 2 && (
+                    <div className="text-center text-xs text-gray-500 font-semibold uppercase tracking-wide pb-2 border-b border-gray-100 mb-2">
+                        Contact Information
+                    </div>
+                )}
 
                 {/* Left Column (Vehicle Info) */}
-                <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-gray-200 pr-3 md:pr-6' : ''}`}>
-                    {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Vehicle Details</h3>}
+                {showVehicleDetails && (
+                    <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-gray-200 pr-3 md:pr-6' : ''}`}>
+                        {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Vehicle Details</h3>}
 
-                    {/* 1. Make */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                            1. Make <span className="text-blue-600">*</span>
-                            {loadingMakes && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedMake}
-                            onChange={(e) => setSelectedMake(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none"
-                            required
-                        >
-                            <option value="">Select Make</option>
-                            {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
-                        </select>
-                    </div>
-
-                    {/* 2. Model */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                            2. Model <span className="text-blue-600">*</span>
-                            {loadingModels && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedModel}
-                            onChange={(e) => setSelectedModel(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedMake}
-                            required
-                        >
-                            <option value="">Select Model</option>
-                            {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
-                        </select>
-                    </div>
-
-                    {/* 3. Year */}
-                    <div className="space-y-0.5 md:space-y-1">
-                        <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                            3. Year <span className="text-blue-600">*</span>
-                            {loadingYears && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
-                        </label>
-                        <select
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(e.target.value)}
-                            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
-                            disabled={!selectedModel}
-                            required
-                        >
-                            <option value="">Select Year</option>
-                            {years.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                    </div>
-
-                    {/* FIELDS SPECIFIC TO QUALITY AUTO PARTS */}
-                    {leadType === 'quality_auto_parts' && (
-                        <>
-                            {/* 4. Part */}
-                            <div className="space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                                    4. Part <span className="text-blue-600">*</span>
-                                    {loadingParts && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
-                                </label>
-                                <select
-                                    value={selectedPart}
-                                    onChange={(e) => setSelectedPart(e.target.value)}
-                                    className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
-                                    disabled={!selectedYear}
-                                    required
-                                >
-                                    <option value="">Select Part</option>
-                                    {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                                </select>
-                            </div>
-
-                            {/* 5. Options */}
-                            <div className="space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
-                                    5. Options
-                                    {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
-                                </label>
-                                <input
-                                    type="text"
-                                    value={options}
-                                    readOnly
-                                    placeholder="Auto-populated from part specs"
-                                    className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
-                                />
-                            </div>
-
-                            {/* Hollander Number */}
-                            <div className="space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
-                                    Hollander #
-                                    {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
-                                </label>
-                                <input
-                                    type="text"
-                                    value={hollanderNumber}
-                                    readOnly
-                                    placeholder="Auto-populated"
-                                    className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
-                                />
-                            </div>
-                        </>
-                    )}
-                </div>
-
-                {/* Right Column (Contact Info) */}
-                <div className={`space-y-1.5 md:space-y-2`}>
-                    {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Contact Information</h3>}
-
-                    {/* Contact Grid */}
-                    <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-gray-200' : ''}`}>
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-gray-700 uppercase">Name <span className="text-blue-600">*</span></label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="Your Name"
-                                className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-gray-700 uppercase">Email <span className="text-blue-600">*</span></label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                placeholder="Your Email Address"
-                                className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-2 space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-gray-700 uppercase">Phone <span className="text-blue-600">*</span></label>
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={e => setPhone(e.target.value)}
-                                placeholder="(555) 555-5555"
-                                className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
-                                required
-                            />
-                        </div>
-
+                        {/* 1. Make */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-gray-700 uppercase">State <span className="text-blue-600">*</span></label>
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                1. Make <span className="text-blue-600">*</span>
+                                {loadingMakes && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                            </label>
                             <select
-                                value={state}
-                                onChange={e => handleStateChange(e.target.value)}
-                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
+                                value={selectedMake}
+                                onChange={(e) => setSelectedMake(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none"
                                 required
                             >
-                                <option value="">State</option>
-                                {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                                <option value="">Select Make</option>
+                                {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
                             </select>
-                            {loadingZipcodes && (
-                                <p className="text-xs text-blue-600 mt-1">Loading zipcodes...</p>
-                            )}
                         </div>
 
+                        {/* 2. Model */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] font-bold text-gray-700 uppercase">Zip <span className="text-blue-600">*</span></label>
-                            {zipcodes.length > 0 ? (
-                                // Show dropdown if zipcodes are loaded
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                2. Model <span className="text-blue-600">*</span>
+                                {loadingModels && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                            </label>
+                            <select
+                                value={selectedModel}
+                                onChange={(e) => setSelectedModel(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                disabled={!selectedMake}
+                                required
+                            >
+                                <option value="">Select Model</option>
+                                {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
+                            </select>
+                        </div>
+
+                        {/* 3. Year */}
+                        <div className="space-y-0.5 md:space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                3. Year <span className="text-blue-600">*</span>
+                                {loadingYears && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                            </label>
+                            <select
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(e.target.value)}
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                disabled={!selectedModel}
+                                required
+                            >
+                                <option value="">Select Year</option>
+                                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                        </div>
+
+                        {/* FIELDS SPECIFIC TO QUALITY AUTO PARTS */}
+                        {leadType === 'quality_auto_parts' && (
+                            <>
+                                {/* 4. Part */}
+                                <div className="space-y-0.5 md:space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                        4. Part <span className="text-blue-600">*</span>
+                                        {loadingParts && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                                    </label>
+                                    <select
+                                        value={selectedPart}
+                                        onChange={(e) => setSelectedPart(e.target.value)}
+                                        className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                        disabled={!selectedYear}
+                                        required
+                                    >
+                                        <option value="">Select Part</option>
+                                        {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                                    </select>
+                                </div>
+
+                                {/* 5. Options */}
+                                <div className="space-y-0.5 md:space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                        5. Options
+                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={options}
+                                        readOnly
+                                        placeholder="Auto-populated from part specs"
+                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                    />
+                                </div>
+
+                                {/* Hollander Number */}
+                                <div className="space-y-0.5 md:space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                        Hollander #
+                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={hollanderNumber}
+                                        readOnly
+                                        placeholder="Auto-populated"
+                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {/* NEXT BUTTON for Step 1 */}
+                        {enableSteps && (
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all mt-4 flex items-center justify-center gap-2 group"
+                            >
+                                Next Step
+                                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* Right Column (Contact Info) */}
+                {showContactInfo && (
+                    <div className="space-y-1.5 md:space-y-2">
+                        {/* Step 2 Back Button */}
+                        {enableSteps && (
+                            <button
+                                type="button"
+                                onClick={handleBack}
+                                className="text-xs text-gray-500 hover:text-blue-600 mb-2 flex items-center gap-1 font-semibold"
+                            >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                Back to Vehicle Details
+                            </button>
+                        )}
+
+                        {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Contact Information</h3>}
+
+                        {/* Contact Grid */}
+                        <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-gray-200' : ''}`}>
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Name <span className="text-blue-600">*</span></label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder="Your Name"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Email <span className="text-blue-600">*</span></label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder="Your Email Address"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-span-2 space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Phone <span className="text-blue-600">*</span></label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    placeholder="(555) 555-5555"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">State <span className="text-blue-600">*</span></label>
                                 <select
-                                    value={zip}
-                                    onChange={e => {
-                                        const selectedZip = e.target.value
-                                        setZip(selectedZip)
-                                        // Find and set city
-                                        const zipObj = zipcodes.find(z => z.postal_code === selectedZip)
-                                        if (zipObj) {
-                                            setZipcodeCity(zipObj.city_name)
-                                        }
-                                    }}
-                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                                    value={state}
+                                    onChange={e => handleStateChange(e.target.value)}
+                                    className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
                                     required
                                 >
-                                    <option value="">Select Zip Code</option>
-                                    {zipcodes.map(zipcode => (
-                                        <option key={zipcode.postal_code} value={zipcode.postal_code}>
-                                            {zipcode.postal_code} - {zipcode.city_name}
-                                        </option>
-                                    ))}
+                                    <option value="">State</option>
+                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
-                            ) : (
-                                // Show text input if no zipcodes loaded
+                                {loadingZipcodes && (
+                                    <p className="text-xs text-blue-600 mt-1">Loading zipcodes...</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-0.5 md:space-y-1">
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Zip <span className="text-blue-600">*</span></label>
+
                                 <div className="relative">
                                     <input
                                         type="text"
                                         value={zip}
-                                        onChange={e => handleZipChange(e.target.value)}
+                                        onChange={e => {
+                                            const val = e.target.value
+                                            setZip(val)
+                                            // Filter suggestions?
+                                            if (zipcodes.length > 0) {
+                                                setShowZipSuggestions(true)
+                                                // Local lookup for city match
+                                                const match = zipcodes.find(z => z.postal_code === val)
+                                                if (match) {
+                                                    setZipcodeCity(match.city_name)
+                                                } else {
+                                                    // Only clear city if we were relying on a match, 
+                                                    // BUT if user is typing custom we might want to let them? 
+                                                    // For now, clear if strict mismatch to encourage selection, 
+                                                    // but validation won't block custom.
+                                                    setZipcodeCity('')
+                                                    // Fallback to strict lookup if 5 digits? 
+                                                    if (val.length === 5) {
+                                                        handleZipChange(val) // Backend verify
+                                                    }
+                                                }
+                                            } else {
+                                                handleZipChange(val)
+                                            }
+                                        }}
+                                        onFocus={() => {
+                                            if (zipcodes.length > 0) setShowZipSuggestions(true)
+                                        }}
+                                        onBlur={() => {
+                                            // Delay hide to allow click
+                                            setTimeout(() => setShowZipSuggestions(false), 200)
+                                        }}
                                         placeholder="Zip Code"
-                                        maxLength="5"
                                         className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
                                         required
                                     />
+
                                     {loadingZipcode && (
                                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                                         </div>
                                     )}
+
+                                    {/* Suggestions Dropdown */}
+                                    {showZipSuggestions && zipcodes.length > 0 && (
+                                        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                            {zipcodes
+                                                .filter(z => z.postal_code.startsWith(zip))
+                                                .slice(0, 100) // Limit render
+                                                .map(z => (
+                                                    <div
+                                                        key={z.postal_code}
+                                                        className="px-3 py-2 text-xs md:text-sm hover:bg-blue-50 cursor-pointer text-gray-700 flex justify-between"
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault() // Prevent blur
+                                                            setZip(z.postal_code)
+                                                            setZipcodeCity(z.city_name)
+                                                            setShowZipSuggestions(false)
+                                                        }}
+                                                    >
+                                                        <span className="font-bold">{z.postal_code}</span>
+                                                        <span className="text-gray-500">{z.city_name}</span>
+                                                    </div>
+                                                ))}
+                                            {zipcodes.filter(z => z.postal_code.startsWith(zip)).length === 0 && (
+                                                <div className="px-3 py-2 text-xs text-gray-400 italic">
+                                                    No matches found. You can add this zip.
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {zipcodeCity && (
+                                    <p className="text-xs text-green-600 mt-1 animate-fade-in">
+                                        📍 {zipcodeCity}, {state}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Security Code */}
+                        <div className="bg-gray-50 p-2 md:p-3 rounded-lg border border-gray-200 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
+                            <div className="bg-white text-gray-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none shadow-sm border border-gray-300 w-20 md:w-24 text-center">
+                                {securityCode}
+                            </div>
+                            <input
+                                type="text"
+                                value={userSecurityCode}
+                                onChange={e => setUserSecurityCode(e.target.value)}
+                                placeholder="ENTER CODE"
+                                className="flex-1 bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400 text-center uppercase font-bold"
+                                maxLength={4}
+                                required
+                            />
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="space-y-1.5 md:space-y-2 pt-1.5 md:pt-2">
+                            {submitError && (
+                                <div className="text-red-600 text-[10px] md:text-xs text-center font-bold bg-red-50 p-1.5 md:p-2 rounded border border-red-200">
+                                    {submitError}
                                 </div>
                             )}
-                            {zipcodeCity && (
-                                <p className="text-xs text-green-600 mt-1">
-                                    📍 {zipcodeCity}, {state}
-                                </p>
-                            )}
+                            <button
+                                type="submit"
+                                disabled={submitting}
+                                className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
+                            >
+                                {submitting ? 'SENDING...' : (leadType === 'vendor' ? 'FIND VENDOR' : 'FIND MY PART NOW')}
+                            </button>
                         </div>
                     </div>
-
-                    {/* Security Code */}
-                    <div className="bg-gray-50 p-2 md:p-3 rounded-lg border border-gray-200 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
-                        <div className="bg-white text-gray-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none shadow-sm border border-gray-300 w-20 md:w-24 text-center">
-                            {securityCode}
-                        </div>
-                        <input
-                            type="text"
-                            value={userSecurityCode}
-                            onChange={e => setUserSecurityCode(e.target.value)}
-                            placeholder="ENTER CODE"
-                            className="flex-1 bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400 text-center uppercase font-bold"
-                            maxLength={4}
-                            required
-                        />
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="space-y-1.5 md:space-y-2 pt-1.5 md:pt-2">
-                        {submitError && (
-                            <div className="text-red-600 text-[10px] md:text-xs text-center font-bold bg-red-50 p-1.5 md:p-2 rounded border border-red-200">
-                                {submitError}
-                            </div>
-                        )}
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
-                        >
-                            {submitting ? 'SENDING...' : (leadType === 'vendor' ? 'FIND VENDOR' : 'FIND MY PART NOW')}
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
+                )}
+            </form >
+        </div >
     )
 }

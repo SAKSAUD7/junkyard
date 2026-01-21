@@ -272,7 +272,11 @@ export default function AdminVendors() {
             address: vendor.address || '',
             city: vendor.city || '',
             state: vendor.state || '',
-            zip_code: vendor.zip_code || ''
+            zip_code: vendor.zip_code || '',
+            description: vendor.description || '',
+            review_snippet: vendor.review_snippet || '',
+            rating_stars: vendor.rating_stars || 5,
+            rating_percentage: vendor.rating_percentage || 100
         });
     };
 
@@ -374,18 +378,21 @@ export default function AdminVendors() {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[220px]">Vendor</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[150px]">Location</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Contact Info</th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">Status</th>
-                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[140px]">Actions</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Vendor</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px]">Location</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[180px]">Contact</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Description</th>
+                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Rating</th>
+                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Leads</th>
+                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Status</th>
+                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-100">
                                 {loading ? (
-                                    <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-400">Loading vendor data...</td></tr>
+                                    <tr><td colSpan="9" className="px-6 py-12 text-center text-gray-400">Loading vendor data...</td></tr>
                                 ) : vendors.length === 0 ? (
-                                    <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-400">No vendors found.</td></tr>
+                                    <tr><td colSpan="9" className="px-6 py-12 text-center text-gray-400">No vendors found.</td></tr>
                                 ) : (
                                     vendors.map((vendor) => (
                                         <tr key={vendor.id} className="hover:bg-gray-50 transition-colors group">
@@ -419,17 +426,56 @@ export default function AdminVendors() {
                                                 </div>
                                             </td>
 
-                                            {/* Contact */}
+                                            {/* Contact Info */}
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-2 text-sm text-gray-600" title={vendor.email}>
-                                                        <EnvelopeIcon className="h-3.5 w-3.5 text-gray-400" />
-                                                        <span className="truncate max-w-[180px]">{vendor.email}</span>
+                                                    <div className="flex items-center gap-2 text-sm text-gray-600 truncate max-w-[160px]" title={vendor.email}>
+                                                        <EnvelopeIcon className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+                                                        <span className="truncate">{vendor.email || 'N/A'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                        <PhoneIcon className="h-3.5 w-3.5 text-gray-400" />
-                                                        <span>{vendor.phone}</span>
+                                                        <PhoneIcon className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+                                                        <span className="truncate">{vendor.phone || 'N/A'}</span>
                                                     </div>
+                                                </div>
+                                            </td>
+
+                                            {/* Description */}
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm text-gray-600 max-w-[250px]" title={vendor.description}>
+                                                    {vendor.description ? (
+                                                        <span className="line-clamp-2">{vendor.description}</span>
+                                                    ) : (
+                                                        <span className="text-gray-400 italic">No description</span>
+                                                    )}
+                                                </div>
+                                            </td>
+
+                                            {/* Rating */}
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <div className="flex items-center gap-0.5">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg
+                                                                key={i}
+                                                                className={`h-4 w-4 ${i < (vendor.rating_stars || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-xs text-gray-500 font-medium">{vendor.rating_percentage || 0}%</span>
+                                                </div>
+                                            </td>
+
+                                            {/* Leads Count */}
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                    {vendor.leads_count || 0}
                                                 </div>
                                             </td>
 
@@ -846,170 +892,232 @@ export default function AdminVendors() {
                             </button>
                         </div>
 
-                        <form onSubmit={handleUpdate} className="p-6 space-y-6">
-                            {/* Company Info */}
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company Details</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.name}
-                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                        <input
-                                            type="email"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.email}
-                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                        <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.phone}
-                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Location Info */}
-                            <div className="space-y-4 pt-4 border-t border-gray-100">
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
-                                <div className="grid grid-cols-6 gap-4">
-                                    <div className="col-span-6 md:col-span-3">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                        <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.city}
-                                            onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="col-span-3 md:col-span-1">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                                        <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.state}
-                                            onChange={e => setFormData({ ...formData, state: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="col-span-3 md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
-                                        <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.zip_code}
-                                            onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
-                                        />
+                        <div className="max-h-[70vh] overflow-y-auto p-6">
+                            <form onSubmit={handleUpdate} className="space-y-6">
+                                {/* Company Info */}
+                                <div className="space-y-4">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company Details</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.name}
+                                                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                            <input
+                                                type="email"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.email}
+                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.phone}
+                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingVendor(null)}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
-                                >
-                                    Save Changes
-                                </button>
-                            </div>
-                        </form>
+                                {/* Location Info */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
+                                    <div className="grid grid-cols-6 gap-4">
+                                        <div className="col-span-6 md:col-span-3">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.city}
+                                                onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="col-span-3 md:col-span-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.state}
+                                                onChange={e => setFormData({ ...formData, state: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="col-span-3 md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.zip_code}
+                                                onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Description & Reviews */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description & Reviews</h4>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                            <textarea
+                                                rows="4"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.description || ''}
+                                                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                                placeholder="Brief description of the vendor's services..."
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Review Snippet</label>
+                                            <textarea
+                                                rows="2"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.review_snippet || ''}
+                                                onChange={e => setFormData({ ...formData, review_snippet: e.target.value })}
+                                                placeholder="Featured review or testimonial..."
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {/* Rating */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Stars (1-5)</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="5"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.rating_stars || 5}
+                                                onChange={e => setFormData({ ...formData, rating_stars: parseInt(e.target.value) || 5 })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating % (0-100)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                                value={formData.rating_percentage || 100}
+                                                onChange={e => setFormData({ ...formData, rating_percentage: parseInt(e.target.value) || 100 })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditingVendor(null)}
+                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                </div >
+            )
+            }
 
             {/* Credentials Modal - Enhanced */}
-            {resetCredentials && (
-                <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform animate-in fade-in zoom-in duration-200">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                <KeyIcon className="h-6 w-6 text-blue-200" />
-                                Credentials Generated
-                            </h2>
-                            <button
-                                onClick={() => setResetCredentials(null)}
-                                className="text-blue-100 hover:text-white transition-colors"
-                            >
-                                <XCircleIcon className="h-6 w-6" />
-                            </button>
-                        </div>
-
-                        <div className="p-6 space-y-6">
-                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-                                <div className="text-blue-600 flex-shrink-0 mt-0.5">
-                                    <CheckCircleIcon className="w-5 h-5" />
-                                </div>
-                                <p className="text-sm text-blue-800">
-                                    Copy these credentials now. The password will not be visible again.
-                                </p>
+            {
+                resetCredentials && (
+                    <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform animate-in fade-in zoom-in duration-200">
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 flex justify-between items-center">
+                                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <KeyIcon className="h-6 w-6 text-blue-200" />
+                                    Credentials Generated
+                                </h2>
+                                <button
+                                    onClick={() => setResetCredentials(null)}
+                                    className="text-blue-100 hover:text-white transition-colors"
+                                >
+                                    <XCircleIcon className="h-6 w-6" />
+                                </button>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="text-center pb-2 border-b border-gray-100">
-                                    <h3 className="text-lg font-bold text-gray-900">{resetCredentials.vendorName}</h3>
-                                    <p className="text-sm text-gray-500">Access Credentials</p>
+                            <div className="p-6 space-y-6">
+                                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
+                                    <div className="text-blue-600 flex-shrink-0 mt-0.5">
+                                        <CheckCircleIcon className="w-5 h-5" />
+                                    </div>
+                                    <p className="text-sm text-blue-800">
+                                        Copy these credentials now. The password will not be visible again.
+                                    </p>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.username); showToast('Username copied!', 'success') }}>
-                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Username</label>
-                                        <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.username}</code>
+                                <div className="space-y-4">
+                                    <div className="text-center pb-2 border-b border-gray-100">
+                                        <h3 className="text-lg font-bold text-gray-900">{resetCredentials.vendorName}</h3>
+                                        <p className="text-sm text-gray-500">Access Credentials</p>
                                     </div>
 
-                                    <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.email); showToast('Email copied!', 'success') }}>
-                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Login Email</label>
-                                        <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.email}</code>
-                                    </div>
+                                    <div className="space-y-3">
+                                        <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.username); showToast('Username copied!', 'success') }}>
+                                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Username</label>
+                                            <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.username}</code>
+                                        </div>
 
-                                    <div className="group bg-yellow-50 hover:bg-yellow-50/80 border border-yellow-200 rounded-xl p-4 cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.temp_password); showToast('Password copied!', 'success') }}>
-                                        <label className="text-xs font-bold text-yellow-700 uppercase tracking-wider block mb-1 flex justify-between">
-                                            New Password
-                                            <span className="text-[10px] bg-yellow-200/50 px-1.5 py-0.5 rounded text-yellow-800">CLICK TO COPY</span>
-                                        </label>
-                                        <code className="text-xl font-bold font-mono text-gray-900 block tracking-wider">{resetCredentials.temp_password}</code>
+                                        <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.email); showToast('Email copied!', 'success') }}>
+                                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Login Email</label>
+                                            <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.email}</code>
+                                        </div>
+
+                                        <div className="group bg-yellow-50 hover:bg-yellow-50/80 border border-yellow-200 rounded-xl p-4 cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.temp_password); showToast('Password copied!', 'success') }}>
+                                            <label className="text-xs font-bold text-yellow-700 uppercase tracking-wider block mb-1 flex justify-between">
+                                                New Password
+                                                <span className="text-[10px] bg-yellow-200/50 px-1.5 py-0.5 rounded text-yellow-800">CLICK TO COPY</span>
+                                            </label>
+                                            <code className="text-xl font-bold font-mono text-gray-900 block tracking-wider">{resetCredentials.temp_password}</code>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-100">
-                            <a
-                                href="/vendor/login"
-                                target="_blank"
-                                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
-                            >
-                                <LinkIcon className="h-3 w-3" />
-                                Go to Vendor Login
-                            </a>
-                            <button
-                                onClick={() => setResetCredentials(null)}
-                                className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium shadow-sm transition-transform active:scale-95"
-                            >
-                                Done
-                            </button>
+                            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-100">
+                                <a
+                                    href="/vendor/login"
+                                    target="_blank"
+                                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
+                                >
+                                    <LinkIcon className="h-3 w-3" />
+                                    Go to Vendor Login
+                                </a>
+                                <button
+                                    onClick={() => setResetCredentials(null)}
+                                    className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium shadow-sm transition-transform active:scale-95"
+                                >
+                                    Done
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

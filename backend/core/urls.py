@@ -17,8 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-from apps.hollander.views import hollander_lookup
+from rest_framework.routers import DefaultRouter
+from apps.hollander.views import hollander_lookup, PartPricingViewSet
 from apps.leads.urls import vendor_leads_urlpatterns
+
+# Create router for Part Pricing
+pricing_router = DefaultRouter()
+pricing_router.register(r'part-pricing', PartPricingViewSet, basename='part-pricing')
 
 
 def health_check(request):
@@ -41,6 +46,9 @@ urlpatterns = [
     # Hollander lookup endpoint
     path("api/hollander/lookup/", hollander_lookup, name="hollander_lookup"),
     path("api/hollander/", include("apps.hollander.urls")),  # New reference data endpoints
+    
+    # Part Pricing API
+    path("api/", include(pricing_router.urls)),
 ]
 
 

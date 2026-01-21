@@ -222,8 +222,9 @@ const VendorDetail = () => {
                                 </div>
                             )}
 
+
                             {/* Review Snippet */}
-                            {vendor.reviewSnippet && (
+                            {vendor.review_snippet && (
                                 <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl md:rounded-3xl compact-card">
                                     <div className="flex items-start gap-4">
                                         <div className="flex-shrink-0">
@@ -233,11 +234,12 @@ const VendorDetail = () => {
                                         </div>
                                         <div className="flex-1">
                                             <h3 className="text-lg font-bold text-gray-900 mb-2">Customer Review</h3>
-                                            <p className="text-gray-700 italic">"{vendor.reviewSnippet}"</p>
+                                            <p className="text-gray-700 italic">"{vendor.review_snippet}"</p>
                                         </div>
                                     </div>
                                 </div>
                             )}
+
 
                             {/* Quick Info Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,6 +282,7 @@ const VendorDetail = () => {
                                 name={vendor.name}
                                 theme="light"
                             />
+
                         </div>
 
                         {/* Right - Contact Form */}
@@ -299,7 +302,7 @@ const VendorDetail = () => {
                                             Get a Quote
                                         </h2>
                                         <p className="text-gray-600 mb-6">Fill out the form below to request a quote from {vendor.name}</p>
-                                        <LeadForm vendorName={vendor.name} />
+                                        <LeadForm vendorName={vendor.name} mode="vendor" />
                                     </div>
                                 </div>
 
