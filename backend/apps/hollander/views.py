@@ -264,3 +264,114 @@ def search_pincodes(request):
     ).values('postal_code', 'city_name', 'state_abbr').distinct()[:10]
     
     return Response(list(zipcodes))
+
+
+@api_view(['POST'])
+def hollander_lookup(request):
+    """
+    Lookup Hollander interchange number and options for a specific part.
+    Expects: year, make, model, part_type (or their IDs)
+    Returns: {results: [{hollander_number, options}]}
+    
+    Uses flexible matching strategy:
+    1. Try exact ID match
+    2. Try partial model name match
+    3. Try make + part + year only (ignore model)
+    """
+    try:
+        year = request.data.get('year')
+        make_id = request.data.get('make_id')
+        model_id = request.data.get('model_id')
+        part_id = request.data.get('part_id')
+        
+        # Also accept string names as fallback
+        make_name = request.data.get('make')
+        model_name = request.data.get('model')
+        part_name = request.data.get('part_type')
+        
+        if not year:
+            return Response({'results': []})
+        
+        # Resolve IDs if names provided
+        if make_name and not make_id:
+            make_obj = Make.objects.filter(make_name__iexact=make_name).first()
+            if make_obj:
+                make_id = make_obj.make_id
+                
+        if model_name and not model_id:
+            model_obj = Model.objects.filter(model_name__iexact=model_name).first()
+            if model_obj:
+                model_id = model_obj.model_id
+                
+        if part_name and not part_id:
+            part_obj = PartType.objects.filter(part_name__iexact=part_name).first()
+            if part_obj:
+                part_id = part_obj.part_id
+        
+        if not make_id or not part_id:
+            return Response({'results': []})
+        
+        # Convert to integers
+        try:
+            year = int(year)
+            make_id = int(make_id)
+            if model_id:
+                model_id = int(model_id)
+            part_id = int(part_id)
+        except (ValueError, TypeError):
+            return Response({'results': []})
+        
+        pricing_record = None
+        
+        # Strategy 1: Try exact match with model_id
+        if model_id:
+            pricing_record = PartPricing.objects.filter(
+                make_ref__make_id=make_id,
+                model_ref__model_id=model_id,
+                part_type_ref__part_id=part_id,
+                year_start__lte=year,
+                year_end__gte=year
+            ).first()
+        
+        # Strategy 2: If no exact match and we have model_name, try partial model name match
+        if not pricing_record and model_name:
+            # Get the model object to extract key parts of the name
+            model_obj = Model.objects.filter(model_id=model_id).first() if model_id else None
+            if model_obj:
+                # Try to find pricing with similar model name
+                pricing_record = PartPricing.objects.filter(
+                    make_ref__make_id=make_id,
+                    model_ref__model_name__icontains=model_obj.model_name.split()[0],  # Use first word
+                    part_type_ref__part_id=part_id,
+                    year_start__lte=year,
+                    year_end__gte=year
+                ).first()
+        
+        # Strategy 3: Fallback - just match make + part + year (ignore model)
+        if not pricing_record:
+            pricing_record = PartPricing.objects.filter(
+                make_ref__make_id=make_id,
+                part_type_ref__part_id=part_id,
+                year_start__lte=year,
+                year_end__gte=year
+            ).first()
+        
+        if pricing_record:
+            # Use the get_all_options() method to combine all option fields
+            result = {
+                'hollander_number': pricing_record.hollander_number or 'N/A',
+                'options': pricing_record.get_all_options()
+            }
+            return Response({'results': [result]})
+        
+        # If no match found, return empty
+        return Response({'results': []})
+        
+    except Exception as e:
+        print(f"Hollander lookup error: {e}")
+        import traceback
+        traceback.print_exc()
+        return Response({'results': []}, status=500)
+
+
+

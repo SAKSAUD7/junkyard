@@ -16,7 +16,10 @@ export default function AdminAds() {
         redirect_url: '',
         page: 'home',
         slot: 'left_sidebar_ad',
-        start_date: '',
+        template_type: 'standard',
+        button_text: 'Visit Website',
+        show_badge: true,
+        start_date: new Date().toISOString().split('T')[0], // Today's date
         end_date: '',
         priority: 1,
         is_active: true
@@ -84,6 +87,9 @@ export default function AdminAds() {
             submitData.append('redirect_url', formData.redirect_url);
             submitData.append('page', formData.page);
             submitData.append('slot', formData.slot);
+            submitData.append('template_type', formData.template_type);
+            submitData.append('button_text', formData.button_text);
+            submitData.append('show_badge', formData.show_badge);
             submitData.append('is_active', formData.is_active);
 
             if (formData.start_date) submitData.append('start_date', formData.start_date);
@@ -107,6 +113,9 @@ export default function AdminAds() {
                 redirect_url: '',
                 page: 'home',
                 slot: 'left_sidebar_ad',
+                template_type: 'standard',
+                button_text: 'Visit Website',
+                show_badge: true,
                 start_date: '',
                 end_date: '',
                 priority: 1,
@@ -129,6 +138,9 @@ export default function AdminAds() {
             redirect_url: ad.redirect_url,
             page: ad.page,
             slot: ad.slot,
+            template_type: ad.template_type || 'standard',
+            button_text: ad.button_text || 'Visit Website',
+            show_badge: ad.show_badge !== undefined ? ad.show_badge : true,
             start_date: ad.start_date,
             end_date: ad.end_date || '',
             priority: ad.priority,
@@ -254,9 +266,10 @@ export default function AdminAds() {
                                     <label className="block text-sm font-medium text-gray-700">Page</label>
                                     <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
                                         value={formData.page} onChange={e => setFormData({ ...formData, page: e.target.value })}>
-                                        <option value="home">Home</option>
-                                        <option value="all">All</option>
-                                        <option value="search">Search</option>
+                                        <option value="all">All Pages</option>
+                                        <option value="home">Home Page</option>
+                                        <option value="vendors">Vendors Page</option>
+                                        <option value="browse">Browse Page</option>
                                     </select>
                                 </div>
                                 <div>
@@ -273,6 +286,59 @@ export default function AdminAds() {
                                 <input type="url" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
                                     value={formData.redirect_url} onChange={e => setFormData({ ...formData, redirect_url: e.target.value })} />
                             </div>
+
+                            {/* Scheduling & Priority */}
+                            <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                                    <input type="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                                        value={formData.start_date} onChange={e => setFormData({ ...formData, start_date: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">End Date (Optional)</label>
+                                    <input type="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                                        value={formData.end_date} onChange={e => setFormData({ ...formData, end_date: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Priority</label>
+                                    <input type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                                        value={formData.priority} onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
+                                        placeholder="0" />
+                                    <p className="mt-1 text-xs text-gray-500">Higher = more priority</p>
+                                </div>
+                            </div>
+
+                            {/* Template Customization */}
+                            <div className="border-t pt-4 mt-4">
+                                <h3 className="text-sm font-semibold text-gray-900 mb-3">Template Customization</h3>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">Template Style</label>
+                                        <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                                            value={formData.template_type} onChange={e => setFormData({ ...formData, template_type: e.target.value })}>
+                                            <option value="standard">Standard Template</option>
+                                            <option value="minimal">Minimal Template</option>
+                                            <option value="premium">Premium Template</option>
+                                            <option value="compact">Compact Template</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">Button Text</label>
+                                        <input type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                                            value={formData.button_text} onChange={e => setFormData({ ...formData, button_text: e.target.value })}
+                                            placeholder="Visit Website" />
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                            checked={formData.show_badge} onChange={e => setFormData({ ...formData, show_badge: e.target.checked })} />
+                                        <label className="ml-2 block text-sm text-gray-900">Show "Featured" Badge</label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex items-center">
                                 <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} />

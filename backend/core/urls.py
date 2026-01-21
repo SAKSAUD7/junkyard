@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-from apps.leads.views import hollander_lookup
+from apps.hollander.views import hollander_lookup
 
 
 def health_check(request):

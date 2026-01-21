@@ -69,10 +69,10 @@ JYNM Vendor Portal
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-            print(f"✓ Password reset email sent to {user.email}")
+            print(f"[OK] Password reset email sent to {user.email}")
             print(f"Reset link: {reset_link}")  # For testing
         except Exception as e:
-            print(f"✗ Failed to send email: {str(e)}")
+            print(f"[ERROR] Failed to send email: {str(e)}")
             # Still return success for security
         
         return Response({
@@ -111,7 +111,7 @@ class VendorPasswordResetConfirmView(APIView):
             user.set_password(new_password)
             user.save()
             
-            print(f"✓ Password reset successful for {user.email}")
+            print(f"[OK] Password reset successful for {user.email}")
             
             return Response({
                 'message': 'Password reset successful. You can now login with your new password.'

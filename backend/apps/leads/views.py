@@ -10,11 +10,19 @@ from .serializers import LeadSerializer
 class LeadViewSet(viewsets.ModelViewSet):
     """
     API endpoint for leads management.
-    Admin only access.
+    - POST (create): Public access (anyone can submit a lead)
+    - GET, PUT, PATCH, DELETE: Admin only access
     """
     queryset = Lead.objects.all().order_by('-created_at')
     serializer_class = LeadSerializer
-    permission_classes = [permissions.IsAdminUser]
+    
+    def get_permissions(self):
+        """
+        Allow public POST (create lead), require admin for everything else
+        """
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
     
     @action(detail=False, methods=['get'])
     def export_csv(self, request):

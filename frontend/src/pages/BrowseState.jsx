@@ -26,7 +26,8 @@ export default function BrowseState() {
         const fetchVendors = async () => {
             try {
                 setLoading(true);
-                const data = await api.getVendors();
+                // Request all vendors by setting a large page_size
+                const data = await api.getVendors({ page_size: 10000 });
                 // Handle both paginated (data.results) and non-paginated (data) responses
                 const vendorsList = data.results || (Array.isArray(data) ? data : []);
                 setJunkyards(vendorsList);

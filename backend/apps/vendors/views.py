@@ -10,7 +10,7 @@ from django.db.models import Count
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 24
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = 10000  # Allow fetching all vendors for state filtering
 
 
 class VendorViewSet(viewsets.ReadOnlyModelViewSet):

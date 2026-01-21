@@ -16,4 +16,4 @@ def auto_assign_lead_to_vendors(sender, instance, created, **kwargs):
     if created:
         # Auto-assign to all active vendors
         vendor_count = assign_lead_to_vendors(instance)
-        print(f"✓ Auto-assigned lead #{instance.id} to {vendor_count} vendor(s)")
+        print(f"[OK] Auto-assigned lead #{instance.id} to {vendor_count} vendor(s)")

@@ -79,10 +79,10 @@ JYNM Vendor Portal
                 fail_silently=False,
             )
             
-            print(f"✓ Email sent to {vendor.name} ({', '.join(vendor_emails)})")
+            print(f"[OK] Email sent to {vendor.name} ({', '.join(vendor_emails)})")
             
         except Exception as e:
-            print(f"✗ Failed to send notification to {vendor.name}: {str(e)}")
+            print(f"[ERROR] Failed to send notification to {vendor.name}: {str(e)}")
 
 
 def send_lead_status_update_notification(lead, vendor, old_status, new_status):
@@ -105,10 +105,10 @@ def send_lead_status_update_notification(lead, vendor, old_status, new_status):
             lead=lead
         )
         
-        print(f"✓ Status update notification created for {vendor.name}")
+        print(f"[OK] Status update notification created for {vendor.name}")
         
     except Exception as e:
-        print(f"✗ Failed to create status update notification: {str(e)}")
+        print(f"[ERROR] Failed to create status update notification: {str(e)}")
 
 
 def send_system_notification(vendor, title, message):
@@ -128,7 +128,7 @@ def send_system_notification(vendor, title, message):
             message=message
         )
         
-        print(f"✓ System notification created for {vendor.name}")
+        print(f"[OK] System notification created for {vendor.name}")
         
     except Exception as e:
-        print(f"✗ Failed to create system notification: {str(e)}")
+        print(f"[ERROR] Failed to create system notification: {str(e)}")
