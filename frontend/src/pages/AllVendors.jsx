@@ -9,6 +9,7 @@ import VendorBadges from '../components/VendorBadges';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema } from '../utils/structuredData';
 import { api } from '../services/api';
+import { getLogoUrl } from '../utils/imageUrl';
 
 const AllVendors = () => {
     const [vendors, setVendors] = useState([]);
@@ -283,7 +284,7 @@ const AllVendors = () => {
                                         <div className="aspect-[16/9] sm:aspect-[16/8] bg-gray-100 p-1.5 sm:p-2 md:p-3 lg:p-4 flex items-center justify-center">
                                             {vendor.logo ? (
                                                 <img
-                                                    src={vendor.logo}
+                                                    src={getLogoUrl(vendor.logo)}
                                                     alt={vendor.name}
                                                     className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
                                                     onError={(e) => {
@@ -307,12 +308,19 @@ const AllVendors = () => {
                                             </h3>
 
                                             {/* Location */}
-                                            <div className="flex items-center gap-1 sm:gap-1.5 text-gray-600 mb-1 sm:mb-1.5 mt-auto">
+                                            <div className="flex items-center gap-1 sm:gap-1.5 text-gray-600 mb-1 sm:mb-1.5">
                                                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                                 </svg>
                                                 <span className="text-[10px] sm:text-sm font-medium text-gray-500">{vendor.city}, {vendor.state}</span>
                                             </div>
+
+                                            {/* Description Snippet */}
+                                            {vendor.description && (
+                                                <p className="text-[10px] sm:text-xs text-gray-600 mb-2 line-clamp-2 leading-relaxed">
+                                                    {vendor.description}
+                                                </p>
+                                            )}
 
                                             {/* Badges */}
                                             <VendorBadges
@@ -321,7 +329,7 @@ const AllVendors = () => {
                                             />
 
                                             {/* Rating - Compact */}
-                                            <div className="mb-1.5 sm:mb-2">
+                                            <div className="mb-1.5 sm:mb-2 mt-auto">
                                                 <Rating
                                                     stars={vendor.rating_stars || 5}
                                                     percentage={vendor.rating_percentage || 100}

@@ -13,7 +13,6 @@ class VendorSerializer(serializers.ModelSerializer):
             'description', 'review_snippet', 'rating', 
             'rating_stars', 'rating_percentage', 
             'is_top_rated', 'is_featured', 'profile_url', 'logo',
-            'is_top_rated', 'is_featured', 'profile_url', 'logo',
             'is_trusted', 'is_active', 'username', 'leads_count'
         ]
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
+import { getLogoUrl } from '../../utils/imageUrl';
 import {
     MagnifyingGlassIcon,
     PencilSquareIcon,
@@ -248,10 +249,37 @@ export default function AdminVendors() {
         });
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData({ ...formData, logo: file }); // Store File object
+        }
+    };
+
+    const prepareSubmitData = (data) => {
+        const submitData = new FormData();
+        Object.keys(data).forEach(key => {
+            // Handle logo specifically
+            if (key === 'logo') {
+                if (data[key] instanceof File) {
+                    submitData.append('logo', data[key]);
+                }
+                // If it's a string (existing URL), don't append it to FormData 
+                // to avoid sending text as file content, or handle if backend expects text.
+                // For ImageField, sending JSON string might fail or be ignored.
+                // Best to only send if it's a file.
+            } else if (data[key] !== null && data[key] !== undefined) {
+                submitData.append(key, data[key]);
+            }
+        });
+        return submitData;
+    };
+
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            await api.createVendor(token, formData);
+            const dataToSend = formData.logo instanceof File ? prepareSubmitData(formData) : formData;
+            await api.createVendor(token, dataToSend);
             setCreatingVendor(false);
             showToast('Vendor created successfully!', 'success');
             fetchVendors(1);
@@ -283,7 +311,8 @@ export default function AdminVendors() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await api.updateVendor(token, editingVendor.id, formData);
+            const dataToSend = formData.logo instanceof File ? prepareSubmitData(formData) : formData;
+            await api.updateVendor(token, editingVendor.id, dataToSend);
             setEditingVendor(null);
             showToast('Vendor details updated successfully', 'success');
             fetchVendors(page);
@@ -378,6 +407,7 @@ export default function AdminVendors() {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">Logo</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Vendor</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px]">Location</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[180px]">Contact</th>
@@ -397,13 +427,26 @@ export default function AdminVendors() {
                                     vendors.map((vendor) => (
                                         <tr key={vendor.id} className="hover:bg-gray-50 transition-colors group">
 
+                                            {/* Logo */}
+                                            <td className="px-6 py-4">
+                                                <div className="h-10 w-10 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
+                                                    {vendor.logo ? (
+                                                        <img
+                                                            src={getLogoUrl(vendor.logo)}
+                                                            alt=""
+                                                            className="h-full w-full object-contain"
+                                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                                        />
+                                                    ) : (
+                                                        <BuildingStorefrontIcon className="h-5 w-5 text-gray-400" />
+                                                    )}
+                                                </div>
+                                            </td>
+
                                             {/* Vendor Name & Username */}
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center">
-                                                    <div className="h-10 w-10 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                                        <BuildingStorefrontIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div className="ml-4">
+                                                    <div className="ml-0">
                                                         <div className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate max-w-[180px]" title={vendor.name}>
                                                             {vendor.name}
                                                         </div>
@@ -758,15 +801,27 @@ export default function AdminVendors() {
                                 <div className="space-y-4 pt-4 border-t border-gray-100">
                                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile & Branding</h4>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
-                                        <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.logo}
-                                            onChange={e => setFormData({ ...formData, logo: e.target.value })}
-                                            placeholder="/images/logo-placeholder.png"
-                                        />
-                                        <p className="text-xs text-gray-500 mt-1">Path to vendor logo image</p>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-16 w-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
+                                                {formData.logo instanceof File ? (
+                                                    <img src={URL.createObjectURL(formData.logo)} alt="Preview" className="h-full w-full object-contain" />
+                                                ) : formData.logo && formData.logo !== '/images/logo-placeholder.png' ? (
+                                                    <img src={getLogoUrl(formData.logo)} alt="Current" className="h-full w-full object-contain" />
+                                                ) : (
+                                                    <BuildingStorefrontIcon className="h-8 w-8 text-gray-400" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                    onChange={handleFileChange}
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Upload a new logo to replace the current one.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -959,6 +1014,34 @@ export default function AdminVendors() {
                                                 value={formData.zip_code}
                                                 onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
                                             />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Profile & Branding */}
+                                <div className="space-y-4 pt-4 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile & Branding</h4>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-16 w-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
+                                                {formData.logo instanceof File ? (
+                                                    <img src={URL.createObjectURL(formData.logo)} alt="Preview" className="h-full w-full object-contain" />
+                                                ) : formData.logo && formData.logo !== '/images/logo-placeholder.png' ? (
+                                                    <img src={getLogoUrl(formData.logo)} alt="Current" className="h-full w-full object-contain" />
+                                                ) : (
+                                                    <BuildingStorefrontIcon className="h-8 w-8 text-gray-400" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                    onChange={handleFileChange}
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Upload a new logo to replace the current one.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

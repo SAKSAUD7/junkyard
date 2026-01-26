@@ -7,6 +7,7 @@ import LeadForm from '../components/LeadForm';
 import LocationMap from '../components/LocationMap';
 import SEO from '../components/SEO';
 import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structuredData';
+import { getLogoUrl } from '../utils/imageUrl';
 
 const VendorDetail = () => {
     const params = useParams();
@@ -20,10 +21,6 @@ const VendorDetail = () => {
         const fetchVendor = async () => {
             try {
                 setLoading(true);
-                const data = await api.getVendors();
-
-                // Handle paginated response
-                const vendors = data.results || (Array.isArray(data) ? data : []);
 
                 let targetId = id;
                 // Support legacy URLs: /junkyards/:state/:slug
@@ -36,9 +33,9 @@ const VendorDetail = () => {
                 }
 
                 if (targetId) {
-                    const foundVendor = vendors.find(v => v.id === parseInt(targetId));
-                    setVendor(foundVendor);
-                    setError(foundVendor ? null : 'Vendor not found');
+                    const data = await api.getVendor(targetId);
+                    setVendor(data);
+                    setError(null);
                 } else {
                     setError('Invalid vendor ID');
                 }
@@ -92,6 +89,8 @@ const VendorDetail = () => {
         );
     }
 
+    const logoUrl = getLogoUrl(vendor.logo);
+
     // SEO structured data
     const localBusinessSchema = getLocalBusinessSchema({
         name: vendor.name,
@@ -101,7 +100,7 @@ const VendorDetail = () => {
         zipcode: vendor.zipcode,
         description: vendor.description,
         rating: vendor.rating,
-        logo: vendor.logo
+        logo: logoUrl
     });
 
     const breadcrumbSchema = getBreadcrumbSchema([
@@ -151,9 +150,9 @@ const VendorDetail = () => {
                                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 md:gap-6">
                                     {/* Logo */}
                                     <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex items-center justify-center">
-                                        {vendor.logo ? (
+                                        {logoUrl ? (
                                             <img
-                                                src={vendor.logo}
+                                                src={logoUrl}
                                                 alt={vendor.name}
                                                 className="max-w-full max-h-full object-contain"
                                                 onError={(e) => {

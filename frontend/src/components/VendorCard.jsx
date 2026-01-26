@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
 import VendorBadges from './VendorBadges';
+import { getLogoUrl } from '../utils/imageUrl';
 
 export default function VendorCard({ vendor, compact = false, showBadge = true }) {
+    const logoUrl = getLogoUrl(vendor.logo);
+
     return (
         <Link
             to={`/vendors/${vendor.id}`}
@@ -30,9 +33,9 @@ export default function VendorCard({ vendor, compact = false, showBadge = true }
                     {/* Subtle Grid Pattern Overlay */}
                     <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
 
-                    {vendor.logo && vendor.logo !== '/images/logo-placeholder.png' ? (
+                    {logoUrl ? (
                         <img
-                            src={vendor.logo}
+                            src={logoUrl}
                             alt={vendor.name}
                             className="relative z-10 max-h-full max-w-full object-contain transform group-hover:scale-110 transition-transform duration-500 will-change-transform"
                             onError={(e) => {

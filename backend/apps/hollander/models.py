@@ -122,7 +122,7 @@ class Vendor(models.Model):
     description = models.TextField(blank=True, default='')
     review_snippet = models.TextField(blank=True, default='')
     profile_url = models.CharField(max_length=255, blank=True, default='')
-    logo = models.CharField(max_length=255, default="/images/logo-placeholder.png")
+    logo = models.ImageField(upload_to='vendor_logos/', blank=True, null=True, default='')
     
     rating = models.CharField(max_length=20, default="100%")
     rating_stars = models.IntegerField(default=5)

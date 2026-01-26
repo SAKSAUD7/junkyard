@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:8000/api';
+export const BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = `${BASE_URL}/api`;
 
 /**
  * Centralized API service for all backend communication
@@ -225,13 +226,14 @@ export const api = {
   },
 
   createVendor: async (token, data) => {
+    const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}/vendors/manage/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' })
       },
-      body: JSON.stringify(data)
+      body: isFormData ? data : JSON.stringify(data)
     });
     if (!response.ok) {
       const error = await response.json();
@@ -241,13 +243,14 @@ export const api = {
   },
 
   updateVendor: async (token, id, data) => {
+    const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}/vendors/manage/${id}/`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' })
       },
-      body: JSON.stringify(data)
+      body: isFormData ? data : JSON.stringify(data)
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();
