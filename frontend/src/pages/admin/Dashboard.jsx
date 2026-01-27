@@ -175,7 +175,7 @@ export default function AdminDashboard() {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Leads Trend */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h3 className="text-lg font-bold text-gray-900">Leads Trend</h3>
@@ -186,7 +186,7 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     {stats.leads_trend && stats.leads_trend.length > 0 ? (
-                        <div style={{ width: '100%', height: 280 }}>
+                        <div className="flex-1 min-h-[280px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={stats.leads_trend}>
                                     <defs>
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Vendor Distribution */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h3 className="text-lg font-bold text-gray-900">Top Vendors by State</h3>
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     {stats.vendor_distribution && stats.vendor_distribution.length > 0 ? (
-                        <div style={{ width: '100%', height: 280 }}>
+                        <div className="flex-1 min-h-[280px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={stats.vendor_distribution}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -329,9 +329,9 @@ export default function AdminDashboard() {
                                         </p>
                                     </div>
                                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${lead.status === 'new' ? 'bg-blue-100 text-blue-700' :
-                                            lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
-                                                lead.status === 'converted' ? 'bg-green-100 text-green-700' :
-                                                    'bg-gray-100 text-gray-700'
+                                        lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
+                                            lead.status === 'converted' ? 'bg-green-100 text-green-700' :
+                                                'bg-gray-100 text-gray-700'
                                         }`}>
                                         {(lead.status || 'new').toUpperCase()}
                                     </span>

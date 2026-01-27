@@ -638,3 +638,87 @@ class ProfileVisit(models.Model):
 
 
 
+
+# -- IMPORT TRACKING (Moved from import_models.py) --
+import uuid
+from django.conf import settings
+
+class VendorImportBatch(models.Model):
+    """
+    Tracks each bulk import operation
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('rolled_back', 'Rolled Back'),
+    ]
+    
+    batch_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='vendor_imports'
+    )
+    filename = models.CharField(max_length=255)
+    total_rows = models.IntegerField(default=0)
+    valid_rows = models.IntegerField(default=0)
+    invalid_rows = models.IntegerField(default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'vendor_import_batch'
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Import Batch {self.batch_id} - {self.filename} ({self.status})"
+
+
+class VendorImportRecord(models.Model):
+    """
+    Tracks individual vendor imports within a batch
+    Stores previous state for rollback capability
+    """
+    ACTION_CHOICES = [
+        ('created', 'Created'),
+        ('updated', 'Updated'),
+        ('skipped', 'Skipped'),
+        ('failed', 'Failed'),
+    ]
+    
+    batch = models.ForeignKey(
+        VendorImportBatch,
+        on_delete=models.CASCADE,
+        related_name='records'
+    )
+    vendor = models.ForeignKey(
+        'Vendor',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='import_records'
+    )
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    row_number = models.IntegerField()
+    previous_state = models.JSONField(
+        null=True,
+        blank=True,
+        help_text='Vendor data before update (for rollback)'
+    )
+    error_message = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'vendor_import_record'
+        ordering = ['batch', 'row_number']
+        indexes = [
+            models.Index(fields=['batch', 'action']),
+        ]
+        
+    def __str__(self):
+        vendor_name = self.vendor.name if self.vendor else "Unknown"
+        return f"Row {self.row_number}: {self.action} - {vendor_name}"

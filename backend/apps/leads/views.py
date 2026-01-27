@@ -7,6 +7,11 @@ from .models import Lead, VendorLead
 from .serializers import LeadSerializer, VendorLeadSerializer
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 class VendorLeadViewSet(viewsets.ModelViewSet):
     """
     API endpoint for vendor leads management.
@@ -15,6 +20,7 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
     """
     queryset = VendorLead.objects.all().order_by('-created_at')
     serializer_class = VendorLeadSerializer
+    authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
     
     def get_permissions(self):
         """
@@ -23,6 +29,13 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error listing Vendor Leads: {str(e)}", exc_info=True)
+            return Response({"error": str(e)}, status=500)
     
     @action(detail=False, methods=['get'])
     def export_csv(self, request):
@@ -85,7 +98,7 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
                 lead.year,
                 lead.make,
                 lead.model,
-                lead.inquiry_type or 'General Vendor Inquiry'
+                getattr(lead, 'inquiry_type', 'General Vendor Inquiry')
             ])
         
         return response
@@ -100,6 +113,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     """
     queryset = Lead.objects.all().order_by('-created_at')
     serializer_class = LeadSerializer
+    authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
     
     def get_permissions(self):
         """
@@ -108,6 +122,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error listing Leads: {str(e)}", exc_info=True)
+            return Response({"error": str(e)}, status=500)
     
     @action(detail=False, methods=['get'])
     def export_csv(self, request):

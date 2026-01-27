@@ -15,9 +15,13 @@ import {
     XCircleIcon,
     CheckCircleIcon,
     LinkIcon,
-    ExclamationTriangleIcon
+    ExclamationTriangleIcon,
+    ArrowUpTrayIcon,
+    ClockIcon
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+import ImportVendorsModal from '../../components/admin/ImportVendorsModal';
+import ImportHistoryModal from '../../components/admin/ImportHistoryModal';
 
 // Simple Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -64,6 +68,8 @@ export default function AdminVendors() {
     const [creatingVendor, setCreatingVendor] = useState(false);
     const [resetCredentials, setResetCredentials] = useState(null);
     const [exporting, setExporting] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
 
     // Toast State
     const [toast, setToast] = useState(null);
@@ -175,6 +181,18 @@ export default function AdminVendors() {
         } finally {
             setExporting(false);
         }
+    };
+
+    const handleImportComplete = (result) => {
+        showToast(`Import successful: ${result.stats.created} created, ${result.stats.updated} updated`, 'success');
+        fetchVendors(1);
+        setPage(1);
+    };
+
+    const handleRollbackComplete = (result) => {
+        showToast('Rollback completed successfully', 'info');
+        fetchVendors(1); // Refresh list to reflect rollback
+        // Don't close history modal so user can see updated status
     };
 
     const toggleStatus = async (vendor) => {
@@ -361,6 +379,20 @@ export default function AdminVendors() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
                             Add Vendor
+                        </button>
+                        <button
+                            onClick={() => setShowImportModal(true)}
+                            className="bg-green-600 text-white border border-green-600 px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
+                        >
+                            <ArrowUpTrayIcon className="w-4 h-4" />
+                            Import
+                        </button>
+                        <button
+                            onClick={() => setShowHistoryModal(true)}
+                            className="bg-white text-gray-700 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
+                            title="Import History"
+                        >
+                            <ClockIcon className="w-5 h-5 text-gray-500" />
                         </button>
                         <button
                             onClick={handleExport}
@@ -1116,8 +1148,21 @@ export default function AdminVendors() {
                             </div>
                         </div>
                     </div>
-                )
-            }
-        </div >
+                )}
+
+            {/* Import Vendors Modal */}
+            <ImportVendorsModal
+                isOpen={showImportModal}
+                onClose={() => setShowImportModal(false)}
+                onImportComplete={handleImportComplete}
+            />
+
+            {/* Import History Modal */}
+            <ImportHistoryModal
+                isOpen={showHistoryModal}
+                onClose={() => setShowHistoryModal(false)}
+                onRollbackComplete={handleRollbackComplete}
+            />
+        </div>
     );
 }
