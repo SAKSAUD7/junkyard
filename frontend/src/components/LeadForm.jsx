@@ -39,9 +39,10 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     // Loading States
     const [loadingMakes, setLoadingMakes] = useState(false)
-    const [loadingModels, setLoadingModels] = useState(false)
-    const [loadingYears, setLoadingYears] = useState(false)
-    const [loadingParts, setLoadingParts] = useState(false)
+    const [loadingVehicleData, setLoadingVehicleData] = useState(false)
+
+    // Bulk Data Cache (NEW - eliminates sequential API calls)
+    const [vehicleDataCache, setVehicleDataCache] = useState(null)
 
     // Contact Info
     const [name, setName] = useState('')
@@ -166,153 +167,148 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         }
     }
 
-    // When Make Changes -> Load Models
+    // OPTIMIZED: Bulk fetch all vehicle data when Make changes (SINGLE API CALL)
     useEffect(() => {
         if (!selectedMake) {
+            setVehicleDataCache(null)
             setModels([])
             setYears([])
             setParts([])
             return
         }
 
-        const loadModels = async () => {
-            setLoadingModels(true)
+        const fetchVehicleDataBulk = async () => {
+            setLoadingVehicleData(true)
             try {
-                // selectedMake is ID here
-                const data = await api.getModels({ make_id: selectedMake })
-                setModels(data || [])
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/vehicle-data/${selectedMake}/`
+                )
+                const data = await response.json()
+
+                // Cache the entire dataset
+                setVehicleDataCache(data)
+
+                // Populate models immediately from cache
+                const modelsList = (data.models || []).map(m => ({
+                    modelID: m.model_id,
+                    modelName: m.model_name
+                }))
+                setModels(modelsList)
+
             } catch (err) {
-                console.error("Failed to load models", err)
+                console.error("Failed to load vehicle data", err)
+                // Fallback to old API if bulk fails
+                try {
+                    const data = await api.getModels({ make_id: selectedMake })
+                    setModels(data || [])
+                } catch (fallbackErr) {
+                    console.error("Fallback also failed", fallbackErr)
+                }
             } finally {
-                setLoadingModels(false)
+                setLoadingVehicleData(false)
             }
         }
-        loadModels()
 
-        // Reset downstream
+        fetchVehicleDataBulk()
+
+        // Reset downstream selections
         setSelectedModel('')
         setSelectedYear('')
         setSelectedPart('')
+        setYears([])
+        setParts([])
     }, [selectedMake])
 
-    // When Model Changes -> Load Years
+    // OPTIMIZED: Client-side filtering for Years (NO API CALL - INSTANT)
     useEffect(() => {
-        if (!selectedMake || !selectedModel) {
+        if (!vehicleDataCache || !selectedModel) {
             setYears([])
             setParts([])
             return
         }
 
-        const loadYears = async () => {
-            setLoadingYears(true)
-            try {
-                const data = await api.getYears({
-                    make_id: selectedMake,
-                    model_id: selectedModel
-                })
-                console.log('Years API Response:', data, 'Type:', typeof data, 'IsArray:', Array.isArray(data))
-                setYears(data || [])
-            } catch (err) {
-                console.error("Failed to load years", err)
-            } finally {
-                setLoadingYears(false)
-            }
+        // Find model in cache
+        const model = vehicleDataCache.models.find(
+            m => m.model_id === parseInt(selectedModel)
+        )
+
+        if (model) {
+            setYears(model.years || [])
+        } else {
+            setYears([])
         }
-        loadYears()
 
         // Reset downstream
         setSelectedYear('')
         setSelectedPart('')
-    }, [selectedModel])
+    }, [selectedModel, vehicleDataCache])
 
-
-    // When Year Changes -> Load Parts (Filtered) - ONLY FOR QUALITY AUTO PARTS
+    // OPTIMIZED: Client-side filtering for Parts (NO API CALL - INSTANT)
     useEffect(() => {
-        // Skip for Vendor type or missing dependencies
-        if (leadType === 'vendor' || !selectedMake || !selectedModel || !selectedYear) {
+        // Skip for Vendor type
+        if (leadType === 'vendor') {
             setParts([])
             return
         }
 
-        const loadParts = async () => {
-            setLoadingParts(true)
-            try {
-                const data = await api.getParts({
-                    make_id: selectedMake,
-                    model_id: selectedModel,
-                    year: selectedYear
-                })
-                setParts(data || [])
-            } catch (err) {
-                console.error("Failed to load parts", err)
-            } finally {
-                setLoadingParts(false)
-            }
+        if (!vehicleDataCache || !selectedModel || !selectedYear) {
+            setParts([])
+            return
         }
-        loadParts()
+
+        // Find model in cache
+        const model = vehicleDataCache.models.find(
+            m => m.model_id === parseInt(selectedModel)
+        )
+
+        if (model && model.parts && model.parts[selectedYear]) {
+            // Map to expected format
+            const partsList = model.parts[selectedYear].map(p => ({
+                partID: p.part_id,
+                partName: p.part_name
+            }))
+            setParts(partsList)
+        } else {
+            setParts([])
+        }
 
         // Reset downstream
         setSelectedPart('')
-    }, [selectedYear, leadType])
+    }, [selectedYear, vehicleDataCache, selectedModel, leadType])
 
 
-    // Lookup Hollander number when Everything Selected (ONLY FOR QUALITY AUTO PARTS)
+    // OPTIMIZED: Auto-populate Hollander from cache (NO API CALL - INSTANT)
     useEffect(() => {
         if (leadType === 'vendor') return
 
-        const lookupHollander = async () => {
-            if (selectedYear && selectedMake && selectedModel && selectedPart) {
-                setLoadingHollander(true)
-
-                // Find names for API payload
-                const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
-                const modelObj = models.find(m => m.modelID === parseInt(selectedModel))
-                const partObj = parts.find(p => p.partID === parseInt(selectedPart))
-
-                try {
-                    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/lookup/`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            year: parseInt(selectedYear),
-                            make: makeObj?.makeName || '',
-                            make_id: selectedMake,
-                            model: modelObj?.modelName || '',
-                            part_type: partObj?.partName || '',
-                            part_id: selectedPart
-                        })
-                    })
-
-                    if (response.ok) {
-                        const data = await response.json()
-                        if (data.results && data.results.length > 0) {
-                            const result = data.results[0]
-                            setHollanderNumber(result.hollander_number)
-                            // Clean up options if array or string
-                            setOptions(result.options || '')
-                        } else {
-                            setHollanderNumber('Not Found')
-                            setOptions('')
-                        }
-                    } else {
-                        setHollanderNumber('Not Found')
-                        setOptions('')
-                    }
-                } catch (error) {
-                    console.error('Hollander lookup error:', error)
-                    setHollanderNumber('Not Available')
-                    setOptions('')
-                }
-
-                setLoadingHollander(false)
-            } else {
-                setHollanderNumber('')
-                setOptions('')
-            }
+        if (!vehicleDataCache || !selectedModel || !selectedYear || !selectedPart) {
+            setHollanderNumber('')
+            setOptions('')
+            return
         }
 
-        lookupHollander()
-    }, [selectedYear, selectedMake, selectedModel, selectedPart, makes, models, parts, leadType])
+        // Find part in cache
+        const model = vehicleDataCache.models.find(
+            m => m.model_id === parseInt(selectedModel)
+        )
+
+        if (model && model.parts && model.parts[selectedYear]) {
+            const part = model.parts[selectedYear].find(
+                p => p.part_id === parseInt(selectedPart)
+            )
+
+            if (part) {
+                setHollanderNumber(part.hollander_number || 'Not Found')
+                setOptions(part.options || '')
+            } else {
+                setHollanderNumber('Not Found')
+                setOptions('')
+            }
+        } else {
+            setHollanderNumber('Not Found')
+            setOptions('')
+        }
+    }, [selectedPart, vehicleDataCache, selectedModel, selectedYear, leadType])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
