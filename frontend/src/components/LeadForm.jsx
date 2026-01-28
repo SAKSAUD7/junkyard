@@ -100,7 +100,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setLoadingZipcode(true)
             try {
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
+                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
                 )
                 const data = await response.json()
 
@@ -132,7 +132,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setLoadingZipcodes(true)
             try {
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
+                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/zipcodes/state/?state=${stateValue}`
                 )
                 const data = await response.json()
 
@@ -269,7 +269,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 const partObj = parts.find(p => p.partID === parseInt(selectedPart))
 
                 try {
-                    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/hollander/lookup/`, {
+                    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/lookup/`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -351,7 +351,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
         if (leadType === 'vendor') {
             // Vendor Lead - separate endpoint, no part fields
-            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/vendor-leads/`;
+            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/vendor-leads/`;
             payload = {
                 make: makeObj ? makeObj.makeName : 'Unknown',
                 model: selectedModel,
@@ -368,7 +368,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             };
         } else {
             // Quality Auto Parts Lead - original endpoint
-            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/leads/`;
+            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/leads/`;
             payload = {
                 make: makeObj ? makeObj.makeName : 'Unknown',
                 model: selectedModel,
@@ -381,7 +381,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 state,
                 zip,
                 options: options || '',
-                hollander_number: hollanderNumber || ''
             };
         }
 
@@ -786,9 +785,9 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                             {zipcodes
                                                 .filter(z => z.postal_code.startsWith(zip))
                                                 .slice(0, 100) // Limit render
-                                                .map(z => (
+                                                .map((z, index) => (
                                                     <div
-                                                        key={z.postal_code}
+                                                        key={`${z.postal_code}-${index}`}
                                                         className="px-3 py-2 text-xs md:text-sm hover:bg-blue-50 cursor-pointer text-gray-700 flex justify-between"
                                                         onMouseDown={(e) => {
                                                             e.preventDefault() // Prevent blur

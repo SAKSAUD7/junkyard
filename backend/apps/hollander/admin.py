@@ -5,10 +5,8 @@ Django admin interface for all Hollander models
 """
 
 from django.contrib import admin
-from .models import (
-    Make, Model, PartType, YearRange,
-    HollanderInterchange, PartPricing, PartSpecification
-)
+from .models import *
+# from .import_models import VendorImportBatch, VendorImportRecord  <-- Removed
 
 
 @admin.register(Make)
@@ -221,6 +219,24 @@ class ProfileVisitAdmin(admin.ModelAdmin):
     list_display = ['tracking_id', 'account_id', 'created_on']
     list_filter = ['created_on']
     ordering = ['-created_on']
+
+
+# Vendor Import Management
+@admin.register(VendorImportBatch)
+class VendorImportBatchAdmin(admin.ModelAdmin):
+    list_display = ['batch_id', 'filename', 'uploaded_by', 'status', 'total_rows', 'valid_rows', 'invalid_rows', 'created_at', 'completed_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['filename', 'batch_id']
+    ordering = ['-created_at']
+    readonly_fields = ['batch_id', 'created_at']
+    
+@admin.register(VendorImportRecord)
+class VendorImportRecordAdmin(admin.ModelAdmin):
+    list_display = ['batch', 'row_number', 'vendor', 'action', 'error_message', 'created_at']
+    list_filter = ['action', 'batch']
+    search_fields = ['vendor__name', 'error_message']
+    ordering = ['batch', 'row_number']
+
 
 
 

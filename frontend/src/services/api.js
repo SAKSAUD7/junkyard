@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_BASE_URL = `${BASE_URL}/api`;
 
 /**
@@ -370,5 +370,92 @@ export const api = {
     const response = await fetch(`${API_BASE_URL}/health/`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();
+  },
+
+  // Vendor Import
+  vendorImport: {
+    upload: async (token, file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch(`${API_BASE_URL}/vendors/import/upload/`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      if (!response.ok) {
+        let errorMsg;
+        try {
+          const text = await response.text();
+          try {
+            const error = JSON.parse(text);
+            errorMsg = error.error || `HTTP error! status: ${response.status}`;
+          } catch {
+            // If JSON parse fails, use text
+            errorMsg = `Server Error (${response.status}): ${text.substring(0, 100)}...`;
+          }
+        } catch (e) {
+          errorMsg = `HTTP error! status: ${response.status}`;
+        }
+        throw new Error(errorMsg);
+      }
+      return response.json();
+    },
+
+    confirm: async (token, uploadId) => {
+      const response = await fetch(`${API_BASE_URL}/vendors/import/confirm/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ upload_id: uploadId })
+      });
+      if (!response.ok) {
+        let errorMsg;
+        try {
+          const text = await response.text();
+          try {
+            const error = JSON.parse(text);
+            errorMsg = error.error || `HTTP error! status: ${response.status}`;
+          } catch {
+            // If JSON parse fails, use text
+            errorMsg = `Server Error (${response.status}): ${text.substring(0, 100)}...`;
+          }
+        } catch (e) {
+          errorMsg = `HTTP error! status: ${response.status}`;
+        }
+        throw new Error(errorMsg);
+      }
+      return response.json();
+    },
+
+    history: async (token, params = {}) => {
+      const queryString = new URLSearchParams(params).toString();
+      const response = await fetch(`${API_BASE_URL}/vendors/import/history/${queryString ? `?${queryString}` : ''}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.json();
+    },
+
+    rollback: async (token, batchId) => {
+      const response = await fetch(`${API_BASE_URL}/vendors/import/${batchId}/rollback/`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
+
+    downloadErrorReport: async (token, batchId) => {
+      const response = await fetch(`${API_BASE_URL}/vendors/import/${batchId}/error_report/`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.blob();
+    }
   }
 };

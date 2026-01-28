@@ -83,10 +83,10 @@ EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')  # Load from environment variable
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
 
 DEFAULT_FROM_EMAIL = 'saqeeb.khan20011@gmail.com'  # Sender email (VERIFIED in SendGrid!)
-LEAD_NOTIFICATION_EMAIL = 'saksaud7411@gmail.com'  # Recipient email (TO)
+LEAD_NOTIFICATION_EMAIL = 'saqeeb.khan20011@gmail.com'  # Recipient email (TO)
 SITE_URL = 'http://localhost:3000'  # Frontend URL
 
 

@@ -38,7 +38,7 @@ export default function AdminPartPricing() {
             }
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/part-pricing/?${params}`,
+                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/part-pricing/?${params}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ export default function AdminPartPricing() {
             if (searchTerm) params.append('search', searchTerm);
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/part-pricing/export_csv/?${params}`,
+                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/part-pricing/export_csv/?${params}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,

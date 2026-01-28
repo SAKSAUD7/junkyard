@@ -19,11 +19,15 @@ from django.urls import path, include
 from django.http import JsonResponse
 from rest_framework.routers import DefaultRouter
 from apps.hollander.views import hollander_lookup, PartPricingViewSet
+from apps.hollander.import_views import VendorImportViewSet
 from apps.leads.urls import vendor_leads_urlpatterns
 
-# Create router for Part Pricing
+# Create router for Part Pricing and Vendor Import
 pricing_router = DefaultRouter()
 pricing_router.register(r'part-pricing', PartPricingViewSet, basename='part-pricing')
+
+vendors_router = DefaultRouter()
+vendors_router.register(r'import', VendorImportViewSet, basename='vendor-import')
 
 
 def health_check(request):
@@ -36,6 +40,7 @@ urlpatterns = [
     path("api/health/", health_check, name="health_check"),
     path("api/auth/", include("apps.users.urls")),
     path("api/vendors/", include("apps.vendors.urls")),
+    path("api/vendors/", include(vendors_router.urls)),  # Import endpoints
     path("api/leads/", include("apps.leads.urls")),
     path("api/vendor-leads/", include(vendor_leads_urlpatterns)),  # Vendor leads endpoint
     path("api/common/", include("apps.common.urls")),

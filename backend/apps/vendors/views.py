@@ -1,6 +1,7 @@
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
 from apps.hollander.models import Vendor
 from .serializers import VendorSerializer
@@ -139,6 +140,7 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all().order_by('id')
     serializer_class = VendorSerializer
     permission_classes = [permissions.IsAdminUser]
+    authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['name', 'city', 'state', 'email']
     filterset_fields = ['is_active', 'state']
