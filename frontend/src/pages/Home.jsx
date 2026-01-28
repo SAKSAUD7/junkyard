@@ -37,7 +37,7 @@ export default function Home() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
+        <div className="min-h-screen bg-white">
             {/* SEO Meta Tags */}
             <SEO
                 title="Find Auto Salvage Yards & Used Auto Parts Near You"
@@ -47,72 +47,115 @@ export default function Home() {
 
             <Navbar />
 
-            {/* Modern Hero Section - Light Theme (Updated with Brand Gradient) */}
-            <div className="relative min-h-[30vh] sm:min-h-[50vh] md:min-h-[70vh] flex flex-col justify-start pt-2 sm:pt-6 md:pt-12 overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
+            {/* Premium Hero Section - Car and Driver Inspired */}
+            <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
 
-                {/* Desktop Sidebar Ads - Fixed in Hero */}
-                <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden xl:block">
-                    <DynamicAd slot="left_sidebar_ad" page="home" />
+                {/* Background Pattern Overlay */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{
+                        backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+                        backgroundSize: '40px 40px'
+                    }}></div>
                 </div>
 
-                <div className="absolute top-4 right-4 z-30 flex flex-col gap-4 hidden xl:block">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/50 to-gray-900"></div>
+
+                {/* Desktop Sidebar Ads */}
+                <div className="absolute top-8 left-8 z-30 hidden xl:block">
+                    <DynamicAd slot="left_sidebar_ad" page="home" />
+                </div>
+                <div className="absolute top-8 right-8 z-30 hidden xl:block">
                     <DynamicAd slot="right_sidebar_ad" page="home" />
                 </div>
 
+                {/* Main Content */}
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
-
-                    {/* Centered Logo & Branding - Compact */}
-                    <div className="text-center mb-2 sm:mb-4">
-                        <div className="inline-flex flex-col items-center">
-                            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white tracking-tight font-display mb-0.5 sm:mb-1">
-                                JYNM
-                            </h1>
-                            <span className="text-blue-600 font-bold text-[8px] sm:text-[10px] md:text-xs tracking-[0.2em] uppercase font-mono bg-white px-1 sm:px-2 md:px-3 py-0.5 rounded shadow-sm">
-                                JunkYardsNearMe.com
+                    {/* Brand Logo */}
+                    <div className="text-center mb-12 animate-fade-in-down">
+                        <h1 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter mb-4">
+                            JYNM
+                        </h1>
+                        <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                            <span className="text-white/90 font-medium text-sm tracking-wider">
+                                JUNKYARDSNEARME.COM
                             </span>
                         </div>
                     </div>
 
-                    {/* Main Content Container - Compact */}
-                    <div className="flex flex-col items-center gap-2 sm:gap-4 md:gap-6 relative z-10">
+                    {/* Headline */}
+                    <div className="text-center max-w-5xl mx-auto mb-16 animate-fade-in-up">
+                        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                            Find Quality Used Auto Parts
+                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 mt-2">
+                                In Seconds
+                            </span>
+                        </h2>
+                        <p className="text-lg sm:text-xl text-gray-300 font-light max-w-3xl mx-auto">
+                            Search 1,000+ verified junkyards nationwide. Save up to 80% on OEM parts with free quotes and nationwide shipping.
+                        </p>
+                    </div>
 
-                        {/* Centered Copy - Compact */}
-                        <div className="text-center max-w-4xl mx-auto space-y-1.5 sm:space-y-3 pt-0.5">
-                            <h2 className="text-lg sm:text-2xl md:text-4xl font-black text-white leading-tight px-2">
-                                FOR YOUR <span className="text-white inline-block transform -skew-x-6 mx-1 sm:mx-1.5 border-2 border-white px-1 sm:px-1.5 py-0 sm:py-0.5">JUNKYARD</span>
-                                <br />
-                                AUTO PARTS RECYCLING
-                                <br />
-                                AND AUTO SALVAGE <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-teal-200">SEARCH IN SECONDS.</span>
-                            </h2>
+                    {/* Search Methods */}
+                    <div className="max-w-4xl mx-auto space-y-8">
 
-                            <h3 className="text-xs sm:text-base font-medium text-white/90 px-4">
-                                LOCATE USED AUTO PARTS <span className="font-script text-white font-bold text-lg sm:text-2xl ml-1 sm:ml-1.5" style={{ fontFamily: 'cursive' }}>near you!</span>
-                            </h3>
-
-                            {/* Divider Line */}
-                            <div className="w-16 h-1 bg-white/20 mx-auto rounded-full"></div>
+                        {/* Primary: ZIP Code Search */}
+                        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                            <div className="text-center mb-6">
+                                <h3 className="text-2xl font-bold text-white mb-2">Search by Location</h3>
+                                <p className="text-gray-400">Find junkyards near you instantly</p>
+                            </div>
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 shadow-2xl">
+                                <PincodeSearch />
+                            </div>
                         </div>
 
-                        {/* Pincode Search Bar - PRIMARY SEARCH */}
-                        <div className="w-full max-w-5xl mx-auto animate-fade-in-up px-2 sm:px-0">
-                            <div className="text-center mb-2 sm:mb-4">
-                                <h3 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2">Search by ZIP Code</h3>
-                                <p className="text-xs sm:text-base text-white/80">Find junkyards near you instantly</p>
+                        {/* Divider */}
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-white/10"></div>
                             </div>
-                            <PincodeSearch />
+                            <div className="relative flex justify-center">
+                                <span className="px-4 bg-gray-900 text-gray-400 text-sm font-medium">
+                                    OR
+                                </span>
+                            </div>
                         </div>
 
-                        {/* Horizontal Lead Form ("Two Parts") */}
-                        <div className="w-full max-w-5xl mx-auto mt-4 sm:mt-6 animate-fade-in-up px-2 sm:px-0">
-                            <div className="text-center mb-2 sm:mb-3">
-                                <p className="text-xs sm:text-base text-white/70">Or search by vehicle details</p>
+                        {/* Secondary: Vehicle Details Search */}
+                        <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                            <div className="text-center mb-6">
+                                <h3 className="text-2xl font-bold text-white mb-2">Search by Vehicle</h3>
+                                <p className="text-gray-400">Get specific parts for your make and model</p>
                             </div>
-                            <LeadForm layout="horizontal" mode="quality_auto_parts" enableSteps={true} />
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 shadow-2xl">
+                                <LeadForm layout="horizontal" mode="quality_auto_parts" enableSteps={true} />
+                            </div>
                         </div>
 
                     </div>
+
+                    {/* Trust Indicators */}
+                    <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-white mb-1">1,000+</div>
+                            <div className="text-sm text-gray-400">Verified Vendors</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-white mb-1">24/7</div>
+                            <div className="text-sm text-gray-400">Support</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-white mb-1">80%</div>
+                            <div className="text-sm text-gray-400">Average Savings</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-white mb-1">Free</div>
+                            <div className="text-sm text-gray-400">Quotes</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
