@@ -76,6 +76,21 @@ INSTALLED_APPS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# CORS Configuration - Allow frontend to connect to backend
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# Session and Cookie Settings for Cross-Origin Requests
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
 # Email settings - SendGrid SMTP (Production)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
 EMAIL_HOST = 'smtp.sendgrid.net'
