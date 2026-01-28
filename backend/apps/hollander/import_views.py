@@ -13,6 +13,8 @@ from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpResponse
 from django.utils import timezone
 from django.db import models
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 import csv
 import io
 import uuid
@@ -29,6 +31,7 @@ from .models import Vendor, VendorImportBatch, VendorImportRecord
 UPLOAD_PREVIEWS = {}
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class VendorImportViewSet(viewsets.ViewSet):
     """
     ViewSet for vendor import operations

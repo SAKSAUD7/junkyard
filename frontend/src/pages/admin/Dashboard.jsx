@@ -186,7 +186,7 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     {stats.leads_trend && stats.leads_trend.length > 0 ? (
-                        <div className="flex-1 min-h-[280px] w-full">
+                        <div className="flex-1 h-[280px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={stats.leads_trend}>
                                     <defs>
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     {stats.vendor_distribution && stats.vendor_distribution.length > 0 ? (
-                        <div className="flex-1 min-h-[280px] w-full">
+                        <div className="flex-1 h-[280px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={stats.vendor_distribution}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
