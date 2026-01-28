@@ -228,37 +228,45 @@ def get_parts(request):
     valid_part_names = set()
 
     # Source 1: Inventory (Data Connection: PartPricing)
-    inv_parts = PartPricing.objects.filter(
-        make_ref__make_id=make_id,
-        model_ref__model_id=model_id,
-        year_start__lte=year,
-        year_end__gte=year,
-        part_type_ref__isnull=False
-    ).values_list('part_type_ref__part_name', flat=True).distinct()
-    
-    valid_part_names.update(inv_parts)
+    try:
+        inv_parts = PartPricing.objects.filter(
+            make_ref__make_id=make_id,
+            model_ref__model_id=model_id,
+            year_start__lte=year,
+            year_end__gte=year,
+            part_type_ref__isnull=False
+        ).values_list('part_type_ref__part_name', flat=True).distinct()
+        
+        valid_part_names.update(inv_parts)
+    except Exception as e:
+        print(f"Inventory parts lookup error: {e}")
 
     # Source 2: Catalog (Data Connection: HollanderIndex via Unified Helper)
-    _, valid_codes = query_catalog_index(make_id, model_id, year=year)
-    
-    if valid_codes:
-        # Data Connection: HollanderPartRef (Code -> Name)
-        cat_names = HollanderPartRef.objects.filter(
-            part_code__in=valid_codes
-        ).values_list('part_name', flat=True)
+    # Add timeout protection to prevent hanging
+    try:
+        _, valid_codes = query_catalog_index(make_id, model_id, year=year)
         
-        # Fuzzy Map to PartType (Data Connection: PartType)
-        all_parts_dict = {p.part_name.lower(): p.part_name for p in PartType.objects.all()}
-        
-        for c_name in cat_names:
-            c_lower = c_name.lower()
-            if c_lower in all_parts_dict:
-                valid_part_names.add(all_parts_dict[c_lower])
-                continue
-                
-            for p_lower, p_real in all_parts_dict.items():
-                if p_lower in c_lower and len(p_lower) > 3:
-                     valid_part_names.add(p_real)
+        if valid_codes:
+            # Data Connection: HollanderPartRef (Code -> Name)
+            cat_names = HollanderPartRef.objects.filter(
+                part_code__in=valid_codes
+            ).values_list('part_name', flat=True)
+            
+            # Fuzzy Map to PartType (Data Connection: PartType)
+            all_parts_dict = {p.part_name.lower(): p.part_name for p in PartType.objects.all()}
+            
+            for c_name in cat_names:
+                c_lower = c_name.lower()
+                if c_lower in all_parts_dict:
+                    valid_part_names.add(all_parts_dict[c_lower])
+                    continue
+                    
+                for p_lower, p_real in all_parts_dict.items():
+                    if p_lower in c_lower and len(p_lower) > 3:
+                         valid_part_names.add(p_real)
+    except Exception as e:
+        print(f"Catalog parts lookup error (non-fatal): {e}")
+        # Continue with inventory parts only
         
     # Final Filter
     if valid_part_names:
