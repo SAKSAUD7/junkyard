@@ -44,6 +44,9 @@ class Lead(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Email notification tracking to prevent duplicates
+    notification_sent = models.BooleanField(default=False, help_text="Whether email notification has been sent")
+    
     # Vendor Assignment - NEW for Vendor Portal
     assigned_vendors = models.ManyToManyField(
         'hollander.Vendor',

@@ -100,7 +100,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setLoadingZipcode(true)
             try {
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
                 )
                 const data = await response.json()
 
@@ -132,7 +132,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setLoadingZipcodes(true)
             try {
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/zipcodes/state/?state=${stateValue}`
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
                 )
                 const data = await response.json()
 
@@ -210,6 +210,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     make_id: selectedMake,
                     model_id: selectedModel
                 })
+                console.log('Years API Response:', data, 'Type:', typeof data, 'IsArray:', Array.isArray(data))
                 setYears(data || [])
             } catch (err) {
                 console.error("Failed to load years", err)
@@ -269,7 +270,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 const partObj = parts.find(p => p.partID === parseInt(selectedPart))
 
                 try {
-                    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/hollander/lookup/`, {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/lookup/`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -351,7 +352,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
         if (leadType === 'vendor') {
             // Vendor Lead - separate endpoint, no part fields
-            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/vendor-leads/`;
+            endpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendor-leads/`;
             payload = {
                 make: makeObj ? makeObj.makeName : 'Unknown',
                 model: selectedModel,
@@ -368,7 +369,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             };
         } else {
             // Quality Auto Parts Lead - original endpoint
-            endpoint = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/api/leads/`;
+            endpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/leads/`;
             payload = {
                 make: makeObj ? makeObj.makeName : 'Unknown',
                 model: selectedModel,

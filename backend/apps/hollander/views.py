@@ -164,6 +164,27 @@ def get_years(request):
     except Exception as e:
         print(f"Catalog lookup main execution error: {e}")
     
+    # Fallback: If still no years found, try direct HollanderIndex lookup with partial model name
+    if not years:
+        try:
+            model_obj = Model.objects.filter(model_id=model_id).first()
+            if model_obj:
+                # Extract base model name (e.g., "318" from "318is")
+                base_model = ''.join(filter(str.isdigit, model_obj.model_name))
+                if base_model:
+                    # Query HollanderIndex with partial match
+                    hollander_entries = HollanderIndex.objects.filter(
+                        model_nm__icontains=base_model
+                    ).values_list('begin_year', 'end_year')
+                    
+                    for start, end in hollander_entries:
+                        if start and end:
+                            s, e = max(1950, start), min(2030, end)
+                            if s <= e:
+                                years.update(range(s, e + 1))
+        except Exception as e:
+            print(f"Fallback year lookup error: {e}")
+    
     sorted_years = sorted(list(years), reverse=True)
     return Response(sorted_years)
 

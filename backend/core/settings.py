@@ -78,12 +78,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email settings - SendGrid SMTP (Production)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Console (for debugging)
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+# Timeout settings to prevent hanging connections and retries
+EMAIL_TIMEOUT = 10  # 10 seconds timeout
+EMAIL_USE_SSL = False  # Use TLS on port 587, not SSL
 
 DEFAULT_FROM_EMAIL = 'saqeeb.khan20011@gmail.com'  # Sender email (VERIFIED in SendGrid!)
 LEAD_NOTIFICATION_EMAIL = 'saqeeb.khan20011@gmail.com'  # Recipient email (TO)
