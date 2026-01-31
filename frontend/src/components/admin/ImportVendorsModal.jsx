@@ -124,26 +124,34 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
         }
     };
 
-    const downloadErrorReport = () => {
-        if (!preview || !preview.error_details || preview.error_details.length === 0) return;
+    const downloadErrorReport = async () => {
+        if (!uploadId) return;
 
-        // Create CSV content
-        let csvContent = "Row Number,Errors\n";
-        preview.error_details.forEach(err => {
-            const errors = err.errors.join('; ');
-            csvContent += `${err.row},"${errors}"\n`;
-        });
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendors/import/${uploadId}/error_report/`,
+                {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }
+            );
 
-        // Download
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `import_errors_${Date.now()}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+            if (!response.ok) {
+                console.error('Error downloading report:', response.statusText);
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vendor_import_errors_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading report:', error);
+        }
     };
 
     return (
@@ -164,8 +172,8 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                         <div className="space-y-4">
                             <div
                                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${dragging
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-300 hover:border-gray-400'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-300 hover:border-gray-400'
                                     }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}

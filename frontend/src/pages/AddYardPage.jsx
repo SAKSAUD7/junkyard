@@ -256,7 +256,7 @@ export default function AddYardPage() {
             const token = localStorage.getItem('access_token');
 
             await axios.post(
-                `${import.meta.env.VITE_API_URL}/yard-submissions/`,
+                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/`,
                 submitData,
                 {
                     headers: {

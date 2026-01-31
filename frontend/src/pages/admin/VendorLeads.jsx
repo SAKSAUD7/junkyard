@@ -7,7 +7,17 @@ import {
     EnvelopeIcon,
     CalendarIcon,
     TruckIcon,
-    XMarkIcon
+    XMarkIcon,
+    SparklesIcon,
+    ArrowDownTrayIcon,
+    FunnelIcon,
+    UserCircleIcon,
+    MapPinIcon,
+    ClockIcon,
+    CheckCircleIcon,
+    ChatBubbleLeftRightIcon,
+    BoltIcon,
+    FireIcon
 } from '@heroicons/react/24/outline';
 import Toast from '../../components/Toast';
 
@@ -119,169 +129,323 @@ export default function AdminVendorLeads() {
         return matchesSearch && matchesStatus;
     });
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'new': return 'bg-blue-100 text-blue-800';
-            case 'contacted': return 'bg-yellow-100 text-yellow-800';
-            case 'closed': return 'bg-gray-100 text-gray-800';
-            case 'converted': return 'bg-green-100 text-green-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
+    const getStatusConfig = (status) => {
+        const configs = {
+            new: {
+                bg: 'bg-gradient-to-r from-blue-400 to-blue-600',
+                text: 'text-white',
+                label: 'New',
+                icon: FireIcon,
+                glow: 'shadow-lg shadow-blue-200'
+            },
+            contacted: {
+                bg: 'bg-gradient-to-r from-amber-400 to-orange-500',
+                text: 'text-white',
+                label: 'Contacted',
+                icon: ChatBubbleLeftRightIcon,
+                glow: 'shadow-lg shadow-amber-200'
+            },
+            converted: {
+                bg: 'bg-gradient-to-r from-emerald-400 to-green-500',
+                text: 'text-white',
+                label: 'Converted',
+                icon: CheckCircleIcon,
+                glow: 'shadow-lg shadow-emerald-200'
+            },
+            closed: {
+                bg: 'bg-gradient-to-r from-gray-400 to-gray-600',
+                text: 'text-white',
+                label: 'Closed',
+                icon: XMarkIcon,
+                glow: 'shadow-lg shadow-gray-200'
+            }
+        };
+        return configs[status] || configs.new;
     };
+
+    const getStatusStats = () => {
+        return {
+            total: leads.length,
+            new: leads.filter(l => l.status === 'new').length,
+            contacted: leads.filter(l => l.status === 'contacted').length,
+            converted: leads.filter(l => l.status === 'converted').length,
+            closed: leads.filter(l => l.status === 'closed').length
+        };
+    };
+
+    const stats = getStatusStats();
 
     if (loading) {
         return (
             <div className="flex justify-center items-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <p className="text-[#6b7280] font-medium">Loading vendor leads...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Vendor Leads Management</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        {filteredLeads.length} of {leads.length} vendor leads
-                    </p>
-                </div>
+        <div className="space-y-6 pb-8">
+            {/* Gradient Hero Header */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-2xl shadow-xl p-8">
+                <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
 
-                <div className="flex gap-3 w-full sm:w-auto flex-wrap">
-                    <select
-                        className="border rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="new">New</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="converted">Converted</option>
-                        <option value="closed">Closed</option>
-                    </select>
-
-                    <div className="relative flex-1 sm:flex-none">
-                        <input
-                            type="text"
-                            placeholder="Search vendor leads..."
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                <div className="relative">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                            <TruckIcon className="h-8 w-8 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-white">Vendor Leads Management</h1>
+                            <p className="text-indigo-100 mt-1">
+                                Track and manage customer inquiries to vendors
+                            </p>
+                        </div>
                     </div>
 
-                    <button
-                        onClick={handleExport}
-                        disabled={exporting}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-                    >
-                        {exporting ? (
-                            <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                Exporting...
-                            </>
-                        ) : (
-                            <>
-                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Export CSV
-                            </>
-                        )}
-                    </button>
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <SparklesIcon className="h-4 w-4 text-white" />
+                                <p className="text-xs text-indigo-100">Total</p>
+                            </div>
+                            <p className="text-2xl font-bold text-white">{stats.total}</p>
+                        </div>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <FireIcon className="h-4 w-4 text-blue-200" />
+                                <p className="text-xs text-indigo-100">New</p>
+                            </div>
+                            <p className="text-2xl font-bold text-white">{stats.new}</p>
+                        </div>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <ChatBubbleLeftRightIcon className="h-4 w-4 text-amber-200" />
+                                <p className="text-xs text-indigo-100">Contacted</p>
+                            </div>
+                            <p className="text-2xl font-bold text-white">{stats.contacted}</p>
+                        </div>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <CheckCircleIcon className="h-4 w-4 text-green-200" />
+                                <p className="text-xs text-indigo-100">Converted</p>
+                            </div>
+                            <p className="text-2xl font-bold text-white">{stats.converted}</p>
+                        </div>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <XMarkIcon className="h-4 w-4 text-gray-200" />
+                                <p className="text-xs text-indigo-100">Closed</p>
+                            </div>
+                            <p className="text-2xl font-bold text-white">{stats.closed}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Leads Table */}
-            <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
+            {/* Filters Card */}
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-[#e5e7eb]">
+                <div className="flex flex-col lg:flex-row gap-4">
+                    {/* Status Filter Tabs */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <FunnelIcon className="h-5 w-5 text-[#6b7280]" />
+                        <span className="text-sm font-medium text-[#6b7280]">Filter:</span>
+                        {['all', 'new', 'contacted', 'converted', 'closed'].map(status => (
+                            <button
+                                key={status}
+                                onClick={() => setStatusFilter(status)}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${statusFilter === status
+                                        ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                        : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
+                                    }`}
+                            >
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Search and Export */}
+                    <div className="flex gap-3 lg:ml-auto">
+                        <div className="relative flex-1 lg:w-64">
+                            <input
+                                type="text"
+                                placeholder="Search leads..."
+                                className="w-full pl-11 pr-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm transition-all"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <MagnifyingGlassIcon className="h-5 w-5 text-[#9ca3af] absolute left-3.5 top-3" />
+                        </div>
+
+                        <button
+                            onClick={handleExport}
+                            disabled={exporting}
+                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
+                        >
+                            {exporting ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    Exporting...
+                                </>
+                            ) : (
+                                <>
+                                    <ArrowDownTrayIcon className="h-5 w-5" />
+                                    Export CSV
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Results Count */}
+                <div className="mt-4 pt-4 border-t border-[#e5e7eb]">
+                    <p className="text-sm text-[#6b7280]">
+                        Showing <span className="font-semibold text-[#1f2937]">{filteredLeads.length}</span> of <span className="font-semibold text-[#1f2937]">{leads.length}</span> vendor leads
+                    </p>
+                </div>
+            </div>
+
+            {/* Modern Table Card */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-[#e5e7eb]">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-[#e5e7eb]">
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Date</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Customer</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Vehicle</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Location</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Contact</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {loading ? (
-                                <tr><td colSpan="7" className="px-6 py-10 text-center">Loading...</td></tr>
-                            ) : filteredLeads.length === 0 ? (
-                                <tr><td colSpan="7" className="px-6 py-10 text-center text-gray-500">No vendor leads found matching your criteria</td></tr>
+                        <tbody className="divide-y divide-[#f3f4f6]">
+                            {filteredLeads.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-6 py-16 text-center">
+                                        <TruckIcon className="h-16 w-16 mx-auto mb-4 text-[#d1d5db]" />
+                                        <p className="text-[#6b7280] text-lg font-medium">No vendor leads found</p>
+                                        <p className="text-[#9ca3af] text-sm mt-1">Try adjusting your filters</p>
+                                    </td>
+                                </tr>
                             ) : (
-                                filteredLeads.map((lead) => (
-                                    <tr key={lead.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {new Date(lead.created_at).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(lead.status || 'new')}`}>
-                                                {(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {lead.year} {lead.make} {lead.model}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {lead.state}, {lead.zip}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div>{lead.email}</div>
-                                            <div className="text-xs">{lead.phone}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                            <button
-                                                onClick={() => setSelectedLead(lead)}
-                                                className="text-blue-600 hover:text-blue-900 font-medium"
-                                                title="View Details"
-                                            >
-                                                <EyeIcon className="h-5 w-5 inline" />
-                                            </button>
-                                            <a
-                                                href={`tel:${lead.phone}`}
-                                                className="text-green-600 hover:text-green-900 font-medium"
-                                                title="Call"
-                                            >
-                                                <PhoneIcon className="h-5 w-5 inline" />
-                                            </a>
-                                            <a
-                                                href={`mailto:${lead.email}`}
-                                                className="text-purple-600 hover:text-purple-900 font-medium"
-                                                title="Email"
-                                            >
-                                                <EnvelopeIcon className="h-5 w-5 inline" />
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))
+                                filteredLeads.map((lead) => {
+                                    const statusConfig = getStatusConfig(lead.status || 'new');
+                                    const StatusIcon = statusConfig.icon;
+
+                                    return (
+                                        <tr
+                                            key={lead.id}
+                                            className="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all"
+                                        >
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarIcon className="h-4 w-4 text-[#6b7280]" />
+                                                    <span className="text-sm text-[#6b7280]">
+                                                        {new Date(lead.created_at).toLocaleDateString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg ${statusConfig.bg} ${statusConfig.text} ${statusConfig.glow}`}>
+                                                    <StatusIcon className="h-3.5 w-3.5" />
+                                                    {statusConfig.label}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold shadow-md">
+                                                        {lead.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-[#1f2937]">{lead.name}</p>
+                                                        <p className="text-xs text-[#6b7280]">ID: #{lead.id}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <TruckIcon className="h-4 w-4 text-[#6b7280]" />
+                                                    <span className="text-sm text-[#1f2937]">
+                                                        {lead.year} {lead.make} {lead.model}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-1.5">
+                                                    <MapPinIcon className="h-4 w-4 text-[#6b7280]" />
+                                                    <span className="text-sm text-[#1f2937]">{lead.state}, {lead.zip}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <EnvelopeIcon className="h-3.5 w-3.5 text-[#6b7280]" />
+                                                        <span className="text-xs text-[#6b7280]">{lead.email}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <PhoneIcon className="h-3.5 w-3.5 text-[#6b7280]" />
+                                                        <span className="text-xs text-[#6b7280]">{lead.phone}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => setSelectedLead(lead)}
+                                                        className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
+                                                        title="View Details"
+                                                    >
+                                                        <EyeIcon className="h-4 w-4" />
+                                                    </button>
+                                                    <a
+                                                        href={`tel:${lead.phone}`}
+                                                        className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 text-white rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all shadow-md shadow-emerald-200"
+                                                        title="Call"
+                                                    >
+                                                        <PhoneIcon className="h-4 w-4" />
+                                                    </a>
+                                                    <a
+                                                        href={`mailto:${lead.email}`}
+                                                        className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-md shadow-purple-200"
+                                                        title="Email"
+                                                    >
+                                                        <EnvelopeIcon className="h-4 w-4" />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {/* Lead Details Modal */}
+            {/* Enhanced Lead Details Modal */}
             {selectedLead && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+                    <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                        <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">Vendor Lead Details</h2>
-                                <p className="text-sm text-gray-500">ID: #{selectedLead.id}</p>
+                                <h2 className="text-xl font-bold text-white">Vendor Lead Details</h2>
+                                <p className="text-sm text-indigo-100">ID: #{selectedLead.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedLead(null)}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -289,102 +453,103 @@ export default function AdminVendorLeads() {
 
                         <div className="p-6 space-y-6">
                             {/* Status Section */}
-                            <div className="bg-gray-50 rounded-lg p-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <div>
+                                <label className="block text-sm font-bold text-[#374151] mb-3 uppercase tracking-wide">
                                     Lead Status
                                 </label>
-                                <div className="flex gap-2">
-                                    {['new', 'contacted', 'converted', 'closed'].map((status) => (
-                                        <button
-                                            key={status}
-                                            onClick={() => handleStatusUpdate(selectedLead.id, status)}
-                                            disabled={updatingStatus || selectedLead.status === status}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedLead.status === status
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                                } disabled:opacity-50`}
-                                        >
-                                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                                        </button>
-                                    ))}
+                                <div className="flex gap-3 flex-wrap">
+                                    {['new', 'contacted', 'converted', 'closed'].map((status) => {
+                                        const config = getStatusConfig(status);
+                                        const StatusIcon = config.icon;
+                                        return (
+                                            <button
+                                                key={status}
+                                                onClick={() => handleStatusUpdate(selectedLead.id, status)}
+                                                disabled={updatingStatus || selectedLead.status === status}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${selectedLead.status === status
+                                                        ? `${config.bg} ${config.text} ${config.glow}`
+                                                        : 'bg-[#f9fafb] border border-[#e5e7eb] text-[#6b7280] hover:bg-[#e5e7eb]'
+                                                    } disabled:opacity-50`}
+                                            >
+                                                <StatusIcon className="h-4 w-4" />
+                                                {config.label}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
                             {/* Customer Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-bold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <UserCircleIcon className="h-5 w-5 text-[#6366f1]" />
                                     Customer Information
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Name</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.name}</p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Name</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.name}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                                        <p className="mt-1 text-sm text-gray-900">
-                                            <a href={`mailto:${selectedLead.email}`} className="text-blue-600 hover:underline">
-                                                {selectedLead.email}
-                                            </a>
-                                        </p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Email</label>
+                                        <a href={`mailto:${selectedLead.email}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                            {selectedLead.email}
+                                        </a>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Phone</label>
-                                        <p className="mt-1 text-sm text-gray-900">
-                                            <a href={`tel:${selectedLead.phone}`} className="text-blue-600 hover:underline">
-                                                {selectedLead.phone}
-                                            </a>
-                                        </p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Phone</label>
+                                        <a href={`tel:${selectedLead.phone}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                            {selectedLead.phone}
+                                        </a>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Location</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.state}, {selectedLead.zip}</p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Location</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.state}, {selectedLead.zip}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Vehicle Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <TruckIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-bold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <TruckIcon className="h-5 w-5 text-[#10b981]" />
                                     Vehicle Information
                                 </h3>
                                 <div className="grid grid-cols-3 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Year</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.year}</p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Year</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.year}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Make</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.make}</p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Make</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.make}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Model</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.model}</p>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Model</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.model}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Timeline */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <CalendarIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-bold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <ClockIcon className="h-5 w-5 text-[#f59e0b]" />
                                     Timeline
                                 </h3>
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-3 text-sm">
-                                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                                        <span className="text-gray-500">Created:</span>
-                                        <span className="text-gray-900 font-medium">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 text-sm bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100">
+                                        <div className="w-2 h-2 bg-[#6366f1] rounded-full animate-pulse"></div>
+                                        <span className="text-[#6b7280] font-medium">Created:</span>
+                                        <span className="text-[#1f2937] font-semibold">
                                             {new Date(selectedLead.created_at).toLocaleString()}
                                         </span>
                                     </div>
                                     {selectedLead.updated_at && selectedLead.updated_at !== selectedLead.created_at && (
-                                        <div className="flex items-center gap-3 text-sm">
-                                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                                            <span className="text-gray-500">Last Updated:</span>
-                                            <span className="text-gray-900 font-medium">
+                                        <div className="flex items-center gap-3 text-sm bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                                            <div className="w-2 h-2 bg-[#10b981] rounded-full"></div>
+                                            <span className="text-[#6b7280] font-medium">Last Updated:</span>
+                                            <span className="text-[#1f2937] font-semibold">
                                                 {new Date(selectedLead.updated_at).toLocaleString()}
                                             </span>
                                         </div>
@@ -393,17 +558,17 @@ export default function AdminVendorLeads() {
                             </div>
 
                             {/* Quick Actions */}
-                            <div className="flex gap-3 pt-4 border-t">
+                            <div className="flex gap-3 pt-4 border-t border-[#e5e7eb]">
                                 <a
                                     href={`tel:${selectedLead.phone}`}
-                                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium text-center flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 transition-all"
                                 >
                                     <PhoneIcon className="h-4 w-4" />
                                     Call Customer
                                 </a>
                                 <a
                                     href={`mailto:${selectedLead.email}?subject=Re: Vendor Inquiry for ${selectedLead.year} ${selectedLead.make} ${selectedLead.model}`}
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium text-center flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 transition-all"
                                 >
                                     <EnvelopeIcon className="h-4 w-4" />
                                     Send Email

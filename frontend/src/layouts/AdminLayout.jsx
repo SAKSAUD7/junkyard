@@ -1,94 +1,110 @@
-import { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import {
+    HomeIcon,
+    BellIcon,
+    BuildingOfficeIcon,
+    UserIcon,
+    MegaphoneIcon,
+    ListBulletIcon,
+    ChatBubbleLeftIcon,
+    Cog6ToothIcon,
+    CurrencyDollarIcon,
+    TruckIcon,
+    DocumentTextIcon,
+    ArrowRightOnRectangleIcon
+} from '@heroicons/react/24/outline';
 
 export default function AdminLayout() {
     const { logout, user } = useContext(AuthContext);
     const location = useLocation();
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const navigate = useNavigate();
 
     const navigation = [
-        { name: 'Dashboard', href: '/admin-portal/dashboard', icon: '📊' },
-        { name: 'Leads', href: '/admin-portal/leads', icon: '📋' },
-        { name: 'Vendor Leads', href: '/admin-portal/vendor-leads', icon: '🚚' },
-        { name: 'Vendors', href: '/admin-portal/vendors', icon: '🏢' },
-        { name: 'Ads', href: '/admin-portal/ads', icon: '📢' },
-        { name: 'Part Pricing', href: '/admin-portal/pricing', icon: '💰' },
-        { name: 'Messages', href: '/admin-portal/messages', icon: '✉️' },
-        { name: 'Settings', href: '/admin-portal/settings', icon: '⚙️' },
+        { name: 'Dashboard', href: '/admin-portal/dashboard', icon: HomeIcon },
+        { name: 'Leads', href: '/admin-portal/leads', icon: ListBulletIcon },
+        { name: 'Vendor Leads', href: '/admin-portal/vendor-leads', icon: TruckIcon },
+        { name: 'Yard Submissions', href: '/admin-portal/yard-submissions', icon: DocumentTextIcon },
+        { name: 'Vendors', href: '/admin-portal/vendors', icon: BuildingOfficeIcon },
+        { name: 'Ads', href: '/admin-portal/ads', icon: MegaphoneIcon },
+        { name: 'Part Pricing', href: '/admin-portal/pricing', icon: CurrencyDollarIcon },
+        { name: 'Messages', href: '/admin-portal/messages', icon: ChatBubbleLeftIcon },
+        { name: 'Settings', href: '/admin-portal/settings', icon: Cog6ToothIcon },
     ];
 
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className="min-h-screen bg-gray-100 flex">
-            {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform transition-transform duration-300 md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
-                        Admin Portal
-                    </h1>
-                    <button onClick={() => setSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
-                        ✕
-                    </button>
-                </div>
-                <nav className="mt-6 px-4 space-y-2">
-                    {navigation.map((item) => (
-                        <Link
-                            key={item.name}
-                            to={item.href}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive(item.href)
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                                }`}
-                        >
-                            <span className="text-xl">{item.icon}</span>
-                            <span className="font-medium">{item.name}</span>
-                        </Link>
-                    ))}
-                    <button
-                        onClick={logout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-slate-800 hover:text-red-300 transition-colors mt-8"
-                    >
-                        <span className="text-xl">🚪</span>
-                        <span className="font-medium">Logout</span>
-                    </button>
-                </nav>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                {/* Mobile Header */}
-                <div className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-                    <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                    <span className="font-bold text-gray-900">Admin Portal</span>
+        <div className="flex h-screen bg-[#f5f5f7] overflow-hidden font-['Inter',sans-serif]">
+            {/* Slim Icon Sidebar - Dark Theme */}
+            <aside className="w-20 bg-[#3d4451]/95 backdrop-blur-xl border-r border-[#4a5160]/30 flex flex-col items-center py-6 gap-2 shadow-xl">
+                {/* Navigation Icons */}
+                <div className="flex flex-col gap-2 flex-1 mt-2">
+                    {navigation.map((item) => {
+                        const Icon = item.icon;
+                        const active = isActive(item.href);
+                        return (
+                            <Link
+                                key={item.name}
+                                to={item.href}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative ${active
+                                    ? 'bg-white/95 shadow-lg shadow-black/10 text-[#3d4451]'
+                                    : 'text-[#9ca3af] hover:text-white hover:bg-white/10'
+                                    }`}
+                                title={item.name}
+                            >
+                                <Icon className="w-5 h-5" />
+                                {/* Tooltip */}
+                                <span className="absolute left-16 bg-[#2d3340] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                                    {item.name}
+                                </span>
+                            </Link>
+                        );
+                    })}
                 </div>
 
-                {/* Desktop Header with Date */}
-                <div className="hidden md:block bg-white border-b border-gray-200 px-8 py-4">
+                {/* Logout Button */}
+                <button
+                    onClick={logout}
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-[#9ca3af] hover:text-red-400 hover:bg-white/10 transition-all group relative"
+                    title="Logout"
+                >
+                    <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                    <span className="absolute left-16 bg-[#2d3340] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                        Logout
+                    </span>
+                </button>
+            </aside>
+
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Modern Header */}
+                <header className="bg-white border-b border-[#e5e7eb] px-8 py-5 shadow-sm">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <span className="text-gray-700 text-base font-semibold">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-xl font-medium text-[#1f2937]">
                                 {new Date().toLocaleDateString('en-US', {
                                     weekday: 'long',
-                                    year: 'numeric',
                                     month: 'long',
-                                    day: 'numeric'
+                                    day: 'numeric',
+                                    year: 'numeric'
                                 })}
-                            </span>
+                            </h1>
                         </div>
-                        <div className="text-base text-gray-600">
-                            Welcome, <span className="font-bold text-gray-900">{user?.username || 'Admin'}</span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-base text-[#6b7280]">
+                                Welcome, <span className="font-semibold text-[#1f2937]">{user?.username || 'admin'}</span>
+                            </span>
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold shadow-md shadow-indigo-200 text-base">
+                                {(user?.username || 'A').charAt(0).toUpperCase()}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </header>
 
-                <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                {/* Page Content */}
+                <main className="flex-1 overflow-y-auto p-8 bg-[#e5e7eb]">
                     <Outlet />
                 </main>
             </div>

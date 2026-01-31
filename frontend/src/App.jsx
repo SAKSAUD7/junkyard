@@ -42,6 +42,7 @@ import AdminDashboard from './pages/admin/Dashboard'
 import AdminMessages from './pages/admin/Messages'
 import AdminLeads from './pages/admin/Leads'
 import AdminVendorLeads from './pages/admin/VendorLeads'
+import AdminYardSubmissions from './pages/admin/YardSubmissions'
 import AdminVendors from './pages/admin/Vendors'
 import AdminAds from './pages/admin/Ads'
 import AdminPartPricing from './pages/admin/PartPricing'
@@ -126,6 +127,7 @@ function App() {
           <Route path="messages" element={<AdminMessages />} />
           <Route path="leads" element={<AdminLeads />} />
           <Route path="vendor-leads" element={<AdminVendorLeads />} />
+          <Route path="yard-submissions" element={<AdminYardSubmissions />} />
           <Route path="vendors" element={<AdminVendors />} />
           <Route path="ads" element={<AdminAds />} />
           <Route path="pricing" element={<AdminPartPricing />} />

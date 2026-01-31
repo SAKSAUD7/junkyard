@@ -1,0 +1,9 @@
+name,address,city,state,zip_code,phone,email,website
+Valid Vendor 1,123 Main St,New York,NY,12345,555-1234,vendor1@example.com,https://vendor1.com
+Valid Vendor 2,456 Oak Ave,Toronto,ON,M5H 2N2,555-5678,vendor2@example.com,https://vendor2.com
+Valid Vendor 3,789 Pine Rd,London,UK,SW1A 1AA,555-9012,vendor3@example.com,https://vendor3.com
+Invalid Vendor 1,321 Elm St,Mumbai,MH,123456,555-3456,vendor4@example.com,https://vendor4.com
+Invalid Vendor 2,654 Maple Dr,Calgary,AB,T2C 4E6,555-7890,invalid-email,https://vendor5.com
+Missing ZIP,,Chicago,IL,,555-2468,vendor6@example.com,https://vendor6.com
+Invalid ZIP,987 Cedar Ln,Boston,MA,---,555-1357,vendor7@example.com,https://vendor7.com
+Valid 9-digit,147 Birch Blvd,Los Angeles,CA,123456789,555-8642,vendor8@example.com,https://vendor8.com

@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateProfile,
         isVendor: user?.user_type === 'vendor',
-        isAdmin: user?.user_type === 'admin',
+        isAdmin: user?.user_type === 'admin' || user?.is_staff || user?.is_superuser,
     };
 
     return (

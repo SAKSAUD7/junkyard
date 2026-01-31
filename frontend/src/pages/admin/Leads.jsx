@@ -9,7 +9,9 @@ import {
     CalendarIcon,
     TruckIcon,
     WrenchScrewdriverIcon,
-    XMarkIcon
+    XMarkIcon,
+    FunnelIcon,
+    ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 import Toast from '../../components/Toast';
 
@@ -52,8 +54,6 @@ export default function AdminLeads() {
             if (searchTerm) params.search = searchTerm;
 
             const blob = await api.exportLeads(token, params);
-
-            // Create download link
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -101,31 +101,34 @@ export default function AdminLeads() {
         return matchesSearch && matchesStatus;
     });
 
-    const getStatusColor = (status) => {
+    const getStatusConfig = (status) => {
         switch (status) {
-            case 'new': return 'bg-blue-100 text-blue-800';
-            case 'contacted': return 'bg-yellow-100 text-yellow-800';
-            case 'closed': return 'bg-gray-100 text-gray-800';
-            case 'converted': return 'bg-green-100 text-green-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'new': return { bg: 'bg-[#dbeafe]', text: 'text-[#1e40af]', label: 'New' };
+            case 'contacted': return { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', label: 'Contacted' };
+            case 'closed': return { bg: 'bg-[#f3f4f6]', text: 'text-[#374151]', label: 'Closed' };
+            case 'converted': return { bg: 'bg-[#d1fae5]', text: 'text-[#065f46]', label: 'Converted' };
+            default: return { bg: 'bg-[#f3f4f6]', text: 'text-[#374151]', label: 'Unknown' };
         }
     };
 
     if (loading) {
         return (
             <div className="flex justify-center items-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <p className="text-[#6b7280] font-medium">Loading leads...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-7">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <h1 className="text-3xl font-semibold text-[#1f2937]">Leads Management</h1>
+                    <p className="text-base text-[#6b7280] mt-2">
                         {filteredLeads.length} of {leads.length} leads
                     </p>
                 </div>
@@ -134,136 +137,166 @@ export default function AdminLeads() {
                     <button
                         onClick={handleExport}
                         disabled={exporting || filteredLeads.length === 0}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-2"
+                        className="px-5 py-2.5 bg-[#10b981] text-white rounded-xl hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium flex items-center gap-2 shadow-md transition-all"
                     >
                         {exporting ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                                 Exporting...
                             </>
                         ) : (
                             <>
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
+                                <ArrowDownTrayIcon className="h-5 w-5" />
                                 Export CSV
                             </>
                         )}
                     </button>
+                </div>
+            </div>
 
-                    <select
-                        className="border rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="new">New</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="converted">Converted</option>
-                        <option value="closed">Closed</option>
-                    </select>
-
-                    <div className="relative flex-1 sm:flex-none">
+            {/* Filters */}
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-[#e5e7eb]">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Search */}
+                    <div className="relative flex-1">
                         <input
                             type="text"
-                            placeholder="Search leads..."
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Search by name, email, phone, or vehicle..."
+                            className="w-full pl-11 pr-4 py-3 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-base"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                        <MagnifyingGlassIcon className="h-5 w-5 text-[#9ca3af] absolute left-3.5 top-3.5" />
+                    </div>
+
+                    {/* Status Filter */}
+                    <div className="relative sm:w-52">
+                        <select
+                            className="w-full appearance-none pl-11 pr-10 py-3 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-base font-medium text-[#374151]"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="converted">Converted</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <FunnelIcon className="h-5 w-5 text-[#9ca3af] absolute left-3.5 top-3.5 pointer-events-none" />
+                        <svg className="h-4 w-4 text-[#9ca3af] absolute right-3 top-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                     </div>
                 </div>
             </div>
 
-            {/* Leads Table */}
-            <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Part</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {loading ? (
-                                <tr><td colSpan="7" className="px-6 py-10 text-center">Loading...</td></tr>
-                            ) : filteredLeads.length === 0 ? (
-                                <tr><td colSpan="7" className="px-6 py-10 text-center text-gray-500">No leads found matching your criteria</td></tr>
-                            ) : (
-                                filteredLeads.map((lead) => (
-                                    <tr key={lead.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {new Date(lead.created_at).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(lead.status || 'new')}`}>
-                                                {(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}
+            {/* Leads Grid */}
+            <div className="grid grid-cols-1 gap-5">
+                {filteredLeads.length === 0 ? (
+                    <div className="bg-white rounded-2xl shadow-md p-12 text-center border border-[#e5e7eb]">
+                        <MagnifyingGlassIcon className="h-16 w-16 mx-auto mb-4 text-[#d1d5db]" />
+                        <p className="text-[#6b7280] text-lg">No leads found matching your criteria</p>
+                    </div>
+                ) : (
+                    filteredLeads.map((lead) => {
+                        const statusConfig = getStatusConfig(lead.status || 'new');
+                        return (
+                            <div
+                                key={lead.id}
+                                className="bg-white rounded-2xl shadow-md p-7 border border-[#e5e7eb] hover:shadow-lg transition-all group"
+                            >
+                                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                                    {/* Avatar */}
+                                    <div className="flex-shrink-0">
+                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] flex items-center justify-center text-white font-bold text-xl shadow-md">
+                                            {lead.name.charAt(0)}
+                                        </div>
+                                    </div>
+
+                                    {/* Lead Info */}
+                                    <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        {/* Customer */}
+                                        <div>
+                                            <p className="text-sm font-medium text-[#9ca3af] mb-1.5">Customer</p>
+                                            <p className="text-base font-semibold text-[#1f2937]">{lead.name}</p>
+                                            <p className="text-sm text-[#6b7280] mt-1">{lead.email}</p>
+                                            <p className="text-sm text-[#6b7280]">{lead.phone}</p>
+                                        </div>
+
+                                        {/* Vehicle */}
+                                        <div>
+                                            <p className="text-xs font-medium text-[#9ca3af] mb-1">Vehicle</p>
+                                            <p className="text-sm font-semibold text-[#1f2937]">
+                                                {lead.year} {lead.make}
+                                            </p>
+                                            <p className="text-xs text-[#6b7280]">{lead.model}</p>
+                                        </div>
+
+                                        {/* Part */}
+                                        <div>
+                                            <p className="text-xs font-medium text-[#9ca3af] mb-1">Part Needed</p>
+                                            <p className="text-sm font-semibold text-[#1f2937]">{lead.part}</p>
+                                            <p className="text-xs text-[#6b7280]">
+                                                {new Date(lead.created_at).toLocaleDateString()}
+                                            </p>
+                                        </div>
+
+                                        {/* Status */}
+                                        <div>
+                                            <p className="text-xs font-medium text-[#9ca3af] mb-1">Status</p>
+                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${statusConfig.bg} ${statusConfig.text}`}>
+                                                {statusConfig.label}
                                             </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {lead.year} {lead.make} {lead.model}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {lead.part}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div>{lead.email}</div>
-                                            <div className="text-xs">{lead.phone}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                            <button
-                                                onClick={() => setSelectedLead(lead)}
-                                                className="text-blue-600 hover:text-blue-900 font-medium"
-                                                title="View Details"
-                                            >
-                                                <EyeIcon className="h-5 w-5 inline" />
-                                            </button>
-                                            <a
-                                                href={`tel:${lead.phone}`}
-                                                className="text-green-600 hover:text-green-900 font-medium"
-                                                title="Call"
-                                            >
-                                                <PhoneIcon className="h-5 w-5 inline" />
-                                            </a>
-                                            <a
-                                                href={`mailto:${lead.email}`}
-                                                className="text-purple-600 hover:text-purple-900 font-medium"
-                                                title="Email"
-                                            >
-                                                <EnvelopeIcon className="h-5 w-5 inline" />
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex lg:flex-col gap-2 flex-shrink-0">
+                                        <button
+                                            onClick={() => setSelectedLead(lead)}
+                                            className="flex-1 lg:flex-none px-4 py-2 bg-[#eef2ff] text-[#6366f1] rounded-xl hover:bg-[#e0e7ff] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                            title="View Details"
+                                        >
+                                            <EyeIcon className="h-4 w-4" />
+                                            <span className="hidden sm:inline">View</span>
+                                        </button>
+                                        <a
+                                            href={`tel:${lead.phone}`}
+                                            className="flex-1 lg:flex-none px-4 py-2 bg-[#d1fae5] text-[#10b981] rounded-xl hover:bg-[#a7f3d0] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                            title="Call"
+                                        >
+                                            <PhoneIcon className="h-4 w-4" />
+                                            <span className="hidden sm:inline">Call</span>
+                                        </a>
+                                        <a
+                                            href={`mailto:${lead.email}`}
+                                            className="flex-1 lg:flex-none px-4 py-2 bg-[#ede9fe] text-[#8b5cf6] rounded-xl hover:bg-[#ddd6fe] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                            title="Email"
+                                        >
+                                            <EnvelopeIcon className="h-4 w-4" />
+                                            <span className="hidden sm:inline">Email</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
             </div>
 
             {/* Lead Details Modal */}
             {selectedLead && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                        <div className="sticky top-0 bg-white border-b border-[#e5e7eb] px-6 py-4 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">Lead Details</h2>
-                                <p className="text-sm text-gray-500">ID: #{selectedLead.id}</p>
+                                <h2 className="text-xl font-semibold text-[#1f2937]">Lead Details</h2>
+                                <p className="text-sm text-[#6b7280]">ID: #{selectedLead.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedLead(null)}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-[#9ca3af] hover:text-[#6b7280] transition-colors"
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -271,19 +304,19 @@ export default function AdminLeads() {
 
                         <div className="p-6 space-y-6">
                             {/* Status Section */}
-                            <div className="bg-gray-50 rounded-lg p-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <div className="bg-[#f9fafb] rounded-xl p-5 border border-[#e5e7eb]">
+                                <label className="block text-sm font-medium text-[#374151] mb-3">
                                     Lead Status
                                 </label>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2">
                                     {['new', 'contacted', 'converted', 'closed'].map((status) => (
                                         <button
                                             key={status}
                                             onClick={() => handleStatusUpdate(selectedLead.id, status)}
                                             disabled={updatingStatus || selectedLead.status === status}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedLead.status === status
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                            className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${selectedLead.status === status
+                                                ? 'bg-[#6366f1] text-white shadow-md'
+                                                : 'bg-white border border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb]'
                                                 } disabled:opacity-50`}
                                         >
                                             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -294,84 +327,80 @@ export default function AdminLeads() {
 
                             {/* Customer Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-semibold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <EnvelopeIcon className="h-5 w-5 text-[#6366f1]" />
                                     Customer Information
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Name</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.name}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Name</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.name}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                                        <p className="mt-1 text-sm text-gray-900">
-                                            <a href={`mailto:${selectedLead.email}`} className="text-blue-600 hover:underline">
-                                                {selectedLead.email}
-                                            </a>
-                                        </p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Email</label>
+                                        <a href={`mailto:${selectedLead.email}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                            {selectedLead.email}
+                                        </a>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Phone</label>
-                                        <p className="mt-1 text-sm text-gray-900">
-                                            <a href={`tel:${selectedLead.phone}`} className="text-blue-600 hover:underline">
-                                                {selectedLead.phone}
-                                            </a>
-                                        </p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Phone</label>
+                                        <a href={`tel:${selectedLead.phone}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                            {selectedLead.phone}
+                                        </a>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Location</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.zipcode || 'N/A'}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Location</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.zipcode || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Vehicle Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <TruckIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-semibold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <TruckIcon className="h-5 w-5 text-[#10b981]" />
                                     Vehicle Information
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Year</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.year}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Year</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.year}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Make</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.make}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Make</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.make}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Model</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.model}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Model</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.model}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">VIN</label>
-                                        <p className="mt-1 text-sm text-gray-900 font-mono">{selectedLead.vin || 'N/A'}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">VIN</label>
+                                        <p className="text-sm font-semibold text-[#1f2937] font-mono">{selectedLead.vin || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Part Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <WrenchScrewdriverIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-semibold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <WrenchScrewdriverIcon className="h-5 w-5 text-[#8b5cf6]" />
                                     Part Request
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Part Needed</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.part}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Part Needed</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.part}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Condition</label>
-                                        <p className="mt-1 text-sm text-gray-900">{selectedLead.condition || 'Any'}</p>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Condition</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.condition || 'Any'}</p>
                                     </div>
                                 </div>
                                 {selectedLead.notes && (
-                                    <div className="mt-4">
-                                        <label className="block text-sm font-medium text-gray-700">Additional Notes</label>
-                                        <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap bg-gray-50 p-3 rounded">
+                                    <div className="mt-4 bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-2">Additional Notes</label>
+                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">
                                             {selectedLead.notes}
                                         </p>
                                     </div>
@@ -380,23 +409,23 @@ export default function AdminLeads() {
 
                             {/* Timeline */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                    <CalendarIcon className="h-5 w-5 text-gray-400" />
+                                <h3 className="text-lg font-semibold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <CalendarIcon className="h-5 w-5 text-[#f59e0b]" />
                                     Timeline
                                 </h3>
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-3 text-sm">
-                                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                                        <span className="text-gray-500">Created:</span>
-                                        <span className="text-gray-900 font-medium">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 text-sm bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                        <div className="w-2 h-2 bg-[#6366f1] rounded-full"></div>
+                                        <span className="text-[#6b7280]">Created:</span>
+                                        <span className="text-[#1f2937] font-medium">
                                             {new Date(selectedLead.created_at).toLocaleString()}
                                         </span>
                                     </div>
                                     {selectedLead.updated_at && selectedLead.updated_at !== selectedLead.created_at && (
-                                        <div className="flex items-center gap-3 text-sm">
-                                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                                            <span className="text-gray-500">Last Updated:</span>
-                                            <span className="text-gray-900 font-medium">
+                                        <div className="flex items-center gap-3 text-sm bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">
+                                            <div className="w-2 h-2 bg-[#10b981] rounded-full"></div>
+                                            <span className="text-[#6b7280]">Last Updated:</span>
+                                            <span className="text-[#1f2937] font-medium">
                                                 {new Date(selectedLead.updated_at).toLocaleString()}
                                             </span>
                                         </div>
@@ -405,17 +434,17 @@ export default function AdminLeads() {
                             </div>
 
                             {/* Quick Actions */}
-                            <div className="flex gap-3 pt-4 border-t">
+                            <div className="flex gap-3 pt-4 border-t border-[#e5e7eb]">
                                 <a
                                     href={`tel:${selectedLead.phone}`}
-                                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium text-center flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-3 bg-[#10b981] text-white rounded-xl hover:bg-[#059669] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
                                 >
                                     <PhoneIcon className="h-4 w-4" />
                                     Call Customer
                                 </a>
                                 <a
                                     href={`mailto:${selectedLead.email}?subject=Re: ${selectedLead.part} for ${selectedLead.year} ${selectedLead.make} ${selectedLead.model}`}
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium text-center flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-3 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
                                 >
                                     <EnvelopeIcon className="h-4 w-4" />
                                     Send Email

@@ -18,37 +18,54 @@ import {
     LinkIcon,
     ExclamationTriangleIcon,
     ArrowUpTrayIcon,
-    ClockIcon
+    ClockIcon,
+    PlusIcon,
+    ArrowDownTrayIcon,
+    SparklesIcon,
+    BoltIcon,
+    ShieldCheckIcon,
+    StarIcon
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import ImportVendorsModal from '../../components/admin/ImportVendorsModal';
 import ImportHistoryModal from '../../components/admin/ImportHistoryModal';
 
-// Simple Toast Component
+// Enhanced Toast Component
 const Toast = ({ message, type, onClose }) => {
     useEffect(() => {
         const timer = setTimeout(onClose, 5000);
         return () => clearTimeout(timer);
     }, [onClose]);
 
-    const bgColors = {
-        success: 'bg-green-50 border-green-200 text-green-800',
-        error: 'bg-red-50 border-red-200 text-red-800',
-        info: 'bg-blue-50 border-blue-200 text-blue-800'
+    const config = {
+        success: {
+            bg: 'bg-gradient-to-r from-emerald-50 to-green-50',
+            border: 'border-emerald-200',
+            text: 'text-emerald-800',
+            icon: <CheckCircleIcon className="h-5 w-5 text-emerald-500" />
+        },
+        error: {
+            bg: 'bg-gradient-to-r from-red-50 to-rose-50',
+            border: 'border-red-200',
+            text: 'text-red-800',
+            icon: <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
+        },
+        info: {
+            bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
+            border: 'border-blue-200',
+            text: 'text-blue-800',
+            icon: <SparklesIcon className="h-5 w-5 text-blue-500" />
+        }
     };
 
-    const icons = {
-        success: <CheckCircleIcon className="h-5 w-5 text-green-500" />,
-        error: <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />,
-        info: <div className="h-5 w-5 text-blue-500">i</div>
-    };
+    const style = config[type] || config.info;
 
     return (
-        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border ${bgColors[type] || bgColors.info} animate-in slide-in-from-right duration-300`}>
-            {icons[type]}
-            <p className="text-sm font-medium">{message}</p>
-            <button onClick={onClose} className="ml-2 hover:opacity-70">
-                <XCircleIcon className="h-4 w-4" />
+        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl border-2 ${style.bg} ${style.border} ${style.text} animate-in slide-in-from-right duration-300`}>
+            {style.icon}
+            <p className="text-sm font-semibold">{message}</p>
+            <button onClick={onClose} className="ml-2 hover:opacity-70 transition-opacity">
+                <XCircleIcon className="h-5 w-5" />
             </button>
         </div>
     );
@@ -62,20 +79,17 @@ export default function AdminVendors() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalVendors, setTotalVendors] = useState(0);
-    const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', 'inactive'
+    const [activeTab, setActiveTab] = useState('all');
 
-    // Edit & Modal States
     const [editingVendor, setEditingVendor] = useState(null);
     const [creatingVendor, setCreatingVendor] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [resetCredentials, setResetCredentials] = useState(null);
     const [exporting, setExporting] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
     const [showHistoryModal, setShowHistoryModal] = useState(false);
 
-    // Toast State
     const [toast, setToast] = useState(null);
-
-    // Stats State
     const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
 
     const [formData, setFormData] = useState({
@@ -105,7 +119,6 @@ export default function AdminVendors() {
         setToast({ message, type });
     };
 
-    // Initial Load & Search
     useEffect(() => {
         fetchVendors(page);
     }, [token, page, activeTab]);
@@ -117,10 +130,6 @@ export default function AdminVendors() {
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm]);
-
-    // Stats are loaded from the API during fetchVendors
-    // No need for reactive calculation here
-
 
     const fetchVendors = async (pageNo) => {
         setLoading(true);
@@ -136,7 +145,6 @@ export default function AdminVendors() {
             setTotalVendors(count);
             setTotalPages(Math.ceil(count / 50));
 
-            // Fetch accurate stats for all vendors
             const [allVendorsData, activeVendorsData, inactiveVendorsData] = await Promise.all([
                 api.getAdminVendors(token, { page_size: 1 }).catch(() => ({ count: 0 })),
                 api.getAdminVendors(token, { page_size: 1, is_active: true }).catch(() => ({ count: 0 })),
@@ -158,8 +166,6 @@ export default function AdminVendors() {
     };
 
     const handleSearch = (e) => setSearchTerm(e.target.value);
-
-    // --- Actions ---
 
     const handleExport = async () => {
         setExporting(true);
@@ -192,17 +198,14 @@ export default function AdminVendors() {
 
     const handleRollbackComplete = (result) => {
         showToast('Rollback completed successfully', 'info');
-        fetchVendors(1); // Refresh list to reflect rollback
-        // Don't close history modal so user can see updated status
+        fetchVendors(1);
     };
 
     const toggleStatus = async (vendor) => {
         const action = vendor.is_active ? 'deactivate' : 'activate';
-        // Only confirm for deactivation to prevent accidental shutdowns
         if (vendor.is_active && !window.confirm(`Are you sure you want to deactivate ${vendor.name}? This will revoke their portal access.`)) return;
 
         try {
-            // Optimistic update
             setVendors(prev => prev.map(v => v.id === vendor.id ? { ...v, is_active: !v.is_active } : v));
 
             const response = await api.updateVendor(token, vendor.id, { is_active: !vendor.is_active });
@@ -216,16 +219,23 @@ export default function AdminVendors() {
                 showToast('Vendor deactivated.', 'info');
             }
 
-            fetchVendors(page); // Sync to be sure
+            fetchVendors(page);
         } catch (error) {
             console.error(error);
             showToast(`Failed to ${action} vendor: ${error.message || 'Unknown error'}`, 'error');
-            fetchVendors(page); // Revert
+            fetchVendors(page);
         }
     };
 
     const handleResetPassword = async (vendor) => {
+        // Check if vendor is active first
+        if (!vendor.is_active) {
+            showToast('Cannot reset password: Vendor must be activated first. Please activate the vendor and try again.', 'error');
+            return;
+        }
+
         if (!window.confirm(`Reset password for ${vendor.name}? This will generate a new temporary password.`)) return;
+
         try {
             const response = await api.resetVendorPassword(token, vendor.id);
             setResetCredentials({
@@ -237,7 +247,18 @@ export default function AdminVendors() {
             showToast('Password reset successful', 'success');
         } catch (error) {
             console.error(error);
-            showToast(`Failed to reset password: ${error.message || 'Error'}`, 'error');
+            // Provide user-friendly error messages
+            let errorMessage = 'Failed to reset password';
+
+            if (error.message.includes('No user account found') || error.message.includes('activate')) {
+                errorMessage = 'Vendor account not found. Please activate the vendor first, then try resetting the password.';
+            } else if (error.message.includes('404')) {
+                errorMessage = 'Password reset endpoint not found. Please contact support.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+
+            showToast(errorMessage, 'error');
         }
     };
 
@@ -270,22 +291,17 @@ export default function AdminVendors() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData({ ...formData, logo: file }); // Store File object
+            setFormData({ ...formData, logo: file });
         }
     };
 
     const prepareSubmitData = (data) => {
         const submitData = new FormData();
         Object.keys(data).forEach(key => {
-            // Handle logo specifically
             if (key === 'logo') {
                 if (data[key] instanceof File) {
                     submitData.append('logo', data[key]);
                 }
-                // If it's a string (existing URL), don't append it to FormData 
-                // to avoid sending text as file content, or handle if backend expects text.
-                // For ImageField, sending JSON string might fail or be ignored.
-                // Best to only send if it's a file.
             } else if (data[key] !== null && data[key] !== undefined) {
                 submitData.append(key, data[key]);
             }
@@ -295,6 +311,7 @@ export default function AdminVendors() {
 
     const handleCreate = async (e) => {
         e.preventDefault();
+        setSaving(true);
         try {
             const dataToSend = formData.logo instanceof File ? prepareSubmitData(formData) : formData;
             await api.createVendor(token, dataToSend);
@@ -306,6 +323,8 @@ export default function AdminVendors() {
             console.error(error);
             const msg = error.response?.data ? JSON.stringify(error.response.data) : error.message;
             showToast(`Failed to create vendor: ${msg}`, 'error');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -328,6 +347,7 @@ export default function AdminVendors() {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        setSaving(true);
         try {
             const dataToSend = formData.logo instanceof File ? prepareSubmitData(formData) : formData;
             await api.updateVendor(token, editingVendor.id, dataToSend);
@@ -338,49 +358,85 @@ export default function AdminVendors() {
             console.error(error);
             const msg = error.response?.data ? JSON.stringify(error.response.data) : error.message;
             showToast(`Failed to update vendor: ${msg}`, 'error');
+        } finally {
+            setSaving(false);
         }
     };
 
+    if (loading && vendors.length === 0) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <p className="text-[#6b7280] font-medium">Loading vendors...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-gray-50 pb-12">
+        <div className="space-y-6 pb-8">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            {/* Gradient Hero Header */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-2xl shadow-xl p-8">
+                <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
 
-                {/* Header & Stats */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Vendor Management</h1>
-                        <p className="text-sm text-gray-500 mt-1">Manage automotive recyclers and their portal access.</p>
+                <div className="relative">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                            <BuildingStorefrontIcon className="h-8 w-8 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-white">Vendor Management</h1>
+                            <p className="text-indigo-100 mt-1">
+                                Manage automotive recyclers and their portal access
+                            </p>
+                        </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
-                            <p className="text-xs text-gray-500 font-medium uppercase">Total</p>
-                            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-4 mt-6">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <SparklesIcon className="h-5 w-5 text-white" />
+                                <p className="text-xs text-indigo-100 font-medium">Total Vendors</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{stats.total}</p>
                         </div>
-                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
-                            <p className="text-xs text-gray-500 font-medium uppercase">Active</p>
-                            <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <CheckCircleIcon className="h-5 w-5 text-green-200" />
+                                <p className="text-xs text-indigo-100 font-medium">Active</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{stats.active}</p>
                         </div>
-                        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 min-w-[120px]">
-                            <p className="text-xs text-gray-500 font-medium uppercase">Inactive</p>
-                            <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <XCircleIcon className="h-5 w-5 text-gray-200" />
+                                <p className="text-xs text-indigo-100 font-medium">Inactive</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{stats.inactive}</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Toolbar */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 justify-between items-center">
-
-                    {/* Tabs */}
-                    <div className="flex bg-gray-100 p-1 rounded-lg self-start">
-                        {['all', 'active', 'inactive'].map((tab) => (
+            {/* Filters & Actions Card */}
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-[#e5e7eb]">
+                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                    {/* Status Filter Tabs */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-sm font-medium text-[#6b7280]">Filter:</span>
+                        {['all', 'active', 'inactive'].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab
+                                    ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                    : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
                                     }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -388,850 +444,499 @@ export default function AdminVendors() {
                         ))}
                     </div>
 
-                    {/* Search & Actions */}
-                    <div className="flex gap-3 w-full md:w-auto">
-                        <div className="relative flex-1 md:w-64">
-                            <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    {/* Search & Action Buttons */}
+                    <div className="flex gap-3 w-full lg:w-auto flex-wrap">
+                        <div className="relative flex-1 lg:w-64">
                             <input
                                 type="text"
-                                placeholder="Search by name, email, zip..."
-                                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                placeholder="Search vendors..."
+                                className="w-full pl-11 pr-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm transition-all"
                                 value={searchTerm}
                                 onChange={handleSearch}
                             />
+                            <MagnifyingGlassIcon className="h-5 w-5 text-[#9ca3af] absolute left-3.5 top-3" />
                         </div>
+
                         <button
                             onClick={handleCreateClick}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center gap-2 transition-colors shadow-sm whitespace-nowrap"
+                            className="px-4 py-2.5 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 whitespace-nowrap"
                         >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
+                            <PlusIcon className="h-5 w-5" />
                             Add Vendor
                         </button>
+
                         <button
                             onClick={() => setShowImportModal(true)}
-                            className="bg-green-600 text-white border border-green-600 px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
+                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 font-medium shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 whitespace-nowrap"
                         >
-                            <ArrowUpTrayIcon className="w-4 h-4" />
+                            <ArrowUpTrayIcon className="h-5 w-5" />
                             Import
                         </button>
+
                         <button
                             onClick={() => setShowHistoryModal(true)}
-                            className="bg-white text-gray-700 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
+                            className="p-2.5 bg-white border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-all"
                             title="Import History"
                         >
-                            <ClockIcon className="w-5 h-5 text-gray-500" />
+                            <ClockIcon className="h-5 w-5 text-[#6b7280]" />
                         </button>
+
                         <button
                             onClick={handleExport}
                             disabled={exporting}
-                            className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap"
+                            className="px-4 py-2.5 bg-white border border-[#e5e7eb] text-[#374151] rounded-xl hover:bg-[#f9fafb] font-medium transition-all flex items-center gap-2 whitespace-nowrap disabled:opacity-50"
                         >
-                            {exporting ? 'Exporting...' : 'Export CSV'}
+                            {exporting ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#6366f1]"></div>
+                                    Exporting...
+                                </>
+                            ) : (
+                                <>
+                                    <ArrowDownTrayIcon className="h-5 w-5" />
+                                    Export CSV
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
 
-                {/* Main Table Card */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
-                    <div className="overflow-x-auto custom-scrollbar">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">Logo</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Vendor</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px]">Location</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[180px]">Contact</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[200px]">Description</th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Rating</th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Leads</th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Status</th>
-                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px]">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-100">
-                                {loading ? (
-                                    <tr><td colSpan="9" className="px-6 py-12 text-center text-gray-400">Loading vendor data...</td></tr>
-                                ) : vendors.length === 0 ? (
-                                    <tr><td colSpan="9" className="px-6 py-12 text-center text-gray-400">No vendors found.</td></tr>
-                                ) : (
-                                    vendors.map((vendor) => (
-                                        <tr key={vendor.id} className="hover:bg-gray-50 transition-colors group">
-
-                                            {/* Logo */}
-                                            <td className="px-6 py-4">
-                                                <div className="h-10 w-10 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
-                                                    {vendor.logo ? (
-                                                        <img
-                                                            src={getLogoUrl(vendor.logo)}
-                                                            alt=""
-                                                            className="h-full w-full object-contain"
-                                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                                        />
-                                                    ) : (
-                                                        <BuildingStorefrontIcon className="h-5 w-5 text-gray-400" />
-                                                    )}
-                                                </div>
-                                            </td>
-
-                                            {/* Vendor Name & Username */}
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center">
-                                                    <div className="ml-0">
-                                                        <div className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate max-w-[180px]" title={vendor.name}>
-                                                            {vendor.name}
-                                                        </div>
-                                                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5" title="Username">
-                                                            <UserCircleIcon className="h-3 w-3" />
-                                                            {vendor.username || "No Access"}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            {/* Location */}
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col">
-                                                    <div className="text-sm text-gray-900 flex items-center gap-1">
-                                                        <MapPinIcon className="h-3.5 w-3.5 text-gray-400" />
-                                                        {vendor.city || "Unknown City"}, {vendor.state}
-                                                    </div>
-                                                    <span className="text-xs text-gray-400 ml-5">{vendor.zip_code}</span>
-                                                </div>
-                                            </td>
-
-                                            {/* Contact Info */}
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-2 text-sm text-gray-600 truncate max-w-[160px]" title={vendor.email}>
-                                                        <EnvelopeIcon className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
-                                                        <span className="truncate">{vendor.email || 'N/A'}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                        <PhoneIcon className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
-                                                        <span className="truncate">{vendor.phone || 'N/A'}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            {/* Description */}
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm text-gray-600 max-w-[250px]" title={vendor.description}>
-                                                    {vendor.description ? (
-                                                        <span className="line-clamp-2">{vendor.description}</span>
-                                                    ) : (
-                                                        <span className="text-gray-400 italic">No description</span>
-                                                    )}
-                                                </div>
-                                            </td>
-
-                                            {/* Rating */}
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <div className="flex items-center gap-0.5">
-                                                        {[...Array(5)].map((_, i) => (
-                                                            <svg
-                                                                key={i}
-                                                                className={`h-4 w-4 ${i < (vendor.rating_stars || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                                                                viewBox="0 0 20 20"
-                                                            >
-                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                            </svg>
-                                                        ))}
-                                                    </div>
-                                                    <span className="text-xs text-gray-500 font-medium">{vendor.rating_percentage || 0}%</span>
-                                                </div>
-                                            </td>
-
-                                            {/* Leads Count */}
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                    {vendor.leads_count || 0}
-                                                </div>
-                                            </td>
-
-                                            {/* Status */}
-                                            <td className="px-6 py-4 text-center">
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${vendor.is_active
-                                                    ? 'bg-green-50 text-green-700 border-green-200'
-                                                    : 'bg-red-50 text-red-700 border-red-200'
-                                                    }`}>
-                                                    <span className={`h-1.5 w-1.5 rounded-full ${vendor.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                                                    {vendor.is_active ? 'Active' : 'Inactive'}
-                                                </span>
-                                            </td>
-
-                                            {/* Actions */}
-                                            <td className="px-6 py-4 text-right whitespace-nowrap">
-                                                <div className="flex justify-end items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                                                    <button
-                                                        onClick={() => handleEditClick(vendor)}
-                                                        className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                                        title="Edit Details"
-                                                    >
-                                                        <PencilSquareIcon className="h-5 w-5" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleResetPassword(vendor)}
-                                                        className="p-1.5 rounded-lg text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors"
-                                                        title="Reset Password"
-                                                    >
-                                                        <KeyIcon className="h-5 w-5" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => toggleStatus(vendor)}
-                                                        className={`p-1.5 rounded-lg transition-colors ${vendor.is_active
-                                                            ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                                                            : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
-                                                            }`}
-                                                        title={vendor.is_active ? "Deactivate Account" : "Activate Account"}
-                                                    >
-                                                        <PowerIcon className="h-5 w-5" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Pagination Controls */}
-                    {!loading && vendors.length > 0 && (
-                        <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50">
-                            <div className="text-sm text-gray-600">
-                                Showing <span className="font-semibold">{((page - 1) * 50) + 1}</span>–<span className="font-semibold">{Math.min(page * 50, totalVendors)}</span> of <span className="font-semibold">{totalVendors}</span> vendors
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setPage(page - 1)}
-                                    disabled={page === 1}
-                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-gray-300 text-gray-700 hover:bg-gray-100 disabled:hover:bg-white"
-                                >
-                                    Previous
-                                </button>
-
-                                <div className="hidden sm:flex items-center gap-1">
-                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                        let pageNum;
-                                        if (totalPages <= 5) {
-                                            pageNum = i + 1;
-                                        } else if (page <= 3) {
-                                            pageNum = i + 1;
-                                        } else if (page >= totalPages - 2) {
-                                            pageNum = totalPages - 4 + i;
-                                        } else {
-                                            pageNum = page - 2 + i;
-                                        }
-                                        return (
-                                            <button
-                                                key={pageNum}
-                                                onClick={() => setPage(pageNum)}
-                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${page === pageNum
-                                                    ? 'bg-blue-600 text-white border-blue-600'
-                                                    : 'border-gray-300 text-gray-700 hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                {pageNum}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="sm:hidden text-sm text-gray-600 px-3">
-                                    Page {page} of {totalPages}
-                                </div>
-
-                                <button
-                                    onClick={() => setPage(page + 1)}
-                                    disabled={page === totalPages}
-                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-gray-300 text-gray-700 hover:bg-gray-100 disabled:hover:bg-white"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                {/* Results Count */}
+                <div className="mt-4 pt-4 border-t border-[#e5e7eb]">
+                    <p className="text-sm text-[#6b7280]">
+                        Showing <span className="font-semibold text-[#1f2937]">{((page - 1) * 50) + 1}</span>–<span className="font-semibold text-[#1f2937]">{Math.min(page * 50, totalVendors)}</span> of <span className="font-semibold text-[#1f2937]">{totalVendors}</span> vendors
+                    </p>
                 </div>
             </div>
 
-            {/* --- Modals --- */}
+            {/* Modern Table Card */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-[#e5e7eb]">
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-[#e5e7eb]">
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Logo</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Vendor</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Location</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Contact</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Description</th>
+                                <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Rating</th>
+                                <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Leads</th>
+                                <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-4 text-right text-xs font-bold text-[#6b7280] uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#f3f4f6]">
+                            {loading ? (
+                                <tr><td colSpan="9" className="px-6 py-12 text-center text-[#6b7280]">Loading vendor data...</td></tr>
+                            ) : vendors.length === 0 ? (
+                                <tr>
+                                    <td colSpan="9" className="px-6 py-16 text-center">
+                                        <BuildingStorefrontIcon className="h-16 w-16 mx-auto mb-4 text-[#d1d5db]" />
+                                        <p className="text-[#6b7280] text-lg font-medium">No vendors found</p>
+                                        <p className="text-[#9ca3af] text-sm mt-1">Try adjusting your filters</p>
+                                    </td>
+                                </tr>
+                            ) : (
+                                vendors.map((vendor) => (
+                                    <tr key={vendor.id} className="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all">
+                                        {/* Logo */}
+                                        <td className="px-6 py-4">
+                                            <div className="h-12 w-12 flex-shrink-0 bg-gradient-to-br from-[#f9fafb] to-white rounded-xl flex items-center justify-center overflow-hidden border-2 border-[#e5e7eb] shadow-sm">
+                                                {vendor.logo ? (
+                                                    <img
+                                                        src={getLogoUrl(vendor.logo)}
+                                                        alt=""
+                                                        className="h-full w-full object-contain p-1"
+                                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                                    />
+                                                ) : (
+                                                    <BuildingStorefrontIcon className="h-6 w-6 text-[#9ca3af]" />
+                                                )}
+                                            </div>
+                                        </td>
 
-            {/* Create Vendor Modal */}
-            {creatingVendor && (
+                                        {/* Vendor Name & Username */}
+                                        <td className="px-6 py-4">
+                                            <div>
+                                                <p className="text-sm font-bold text-[#1f2937] group-hover:text-[#6366f1] transition-colors">
+                                                    {vendor.name}
+                                                </p>
+                                                <div className="flex items-center gap-1.5 mt-1">
+                                                    <UserCircleIcon className="h-3.5 w-3.5 text-[#9ca3af]" />
+                                                    <span className="text-xs text-[#6b7280]">{vendor.username || "No Access"}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {/* Location */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-1.5">
+                                                <MapPinIcon className="h-4 w-4 text-[#6b7280]" />
+                                                <div>
+                                                    <p className="text-sm text-[#1f2937]">{vendor.city || "Unknown"}, {vendor.state}</p>
+                                                    <p className="text-xs text-[#9ca3af]">{vendor.zip_code}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {/* Contact */}
+                                        <td className="px-6 py-4">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-1.5">
+                                                    <EnvelopeIcon className="h-3.5 w-3.5 text-[#6b7280]" />
+                                                    <span className="text-xs text-[#6b7280] truncate max-w-[150px]">{vendor.email || 'N/A'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <PhoneIcon className="h-3.5 w-3.5 text-[#6b7280]" />
+                                                    <span className="text-xs text-[#6b7280]">{vendor.phone || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {/* Description */}
+                                        <td className="px-6 py-4">
+                                            <p className="text-sm text-[#6b7280] line-clamp-2 max-w-[200px]">
+                                                {vendor.description || <span className="italic text-[#9ca3af]">No description</span>}
+                                            </p>
+                                        </td>
+
+                                        {/* Rating */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <div className="flex items-center gap-0.5">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <StarIcon
+                                                            key={i}
+                                                            className={`h-4 w-4 ${i < (vendor.rating_stars || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`}
+                                                        />
+                                                    ))}
+                                                </div>
+                                                <span className="text-xs font-semibold text-[#6b7280]">{vendor.rating_percentage || 0}%</span>
+                                            </div>
+                                        </td>
+
+                                        {/* Leads Count */}
+                                        <td className="px-6 py-4 text-center">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-br from-blue-50 to-indigo-50 text-[#6366f1] border border-blue-200 shadow-sm">
+                                                {vendor.leads_count || 0}
+                                            </span>
+                                        </td>
+
+                                        {/* Status */}
+                                        <td className="px-6 py-4 text-center">
+                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border-2 ${vendor.is_active
+                                                ? 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200'
+                                                : 'bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200'
+                                                }`}>
+                                                <span className={`h-2 w-2 rounded-full ${vendor.is_active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}></span>
+                                                {vendor.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+
+                                        {/* Actions */}
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end items-center gap-2">
+                                                <button
+                                                    onClick={() => handleEditClick(vendor)}
+                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
+                                                    title="Edit Details"
+                                                >
+                                                    <PencilSquareIcon className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleResetPassword(vendor)}
+                                                    disabled={!vendor.is_active}
+                                                    className={`p-2 rounded-lg transition-all shadow-md ${vendor.is_active
+                                                        ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-amber-200 cursor-pointer'
+                                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-200'
+                                                        }`}
+                                                    title={vendor.is_active ? 'Reset Password' : 'Activate vendor first to reset password'}
+                                                >
+                                                    <KeyIcon className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => toggleStatus(vendor)}
+                                                    className={`p-2 rounded-lg transition-all shadow-md ${vendor.is_active
+                                                        ? 'bg-gradient-to-br from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600 shadow-red-200'
+                                                        : 'bg-gradient-to-br from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600 shadow-emerald-200'
+                                                        }`}
+                                                    title={vendor.is_active ? "Deactivate Account" : "Activate Account"}
+                                                >
+                                                    <PowerIcon className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                {!loading && vendors.length > 0 && (
+                    <div className="px-6 py-4 border-t-2 border-[#e5e7eb] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-[#f9fafb] to-white">
+                        <div className="text-sm text-[#6b7280]">
+                            Showing <span className="font-bold text-[#1f2937]">{((page - 1) * 50) + 1}</span>–<span className="font-bold text-[#1f2937]">{Math.min(page * 50, totalVendors)}</span> of <span className="font-bold text-[#1f2937]">{totalVendors}</span> vendors
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setPage(page - 1)}
+                                disabled={page === 1}
+                                className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
+                            >
+                                Previous
+                            </button>
+
+                            <div className="hidden sm:flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let pageNum;
+                                    if (totalPages <= 5) {
+                                        pageNum = i + 1;
+                                    } else if (page <= 3) {
+                                        pageNum = i + 1;
+                                    } else if (page >= totalPages - 2) {
+                                        pageNum = totalPages - 4 + i;
+                                    } else {
+                                        pageNum = page - 2 + i;
+                                    }
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setPage(pageNum)}
+                                            className={`px-3 py-2 text-sm font-bold rounded-xl transition-all ${page === pageNum
+                                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                                : 'border-2 border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb]'
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="sm:hidden text-sm text-[#6b7280] px-3">
+                                Page {page} of {totalPages}
+                            </div>
+
+                            <button
+                                onClick={() => setPage(page + 1)}
+                                disabled={page === totalPages}
+                                className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Create/Edit Vendor Modal */}
+            {(creatingVendor || editingVendor) && (
                 <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden transform transition-all scale-100">
-                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-50">
-                            <h3 className="text-lg font-semibold text-gray-900">Add New Vendor</h3>
-                            <button onClick={() => setCreatingVendor(false)} className="text-gray-400 hover:text-gray-500">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-purple-50">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                {creatingVendor ? 'Add New Vendor' : 'Edit Vendor'}
+                            </h3>
+                            <button
+                                onClick={() => {
+                                    setCreatingVendor(false);
+                                    setEditingVendor(null);
+                                }}
+                                className="text-gray-400 hover:text-gray-500"
+                            >
                                 <XCircleIcon className="h-6 w-6" />
                             </button>
                         </div>
 
-                        <div className="p-6 max-h-[70vh] overflow-y-auto">
-                            <form onSubmit={handleCreate} className="space-y-6" id="create-vendor-form">
-                                {/* Basic Info */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Basic Information</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Company Name <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.name}
-                                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                                placeholder="ABC Auto Recyclers"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Legacy Yard ID</label>
-                                            <input
-                                                type="number"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.yard_id}
-                                                onChange={e => setFormData({ ...formData, yard_id: e.target.value })}
-                                                placeholder="Optional"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Profile URL Slug</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.profile_url}
-                                                onChange={e => setFormData({ ...formData, profile_url: e.target.value })}
-                                                placeholder="abc-auto-recyclers"
-                                            />
-                                        </div>
-                                        <div className="col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                            <textarea
-                                                rows="3"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.description}
-                                                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                                placeholder="Brief description of the vendor's services..."
-                                            />
-                                        </div>
-                                        <div className="col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Review Snippet</label>
-                                            <textarea
-                                                rows="2"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.review_snippet}
-                                                onChange={e => setFormData({ ...formData, review_snippet: e.target.value })}
-                                                placeholder="Featured review or testimonial..."
-                                            />
-                                        </div>
-                                    </div>
+                        {/* Form */}
+                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+                            <div className="grid grid-cols-2 gap-4">
+                                {/* Vendor Name */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Vendor Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Enter vendor name"
+                                    />
                                 </div>
 
-                                {/* Contact Info */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact Information</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                            <input
-                                                type="email"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.email}
-                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                placeholder="contact@example.com"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.phone}
-                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                                placeholder="(555) 123-4567"
-                                            />
-                                        </div>
-                                        <div className="col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
-                                            <input
-                                                type="url"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.website}
-                                                onChange={e => setFormData({ ...formData, website: e.target.value })}
-                                                placeholder="https://example.com"
-                                            />
-                                        </div>
-                                    </div>
+                                {/* Address */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Address
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Street address"
+                                    />
                                 </div>
 
-                                {/* Location */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
-                                    <div className="col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                                {/* City */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        City *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="City"
+                                    />
+                                </div>
+
+                                {/* State */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        State *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.state}
+                                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="State"
+                                        maxLength={2}
+                                    />
+                                </div>
+
+                                {/* ZIP Code */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        ZIP Code *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.zip_code}
+                                        onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="ZIP Code"
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Phone
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Phone number"
+                                    />
+                                </div>
+
+                                {/* Email */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="contact@vendor.com"
+                                    />
+                                </div>
+
+                                {/* Website */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Website
+                                    </label>
+                                    <input
+                                        type="url"
+                                        value={formData.website}
+                                        onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="https://vendor.com"
+                                    />
+                                </div>
+
+                                {/* Description */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        rows={3}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Vendor description"
+                                    />
+                                </div>
+
+                                {/* Status Toggles */}
+                                <div className="col-span-2 space-y-2">
+                                    <label className="flex items-center gap-2">
                                         <input
-                                            type="text"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                            value={formData.address}
-                                            onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                            placeholder="123 Main Street"
+                                            type="checkbox"
+                                            checked={formData.is_active}
+                                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                    </div>
-                                    <div className="grid grid-cols-6 gap-4">
-                                        <div className="col-span-6 md:col-span-3">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                City <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.city}
-                                                onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                                placeholder="Phoenix"
-                                            />
-                                        </div>
-                                        <div className="col-span-3 md:col-span-1">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                State <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                maxLength="2"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border uppercase"
-                                                value={formData.state}
-                                                onChange={e => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
-                                                placeholder="AZ"
-                                            />
-                                        </div>
-                                        <div className="col-span-3 md:col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                ZIP <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.zip_code}
-                                                onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
-                                                placeholder="85001"
-                                            />
-                                        </div>
-                                    </div>
+                                        <span className="text-sm font-medium text-gray-700">Active</span>
+                                    </label>
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.is_featured}
+                                            onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">Featured</span>
+                                    </label>
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.is_top_rated}
+                                            onChange={(e) => setFormData({ ...formData, is_top_rated: e.target.checked })}
+                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">Top Rated</span>
+                                    </label>
                                 </div>
-
-                                {/* Profile & Branding */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile & Branding</h4>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
-                                        <div className="flex items-center gap-4">
-                                            <div className="h-16 w-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
-                                                {formData.logo instanceof File ? (
-                                                    <img src={URL.createObjectURL(formData.logo)} alt="Preview" className="h-full w-full object-contain" />
-                                                ) : formData.logo && formData.logo !== '/images/logo-placeholder.png' ? (
-                                                    <img src={getLogoUrl(formData.logo)} alt="Current" className="h-full w-full object-contain" />
-                                                ) : (
-                                                    <BuildingStorefrontIcon className="h-8 w-8 text-gray-400" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1">
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                                    onChange={handleFileChange}
-                                                />
-                                                <p className="text-xs text-gray-500 mt-1">Upload a new logo to replace the current one.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Rating & Trust */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating & Trust Badges</h4>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Stars (1-5)</label>
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max="5"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.rating_stars}
-                                                onChange={e => setFormData({ ...formData, rating_stars: parseInt(e.target.value) || 5 })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating %</label>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="100"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.rating_percentage}
-                                                onChange={e => setFormData({ ...formData, rating_percentage: parseInt(e.target.value) || 100 })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Text</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.rating}
-                                                onChange={e => setFormData({ ...formData, rating: e.target.value })}
-                                                placeholder="100%"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-wrap gap-4">
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                checked={formData.is_top_rated}
-                                                onChange={e => setFormData({ ...formData, is_top_rated: e.target.checked })}
-                                            />
-                                            <span className="text-sm text-gray-700">Top Rated</span>
-                                        </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                checked={formData.is_featured}
-                                                onChange={e => setFormData({ ...formData, is_featured: e.target.checked })}
-                                            />
-                                            <span className="text-sm text-gray-700">Featured</span>
-                                        </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                checked={formData.is_trusted}
-                                                onChange={e => setFormData({ ...formData, is_trusted: e.target.checked })}
-                                            />
-                                            <span className="text-sm text-gray-700">Trusted Vendor</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                {/* Status */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</h4>
-                                    <div className="flex items-center gap-3">
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only peer"
-                                                checked={formData.is_active}
-                                                onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                                            />
-                                            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                            <span className="ml-3 text-sm font-medium text-gray-700">
-                                                {formData.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </label>
-                                        <p className="text-xs text-gray-500">(Inactive vendors hidden from public)</p>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
                         </div>
 
-                        {/* Form Footer */}
-                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                        {/* Footer */}
+                        <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
                             <button
-                                type="button"
-                                onClick={() => setCreatingVendor(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                                onClick={() => {
+                                    setCreatingVendor(false);
+                                    setEditingVendor(null);
+                                }}
+                                className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
                             >
                                 Cancel
                             </button>
                             <button
-                                type="submit"
-                                form="create-vendor-form"
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
+                                onClick={creatingVendor ? handleCreate : handleUpdate}
+                                disabled={saving}
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 font-medium"
                             >
-                                Create Vendor
+                                {saving ? 'Saving...' : (creatingVendor ? 'Create Vendor' : 'Update Vendor')}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-
-            {/* Edit Modal */}
-            {editingVendor && (
-                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden transform transition-all scale-100">
-                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 className="text-lg font-semibold text-gray-900">Edit Vendor Profile</h3>
-                            <button onClick={() => setEditingVendor(null)} className="text-gray-400 hover:text-gray-500">
-                                <XCircleIcon className="h-6 w-6" />
-                            </button>
-                        </div>
-
-                        <div className="max-h-[70vh] overflow-y-auto p-6">
-                            <form onSubmit={handleUpdate} className="space-y-6">
-                                {/* Company Info */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company Details</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.name}
-                                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                            <input
-                                                type="email"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.email}
-                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.phone}
-                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Location Info */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</h4>
-                                    <div className="grid grid-cols-6 gap-4">
-                                        <div className="col-span-6 md:col-span-3">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.city}
-                                                onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                            />
-                                        </div>
-                                        <div className="col-span-3 md:col-span-1">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.state}
-                                                onChange={e => setFormData({ ...formData, state: e.target.value })}
-                                            />
-                                        </div>
-                                        <div className="col-span-3 md:col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
-                                            <input
-                                                type="text"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.zip_code}
-                                                onChange={e => setFormData({ ...formData, zip_code: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Profile & Branding */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile & Branding</h4>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
-                                        <div className="flex items-center gap-4">
-                                            <div className="h-16 w-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
-                                                {formData.logo instanceof File ? (
-                                                    <img src={URL.createObjectURL(formData.logo)} alt="Preview" className="h-full w-full object-contain" />
-                                                ) : formData.logo && formData.logo !== '/images/logo-placeholder.png' ? (
-                                                    <img src={getLogoUrl(formData.logo)} alt="Current" className="h-full w-full object-contain" />
-                                                ) : (
-                                                    <BuildingStorefrontIcon className="h-8 w-8 text-gray-400" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1">
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                                    onChange={handleFileChange}
-                                                />
-                                                <p className="text-xs text-gray-500 mt-1">Upload a new logo to replace the current one.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Description & Reviews */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description & Reviews</h4>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                            <textarea
-                                                rows="4"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.description || ''}
-                                                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                                placeholder="Brief description of the vendor's services..."
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Review Snippet</label>
-                                            <textarea
-                                                rows="2"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.review_snippet || ''}
-                                                onChange={e => setFormData({ ...formData, review_snippet: e.target.value })}
-                                                placeholder="Featured review or testimonial..."
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                {/* Rating */}
-                                <div className="space-y-4 pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating Stars (1-5)</label>
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max="5"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.rating_stars || 5}
-                                                onChange={e => setFormData({ ...formData, rating_stars: parseInt(e.target.value) || 5 })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating % (0-100)</label>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="100"
-                                                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
-                                                value={formData.rating_percentage || 100}
-                                                onChange={e => setFormData({ ...formData, rating_percentage: parseInt(e.target.value) || 100 })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                    <button
-                                        type="button"
-                                        onClick={() => setEditingVendor(null)}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
-                                    >
-                                        Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div >
-            )
-            }
-
-            {/* Credentials Modal - Enhanced */}
-            {
-                resetCredentials && (
-                    <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform animate-in fade-in zoom-in duration-200">
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 flex justify-between items-center">
-                                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                    <KeyIcon className="h-6 w-6 text-blue-200" />
-                                    Credentials Generated
-                                </h2>
-                                <button
-                                    onClick={() => setResetCredentials(null)}
-                                    className="text-blue-100 hover:text-white transition-colors"
-                                >
-                                    <XCircleIcon className="h-6 w-6" />
-                                </button>
-                            </div>
-
-                            <div className="p-6 space-y-6">
-                                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-                                    <div className="text-blue-600 flex-shrink-0 mt-0.5">
-                                        <CheckCircleIcon className="w-5 h-5" />
-                                    </div>
-                                    <p className="text-sm text-blue-800">
-                                        Copy these credentials now. The password will not be visible again.
-                                    </p>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div className="text-center pb-2 border-b border-gray-100">
-                                        <h3 className="text-lg font-bold text-gray-900">{resetCredentials.vendorName}</h3>
-                                        <p className="text-sm text-gray-500">Access Credentials</p>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.username); showToast('Username copied!', 'success') }}>
-                                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Username</label>
-                                            <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.username}</code>
-                                        </div>
-
-                                        <div className="group bg-gray-50 hover:bg-white hover:shadow-md border border-gray-200 rounded-xl p-3 transition-all cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.email); showToast('Email copied!', 'success') }}>
-                                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Login Email</label>
-                                            <code className="text-sm font-mono text-gray-900 block break-all">{resetCredentials.email}</code>
-                                        </div>
-
-                                        <div className="group bg-yellow-50 hover:bg-yellow-50/80 border border-yellow-200 rounded-xl p-4 cursor-pointer" onClick={() => { navigator.clipboard.writeText(resetCredentials.temp_password); showToast('Password copied!', 'success') }}>
-                                            <label className="text-xs font-bold text-yellow-700 uppercase tracking-wider block mb-1 flex justify-between">
-                                                New Password
-                                                <span className="text-[10px] bg-yellow-200/50 px-1.5 py-0.5 rounded text-yellow-800">CLICK TO COPY</span>
-                                            </label>
-                                            <code className="text-xl font-bold font-mono text-gray-900 block tracking-wider">{resetCredentials.temp_password}</code>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-100">
-                                <a
-                                    href="/vendor/login"
-                                    target="_blank"
-                                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
-                                >
-                                    <LinkIcon className="h-3 w-3" />
-                                    Go to Vendor Login
-                                </a>
-                                <button
-                                    onClick={() => setResetCredentials(null)}
-                                    className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium shadow-sm transition-transform active:scale-95"
-                                >
-                                    Done
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
             {/* Import Vendors Modal */}
             <ImportVendorsModal

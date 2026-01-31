@@ -1,4 +1,6 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
 from .models import ContactMessage
 from .serializers import (
@@ -60,8 +62,6 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
     
-    from rest_framework.decorators import action
-    from rest_framework import status
     
     @action(detail=True, methods=['post'])
     def mark_as_read(self, request, pk=None):

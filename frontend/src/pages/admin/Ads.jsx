@@ -1,8 +1,19 @@
-
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import {
+    PlusIcon,
+    MegaphoneIcon,
+    EyeIcon,
+    PencilIcon,
+    TrashIcon,
+    XMarkIcon,
+    PhotoIcon,
+    VideoCameraIcon,
+    ChartBarIcon,
+    CalendarIcon,
+    CursorArrowRaysIcon
+} from '@heroicons/react/24/outline';
 
 export default function AdminAds() {
     const { token } = useContext(AuthContext);
@@ -19,7 +30,7 @@ export default function AdminAds() {
         template_type: 'standard',
         button_text: 'Visit Website',
         show_badge: true,
-        start_date: new Date().toISOString().split('T')[0], // Today's date
+        start_date: new Date().toISOString().split('T')[0],
         end_date: '',
         priority: 1,
         is_active: true
@@ -46,14 +57,12 @@ export default function AdminAds() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validate file type
             const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'video/mp4'];
             if (!validTypes.includes(file.type)) {
                 alert('Invalid file type. Please upload JPG, PNG, WebP, or MP4 files.');
                 return;
             }
 
-            // Validate file size (10MB for images, 50MB for videos)
             const maxSize = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
             if (file.size > maxSize) {
                 alert(`File too large. Max size: ${file.type.startsWith('video/') ? '50MB' : '10MB'}`);
@@ -61,8 +70,6 @@ export default function AdminAds() {
             }
 
             setSelectedFile(file);
-
-            // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFilePreview(reader.result);
@@ -79,9 +86,6 @@ export default function AdminAds() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log('[Admin Ads] Submitting ad:', formData);
-
-            // Create FormData for multipart upload
             const submitData = new FormData();
             submitData.append('title', formData.title);
             submitData.append('redirect_url', formData.redirect_url);
@@ -96,7 +100,6 @@ export default function AdminAds() {
             if (formData.end_date) submitData.append('end_date', formData.end_date);
             if (formData.priority) submitData.append('priority', formData.priority);
 
-            // Add file if selected
             if (selectedFile) {
                 submitData.append('image', selectedFile);
             }
@@ -126,8 +129,7 @@ export default function AdminAds() {
             fetchAds();
         } catch (error) {
             console.error('[Admin Ads] Save error:', error);
-            const errorMsg = error.message || 'Failed to save ad. Check console for details.';
-            alert(errorMsg);
+            alert(error.message || 'Failed to save ad. Check console for details.');
         }
     };
 
@@ -162,110 +164,238 @@ export default function AdminAds() {
         }
     };
 
+    const getPositionBadge = (page, slot) => {
+        const positions = {
+            'home-left_sidebar_ad': { label: 'Home Left', color: 'bg-[#eef2ff] text-[#6366f1]' },
+            'home-right_sidebar_ad': { label: 'Home Right', color: 'bg-[#ede9fe] text-[#8b5cf6]' },
+            'vendors-left_sidebar_ad': { label: 'Vendors Left', color: 'bg-[#d1fae5] text-[#10b981]' },
+            'vendors-right_sidebar_ad': { label: 'Vendors Right', color: 'bg-[#fef3c7] text-[#f59e0b]' },
+            'browse-left_sidebar_ad': { label: 'Browse Left', color: 'bg-[#dbeafe] text-[#1e40af]' },
+            'browse-right_sidebar_ad': { label: 'Browse Right', color: 'bg-[#fce7f3] text-[#be185d]' },
+        };
+        const key = `${page}-${slot}`;
+        return positions[key] || { label: `${page} - ${slot}`, color: 'bg-[#f3f4f6] text-[#374151]' };
+    };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <p className="text-[#6b7280] font-medium">Loading ads...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">Ad Management</h1>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-semibold text-[#1f2937]">Ad Management</h1>
+                    <p className="text-base text-[#6b7280] mt-2">
+                        {ads.length} active campaigns
+                    </p>
+                </div>
+
                 <button
                     onClick={() => { setEditingAd(null); setSelectedFile(null); setFilePreview(null); setShowModal(true); }}
-                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex items-center px-6 py-3 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] shadow-md transition-all font-medium text-base"
                 >
                     <PlusIcon className="h-5 w-5 mr-2" />
                     Create Ad
                 </button>
             </div>
 
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clicks</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {loading ? (
-                            <tr><td colSpan="6" className="px-6 py-4 text-center">Loading...</td></tr>
-                        ) : ads.length === 0 ? (
-                            <tr><td colSpan="6" className="px-6 py-4 text-center">No ads found</td></tr>
-                        ) : (
-                            ads.map((ad) => (
-                                <tr key={ad.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap font-medium">{ad.title}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">{ad.page} - {ad.slot}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                        {ad.start_date} to {ad.end_date || 'Forever'}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ad.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                                            }`}>
+            {/* Ads Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {ads.length === 0 ? (
+                    <div className="col-span-full bg-white rounded-2xl shadow-md p-12 text-center border border-[#e5e7eb]">
+                        <MegaphoneIcon className="h-16 w-16 mx-auto mb-4 text-[#d1d5db]" />
+                        <p className="text-[#6b7280] text-lg">No ads created yet</p>
+                        <p className="text-[#9ca3af] text-base mt-2">Create your first ad campaign to get started</p>
+                    </div>
+                ) : (
+                    ads.map((ad) => {
+                        const positionBadge = getPositionBadge(ad.page, ad.slot);
+                        return (
+                            <div
+                                key={ad.id}
+                                className="bg-white rounded-2xl shadow-md overflow-hidden border border-[#e5e7eb] hover:shadow-lg transition-all group"
+                            >
+                                {/* Ad Preview */}
+                                <div className="relative h-48 bg-gradient-to-br from-[#f9fafb] to-[#f3f4f6] flex items-center justify-center overflow-hidden">
+                                    {ad.image ? (
+                                        ad.image.endsWith('.mp4') ? (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-[#1f2937]">
+                                                <VideoCameraIcon className="h-16 w-16 text-white/50" />
+                                                <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">Video</span>
+                                            </div>
+                                        ) : (
+                                            <img src={ad.image} alt={ad.title} className="w-full h-full object-cover" />
+                                        )
+                                    ) : (
+                                        <div className="text-center">
+                                            <PhotoIcon className="h-16 w-16 mx-auto text-[#d1d5db] mb-2" />
+                                            <p className="text-sm text-[#9ca3af]">No media</p>
+                                        </div>
+                                    )}
+
+                                    {/* Status Badge */}
+                                    <div className="absolute top-3 left-3">
+                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${ad.is_active ? 'bg-[#d1fae5] text-[#065f46]' : 'bg-[#f3f4f6] text-[#6b7280]'}`}>
                                             {ad.is_active ? 'Active' : 'Inactive'}
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">{ad.clicks}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-3">
-                                        <button onClick={() => handleEdit(ad)} className="text-blue-600 hover:text-blue-900">Edit</button>
-                                        <button onClick={() => handleDelete(ad.id)} className="text-red-600 hover:text-red-900">Delete</button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                                    </div>
+
+                                    {/* Position Badge */}
+                                    <div className="absolute top-3 right-3">
+                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${positionBadge.color}`}>
+                                            {positionBadge.label}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Ad Info */}
+                                <div className="p-5">
+                                    <h3 className="text-lg font-semibold text-[#1f2937] mb-2 truncate">{ad.title}</h3>
+
+                                    {/* Stats */}
+                                    <div className="grid grid-cols-2 gap-3 mb-4">
+                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb]">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <CursorArrowRaysIcon className="h-4 w-4 text-[#6366f1]" />
+                                                <span className="text-xs text-[#6b7280]">Clicks</span>
+                                            </div>
+                                            <p className="text-lg font-bold text-[#1f2937]">{ad.clicks || 0}</p>
+                                        </div>
+                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb]">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <ChartBarIcon className="h-4 w-4 text-[#10b981]" />
+                                                <span className="text-xs text-[#6b7280]">Priority</span>
+                                            </div>
+                                            <p className="text-lg font-bold text-[#1f2937]">{ad.priority}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Duration */}
+                                    <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb] mb-4">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <CalendarIcon className="h-4 w-4 text-[#f59e0b]" />
+                                            <span className="text-xs text-[#6b7280]">Duration</span>
+                                        </div>
+                                        <p className="text-sm text-[#1f2937]">
+                                            {ad.start_date} → {ad.end_date || 'Forever'}
+                                        </p>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleEdit(ad)}
+                                            className="flex-1 px-3 py-2 bg-[#eef2ff] text-[#6366f1] rounded-xl hover:bg-[#e0e7ff] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                        >
+                                            <PencilIcon className="h-4 w-4" />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(ad.id)}
+                                            className="flex-1 px-3 py-2 bg-[#fee2e2] text-[#dc2626] rounded-xl hover:bg-[#fecaca] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                        >
+                                            <TrashIcon className="h-4 w-4" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
             </div>
 
+            {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-xl font-bold mb-4">{editingAd ? 'Edit Ad' : 'New Ad'}</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                        {/* Modal Header */}
+                        <div className="sticky top-0 bg-white border-b border-[#e5e7eb] px-6 py-4 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Title</label>
-                                <input type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                    value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                                <h2 className="text-xl font-semibold text-[#1f2937]">{editingAd ? 'Edit Ad' : 'Create New Ad'}</h2>
+                                <p className="text-sm text-[#6b7280]">Configure your ad campaign</p>
+                            </div>
+                            <button
+                                onClick={() => { setShowModal(false); setSelectedFile(null); setFilePreview(null); }}
+                                className="text-[#9ca3af] hover:text-[#6b7280] transition-colors"
+                            >
+                                <XMarkIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                            {/* Title */}
+                            <div>
+                                <label className="block text-sm font-medium text-[#374151] mb-2">Ad Title</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                    value={formData.title}
+                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="Enter ad title"
+                                />
                             </div>
 
                             {/* File Upload */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Ad Media (Image or Video)</label>
-                                <input
-                                    type="file"
-                                    accept=".jpg,.jpeg,.png,.webp,.mp4"
-                                    onChange={handleFileChange}
-                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                />
-                                <p className="mt-1 text-xs text-gray-500">JPG, PNG, WebP or MP4 (max 10MB for images, 50MB for videos)</p>
-
-                                {/* Preview */}
-                                {filePreview && (
-                                    <div className="mt-3 relative">
-                                        {selectedFile?.type.startsWith('video/') || filePreview.endsWith('.mp4') ? (
-                                            <video src={filePreview} controls className="max-w-full h-auto rounded-lg border" />
-                                        ) : (
-                                            <img src={filePreview} alt="Preview" className="max-w-full h-auto rounded-lg border" />
-                                        )}
-                                        <button
-                                            type="button"
-                                            onClick={handleRemoveFile}
-                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                )}
+                                <label className="block text-sm font-medium text-[#374151] mb-2">Ad Media</label>
+                                <div className="border-2 border-dashed border-[#e5e7eb] rounded-xl p-6 text-center hover:border-[#6366f1] transition-colors">
+                                    {filePreview ? (
+                                        <div className="relative">
+                                            {selectedFile?.type.startsWith('video/') || filePreview.endsWith('.mp4') ? (
+                                                <video src={filePreview} controls className="max-w-full h-auto rounded-lg mx-auto" />
+                                            ) : (
+                                                <img src={filePreview} alt="Preview" className="max-w-full h-auto rounded-lg mx-auto" />
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveFile}
+                                                className="absolute top-2 right-2 bg-[#dc2626] text-white rounded-full p-2 hover:bg-[#b91c1c] shadow-lg"
+                                            >
+                                                <XMarkIcon className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <PhotoIcon className="h-12 w-12 mx-auto text-[#9ca3af] mb-3" />
+                                            <input
+                                                type="file"
+                                                accept=".jpg,.jpeg,.png,.webp,.mp4"
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                                id="file-upload"
+                                            />
+                                            <label
+                                                htmlFor="file-upload"
+                                                className="cursor-pointer inline-flex items-center px-4 py-2 bg-[#eef2ff] text-[#6366f1] rounded-xl hover:bg-[#e0e7ff] text-sm font-medium"
+                                            >
+                                                Choose File
+                                            </label>
+                                            <p className="mt-2 text-xs text-[#6b7280]">JPG, PNG, WebP or MP4 (max 10MB for images, 50MB for videos)</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
+                            {/* Position */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Page</label>
-                                    <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.page} onChange={e => setFormData({ ...formData, page: e.target.value })}>
+                                    <label className="block text-sm font-medium text-[#374151] mb-2">Page</label>
+                                    <select
+                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        value={formData.page}
+                                        onChange={e => setFormData({ ...formData, page: e.target.value })}
+                                    >
                                         <option value="all">All Pages</option>
                                         <option value="home">Home Page</option>
                                         <option value="vendors">Vendors Page</option>
@@ -273,80 +403,128 @@ export default function AdminAds() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Slot</label>
-                                    <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.slot} onChange={e => setFormData({ ...formData, slot: e.target.value })}>
-                                        <option value="left_sidebar_ad">Left Sidebar Ad</option>
-                                        <option value="right_sidebar_ad">Right Sidebar Ad</option>
+                                    <label className="block text-sm font-medium text-[#374151] mb-2">Slot</label>
+                                    <select
+                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        value={formData.slot}
+                                        onChange={e => setFormData({ ...formData, slot: e.target.value })}
+                                    >
+                                        <option value="left_sidebar_ad">Left Sidebar</option>
+                                        <option value="right_sidebar_ad">Right Sidebar</option>
                                     </select>
                                 </div>
                             </div>
+
+                            {/* URL */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Redirect URL</label>
-                                <input type="url" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                    value={formData.redirect_url} onChange={e => setFormData({ ...formData, redirect_url: e.target.value })} />
+                                <label className="block text-sm font-medium text-[#374151] mb-2">Redirect URL</label>
+                                <input
+                                    type="url"
+                                    required
+                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                    value={formData.redirect_url}
+                                    onChange={e => setFormData({ ...formData, redirect_url: e.target.value })}
+                                    placeholder="https://example.com"
+                                />
                             </div>
 
-                            {/* Scheduling & Priority */}
+                            {/* Scheduling */}
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                                    <input type="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.start_date} onChange={e => setFormData({ ...formData, start_date: e.target.value })} />
+                                    <label className="block text-sm font-medium text-[#374151] mb-2">Start Date</label>
+                                    <input
+                                        type="date"
+                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        value={formData.start_date}
+                                        onChange={e => setFormData({ ...formData, start_date: e.target.value })}
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">End Date (Optional)</label>
-                                    <input type="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.end_date} onChange={e => setFormData({ ...formData, end_date: e.target.value })} />
+                                    <label className="block text-sm font-medium text-[#374151] mb-2">End Date</label>
+                                    <input
+                                        type="date"
+                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        value={formData.end_date}
+                                        onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Priority</label>
-                                    <input type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                        value={formData.priority} onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                                        placeholder="0" />
-                                    <p className="mt-1 text-xs text-gray-500">Higher = more priority</p>
+                                    <label className="block text-sm font-medium text-[#374151] mb-2">Priority</label>
+                                    <input
+                                        type="number"
+                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        value={formData.priority}
+                                        onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
+                                        placeholder="0"
+                                    />
                                 </div>
                             </div>
 
-                            {/* Template Customization */}
-                            <div className="border-t pt-4 mt-4">
-                                <h3 className="text-sm font-semibold text-gray-900 mb-3">Template Customization</h3>
-
+                            {/* Template Options */}
+                            <div className="bg-[#f9fafb] rounded-xl p-5 border border-[#e5e7eb]">
+                                <h3 className="text-sm font-semibold text-[#1f2937] mb-4">Template Options</h3>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Template Style</label>
-                                        <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                            value={formData.template_type} onChange={e => setFormData({ ...formData, template_type: e.target.value })}>
-                                            <option value="standard">Standard Template</option>
-                                            <option value="minimal">Minimal Template</option>
-                                            <option value="premium">Premium Template</option>
-                                            <option value="compact">Compact Template</option>
+                                        <label className="block text-sm font-medium text-[#374151] mb-2">Template Style</label>
+                                        <select
+                                            className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                            value={formData.template_type}
+                                            onChange={e => setFormData({ ...formData, template_type: e.target.value })}
+                                        >
+                                            <option value="standard">Standard</option>
+                                            <option value="minimal">Minimal</option>
+                                            <option value="premium">Premium</option>
+                                            <option value="compact">Compact</option>
                                         </select>
                                     </div>
-
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Button Text</label>
-                                        <input type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
-                                            value={formData.button_text} onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                                            placeholder="Visit Website" />
+                                        <label className="block text-sm font-medium text-[#374151] mb-2">Button Text</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                            value={formData.button_text}
+                                            onChange={e => setFormData({ ...formData, button_text: e.target.value })}
+                                            placeholder="Visit Website"
+                                        />
                                     </div>
-
-                                    <div className="flex items-center">
-                                        <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                            checked={formData.show_badge} onChange={e => setFormData({ ...formData, show_badge: e.target.checked })} />
-                                        <label className="ml-2 block text-sm text-gray-900">Show "Featured" Badge</label>
+                                    <div className="flex items-center gap-6">
+                                        <label className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 text-[#6366f1] focus:ring-[#6366f1] border-[#e5e7eb] rounded"
+                                                checked={formData.show_badge}
+                                                onChange={e => setFormData({ ...formData, show_badge: e.target.checked })}
+                                            />
+                                            <span className="ml-2 text-sm text-[#374151]">Show Featured Badge</span>
+                                        </label>
+                                        <label className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 text-[#6366f1] focus:ring-[#6366f1] border-[#e5e7eb] rounded"
+                                                checked={formData.is_active}
+                                                onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
+                                            />
+                                            <span className="ml-2 text-sm text-[#374151]">Active</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center">
-                                <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} />
-                                <label className="ml-2 block text-sm text-gray-900">Active</label>
-                            </div>
-                            <div className="flex justify-end space-x-3 mt-6">
-                                <button type="button" onClick={() => { setShowModal(false); setSelectedFile(null); setFilePreview(null); }} className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save</button>
+                            {/* Actions */}
+                            <div className="flex justify-end gap-3 pt-4 border-t border-[#e5e7eb]">
+                                <button
+                                    type="button"
+                                    onClick={() => { setShowModal(false); setSelectedFile(null); setFilePreview(null); }}
+                                    className="px-5 py-2.5 border border-[#e5e7eb] rounded-xl text-[#374151] hover:bg-[#f9fafb] text-sm font-medium transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-5 py-2.5 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] text-sm font-medium shadow-md transition-all"
+                                >
+                                    {editingAd ? 'Update Ad' : 'Create Ad'}
+                                </button>
                             </div>
                         </form>
                     </div>

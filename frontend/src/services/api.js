@@ -134,6 +134,29 @@ export const api = {
     return response.json();
   },
 
+  markMessageAsRead: async (token, messageId) => {
+    const response = await fetch(`${API_BASE_URL}/common/messages/${messageId}/mark_as_read/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  },
+
+  deleteContactMessage: async (token, messageId) => {
+    const response = await fetch(`${API_BASE_URL}/common/messages/${messageId}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.ok;
+  },
+
   // Leads
   createLead: async (data) => {
     const response = await fetch(`${API_BASE_URL}/leads/`, {
@@ -326,7 +349,7 @@ export const api = {
 
   // Message Management
   markMessageAsRead: async (token, id) => {
-    const response = await fetch(`${API_BASE_URL}/contact-messages/${id}/mark_as_read/`, {
+    const response = await fetch(`${API_BASE_URL}/common/messages/${id}/mark_as_read/`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -335,7 +358,7 @@ export const api = {
   },
 
   markMessageAsUnread: async (token, id) => {
-    const response = await fetch(`${API_BASE_URL}/contact-messages/${id}/mark_as_unread/`, {
+    const response = await fetch(`${API_BASE_URL}/common/messages/${id}/mark_as_unread/`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -344,7 +367,7 @@ export const api = {
   },
 
   deleteMessage: async (token, id) => {
-    const response = await fetch(`${API_BASE_URL}/contact-messages/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/common/messages/${id}/`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -353,7 +376,7 @@ export const api = {
   },
 
   bulkDeleteMessages: async (token, ids) => {
-    const response = await fetch(`${API_BASE_URL}/contact-messages/bulk_delete/`, {
+    const response = await fetch(`${API_BASE_URL}/common/messages/bulk_delete/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
