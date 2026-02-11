@@ -1,0 +1,47 @@
+from rest_framework import serializers
+from .models import Lead, VendorLead
+
+
+class VendorLeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VendorLead
+        fields = [
+            'id',
+            'make',
+            'model',
+            'year',
+            'name',
+            'email',
+            'phone',
+            'state',
+            'zip',
+            'status',
+            'created_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'status']
+
+
+
+class LeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lead
+        fields = [
+            'id', 
+            'make', 
+            'model', 
+            'part', 
+            'year', 
+            'name', 
+            'email', 
+            'phone', 
+            'state',  # NEW
+            'zip',  # NEW
+            'location',  # Legacy field (kept for backwards compatibility)
+            'options',  # NEW - part specifications
+            'hollander_number',  # NEW - Hollander interchange number
+            'lead_type',  # NEW - Distinguish between Quality Auto and Vendor leads
+            'status', 
+            'created_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'status']
+

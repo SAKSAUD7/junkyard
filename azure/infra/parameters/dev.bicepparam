@@ -1,0 +1,10 @@
+﻿using '../main.bicep'
+
+param environment = 'dev'
+param location = 'centralindia'
+param resourceGroupName = 'junkyard'
+param appName = 'junkyard'
+param dbAdminUsername = 'junkyard_admin'
+param dbAdminPassword = 'DlVZ[d(!Q}#j#TMM{%P1G60yOQPS/Z&r'
+param sendGridApiKey = 'dummy-key-for-dev'
+param djangoSecretKey = '/Q05|7%7jr%r%s?0LZV5WSl9VB|xa+&$uwp.K;.3lF_jaNRO_J'

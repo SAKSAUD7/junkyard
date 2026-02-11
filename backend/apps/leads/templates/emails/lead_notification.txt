@@ -1,0 +1,19 @@
+QAJ Lead
+
+From: {{ from_email }}
+Mail Sent on: {{ sent_date }}
+
+Requested Information
+Mail Sent on: {{ sent_date }}
+
+Name: {{ lead.name }}
+Email Address: {{ lead.email }}
+Phone: {{ lead.phone }}
+State: {{ lead.state }}
+Zip: {{ lead.zip }}
+Year: {{ lead.year }}
+Make: {{ lead.make }}
+Model: {{ lead.model }}
+Part: {{ lead.part }}
+Options: {{ lead.options|default:"N/A" }}
+Hollander#: {{ lead.hollander_number|default:"Not Found" }}

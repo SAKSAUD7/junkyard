@@ -1,0 +1,78 @@
+name: Azure Deployment - CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: junkyard-api-dev
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[backend]') || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install mssql-django pyodbc gunicorn django-storages[azure]
+    
+    - name: Run tests
+      run: |
+        cd backend
+        python manage.py test
+    
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./backend
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[frontend]') || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Build
+      run: |
+        cd frontend
+        npm run build
+      env:
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+    
+    - name: Deploy to Azure Static Web Apps
+      uses: Azure/static-web-apps-deploy@v1
+      with:
+        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        action: "upload"
+        app_location: "/frontend"
+        output_location: "dist"

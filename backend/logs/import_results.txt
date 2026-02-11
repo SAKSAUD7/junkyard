@@ -1,0 +1,28 @@
+﻿================================================================================
+VENDOR LOGO IMPORT - JSON-BASED APPROACH
+================================================================================
+
+JSON file: C:\Users\saksa\OneDrive\Desktop\junkyard\junkyard\frontend\public\data\data_junkyards.json
+Logos directory: C:\Users\saksa\OneDrive\Desktop\junkyard\junkyard\frontend\public\images\vendors
+Mode: DRY RUN
+
+Loaded 650 junkyards from JSON
+
+Processing junkyards...
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total in JSON:              650
+Vendors updated:            0
+Already had correct logo:   0
+Skipped (placeholder):      255
+Skipped (no logo field):    395
+Not found in database:      0
+Logo file not found:        0
+
+DRY RUN MODE - No changes were made
+   Run with --apply to update database
+
+

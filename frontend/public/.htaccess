@@ -1,0 +1,41 @@
+# SEO Preservation - 301 Redirects from Old Website
+# This file preserves all backlinks from junkyardsnearme.com legacy site
+
+# Remove www redirect (old site used www.junkyardsnearme.com)
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.junkyardsnearme\.com [NC]
+RewriteRule ^(.*)$ https://junkyardsnearme.com/$1 [L,R=301]
+
+# Redirect old vendor URLs to new format
+# Old: /junkyards/{state}/{id}-{vendor-name-slug}-{city}-{state}
+# New: /vendors/{id}
+RewriteRule ^junkyards/[^/]+/(\d+)-.*$ /vendors/$1 [R=301,L]
+
+# Redirect old rating URLs to vendor pages
+# Old: /rate-junkyard/{id}-{vendor-name-slug}-{city}-{state}
+# New: /vendors/{id}
+RewriteRule ^rate-junkyard/(\d+)-.*$ /vendors/$1 [R=301,L]
+
+# Redirect old main vendor listing
+# Old: /junkyards or /junkyards?p={page}
+# New: /vendors or /vendors?p={page}
+RewriteRule ^junkyards$ /vendors [R=301,L,QSA]
+
+# Redirect old location browsing
+# Old: /junkyards-by-location
+# New: /browse
+RewriteRule ^junkyards-by-location$ /browse [R=301,L]
+
+# Redirect old static pages
+# Old: /about-us
+# New: /about
+RewriteRule ^about-us$ /about [R=301,L]
+
+# Old: /terms-and-conditions
+# New: /terms
+RewriteRule ^terms-and-conditions$ /terms [R=301,L]
+
+# React Router - Serve index.html for all other routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

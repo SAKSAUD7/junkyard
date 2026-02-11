@@ -1,0 +1,326 @@
+"""
+Bulk Vehicle Data API Endpoint
+Returns complete hierarchical data for a make in a single request
+Eliminates sequential API calls and loading delays
+"""
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.db.models import Q
+from .models import Make, Model, PartPricing, PartType, HollanderIndex
+from .views import query_catalog_index
+
+
+@api_view(['GET'])
+def get_vehicle_data_bulk(request, make_id):
+    """
+    Return complete hierarchical data for a make:
+    Make → Models → Years → Parts → Hollander/Options
+    
+    OPTIMIZED VERSION: Uses 3 bulk queries instead of loops.
+    """
+    try:
+        make_id = int(make_id)
+        make = Make.objects.filter(make_id=make_id).first()
+        
+        if not make:
+            return Response({'error': 'Make not found'}, status=404)
+        
+        # 1. Fetch ALL Models for this Make (Query #1)
+        models = list(Model.objects.filter(make=make).values('model_id', 'model_name').order_by('model_name'))
+        
+        # Initialize result structure
+        result = {
+            'make_id': make.make_id,
+            'make_name': make.make_name,
+            'models': []
+        }
+        
+        # Helpers for mapping
+        model_map = {m['model_id']: {'model_id': m['model_id'], 'model_name': m['model_name'], 'years': [], 'parts': {}} for m in models}
+        model_ids = [m['model_id'] for m in models]
+        
+        # 2. Fetch ALL PartPricing data for this Make (Query #2)
+        # This gets us Years AND Parts in one go
+        pricing_data = PartPricing.objects.filter(
+            make_ref=make,
+            part_type_ref__isnull=False
+        ).values(
+            'model_ref__model_id',
+            'year_start',
+            'year_end',
+            'part_type_ref__part_id',
+            'part_type_ref__part_name',
+            'hollander_number',
+            'option1', 'option2', 'option3' # Fetch first few options for quick display
+        )
+        
+        # Process Pricing Data in Memory
+        for row in pricing_data:
+            m_id = row['model_ref__model_id']
+            if m_id not in model_map: continue
+            
+            # Add Years
+            start, end = row['year_start'], row['year_end']
+            if start and end:
+                 s, e = max(1950, start), min(2030, end)
+                 if s <= e:
+                     # We can't easily add range to set without loop, but Python loop is fast
+                     # Optimization: Just track min/max per model? 
+                     # For now, let's just add the range end points and fill gaps later if needed?
+                     # Better: Use a set for years per model
+                     if 'year_set' not in model_map[m_id]: model_map[m_id]['year_set'] = set()
+                     model_map[m_id]['year_set'].update(range(s, e + 1))
+            
+            # Add Parts (buckets by year)
+            # This is tricky because one record spans multiple years.
+            # We construct a part object
+            part_obj = {
+                'part_id': row['part_type_ref__part_id'],
+                'part_name': row['part_type_ref__part_name'],
+                'hollander_number': row['hollander_number'] or '',
+                # Simple option concat for list view
+                'options': ', '.join(filter(None, [row['option1'], row['option2'], row['option3']]))
+            }
+            
+            # Add to all relevant years for this model
+            # To avoid exploding memory, we only add to year buckets if we track them
+            if s <= e:
+                pass 
+                # Doing this for every year in range for every part is expensive memory-wise.
+                # Optimization: Store parts by (model) and just filter in Frontend?
+                # No, frontend expects hierarchical.
+                # Let's simple check: limit range to [2000-2030] for full detail?
+                # Or just do it. Python is efficient enough for 50k objects usually.
+                
+                # Let's optimize: Store generic parts list per model, and year availability?
+                # Frontend expects: model_data['parts'][year] = [list of parts]
+                
+                for y in range(s, e + 1):
+                    if y < 1980: continue # Skip very old data for bulk performance
+                    
+                    if str(y) not in model_map[m_id]['parts']:
+                        model_map[m_id]['parts'][str(y)] = {} # Use dict for dedupe
+                    
+                    p_id = part_obj['part_id']
+                    if p_id not in model_map[m_id]['parts'][str(y)]:
+                        model_map[m_id]['parts'][str(y)][p_id] = part_obj
+
+        # 3. Fallback: Hollander Index (Query #3 & #4 - Catalog Years)
+        # Robust Logic: Bridge Local Model Names -> Hollander Ref Names -> Hollander Index
+        
+        from django.db.models import Q, Count
+        import re
+        from .models import HollanderMakeModelRef
+        
+        # A. Resolve Relevant Hollander Makes (Multiple Allowed)
+        # Some local Makes (like AMC) map to multiple Hollander Makes (Renault, AM General, Eagle)
+        # Strategy: Identify ALL potential Hollander Makes associated with these models
+        
+        target_h_makes = set()
+        
+        # 1. Try direct name match (High Confidence)
+        h_make_guess = HollanderMakeModelRef.objects.filter(h_make__icontains=make.make_name).first()
+        if h_make_guess:
+            target_h_makes.add(h_make_guess.h_make)
+            
+        # 2. Scan ALL models (Global Search)
+        # Optimization: Check chunks of names
+        # IMPORTANT: Include "Stripped" names (Series) in the search!
+        # "190E" won't find "MERCEDES 190" unless we search for "190".
+        
+        search_terms = set()
+        for m in models:
+             m_name = m['model_name'].strip()
+             if len(m_name) > 1: # "M3" is short but valid
+                 search_terms.add(m_name)
+                 
+                 # Strip suffix logic (replicated from Smart Match loop)
+                 if re.match(r'^\d+', m_name):
+                     base_series = re.sub(r'[a-zA-Z\W]+$', '', m_name)
+                     if len(base_series) >= 2 and base_series != m_name:
+                         search_terms.add(base_series)
+        
+        search_list = list(search_terms)
+        
+        from django.db.models import Q
+        
+        # Batch query for refs
+        valid_refs = []
+        if search_list:
+            chunk_size = 20
+            all_refs = []
+            
+            for i in range(0, len(search_list), chunk_size):
+                chunk = search_list[i:i+chunk_size]
+                query = Q()
+                for term in chunk:
+                    query |= Q(h_model__icontains=term)
+                
+                refs = list(HollanderMakeModelRef.objects.filter(query).values('h_model', 'h_make'))
+                all_refs.extend(refs)
+            
+            valid_refs = all_refs
+
+        # C. smart Match: Local Model -> [List of Hollander Model Names]
+        # ... logic continues using valid_refs (which is now broader)
+
+
+        # C. smart Match: Local Model -> [List of Hollander Model Names]
+        model_to_h_models = {} 
+        h_model_list = set()
+        
+        # Pre-process Refs for speed
+        # We want to match against "190" inside "MERCEDES 190"
+        
+        for m in models:
+            m_id = m['model_id']
+            m_name = m['model_name'].upper().strip()
+            model_to_h_models[m_id] = []
+            
+            # Smart Token Extraction
+            # 1. Exact Name
+            tokens = [m_name]
+            
+            # 2. Base Series (Strip alpha suffix: "190E" -> "190", "325i" -> "325")
+            # Regex: Remove letters from end, keep digits. 
+            # Only do this if the name starts with digits (common for luxury cars)
+            if re.match(r'^\d+', m_name):
+                 base_series = re.sub(r'[a-zA-Z\W]+$', '', m_name)
+                 if len(base_series) >= 2 and base_series != m_name:
+                     tokens.append(base_series)
+            
+            # 3. Strip "Series" or "Class" words? (Maybe later)
+
+            # Check tokens against valid refs
+            for ref in valid_refs:
+                h_name = ref['h_model'].upper()
+                
+                match_found = False
+                for token in tokens:
+                    # Logic: 
+                    # If token is numeric/short ("190"), require word boundary or tight match?
+                    # "MERCEDES 190" contains "190" -> YES.
+                    # "MERCEDES 190" contains "190E" -> NO.
+                    
+                    # Search for token IN ref name
+                    if token in h_name: 
+                         match_found = True
+                         break
+                    # Search for ref name IN token (rare, e.g. "Alliance DL" vs "Alliance")
+                    if h_name in m_name:
+                         match_found = True
+                         break
+                
+                if match_found:
+                    model_to_h_models[m_id].append(ref['h_model'])
+                    h_model_list.add(ref['h_model'])
+        
+        # D. Query Hollander Index for Years AND Parts
+        catalog_entries = []
+        if h_model_list:
+            # We now need part_type_nbr as well
+            catalog_entries = HollanderIndex.objects.filter(
+                model_nm__in=list(h_model_list)
+            ).values('model_nm', 'begin_year', 'end_year', 'part_type_nbr')
+        
+        # E. Resolve Part Names (Bulk)
+        # Get all unique part codes from the result
+        unique_part_codes = set(e['part_type_nbr'] for e in catalog_entries if e['part_type_nbr'])
+        
+        # Fetch Part Names from PartRef
+        # Map: Code -> Part Name
+        part_code_map = {}
+        from .models import HollanderPartRef, PartType
+        
+        # 1. Try HollanderPartRef (Catalog Names)
+        refs = HollanderPartRef.objects.filter(part_code__in=unique_part_codes).values('part_code', 'part_name')
+        for r in refs:
+            part_code_map[r['part_code']] = r['part_name']
+            
+        # 2. Try PartType (Local Inventory Names) - Fallback or Merge?
+        # Typically HollanderPartRef is more accurate for Catalog codes.
+        
+        # F. Merge Data back to Models
+        # Organization: catalog_by_h_model[h_name] = [entries...]
+        catalog_by_h_model = {}
+        for entry in catalog_entries:
+            nm = entry['model_nm']
+            if nm not in catalog_by_h_model: catalog_by_h_model[nm] = []
+            catalog_by_h_model[nm].append(entry)
+            
+        # Assign to Local Models
+        for m_id, h_names in model_to_h_models.items():
+            if not h_names: continue
+            
+            for h_name in h_names:
+                if h_name in catalog_by_h_model:
+                     for entry in catalog_by_h_model[h_name]:
+                         start, end = entry['begin_year'], entry['end_year']
+                         p_code = entry['part_type_nbr']
+                         
+                         if start and end:
+                             s, e = max(1950, start), min(2030, end)
+                             if s <= e:
+                                 # 1. Add Years
+                                 if 'year_set' not in model_map[m_id]: model_map[m_id]['year_set'] = set()
+                                 model_map[m_id]['year_set'].update(range(s, e + 1))
+                                 
+                                 # 2. Add Parts (for every year in range)
+                                 # Optimization: Listing EVERY part for EVERY year is heavy.
+                                 # But necessary for "Select Year -> Select Part" flow.
+                                 
+                                 if p_code and p_code in part_code_map:
+                                     p_name = part_code_map[p_code]
+                                     
+                                     # Convert to int for frontend compatibility
+                                     try:
+                                         p_id_int = int(p_code)
+                                     except (ValueError, TypeError):
+                                         # Skip invalid non-numeric parts if any
+                                         continue
+
+                                     # Create part object
+                                     p_obj = {
+                                         'part_id': p_id_int, 
+                                         'part_name': p_name,
+                                         'hollander_number': '', # No specific number known yet
+                                         'options': 'Check Availability' # Placeholder
+                                     }
+                                     
+                                     for y in range(s, e + 1):
+                                         if y < 1980: continue
+                                         
+                                         y_str = str(y)
+                                         if y_str not in model_map[m_id]['parts']:
+                                             model_map[m_id]['parts'][y_str] = {}
+                                         
+                                         # Dedupe by Code (using int ID as key is fine)
+                                         if p_id_int not in model_map[m_id]['parts'][y_str]:
+                                              model_map[m_id]['parts'][y_str][p_id_int] = p_obj
+        
+        # Final Assembly (Filter out empty models)
+        for m_id, data in model_map.items():
+            # Convert year set to sorted list
+            if 'year_set' in data:
+                data['years'] = sorted(list(data['year_set']), reverse=True)
+                del data['year_set']
+            
+            # Convert parts dicts to lists
+            for y_key in list(data['parts'].keys()):
+                # Sort parts by name for better UX
+                p_list = list(data['parts'][y_key].values())
+                p_list.sort(key=lambda x: x['part_name'])
+                data['parts'][y_key] = p_list
+            
+            # ONLY include models that have data (years or parts)
+            # This filters out "ghost models" like Renault Clio, Mercedes 190E-16, etc.
+            if data['years'] or data['parts']:
+                result['models'].append(data)
+            
+        return Response(result)
+        
+    except Exception as e:
+        print(f"Bulk vehicle data error: {e}")
+        import traceback
+        traceback.print_exc()
+        return Response({'error': str(e)}, status=500)

@@ -1,0 +1,292 @@
+[
+    {
+        "stateAbbr": "PA",
+        "stateName": "Pennsylvania",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "VA",
+        "stateName": "Virginia",
+        "junkyardCount": 30
+    },
+    {
+        "stateAbbr": "BC",
+        "stateName": "British Columbia",
+        "junkyardCount": 8
+    },
+    {
+        "stateAbbr": "OR",
+        "stateName": "Oregon",
+        "junkyardCount": 20
+    },
+    {
+        "stateAbbr": "IL",
+        "stateName": "Illinois",
+        "junkyardCount": 37
+    },
+    {
+        "stateAbbr": "AZ",
+        "stateName": "Arizona",
+        "junkyardCount": 21
+    },
+    {
+        "stateAbbr": "MO",
+        "stateName": "Missouri",
+        "junkyardCount": 29
+    },
+    {
+        "stateAbbr": "TX",
+        "stateName": "Texas",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "SC",
+        "stateName": "South Carolina",
+        "junkyardCount": 13
+    },
+    {
+        "stateAbbr": "CA",
+        "stateName": "California",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "FL",
+        "stateName": "Florida",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "MN",
+        "stateName": "Minnesota",
+        "junkyardCount": 22
+    },
+    {
+        "stateAbbr": "KS",
+        "stateName": "Kansas",
+        "junkyardCount": 12
+    },
+    {
+        "stateAbbr": "NV",
+        "stateName": "Nevada",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "NJ",
+        "stateName": "New Jersey",
+        "junkyardCount": 38
+    },
+    {
+        "stateAbbr": "OH",
+        "stateName": "Ohio",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "IA",
+        "stateName": "Iowa",
+        "junkyardCount": 19
+    },
+    {
+        "stateAbbr": "NY",
+        "stateName": "New York",
+        "junkyardCount": 50
+    },
+    {
+        "stateAbbr": "KY",
+        "stateName": "Kentucky",
+        "junkyardCount": 19
+    },
+    {
+        "stateAbbr": "NC",
+        "stateName": "North Carolina",
+        "junkyardCount": 33
+    },
+    {
+        "stateAbbr": "TN",
+        "stateName": "Tennessee",
+        "junkyardCount": 27
+    },
+    {
+        "stateAbbr": "NM",
+        "stateName": "New Mexico",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "AR",
+        "stateName": "Arkansas",
+        "junkyardCount": 17
+    },
+    {
+        "stateAbbr": "IN",
+        "stateName": "Indiana",
+        "junkyardCount": 28
+    },
+    {
+        "stateAbbr": "GA",
+        "stateName": "Georgia",
+        "junkyardCount": 26
+    },
+    {
+        "stateAbbr": "MI",
+        "stateName": "Michigan",
+        "junkyardCount": 36
+    },
+    {
+        "stateAbbr": "SD",
+        "stateName": "South Dakota",
+        "junkyardCount": 6
+    },
+    {
+        "stateAbbr": "WA",
+        "stateName": "Washington",
+        "junkyardCount": 22
+    },
+    {
+        "stateAbbr": "WI",
+        "stateName": "Wisconsin",
+        "junkyardCount": 23
+    },
+    {
+        "stateAbbr": "RI",
+        "stateName": "Rhode Island",
+        "junkyardCount": 5
+    },
+    {
+        "stateAbbr": "AB",
+        "stateName": "Alberta",
+        "junkyardCount": 8
+    },
+    {
+        "stateAbbr": "CO",
+        "stateName": "Colorado",
+        "junkyardCount": 13
+    },
+    {
+        "stateAbbr": "MB",
+        "stateName": "Manitoba",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "OK",
+        "stateName": "Oklahoma",
+        "junkyardCount": 18
+    },
+    {
+        "stateAbbr": "CT",
+        "stateName": "Connecticut",
+        "junkyardCount": 11
+    },
+    {
+        "stateAbbr": "UT",
+        "stateName": "Utah",
+        "junkyardCount": 9
+    },
+    {
+        "stateAbbr": "NE",
+        "stateName": "Nebraska",
+        "junkyardCount": 8
+    },
+    {
+        "stateAbbr": "MD",
+        "stateName": "Maryland",
+        "junkyardCount": 9
+    },
+    {
+        "stateAbbr": "WY",
+        "stateName": "Wyoming",
+        "junkyardCount": 2
+    },
+    {
+        "stateAbbr": "MS",
+        "stateName": "Mississippi",
+        "junkyardCount": 17
+    },
+    {
+        "stateAbbr": "LA",
+        "stateName": "Louisiana",
+        "junkyardCount": 5
+    },
+    {
+        "stateAbbr": "AL",
+        "stateName": "Alabama",
+        "junkyardCount": 19
+    },
+    {
+        "stateAbbr": "ID",
+        "stateName": "Idaho",
+        "junkyardCount": 7
+    },
+    {
+        "stateAbbr": "MA",
+        "stateName": "Massachusetts",
+        "junkyardCount": 25
+    },
+    {
+        "stateAbbr": "NB",
+        "stateName": "New Brunswick",
+        "junkyardCount": 6
+    },
+    {
+        "stateAbbr": "ON",
+        "stateName": "Ontario",
+        "junkyardCount": 20
+    },
+    {
+        "stateAbbr": "MT",
+        "stateName": "Montana",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "VT",
+        "stateName": "Vermont",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "DE",
+        "stateName": "Delaware",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "NH",
+        "stateName": "New Hampshire",
+        "junkyardCount": 9
+    },
+    {
+        "stateAbbr": "NL",
+        "stateName": "Newfoundland And Labrador",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "SK",
+        "stateName": "Saskatchewan",
+        "junkyardCount": 2
+    },
+    {
+        "stateAbbr": "QC",
+        "stateName": "Quebec",
+        "junkyardCount": 3
+    },
+    {
+        "stateAbbr": "WV",
+        "stateName": "West Virginia",
+        "junkyardCount": 4
+    },
+    {
+        "stateAbbr": "ME",
+        "stateName": "Maine",
+        "junkyardCount": 6
+    },
+    {
+        "stateAbbr": "ND",
+        "stateName": "North Dakota",
+        "junkyardCount": 2
+    },
+    {
+        "stateAbbr": "AK",
+        "stateName": "Alaska",
+        "junkyardCount": 2
+    },
+    {
+        "stateAbbr": "PE",
+        "stateName": "Prince Edward Island",
+        "junkyardCount": 1
+    }
+]

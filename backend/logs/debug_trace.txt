@@ -1,0 +1,28 @@
+DEBUG: Lookup Input - Year:1990 Make:6 Model:48 Part:296 (Air Cleaner Engine)
+DEBUG: Lookup Input - Year:2013 Make:16 Model:297 Part:296 (Air Cleaner Engine)
+DEBUG: Lookup Input - Year:1990 Make:6 Model:48 Part:296 (Air Cleaner Engine)
+DEBUG: Inventory Records Found: 0
+DEBUG: Catalog Valid Codes: 0
+DEBUG: Lookup Input - Year:2013 Make:16 Model:297 Part:296 (Air Cleaner Engine)
+DEBUG: Inventory Records Found: 0
+DEBUG: Catalog Valid Codes: 115
+DEBUG: Target Name: Air Cleaner Engine
+DEBUG: Exact Ref Matches: 0
+DEBUG: Contains Ref Matches: 0
+DEBUG: Target Codes: set()
+DEBUG: Lookup Input - Year:1990 Make:6 Model:53 Part:97 (Engine Assembly)
+DEBUG: Inventory Records Found: 0
+DEBUG: Catalog Valid Codes: 126
+DEBUG: Target Name: Engine Assembly
+DEBUG: Exact Ref Matches: 1
+DEBUG: Target Codes: {'300'}
+DEBUG: Querying Index with Keys: ['325i', '80', 'BMW 325i']
+DEBUG: Code 300 Matches: 1
+DEBUG: Lookup Input - Year:2013 Make:16 Model:297 Part:97 (Engine Assembly)
+DEBUG: Inventory Records Found: 0
+DEBUG: Catalog Valid Codes: 115
+DEBUG: Target Name: Engine Assembly
+DEBUG: Exact Ref Matches: 1
+DEBUG: Target Codes: {'300'}
+DEBUG: Querying Index with Keys: ['Taurus', '315', 'TAURUS']
+DEBUG: Code 300 Matches: 1

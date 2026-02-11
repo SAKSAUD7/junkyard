@@ -1,0 +1,32 @@
+import psycopg2
+
+# Azure Connection
+DB_HOST = "junk.postgres.database.azure.com"
+DB_USER = "junkyard_admin"
+DB_PASSWORD = "saksaud@7411"
+DB_NAME = "junkyard"
+
+try:
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, sslmode="require")
+    cur = conn.cursor()
+    
+    linkage_tables = [
+        'hollander_yard_make',
+        'hollander_yard_part',
+        'hollander_interchange'
+    ]
+    
+    print("\n🔍 Linkage Table Status (Azure):")
+    print("-" * 50)
+    for table in linkage_tables:
+        try:
+            cur.execute(f'SELECT count(*) FROM "{table}"')
+            count = cur.fetchone()[0]
+            print(f"{table:<25}: {count:,} rows")
+        except Exception as e:
+            print(f"{table:<25}: ERROR - {e}")
+            conn.rollback()
+            
+    conn.close()
+except Exception as e:
+    print(f"Connection failed: {e}")

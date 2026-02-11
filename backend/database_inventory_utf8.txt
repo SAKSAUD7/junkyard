@@ -1,0 +1,55 @@
+﻿================================================================================
+LOCAL DATABASE INVENTORY - What Will Be Migrated
+================================================================================
+admin.logentry                                             24
+auth.permission                                           236
+contenttypes.contenttype                                   59
+sessions.session                                            5
+token_blacklist.outstandingtoken                           71
+token_blacklist.blacklistedtoken                           50
+users.user                                              1,858
+users.vendorprofile                                     1,852
+leads.lead                                                 33
+leads.vendorlead                                            6
+hollander.make                                             56
+hollander.model                                         1,293
+hollander.parttype                                        378
+hollander.vendor                                        6,567
+hollander.yardmake                                     69,916
+hollander.yardpart                                    347,404
+hollander.partpricing                                 576,943
+hollander.hollandermakemodelref                         1,252
+hollander.hollanderpartref                                315
+hollander.hollanderindex                            1,649,379
+hollander.vehicleimage                                  2,820
+hollander.state                                            68
+hollander.zipcode                                     924,270
+hollander.vendorrating                                  2,799
+hollander.vendordetail                                    103
+hollander.vendorhours                                     666
+hollander.association                                      57
+hollander.legacyaccount                                 6,702
+hollander.legacyuser                                    2,540
+hollander.country                                           2
+hollander.presetmake                                        4
+hollander.presetmakeitem                                   64
+hollander.presetpart                                       13
+hollander.presetpartitem                                  249
+hollander.presetlocation                                    2
+hollander.presetlocationitem                               13
+hollander.presetvehicle                                     1
+hollander.presetvehicleitem                                 4
+hollander.profilevisit                              1,250,341
+common.make                                                54
+common.model                                              597
+common.part                                               111
+common.state                                               58
+common.city                                               793
+common.contactmessage                                       1
+ads.advertisement                                           4
+yard_submissions.yardsubmission                             1
+vendor_portal.vendorinventory                               3
+vendor_portal.vendornotification                       25,088
+================================================================================
+TOTAL RECORDS                                       4,875,125
+================================================================================

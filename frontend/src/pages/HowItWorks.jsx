@@ -1,0 +1,219 @@
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import SEO from '../components/SEO';
+
+const HowItWorks = () => {
+    const navigate = useNavigate();
+
+    // Scroll to top when page loads
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    const steps = [
+        {
+            number: '01',
+            title: 'Tell Us What You Need',
+            description: 'Fill out our simple form with your vehicle details (make, model, year) and the specific part you\'re looking for. Add your contact information and location.',
+            icon: (
+                <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            )
+        },
+        {
+            number: '02',
+            title: 'We Connect You with Junkyards',
+            description: 'Your request is instantly sent to our network of verified junkyards and auto salvage yards in your area. No need to call around - we do the work for you.',
+            icon: (
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            )
+        },
+        {
+            number: '03',
+            title: 'Receive Quotes Directly',
+            description: 'Junkyards with your part in stock will contact you directly with pricing, availability, and shipping options. Compare offers and choose the best deal.',
+            icon: (
+                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            )
+        },
+        {
+            number: '04',
+            title: 'Get Your Part',
+            description: 'Purchase directly from the junkyard of your choice. Arrange pickup or shipping, and get your quality used part at a fraction of the cost of new.',
+            icon: (
+                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+            )
+        }
+    ];
+
+    const benefits = [
+        {
+            title: 'Save Time',
+            description: 'No more calling dozens of junkyards. One form reaches them all.',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            )
+        },
+        {
+            title: 'Save Money',
+            description: 'Compare prices from multiple vendors to get the best deal on quality used parts.',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            )
+        },
+        {
+            title: 'Verified Vendors',
+            description: 'All junkyards in our network are verified and rated by real customers.',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            )
+        },
+        {
+            title: '100% Free',
+            description: 'Our service is completely free for buyers. No hidden fees, ever.',
+            icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
+            )
+        }
+    ];
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
+            {/* SEO Meta Tags */}
+            <SEO
+                title="How It Works - Find Used Auto Parts in 4 Easy Steps"
+                description="Learn how to find quality used auto parts through our network of verified junkyards. Simple 4-step process: Tell us what you need, we connect you with vendors, receive quotes, get your part."
+            />
+
+            <Navbar />
+
+            {/* Hero Section - Compact */}
+            <div className="relative compact-section overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
+                {/* Background Details */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+
+                {/* Glow Effects */}
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-400/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full mb-8">
+                        <span className="text-white font-bold">SIMPLE PROCESS</span>
+                        <span className="text-white/50">|</span>
+                        <span className="text-white/90 text-sm">Find parts in minutes</span>
+                    </div>
+
+                    <h1 className="compact-hero font-black text-white mb-2 sm:mb-3 md:mb-4 tracking-tight px-2">
+                        How It <span className="text-white underline decoration-teal-400 decoration-4 underline-offset-4">Works</span>
+                    </h1>
+
+                    <p className="compact-heading text-white/90 font-light max-w-3xl mx-auto mb-4 sm:mb-6 md:mb-8 px-2">
+                        Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide - no more endless phone calls or wasted time.
+                    </p>
+                </div>
+            </div>
+
+            {/* Steps Grid - Compact */}
+            <div className="relative compact-section">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 compact-gap">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 via-purple-500/30 to-green-500/30 z-0"></div>
+
+                        {steps.map((step, index) => (
+                            <div key={index} className="group">
+                                <div className="bg-white border border-gray-200 rounded-2xl compact-card hover:shadow-xl hover:border-blue-300 transition-all duration-500 h-full hover:-translate-y-1">
+                                    {/* Number Circle */}
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-xl flex items-center justify-center mb-3 sm:mb-4 md:mb-6 shadow-md group-hover:scale-110 group-hover:border-blue-400 transition-all duration-500 mx-auto relative">
+                                        <div className="absolute inset-0 bg-blue-400/10 blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                                        <span className="compact-title font-bold text-gray-900 group-hover:text-blue-600 transition-colors relative z-10">{step.number}</span>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="text-center">
+                                        <div className="inline-flex p-1.5 sm:p-2 md:p-3 rounded-lg md:rounded-xl bg-blue-50 mb-2 sm:mb-3 md:mb-4 group-hover:bg-blue-100 transition-colors">
+                                            {step.icon}
+                                        </div>
+                                        <h3 className="compact-heading font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                                            {step.title}
+                                        </h3>
+                                        <span className="text-gray-600 leading-relaxed compact-text">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Benefits Section - Compact */}
+            <div className="relative compact-section">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <div className="text-center mb-4 sm:mb-6 md:mb-8">
+                        <h2 className="compact-title font-black text-gray-900 mb-2">
+                            Why Use <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">JYNM</span>?
+                        </h2>
+                        <p className="text-gray-600 compact-text max-w-2xl mx-auto px-2">
+                            We make finding used auto parts simple, fast, and affordable.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 compact-gap">
+                        {benefits.map((benefit, index) => (
+                            <div key={index} className="bg-white border border-gray-200 rounded-2xl compact-card hover:shadow-lg transition-all duration-300">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-blue-100 text-blue-600 rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                                    {benefit.icon}
+                                </div>
+                                <h3 className="compact-heading font-bold text-gray-900 mb-1.5">{benefit.title}</h3>
+                                <p className="text-gray-600 leading-relaxed compact-text">{benefit.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* CTA Section - Compact */}
+            <div className="relative compact-section">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <div className="bg-gradient-to-br from-blue-600 to-teal-600 text-white border border-white/10 rounded-2xl compact-card relative overflow-hidden text-center shadow-2xl">
+                        <div className="absolute inset-0 bg-white/10 blur-3xl"></div>
+                        <div className="relative z-10">
+                            <h2 className="compact-title font-bold text-white mb-2">Ready to Find Your Part?</h2>
+                            <p className="text-white/90 compact-text mb-4 sm:mb-6 max-w-2xl mx-auto px-2">
+                                Join thousands of satisfied customers who found their parts through our network of trusted junkyards.
+                            </p>
+                            <button
+                                onClick={() => navigate('/')}
+                                className="bg-white text-blue-600 hover:bg-blue-50 font-bold px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-lg md:rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 compact-text"
+                            >
+                                Get Started - It's Free →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
+        </div>
+    );
+};
+
+export default HowItWorks;

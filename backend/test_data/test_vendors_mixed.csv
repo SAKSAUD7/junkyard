@@ -1,0 +1,10 @@
+Vendor Name,Email,Phone,Address,City,State,Zip Code,Status,Featured,Top Rated,Description,Rating
+Good Vendor,valid@test.com,5551234567,123 Test St,Phoenix,AZ,85001,Active,Yes,No,Valid vendor entry,5
+Bad Email,invalid-email,5552223344,456 Oak Ave,Tucson,AZ,85701,Active,No,No,Invalid email format,4
+Bad Phone,another@test.com,123,789 Pine Rd,Mesa,AZ,85201,Active,No,No,Invalid phone number,3
+Bad Zip,test@example.com,5554445566,321 Elm Blvd,Chandler,XX,ABCDE,Active,No,No,Invalid zip code,5
+Missing City,missing@test.com,5556667788,654 Maple Dr,,AZ,85250,Active,No,No,City is required,4
+Invalid Status,status@test.com,5558889999,111 Park Ln,Tempe,AZ,85281,Maybe,No,No,Status must be Active or Inactive,5
+Bad Rating,rating@test.com,5553332222,222 Hill St,Gilbert,AZ,85296,Active,No,No,Invalid rating value,10
+Valid Again,success@test.com,5557778888,333 Lake Rd,Peoria,AZ,85345,Inactive,No,Yes,Another valid entry,4
+Bad State,state@test.com,5559991111,444 River Dr,Glendale,XYZ,85301,Active,No,No,Invalid state code,3

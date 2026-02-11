@@ -1,0 +1,41 @@
+Total Records: 1649379
+----------------------------------------
+GMC: 373238
+Ford: 177982
+Chrysler: 148527
+BMW: 93844
+TY: 87302
+Nissan: 77506
+MB: 72307
+VW: 52594
+Audi: 49079
+Lexus: 48991
+MZ: 47099
+HA: 40742
+JP: 34005
+MU: 30825
+VL: 30771
+Hyundai: 30253
+Kia: 27550
+Suzuki: 25802
+VA: 25478
+IF: 23114
+PR: 21594
+Jaguar: 19988
+RV: 16902
+Isuzu: 13320
+SZ: 13022
+Saturn: 12148
+AMC: 9022
+Fiat: 6267
+CO: 5744
+Alfa Romeo: 5523
+Scion: 5292
+BL: 5245
+Peugeot: 4862
+Renault: 4766
+GN: 2942
+Infiniti: 2398
+DW: 1859
+DH: 914
+Yugo: 562

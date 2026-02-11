@@ -1,0 +1,4760 @@
+[
+    {
+        "cityName": "Scranton",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Manassas",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "House",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brookings",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Phoenix",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 11
+    },
+    {
+        "cityName": "Barnhart",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Imperial",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gladewater",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Philadelphia",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Olanta",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jose",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Olyphant",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Jacksonville",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Winnebago",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springs",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wichita",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Vegas",
+        "state": "NV",
+        "stateFull": "Nevada",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Kennedale",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Freehold",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Portland",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Toledo",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Holland",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sacramento",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Valley",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 6
+    },
+    {
+        "cityName": "Brooklyn",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 6
+    },
+    {
+        "cityName": "Louisville",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Howard",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lexington",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Berea",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cleveland",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Alliance",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Perris",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Winnemucca",
+        "state": "NV",
+        "stateFull": "Nevada",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kirtland",
+        "state": "NM",
+        "stateFull": "New Mexico",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Apopka",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springfield",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Nacogdoches",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Locka",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Robles",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dallas",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Thorpe",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lakeland",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Austintown",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rock",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Avenel",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Evansville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Houston",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 7
+    },
+    {
+        "cityName": "Columbus",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fridley",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ypsilanti",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Joliet",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Ridgewood",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Medford",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Orlando",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Dunellen",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Island",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Aberdeen",
+        "state": "SD",
+        "stateFull": "South Dakota",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Morganville",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Abilene",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Diego",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Park",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Seattle",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Hull",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bristol",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Maspeth",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bay",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Valley",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Goodlettsville",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Providence",
+        "state": "RI",
+        "stateFull": "Rhode Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Macon",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Prosperity",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Oxnard",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Rosa",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Greenville",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marshalltown",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Paul",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Barberton",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Massapequa",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cordova",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 9
+    },
+    {
+        "cityName": "Tatum",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Martinsville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chicago",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Tannersville",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Calgary",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Aurora",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Christiansburg",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Winnipeg",
+        "state": "MB",
+        "stateFull": "Manitoba",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Mesquite",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Creek",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jefferson",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Christi",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "City",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 7
+    },
+    {
+        "cityName": "Thomaston",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Albuquerque",
+        "state": "NM",
+        "stateFull": "New Mexico",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Patchogue",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Vancouver",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Titusville",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chester",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pittsburg",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Worth",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Cannelton",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springfield",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Auburndale",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Midvale",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lawrenceburg",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lewisberry",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cincinnati",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lake",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brook",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pulaski",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Angeles",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Colton",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Antonio",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Way",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Glendale",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Seffner",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gilbert",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Nuys",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Landing",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Moines",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Green",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kearney",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Middletown",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Tuscola",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Andover",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Plains",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ontario",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Basin",
+        "state": "WY",
+        "stateFull": "Wyoming",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Callaway",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gardena",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Beach",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Lee",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Georgetown",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wilmington",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Effingham",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Merrillville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Biloxi",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Britain",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tucson",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Hartman",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ferndale",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Iddletown",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Saginaw",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Tallahassee",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jordan",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Prairie",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Williamstown",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Roseville",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Paterson",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Decatur",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elizabethton",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Shelby",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Shreveport",
+        "state": "LA",
+        "stateFull": "Louisiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Manchester",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Douglas",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ladson",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Woodstock",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lauderdale",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Mobile",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Danville",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Charlotte",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "City",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Palmetto",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Springs",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "George",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Albany",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hines",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Leesburg",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Louis",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springfield",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ravenna",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Zion",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fairdale",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rapids",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cape",
+        "state": "NB",
+        "stateFull": "New Brunswick",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bradenton",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lexington",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "SD",
+        "stateFull": "South Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "River",
+        "state": "NB",
+        "stateFull": "New Brunswick",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dartmouth",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valley",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mooresville",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Platte",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Palatka",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Seagoville",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hyattsville",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bedford",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Bluff",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Wilder",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Trenton",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Heights",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Beloit",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Danville",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spokane",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Cumberland",
+        "state": "RI",
+        "stateFull": "Rhode Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Courtice",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Calera",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Newcastle",
+        "state": "WY",
+        "stateFull": "Wyoming",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brusly",
+        "state": "LA",
+        "stateFull": "Louisiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gibsonia",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Irving",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Trafford",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Billings",
+        "state": "MT",
+        "stateFull": "Montana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Milan",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Miami",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Saxton",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tavares",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dubuque",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tanner",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valrico",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Memphis",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Center",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bomoseen",
+        "state": "VT",
+        "stateFull": "Vermont",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Greenville",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sunset",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mechanicsvlle",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Portsmouth",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westville",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pensacola",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Sanford",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Bernstadt",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Decatur",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sheridan",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tulsa",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Hocking",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Edina",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sarasota",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Burnet",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Biglerville",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ridgely",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Booneville",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Atlanta",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Magnolia",
+        "state": "DE",
+        "stateFull": "Delaware",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cadott",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Park",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 6
+    },
+    {
+        "cityName": "Akron",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Arlington",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Garner",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fredericton",
+        "state": "NB",
+        "stateFull": "New Brunswick",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Bangor",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Middletown",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Fitzwilliam",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fairmont",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Candia",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Clara",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Greenville",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gap",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cincinnati",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Armington",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rochester",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Union",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Belvoir",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Savannah",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ridge",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Columbus",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Lewiston",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Botwood",
+        "state": "NL",
+        "stateFull": "Newfoundland And Labrador",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tullahoma",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Metairie",
+        "state": "LA",
+        "stateFull": "Louisiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Frisco",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Knoxville",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Orange",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dayton",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Waterloo",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Lawton",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Osceola",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valley",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Batesville",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marinette",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Waxahachie",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Southington",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bridgewater",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Aurora",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hinton",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Laurinburg",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elder",
+        "state": "SD",
+        "stateFull": "South Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Melbourne",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Norfolk",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Braunfels",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cocoa",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Memphis",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Isle",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flint",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westminster",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Uncasville",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Plains",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bristol",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "NL",
+        "stateFull": "Newfoundland And Labrador",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Harrison",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hartford",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Farmington",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bayville",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mesa",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chandler",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Aurora",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Blackstone",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Kingsville",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lithonia",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marysville",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Frankfort",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Beloit",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sullivan",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Francesville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Culpeper",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cumberland",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rustburg",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Albert",
+        "state": "SK",
+        "stateFull": "Saskatchewan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bellport",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Richmond",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cicero",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mossbank",
+        "state": "SK",
+        "stateFull": "Saskatchewan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kennewick",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westbend",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Milan",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marlborough",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Carp",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Corbin",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Detroit",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Mount",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Williamsport",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gap",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spicer",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lebanon",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Portageville",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dunmore",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Holly",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Greenwood",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fayetteville",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pemberton",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Southfield",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Caldwell",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Picayune",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Montreal",
+        "state": "QC",
+        "stateFull": "Quebec",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elberton",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Washington",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wilmington",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Walton",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Deland",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bryan",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hospital",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fredericksburg",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Atkins",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pavilion",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Forest",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Leominster",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Angelo",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Portsmouth",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Higganum",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marble",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springfield",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Winnona",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Seaford",
+        "state": "DE",
+        "stateFull": "Delaware",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westlock",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Grove",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lindenhurst",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lake",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "City",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lafayette",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Milwaukee",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "York",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Alpharetta",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jessup",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Athens",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Moultrie",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Powell",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cumming",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Newport",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brockton",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Worcester",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spring",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mancelona",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Surrey",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "MT",
+        "stateFull": "Montana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Baltimore",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Falls",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Fergus",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hamilton",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cabot",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mboro",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ridgeley",
+        "state": "WV",
+        "stateFull": "West Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westtown",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Montgomery",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lynnwood",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Barrington",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Joplin",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 4
+    },
+    {
+        "cityName": "Gastonia",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Frederic",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Effingham",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Annandale",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springs",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Floyd",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chesterfield",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Longview",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gainesville",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Oneida",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Arundel",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jamestown",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hardwick",
+        "state": "VT",
+        "stateFull": "Vermont",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Buffalo",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Mantua",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Rockford",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Tiverton",
+        "state": "RI",
+        "stateFull": "Rhode Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ignace",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Toronto",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "City",
+        "state": "ND",
+        "stateFull": "North Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Eugene",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Columbia",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pasadena",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Goldsboro",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ahoskie",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bedford",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Liberty",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Axton",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lakeside",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flatgap",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Colburn",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bellingham",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Narvon",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Hanover",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Place",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Indianapolis",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Clinton",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Harrison",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Hayward",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fargo",
+        "state": "ND",
+        "stateFull": "North Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hazleton",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Arley",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sidney",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hickman",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "George",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Trenton",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fayetteville",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Timbo",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dover",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hill",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tyler",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Angelton",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gadsden",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Denver",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 5
+    },
+    {
+        "cityName": "Hope",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rouge",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rapids",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gary",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Abbotsford",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marion",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pass",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Fairbanks",
+        "state": "AK",
+        "stateFull": "Alaska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rigby",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Glencoe",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Schenectady",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fork",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Center",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Billerica",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Charleston",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Dandridge",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Center",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Woodridge",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Portland",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Salisbury",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pelham",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Westminster",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hatton",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Saxonburg",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ringold",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Linden",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jackson",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Howell",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elizabethtown",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Harmony",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Blaine",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Piermont",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Magnolia",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Orleans",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Madisonville",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marion",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Somerville",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Flemingsburg",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sussex",
+        "state": "NB",
+        "stateFull": "New Brunswick",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Girardeau",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "York",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Malden",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Island",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Church",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Morrisville",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Farm",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Graham",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Yadkinville",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dover",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ontario",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kankakee",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Larksville",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Canton",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Osceola",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kingston",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kewaskum",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bronx",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Centennial",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tamaqua",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Owensboro",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Omaha",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 3
+    },
+    {
+        "cityName": "Wendell",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Woodhull",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Newark",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Township",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sumrall",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Holland",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Holland",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valley",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Oxford",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lawrence",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sophie",
+        "state": "QC",
+        "stateFull": "Quebec",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Evington",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Doon",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flemington",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Laval",
+        "state": "QC",
+        "stateFull": "Quebec",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pk",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Richmond",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ardmore",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Creek",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Parryville",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Orange",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Frankewing",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lowell",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lubbock",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lincoln",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Stafford",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Topeka",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Woodburn",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Auburn",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ellendale",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Murfreesboro",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "48089",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Louis",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Waterford",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Victoria",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Smithton",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mattawan",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lethbridge",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Freeland",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Beaverton",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Donough",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pueblo",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elizabethtown",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rockville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Graham",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Charleroi",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valparaiso",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Baldwin",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bernardino",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Centereach",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fraser",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Summit",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Midland",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gosport",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Wayne",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kingston",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mims",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bluffs",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lawndale",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flowood",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sikeston",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Glenmoore",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Homestead",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "SD",
+        "stateFull": "South Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Moraine",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jacksonville",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bakersfield",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Westbury",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Whitehall",
+        "state": "MT",
+        "stateFull": "Montana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Altoona",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Beaufort",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bensalem",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Carmel",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lancaster",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Terrebonne",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Needles",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Castle",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Queens",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Edgerton",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Hills",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Edmonton",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Neenah",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Johns",
+        "state": "NL",
+        "stateFull": "Newfoundland And Labrador",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Garreston",
+        "state": "SD",
+        "stateFull": "South Dakota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Andover",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Smithfield",
+        "state": "RI",
+        "stateFull": "Rhode Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Leslie",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Conneut",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "River",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Covington",
+        "state": "LA",
+        "stateFull": "Louisiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tempe",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Stevens",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lake",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Junction",
+        "state": "VT",
+        "stateFull": "Vermont",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Felton",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Richland",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chouteau",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Roanoke",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Phillipston",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lincoln",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Louis",
+        "state": "PE",
+        "stateFull": "Prince Edward Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Oakville",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Gresham",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Maybee",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Canyon",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Elkton",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ravenel",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kitchner",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Parsons",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marysville",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Soldier",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Coombs",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Plainwell",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Summertown",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jenison",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Zelienople",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Shore",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wadsworth",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fairmont",
+        "state": "WV",
+        "stateFull": "West Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Paris",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mishawaka",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bloomfield",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Muskogee",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lacombe",
+        "state": "AB",
+        "stateFull": "Alberta",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sydney",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Catskill",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Marlboro",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cumberland",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Griffith",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springs",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Clarkston",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Peterborough",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Net",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Glenwood",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Boston",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Coffeyville",
+        "state": "KS",
+        "stateFull": "Kansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Byhalia",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lafayette",
+        "state": "TN",
+        "stateFull": "Tennessee",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Burnie",
+        "state": "MD",
+        "stateFull": "Maryland",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "City",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Raleigh",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lockport",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Claire",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flemington",
+        "state": "WV",
+        "stateFull": "West Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Park",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tampa",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Melbourne",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rhinelander",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Streator",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Gering",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Reedsport",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mooresboro",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lucama",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wareham",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pleasanton",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Flora",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Junction",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Grover",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Richmond",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Murray",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kenvil",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spanaway",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rae",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lea",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Roseboro",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lyndhurst",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Alma",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Deerfield",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Morton",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Boston",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Clay",
+        "state": "WV",
+        "stateFull": "West Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Salisbury",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Corona",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Henderson",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sanborn",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Torrance",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Mason",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Collins",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Greeley",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Seymour",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Stillwater",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pembroke",
+        "state": "NB",
+        "stateFull": "New Brunswick",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pocatello",
+        "state": "ID",
+        "stateFull": "Idaho",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Alberni",
+        "state": "BC",
+        "stateFull": "British Columbia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brainerd",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ellenboro",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Brewster",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ozark",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spring",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bend",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Columbia",
+        "state": "MO",
+        "stateFull": "Missouri",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Frenchtown",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bandon",
+        "state": "OR",
+        "stateFull": "Oregon",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ketchikan",
+        "state": "AK",
+        "stateFull": "Alaska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Greenview",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Louis",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Pearl",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Delcambre",
+        "state": "LA",
+        "stateFull": "Louisiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Vly",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Essex",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Norfolk",
+        "state": "NE",
+        "stateFull": "Nebraska",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Whittemore",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Noorcross",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Amboy",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Montgomery",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Falls",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Stockton",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Carleton",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Victorville",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Village",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rapids",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Weyauwega",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Olean",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lombard",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Tahlequah",
+        "state": "OK",
+        "stateFull": "Oklahoma",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cumberland",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chester",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Holiday",
+        "state": "FL",
+        "stateFull": "Florida",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wauseon",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ogden",
+        "state": "UT",
+        "stateFull": "Utah",
+        "junkyardCount": 2
+    },
+    {
+        "cityName": "Damascus",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Danville",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Somerset",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Fyffe",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Bowersville",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Inn",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Springs",
+        "state": "NY",
+        "stateFull": "New York",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Grande",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rapids",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Haverhill",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Kingman",
+        "state": "AZ",
+        "stateFull": "Arizona",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sabattus",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Waterbury",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Spartanburg",
+        "state": "SC",
+        "stateFull": "South Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rhoadesville",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Utopia",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Johns",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Monroe",
+        "state": "NC",
+        "stateFull": "North Carolina",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Chesapeake",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Cottondale",
+        "state": "AL",
+        "stateFull": "Alabama",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Park",
+        "state": "CA",
+        "stateFull": "California",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ipswich",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Suffolk",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Rushville",
+        "state": "IN",
+        "stateFull": "Indiana",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Norcross",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ottawa",
+        "state": "ON",
+        "stateFull": "Ontario",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Union",
+        "state": "NH",
+        "stateFull": "New Hampshire",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Jackson",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Woonsocket",
+        "state": "RI",
+        "stateFull": "Rhode Island",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Englewood",
+        "state": "CO",
+        "stateFull": "Colorado",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Uxbridge",
+        "state": "MA",
+        "stateFull": "Massachusetts",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Wayne",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Valdosta",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Warren",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Oskaloo",
+        "state": "IA",
+        "stateFull": "Iowa",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Waupun",
+        "state": "WI",
+        "stateFull": "Wisconsin",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Northfield",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Humboldt",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Topsfield",
+        "state": "ME",
+        "stateFull": "Maine",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Albany",
+        "state": "KY",
+        "stateFull": "Kentucky",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Warsaw",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Dover",
+        "state": "OH",
+        "stateFull": "Ohio",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Carnesville",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Lebanon",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Yakima",
+        "state": "WA",
+        "stateFull": "Washington",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Terryville",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Milford",
+        "state": "NJ",
+        "stateFull": "New Jersey",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Laurel",
+        "state": "DE",
+        "stateFull": "Delaware",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Collinsville",
+        "state": "IL",
+        "stateFull": "Illinois",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Nevada",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Ashdown",
+        "state": "AR",
+        "stateFull": "Arkansas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Austin",
+        "state": "TX",
+        "stateFull": "Texas",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Canon",
+        "state": "GA",
+        "stateFull": "Georgia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Starkville",
+        "state": "MS",
+        "stateFull": "Mississippi",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Meriden",
+        "state": "CT",
+        "stateFull": "Connecticut",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Midlothian",
+        "state": "VA",
+        "stateFull": "Virginia",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Newtown",
+        "state": "PA",
+        "stateFull": "Pennsylvania",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Oaks",
+        "state": "MI",
+        "stateFull": "Michigan",
+        "junkyardCount": 1
+    },
+    {
+        "cityName": "Sherburn",
+        "state": "MN",
+        "stateFull": "Minnesota",
+        "junkyardCount": 1
+    }
+]
