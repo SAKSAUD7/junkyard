@@ -10,3 +10,12 @@ gunicorn
 whitenoise
 django-storages[azure]
 ijson
+mssql-django
+
+django-storages[azure]
+
+django-storages[azure]
+
+django-storages[azure]
+
+django-storages[azure]

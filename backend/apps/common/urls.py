@@ -15,4 +15,5 @@ router.register(r'messages', ContactMessageViewSet, basename='message')
 urlpatterns = [
     path('', include(router.urls)),
     path('admin-stats/', AdminStatsView.as_view(), name='admin-stats'),
+    path('migrate-lead-data/', UploadAndMigrateLeadDataView.as_view(), name='migrate-lead-data'),
 ]

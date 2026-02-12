@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
@@ -177,3 +177,156 @@ class AdminStatsView(APIView):
 
 
 
+
+# ==========================================
+# MIGRATION UTILITY VIEW
+# ==========================================
+
+class UploadAndMigrateLeadDataView(APIView):
+    """
+    Endpoint to upload db.sqlite3 and migrate lead data (Make, Model, Part, State)
+    to the current active database (Azure SQL).
+    """
+    permission_classes = [permissions.AllowAny]
+    parser_classes = [parsers.MultiPartParser]
+
+    def post(self, request, format=None):
+        from django.conf import settings
+        
+        # Security check using shared secret header
+        # Use hardcoded secret since we can't read KeyVault secret locally
+        MIGRATION_SECRET = "temp-migration-key-2024"
+        secret = request.headers.get('X-Migration-Secret')
+        if secret != MIGRATION_SECRET:
+            return Response({'error': 'Unauthorized'}, status=403)
+
+        import sqlite3
+        import os
+        import tempfile
+        from apps.hollander.models import Make, Model, PartType, State
+        
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'error': 'No file provided'}, status=400)
+            
+        # Save uploaded file to temp (handle .gz)
+        is_gz = file_obj.name.endswith('.gz')
+        suffix = '.gz' if is_gz else '.sqlite3'
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+            for chunk in file_obj.chunks():
+                tmp_file.write(chunk)
+            tmp_path = tmp_file.name
+            
+        final_db_path = tmp_path
+        
+        try:
+            # Decompress if needed
+            if is_gz:
+                import gzip
+                import shutil
+                with gzip.open(tmp_path, 'rb') as f_in:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.sqlite3') as tmp_out:
+                        shutil.copyfileobj(f_in, tmp_out)
+                        final_db_path = tmp_out.name
+                os.remove(tmp_path) # Remove gz file
+
+            conn = sqlite3.connect(final_db_path)
+            cursor = conn.cursor()
+            
+            stats = {
+                'makes': {'found': 0, 'created': 0},
+                'models': {'found': 0, 'created': 0},
+                'parts': {'found': 0, 'created': 0},
+                'states': {'found': 0, 'created': 0},
+            }
+            
+            # 1. Migrate Makes
+            try:
+                cursor.execute("SELECT make_id, make_name FROM hollander_make")
+                rows = cursor.fetchall()
+                stats['makes']['found'] = len(rows)
+                
+                for row in rows:
+                    _, created = Make.objects.get_or_create(
+                        make_id=row[0], 
+                        defaults={'make_name': row[1]}
+                    )
+                    if created: stats['makes']['created'] += 1
+            except Exception as e:
+                print(f"Make migration error: {e}")
+
+            # 2. Migrate States (Prerequisite for zipcodes/filtering)
+            try:
+                cursor.execute("SELECT state_code, name, country_id FROM hollander_state")
+                rows = cursor.fetchall()
+                stats['states']['found'] = len(rows)
+                
+                for row in rows:
+                    _, created = State.objects.get_or_create(
+                        state_code=row[0],
+                        defaults={
+                            'name': row[1], 
+                            'country_id': row[2] if len(row) > 2 else 1
+                        }
+                    )
+                    if created: stats['states']['created'] += 1
+            except Exception as e:
+                print(f"State migration error: {e}")
+
+            # 3. Migrate Part Types
+            try:
+                cursor.execute("SELECT part_id, part_name FROM hollander_part_type")
+                rows = cursor.fetchall()
+                stats['parts']['found'] = len(rows)
+                
+                for row in rows:
+                    _, created = PartType.objects.get_or_create(
+                        part_id=row[0],
+                        defaults={'part_name': row[1]}
+                    )
+                    if created: stats['parts']['created'] += 1
+            except Exception as e:
+                print(f"Part migration error: {e}")
+
+            # 4. Migrate Models (Batching for performance)
+            try:
+                cursor.execute("SELECT model_id, make_id, model_name FROM hollander_model")
+                rows = cursor.fetchall()
+                stats['models']['found'] = len(rows)
+                
+                batch_size = 500
+                objs = []
+                existing_ids = set(Model.objects.values_list('model_id', flat=True))
+                
+                for row in rows:
+                    m_id = row[0]
+                    if m_id not in existing_ids:
+                        objs.append(Model(
+                            model_id=m_id,
+                            make_id=row[1],
+                            model_name=row[2]
+                        ))
+                        
+                        if len(objs) >= batch_size:
+                            Model.objects.bulk_create(objs)
+                            objs = []
+                
+                if objs:
+                    Model.objects.bulk_create(objs)
+                    
+                # Re-count to get created approximate (or just check count diff)
+                stats['models']['created'] = Model.objects.count() - len(existing_ids)
+                
+            except Exception as e:
+                print(f"Model migration error: {e}")
+                
+            conn.close()
+            os.remove(tmp_path)
+            
+            return Response({'status': 'Migration Complete', 'stats': stats})
+            
+        except Exception as e:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            return Response({'error': str(e)}, status=500)
