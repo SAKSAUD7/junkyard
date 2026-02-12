@@ -79,11 +79,30 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # CORS Configuration - Allow frontend to connect to backend
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001'
-).split(',')
+# Always include production frontend URL
+CORS_ALLOWED_ORIGINS = [
+    'https://witty-field-015b59200.6.azurestaticapps.net',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+]
+
+# Allow credentials for authentication
 CORS_ALLOW_CREDENTIALS = True
+
+# Allow all common headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Session and Cookie Settings for Cross-Origin Requests
 SESSION_COOKIE_SAMESITE = 'Lax'
@@ -95,11 +114,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'https://witty-field-015b59200.6.azurestaticapps.net',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
 
 # Email settings - SendGrid SMTP (Production)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
