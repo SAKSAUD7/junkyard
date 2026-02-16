@@ -1,9 +1,6 @@
 #!/bin/bash
 # Azure App Service startup script for Django application
 
-# Navigate to backend directory
-cd /home/site/wwwroot/backend
-
 # Run database migrations
 python manage.py migrate --noinput
 
