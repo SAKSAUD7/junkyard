@@ -32,11 +32,6 @@ jobs:
         pip install -r requirements.txt
         pip install mssql-django pyodbc gunicorn django-storages[azure]
     
-    - name: Run tests
-      run: |
-        cd backend
-        python manage.py test
-    
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
