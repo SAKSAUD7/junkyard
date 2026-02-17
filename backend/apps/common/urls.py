@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     MakeViewSet, ModelViewSet, PartViewSet,
-    StateViewSet, ContactMessageViewSet, AdminStatsView
+    StateViewSet, ContactMessageViewSet, AdminStatsView,
+    UploadAndMigrateLeadDataView
 )
 
 router = DefaultRouter()
