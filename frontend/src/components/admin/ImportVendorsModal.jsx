@@ -128,19 +128,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
         if (!uploadId) return;
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendors/import/${uploadId}/error_report/`,
-                {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }
-            );
-
-            if (!response.ok) {
-                console.error('Error downloading report:', response.statusText);
-                return;
-            }
-
-            const blob = await response.blob();
+            const blob = await api.vendorImport.downloadErrorReport(token, uploadId);
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;

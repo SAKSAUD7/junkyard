@@ -100,10 +100,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         if (zipValue.length === 5) {
             setLoadingZipcode(true)
             try {
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/zipcode/lookup/?zip=${zipValue}`
-                )
-                const data = await response.json()
+                const data = await api.lookupZipcode(zipValue)
 
                 if (data.found) {
                     setState(data.state)
@@ -132,10 +129,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         if (stateValue) {
             setLoadingZipcodes(true)
             try {
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/zipcodes/state/?state=${stateValue}`
-                )
-                const data = await response.json()
+                const data = await api.getZipcodesByState(stateValue)
 
                 if (data.zipcodes) {
                     setZipcodes(data.zipcodes)
@@ -180,10 +174,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         const fetchVehicleDataBulk = async () => {
             setLoadingVehicleData(true)
             try {
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/hollander/vehicle-data/${selectedMake}/`
-                )
-                const data = await response.json()
+                const data = await api.getVehicleDataBulk(selectedMake)
 
                 // Cache the entire dataset
                 setVehicleDataCache(data)
@@ -344,51 +335,30 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         const partObj = parts.find(p => p.partID === parseInt(selectedPart))
 
         // Determine endpoint and payload based on lead type
-        let endpoint, payload;
+        let payload;
 
-        if (leadType === 'vendor') {
-            // Vendor Lead - separate endpoint, no part fields
-            endpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendor-leads/`;
-            payload = {
-                make: makeObj ? makeObj.makeName : 'Unknown',
-                model: selectedModel,
-                year: parseInt(selectedYear),
-                name,
-                email,
-                phone,
-                state,
-                zip,
-                // Add vendor ID if context available? The legacy form might not expect it, 
-                // but usually vendor leads should account for WHO. 
-                // However, user asked to remove vendor-specific UI from home.
-                // If this is a generic 'find a vendor' lead, it goes to admin usually.
-            };
-        } else {
-            // Quality Auto Parts Lead - original endpoint
-            endpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/leads/`;
-            payload = {
-                make: makeObj ? makeObj.makeName : 'Unknown',
-                model: selectedModel,
-                year: parseInt(selectedYear),
-                part: partObj ? partObj.partName : 'Unknown',
-                lead_type: leadType,
-                name,
-                email,
-                phone,
-                state,
-                zip,
-                options: options || '',
-            };
-        }
+        payload = {
+            make: makeObj ? makeObj.makeName : 'Unknown',
+            model: selectedModel,
+            year: parseInt(selectedYear),
+            name,
+            email,
+            phone,
+            state,
+            zip,
+        };
 
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-
-            if (!response.ok) throw new Error('Failed to submit lead')
+            if (leadType === 'vendor') {
+                // Vendor Lead
+                await api.createVendorLead(payload)
+            } else {
+                // Quality Auto Parts Lead
+                payload.part = partObj ? partObj.partName : 'Unknown';
+                payload.lead_type = leadType;
+                payload.options = options || '';
+                await api.createLead(payload)
+            }
 
             setSubmitting(false)
             setIsSuccess(true)

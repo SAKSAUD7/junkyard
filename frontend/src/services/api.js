@@ -89,6 +89,11 @@ export const api = {
     return response.data;
   },
 
+  getVehicleDataBulk: async (makeId) => {
+    const response = await axiosInstance.get(`/hollander/vehicle-data/${makeId}/`);
+    return response.data;
+  },
+
   getStates: async () => {
     const response = await axiosInstance.get('/common/states/');
     return response.data;
@@ -96,6 +101,28 @@ export const api = {
 
   getCities: async () => {
     const response = await axiosInstance.get('/common/cities/');
+    return response.data;
+  },
+
+  // Hollander / ZipCode Search
+  searchPincodes: async (query) => {
+    const response = await axiosInstance.get('/hollander/pincodes/search/', {
+      params: { q: query }
+    });
+    return response.data;
+  },
+
+  lookupZipcode: async (zip) => {
+    const response = await axiosInstance.get('/hollander/zipcode/lookup/', {
+      params: { zip }
+    });
+    return response.data;
+  },
+
+  getZipcodesByState: async (state) => {
+    const response = await axiosInstance.get('/hollander/zipcodes/state/', {
+      params: { state }
+    });
     return response.data;
   },
 
@@ -121,9 +148,19 @@ export const api = {
     return true;
   },
 
+  submitYard: async (data) => {
+    const response = await axiosInstance.post('/yard-submissions/', data);
+    return response.data;
+  },
+
   // Leads
   createLead: async (data) => {
     const response = await axiosInstance.post('/leads/', data);
+    return response.data;
+  },
+
+  createVendorLead: async (data) => {
+    const response = await axiosInstance.post('/vendor-leads/', data);
     return response.data;
   },
 
@@ -212,6 +249,21 @@ export const api = {
   deleteAd: async (token, id) => {
     await axiosInstance.delete(`/ads/manage/${id}/`);
     return true;
+  },
+
+  // Part Pricing
+  getPartPricing: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `/part-pricing/${queryString ? `?${queryString}` : ''}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  },
+
+  exportPartPricing: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `/part-pricing/export_csv/${queryString ? `?${queryString}` : ''}`;
+    const response = await axiosInstance.get(url, { responseType: 'blob' });
+    return response.data;
   },
 
   // Message Management

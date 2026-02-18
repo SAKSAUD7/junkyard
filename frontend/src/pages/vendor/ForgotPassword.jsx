@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { vendorAuth } from '../../services/vendorApi';
 
 const VendorForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -15,23 +16,10 @@ const VendorForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/vendor/password-reset/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setSubmitted(true);
-            } else {
-                setError(data.error || 'Failed to send reset instructions');
-            }
+            await vendorAuth.requestPasswordReset(email);
+            setSubmitted(true);
         } catch (err) {
-            setError('Network error. Please try again.');
+            setError(err.response?.data?.error || 'Failed to send reset instructions');
             console.error('Password reset error:', err);
         } finally {
             setLoading(false);

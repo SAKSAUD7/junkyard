@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { api } from '../services/api'
 
 export default function PincodeSearch() {
     const [pincode, setPincode] = useState('')
@@ -33,14 +33,13 @@ export default function PincodeSearch() {
 
             setLoading(true)
             try {
-                const response = await axios.get(`http://localhost:8000/api/hollander/pincodes/search/`, {
-                    params: { q: pincode }
-                })
-                console.log('Pincode API Response:', response.data)
-                console.log('Number of suggestions:', response.data.length)
-                setSuggestions(response.data)
-                setShowDropdown(response.data.length > 0)
-                console.log('Show dropdown:', response.data.length > 0)
+                // Use centralized API service
+                const data = await api.searchPincodes(pincode)
+                console.log('Pincode API Response:', data)
+                console.log('Number of suggestions:', data.length)
+                setSuggestions(data)
+                setShowDropdown(data.length > 0)
+                console.log('Show dropdown:', data.length > 0)
             } catch (error) {
                 console.error('Error fetching pincodes:', error)
                 setSuggestions([])

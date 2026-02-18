@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import authService from '../../services/authService';
 import PasswordInput from '../PasswordInput';
 
 const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
@@ -95,17 +96,16 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
 
             console.log('Submitting registration:', { ...registrationData, password: '***', password2: '***' });
 
-            // Call registration API
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-            const response = await axios.post(`${API_URL}/api/auth/register/`, registrationData);
+            // Call registration API using authService
+            const data = await authService.register(registrationData);
 
-            console.log('Registration successful:', response.data);
+            console.log('Registration successful:', data);
 
-            // Store tokens and user data
-            const { user: userData, tokens } = response.data;
-            localStorage.setItem('access_token', tokens.access);
-            localStorage.setItem('refresh_token', tokens.refresh);
-            localStorage.setItem('user_data', JSON.stringify(userData));
+            // authService handles token storage in 'access_token', 'refresh_token', 'user'
+            // We also store 'user_data' to maintain compatibility with this component's expectations
+            if (data.user) {
+                localStorage.setItem('user_data', JSON.stringify(data.user));
+            }
 
             // Success message
             alert('Registration successful! Welcome to JYNM!');
