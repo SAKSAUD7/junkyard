@@ -47,6 +47,11 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Trust Azure's load balancer HTTPS forwarding
+# Azure App Service terminates SSL at the load balancer and forwards as HTTP internally
+# This tells Django to trust the X-Forwarded-Proto header from the load balancer
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 

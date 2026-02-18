@@ -22,17 +22,20 @@ class VendorSerializer(serializers.ModelSerializer):
     leads_count = serializers.SerializerMethodField()
 
     def get_logo(self, obj):
-        """Return absolute URL for logo - handles both Azure Blob Storage and local storage."""
+        """Return absolute HTTPS URL for logo - handles both Azure Blob Storage and local storage."""
         if not obj.logo:
             return None
-        # If it's already an absolute URL (Azure Blob Storage), return as-is
+        # Get the URL from the ImageField
         logo_url = obj.logo.url if hasattr(obj.logo, 'url') else str(obj.logo)
+        # If already an absolute URL (Azure Blob Storage), ensure HTTPS
         if logo_url.startswith('http'):
-            return logo_url
+            return logo_url.replace('http://', 'https://', 1)
         # Build absolute URL using request context
         request = self.context.get('request')
         if request:
-            return request.build_absolute_uri(logo_url)
+            absolute_url = request.build_absolute_uri(logo_url)
+            # Force HTTPS (Azure App Service terminates SSL at load balancer)
+            return absolute_url.replace('http://', 'https://', 1)
         return logo_url
 
     def get_username(self, obj):

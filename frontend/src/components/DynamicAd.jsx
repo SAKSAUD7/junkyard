@@ -16,20 +16,9 @@ export default function DynamicAd({ slot, page = 'all', templateOverride = null 
                 const results = data.results || data
 
                 if (results && results.length > 0) {
-                    // Process all ads with full image URLs
-                    const processedAds = results.map(ad => {
-                        let imageUrl = ad.image
-
-                        if (imageUrl && !imageUrl.startsWith('http')) {
-                            // Remove /api from the end of VITE_API_URL if present to get base URL
-                            const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
-                            imageUrl = `${baseUrl}${imageUrl}`
-                        }
-
-                        return { ...ad, image: imageUrl }
-                    })
-
-                    setAds(processedAds)
+                    // Backend now returns absolute HTTPS URLs for images
+                    // No URL construction needed - use as-is
+                    setAds(results)
                 }
             } catch (error) {
                 console.error("Failed to load ads", error)
