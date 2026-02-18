@@ -40,28 +40,18 @@ export default function AdminPartPricing() {
     const fetchPricing = async (pageNo) => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
+            const queryParams = {
                 page: pageNo,
                 page_size: 50,
-            });
+            };
 
             if (searchTerm) {
-                params.append('search', searchTerm);
+                queryParams.search = searchTerm;
             }
 
-            const response = await fetch(
-                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/part-pricing/?${params}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+            const data = await api.getPartPricing(queryParams);
 
-            if (!response.ok) throw new Error('Failed to fetch pricing data');
-
-            const data = await response.json();
+            // Response data is already JSON from api service
             setPricing(data.results || []);
             setTotalRecords(data.count || 0);
             setTotalPages(Math.ceil((data.count || 0) / 50));
@@ -75,21 +65,12 @@ export default function AdminPartPricing() {
     const handleExport = async () => {
         setExporting(true);
         try {
-            const params = new URLSearchParams();
-            if (searchTerm) params.append('search', searchTerm);
+            const queryParams = {};
+            if (searchTerm) queryParams.search = searchTerm;
 
-            const response = await fetch(
-                `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/part-pricing/export_csv/?${params}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
-                }
-            );
+            const blob = await api.exportPartPricing(queryParams);
 
-            if (!response.ok) throw new Error('Export failed');
-
-            const blob = await response.blob();
+            // Blob is returned directly
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;

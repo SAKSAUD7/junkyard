@@ -119,6 +119,11 @@ export const vendorAuth = {
     isAuthenticated: () => {
         return !!localStorage.getItem('vendor_access_token');
     },
+
+    requestPasswordReset: async (email) => {
+        const response = await axios.post(`${API_BASE_URL}/vendor/password-reset/`, { email });
+        return response.data;
+    },
 };
 
 // ============================================

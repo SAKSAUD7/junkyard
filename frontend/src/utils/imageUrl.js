@@ -5,6 +5,11 @@ export const getLogoUrl = (logoPath) => {
     if (logoPath.startsWith('http')) return logoPath;
     if (logoPath === '/images/logo-placeholder.png') return logoPath;
 
+    // If it's already a relative path starting with /media/
+    if (logoPath.startsWith('/media/')) {
+        return `${BASE_URL}${logoPath}`;
+    }
+
     // If it looks like a relative backend path (e.g. vendor_logos/...)
     // Or just a filename without leading slash
     if (logoPath.includes('vendor_logos/') || !logoPath.startsWith('/')) {

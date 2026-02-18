@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MobileAdBanner from '../components/MobileAdBanner';
 import axios from 'axios';
+import { api } from '../services/api';
 import SEO from '../components/SEO';
 
 export default function AddYardPage() {
@@ -252,19 +253,9 @@ export default function AddYardPage() {
                 }
             });
 
-            // Get authentication token
-            const token = localStorage.getItem('access_token');
-
-            await axios.post(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/`,
-                submitData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': token ? `Bearer ${token}` : ''
-                    }
-                }
-            );
+            // Call API using centralized service
+            // Token is handled by interceptor, Content-Type is auto-set for FormData
+            await api.submitYard(submitData);
 
             setSuccess(true);
         } catch (err) {
