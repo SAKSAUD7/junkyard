@@ -22,21 +22,22 @@ class VendorSerializer(serializers.ModelSerializer):
     leads_count = serializers.SerializerMethodField()
 
     def get_logo(self, obj):
-        """Return absolute HTTPS URL for logo - handles both Azure Blob Storage and local storage."""
+        """Return absolute HTTPS URL for logo - handles Azure Blob Storage and local storage."""
         if not obj.logo:
             return None
-        # Get the URL from the ImageField
-        logo_url = obj.logo.url if hasattr(obj.logo, 'url') else str(obj.logo)
-        # If already an absolute URL (Azure Blob Storage), ensure HTTPS
-        if logo_url.startswith('http'):
-            return logo_url.replace('http://', 'https://', 1)
-        # Build absolute URL using request context
+        # Use .name to get the raw stored string — NOT .url which re-wraps it via storage
+        logo_name = obj.logo.name if hasattr(obj.logo, 'name') else str(obj.logo)
+        # If already an absolute URL (Azure Blob Storage), return it directly
+        if logo_name.startswith('http://') or logo_name.startswith('https://'):
+            return logo_name.replace('http://', 'https://', 1)
+        # Build absolute URL using request context for relative paths
         request = self.context.get('request')
         if request:
-            absolute_url = request.build_absolute_uri(logo_url)
-            # Force HTTPS (Azure App Service terminates SSL at load balancer)
+            from django.conf import settings
+            media_url = settings.MEDIA_URL + logo_name.lstrip('/')
+            absolute_url = request.build_absolute_uri(media_url)
             return absolute_url.replace('http://', 'https://', 1)
-        return logo_url
+        return logo_name
 
     def get_username(self, obj):
         # Get the first associated vendor profile and return its username
