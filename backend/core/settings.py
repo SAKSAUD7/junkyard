@@ -113,6 +113,7 @@ CORS_ALLOW_HEADERS = [
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
+    'https://junkyard-api-dev.azurewebsites.net',
     'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
     'https://witty-field-015b59200.6.azurestaticapps.net',
     'http://localhost:3000',
