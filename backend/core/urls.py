@@ -35,6 +35,38 @@ def health_check(request):
     """Health check endpoint"""
     return JsonResponse({"status": "ok"})
 
+def db_check(request):
+    """Diagnostic endpoint - check DB connectivity and config"""
+    import os
+    from django.conf import settings
+    from django.db import connection, OperationalError
+    
+    db = settings.DATABASES.get('default', {})
+    engine = db.get('ENGINE', 'unknown')
+    host = db.get('HOST', '')
+    user = db.get('USER', '')
+    name = str(db.get('NAME', ''))
+    
+    result = {
+        "engine": engine,
+        "host": host[:20] + "..." if len(host) > 20 else host,
+        "user": user[:5] + "***" if len(user) > 5 else user,
+        "name": name[:30] + "..." if len(name) > 30 else name,
+        "db_env_set": bool(os.environ.get('DB_ENGINE')),
+        "secret_key_set": bool(os.environ.get('SECRET_KEY')),
+        "azure_key_set": bool(os.environ.get('AZURE_ACCOUNT_KEY')),
+    }
+    
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        result["db_connected"] = True
+    except Exception as e:
+        result["db_connected"] = False
+        result["db_error"] = str(e)[:200]
+    
+    return JsonResponse(result)
+
 def home(request):
     """Root home view"""
     return JsonResponse({
@@ -53,6 +85,7 @@ urlpatterns = [
     path("ads/<int:pk>/click/", AdClickView.as_view(), name="ad-click"),
     
     path("api/health/", health_check, name="health_check"),
+    path("api/db-check/", db_check, name="db_check"),
     path("api/auth/", include("apps.users.urls")),
     path("api/vendors/", include("apps.vendors.urls")),
     path("api/vendors/", include(vendors_router.urls)),  # Import endpoints
