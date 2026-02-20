@@ -46,15 +46,20 @@ def db_check(request):
     host = db.get('HOST', '')
     user = db.get('USER', '')
     name = str(db.get('NAME', ''))
+    port = db.get('PORT', '')
+    options = db.get('OPTIONS', {})
     
     result = {
         "engine": engine,
-        "host": host[:20] + "..." if len(host) > 20 else host,
-        "user": user[:5] + "***" if len(user) > 5 else user,
-        "name": name[:30] + "..." if len(name) > 30 else name,
+        "host": host[:40] + "..." if len(host) > 40 else host,
+        "user": user[:10] + "***" if len(user) > 10 else user,
+        "name": name[:40] + "..." if len(name) > 40 else name,
+        "port": port,
+        "sslmode": options.get('sslmode', 'not set'),
         "db_env_set": bool(os.environ.get('DB_ENGINE')),
         "secret_key_set": bool(os.environ.get('SECRET_KEY')),
         "azure_key_set": bool(os.environ.get('AZURE_ACCOUNT_KEY')),
+        "db_engine_env": os.environ.get('DB_ENGINE', '(not set)'),
     }
     
     try:
@@ -63,7 +68,7 @@ def db_check(request):
         result["db_connected"] = True
     except Exception as e:
         result["db_connected"] = False
-        result["db_error"] = str(e)[:200]
+        result["db_error"] = str(e)[:500]
     
     return JsonResponse(result)
 
