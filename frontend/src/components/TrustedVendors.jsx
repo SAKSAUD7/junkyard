@@ -72,12 +72,24 @@ export default function TrustedVendors() {
                                     {/* Vendor Logo - Compact */}
                                     <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-blue-50 rounded-md md:rounded-lg flex items-center justify-center mb-1.5 sm:mb-2 mx-auto group-hover:scale-105 transition-transform duration-200">
                                         {logoUrl ? (
-                                            <img src={logoUrl} alt={vendor.name} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain" />
-                                        ) : (
-                                            <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                                            </svg>
-                                        )}
+                                            <img
+                                                src={logoUrl}
+                                                alt={vendor.name}
+                                                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    e.target.nextSibling.style.display = 'block';
+                                                }}
+                                            />
+                                        ) : null}
+                                        <svg
+                                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-blue-600"
+                                            style={{ display: logoUrl ? 'none' : 'block' }}
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                        </svg>
                                     </div>
 
                                     {/* Vendor Name - Compact */}
