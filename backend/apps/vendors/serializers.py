@@ -22,22 +22,23 @@ class VendorSerializer(serializers.ModelSerializer):
     leads_count = serializers.SerializerMethodField()
 
     def get_logo(self, obj):
-        """Return absolute HTTPS URL for logo - handles Azure Blob Storage and local storage."""
+        """Return clean Azure Blob Storage URL for logo, bypassing Django storage URL generation."""
         if not obj.logo:
             return None
-        # Use .name to get the raw stored string — NOT .url which re-wraps it via storage
-        logo_name = obj.logo.name if hasattr(obj.logo, 'name') else str(obj.logo)
-        # If already an absolute URL (Azure Blob Storage), return it directly
-        if logo_name.startswith('http://') or logo_name.startswith('https://'):
-            return logo_name.replace('http://', 'https://', 1)
-        # Build absolute URL using request context for relative paths
+        # obj.logo.name holds the raw stored DB value (full Azure Blob URL or relative path)
+        # We MUST NOT call obj.logo.url as AzureStorage.url() re-encodes already-absolute URLs
+        raw = obj.logo.name if hasattr(obj.logo, 'name') and obj.logo.name else str(obj.logo)
+        if not raw:
+            return None
+        # Already an absolute URL — return directly (force https)
+        if raw.startswith('http://') or raw.startswith('https://'):
+            return raw.replace('http://', 'https://', 1)
+        # Relative path — build from request context
         request = self.context.get('request')
         if request:
-            from django.conf import settings
-            media_url = settings.MEDIA_URL + logo_name.lstrip('/')
-            absolute_url = request.build_absolute_uri(media_url)
+            absolute_url = request.build_absolute_uri('/' + raw.lstrip('/'))
             return absolute_url.replace('http://', 'https://', 1)
-        return logo_name
+        return raw
 
     def get_username(self, obj):
         # Get the first associated vendor profile and return its username

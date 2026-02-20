@@ -16,20 +16,21 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         read_only_fields = ['clicks', 'impressions', 'created_at', 'updated_at']
 
     def get_image(self, obj):
-        """Return absolute HTTPS URL for ad image."""
+        """Return clean Azure Blob Storage URL for image, bypassing Django storage URL generation."""
         if not obj.image:
             return None
-        # Use .name to get the raw stored string — NOT .url which re-wraps it via storage
-        image_name = obj.image.name if hasattr(obj.image, 'name') else str(obj.image)
-        # If already an absolute URL (Azure Blob Storage), return it directly
-        if image_name.startswith('http://') or image_name.startswith('https://'):
-            return image_name.replace('http://', 'https://', 1)
-        # Build absolute URL using request context for relative paths
+        # obj.image.name holds the raw stored DB value (full Azure Blob URL or relative path)
+        # We MUST NOT call obj.image.url as AzureStorage.url() re-encodes already-absolute URLs
+        raw = obj.image.name if hasattr(obj.image, 'name') and obj.image.name else str(obj.image)
+        if not raw:
+            return None
+        # Already an absolute URL — return directly (force https)
+        if raw.startswith('http://') or raw.startswith('https://'):
+            return raw.replace('http://', 'https://', 1)
+        # Relative path — build from request context
         request = self.context.get('request')
         if request:
-            from django.conf import settings
-            media_url = settings.MEDIA_URL + image_name.lstrip('/')
-            absolute_url = request.build_absolute_uri(media_url)
+            absolute_url = request.build_absolute_uri('/' + raw.lstrip('/'))
             return absolute_url.replace('http://', 'https://', 1)
-        return image_name
+        return raw
 
