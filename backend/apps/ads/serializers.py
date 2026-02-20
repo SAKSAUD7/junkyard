@@ -19,16 +19,17 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         """Return absolute HTTPS URL for ad image."""
         if not obj.image:
             return None
-        # Get the URL from the ImageField
-        image_url = obj.image.url if hasattr(obj.image, 'url') else str(obj.image)
-        # If already an absolute URL (Azure Blob Storage), ensure HTTPS
-        if image_url.startswith('http'):
-            return image_url.replace('http://', 'https://', 1)
-        # Build absolute URL using request context
+        # Use .name to get the raw stored string — NOT .url which re-wraps it via storage
+        image_name = obj.image.name if hasattr(obj.image, 'name') else str(obj.image)
+        # If already an absolute URL (Azure Blob Storage), return it directly
+        if image_name.startswith('http://') or image_name.startswith('https://'):
+            return image_name.replace('http://', 'https://', 1)
+        # Build absolute URL using request context for relative paths
         request = self.context.get('request')
         if request:
-            absolute_url = request.build_absolute_uri(image_url)
-            # Force HTTPS (Azure App Service terminates SSL at load balancer)
+            from django.conf import settings
+            media_url = settings.MEDIA_URL + image_name.lstrip('/')
+            absolute_url = request.build_absolute_uri(media_url)
             return absolute_url.replace('http://', 'https://', 1)
-        return image_url
+        return image_name
 
