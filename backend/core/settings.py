@@ -176,9 +176,17 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
+# Azure App Settings may have DB_ENGINE=mssql from old config, but DB is PostgreSQL.
+# Always use postgresql engine; mssql-django is not available on Azure Linux.
+_raw_engine = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
+if 'mssql' in _raw_engine.lower() or _raw_engine == 'mssql':
+    _db_engine = 'django.db.backends.postgresql'
+else:
+    _db_engine = _raw_engine
+
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'ENGINE': _db_engine,
         'NAME': os.environ.get('DB_NAME', BASE_DIR / "db.sqlite3"),
         'USER': os.environ.get('DB_USER', ''),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
@@ -186,7 +194,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
-        } if os.environ.get('DB_ENGINE') == 'django.db.backends.postgresql' else {},
+        } if os.environ.get('DB_HOST') else {},
     }
 }
 
