@@ -234,7 +234,11 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         setSelectedPart('')
     }, [selectedModel, vehicleDataCache])
 
+    // Loading state for the parts API fallback
+    const [loadingParts, setLoadingParts] = useState(false)
+
     // OPTIMIZED: Client-side filtering for Parts (NO API CALL - INSTANT)
+    // Falls back to api.getParts() if bulk cache has no parts for this year
     useEffect(() => {
         // Skip for Vendor type
         if (leadType === 'vendor') {
@@ -242,30 +246,61 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             return
         }
 
-        if (!vehicleDataCache || !selectedModel || !selectedYear) {
+        if (!selectedModel || !selectedYear) {
             setParts([])
             return
         }
 
-        // Find model in cache
-        const model = vehicleDataCache.models.find(
-            m => m.model_id === parseInt(selectedModel)
-        )
+        // Try to get parts from the bulk cache first (instant, no API call)
+        if (vehicleDataCache) {
+            const model = vehicleDataCache.models.find(
+                m => m.model_id === parseInt(selectedModel)
+            )
 
-        if (model && model.parts && model.parts[selectedYear]) {
-            // Map to expected format
-            const partsList = model.parts[selectedYear].map(p => ({
-                partID: p.part_id,
-                partName: p.part_name
-            }))
-            setParts(partsList)
-        } else {
-            setParts([])
+            if (model && model.parts && model.parts[selectedYear] && model.parts[selectedYear].length > 0) {
+                // Cache hit — map to expected format
+                const partsList = model.parts[selectedYear].map(p => ({
+                    partID: p.part_id,
+                    partName: p.part_name
+                }))
+                setParts(partsList)
+                setSelectedPart('')
+                return
+            }
         }
+
+        // Fallback: cache miss or empty — call the parts API directly
+        // This endpoint has wider matching (inventory + catalog + full PartType fallback)
+        const fetchPartsFromAPI = async () => {
+            setLoadingParts(true)
+            try {
+                const data = await api.getParts({
+                    make_id: selectedMake,
+                    model_id: selectedModel,
+                    year: selectedYear
+                })
+                if (data && data.length > 0) {
+                    const partsList = data.map(p => ({
+                        partID: p.partID,
+                        partName: p.partName
+                    }))
+                    setParts(partsList)
+                } else {
+                    setParts([])
+                }
+            } catch (err) {
+                console.error('Parts API fallback error:', err)
+                setParts([])
+            } finally {
+                setLoadingParts(false)
+            }
+        }
+
+        fetchPartsFromAPI()
 
         // Reset downstream
         setSelectedPart('')
-    }, [selectedYear, vehicleDataCache, selectedModel, leadType])
+    }, [selectedYear, vehicleDataCache, selectedModel, leadType, selectedMake])
 
 
     // OPTIMIZED: Auto-populate Hollander from cache (NO API CALL - INSTANT)
@@ -565,13 +600,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 <div className="space-y-0.5 md:space-y-1">
                                     <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
                                         4. Part <span className="text-blue-600">*</span>
-                                        {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                                        {(loadingVehicleData || loadingParts) && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
                                     </label>
                                     <select
                                         value={selectedPart}
                                         onChange={(e) => setSelectedPart(e.target.value)}
                                         className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
-                                        disabled={!selectedYear}
+                                        disabled={!selectedYear || loadingParts}
                                         required
                                     >
                                         <option value="">Select Part</option>

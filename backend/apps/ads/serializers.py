@@ -16,18 +16,34 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         read_only_fields = ['clicks', 'impressions', 'created_at', 'updated_at']
 
     def get_image(self, obj):
-        """Return correct image URL — combines MEDIA_URL from settings with stored relative path."""
+        """Return correct image URL using Django's storage backend (.url property).
+        
+        Works correctly with both Azure Blob Storage (production) and
+        local filesystem storage (development) without manual URL construction
+        that can cause double-encoding or 404 errors.
+        """
         if not obj.image:
             return None
-        # Read the raw stored name (e.g. 'ads/image.png' or full https:// URL)
-        raw = obj.image.name if hasattr(obj.image, 'name') and obj.image.name else str(obj.image)
-        if not raw:
-            return None
-        # If already an absolute URL, return directly (force https)
-        if raw.startswith('http://') or raw.startswith('https://'):
-            return raw.replace('http://', 'https://', 1)
-        # Relative path: combine with MEDIA_URL from settings (Azure Blob URL in production)
-        from django.conf import settings
-        media_url = settings.MEDIA_URL.rstrip('/')
-        return f"{media_url}/{raw.lstrip('/')}"
+        try:
+            # Use Django's storage backend to generate the correct URL.
+            # For AzureStorage this returns the full Azure Blob URL.
+            # For local storage this returns '/media/ads/...'
+            url = obj.image.url
+            if not url:
+                return None
+            # Ensure https in production (Azure returns https already, but be safe)
+            return url.replace('http://', 'https://', 1) if url.startswith('http://') else url
+        except Exception:
+            # Fallback: try raw name if .url fails
+            try:
+                raw = obj.image.name if hasattr(obj.image, 'name') and obj.image.name else str(obj.image)
+                if not raw:
+                    return None
+                if raw.startswith('http://') or raw.startswith('https://'):
+                    return raw.replace('http://', 'https://', 1)
+                from django.conf import settings
+                media_url = settings.MEDIA_URL.rstrip('/')
+                return f"{media_url}/{raw.lstrip('/')}"
+            except Exception:
+                return None
 
