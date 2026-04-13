@@ -547,6 +547,7 @@ export default function AdminVendors() {
                                                     <img
                                                         src={getLogoUrl(vendor.logo)}
                                                         alt=""
+                                                        loading="lazy"
                                                         className="h-full w-full object-contain p-1"
                                                         onError={(e) => { e.target.style.display = 'none'; }}
                                                     />

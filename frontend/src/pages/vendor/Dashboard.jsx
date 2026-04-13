@@ -140,6 +140,7 @@ const VendorDashboard = () => {
                                     <img
                                         src={getLogoUrl(dashboardData.vendor.logo)}
                                         alt={dashboardData.vendor.name}
+                                        loading="lazy"
                                         className="w-full h-full object-contain p-1.5"
                                         onError={(e) => {
                                             e.target.style.display = 'none';

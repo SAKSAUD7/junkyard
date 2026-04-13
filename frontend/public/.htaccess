@@ -1,41 +1,81 @@
-# SEO Preservation - 301 Redirects from Old Website
-# This file preserves all backlinks from junkyardsnearme.com legacy site
+# ==============================================================================
+# JUNKYARDSNEARME.COM — FULL 301 REDIRECT & SEO CONFIGURATION
+# Migration: PHP -> React SPA + Django API
+# ==============================================================================
 
-# Remove www redirect (old site used www.junkyardsnearme.com)
+Options -MultiViews
 RewriteEngine On
+
+# ─── 1. FORCE HTTPS (SSL) ───────────────────────────────────────────────────
+# Redirect all HTTP traffic to HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ─── 2. CANONICAL DOMAIN: FORCE NON-WWW ─────────────────────────────────────
+# The site uses the non-www version historically. Force all www to non-www.
 RewriteCond %{HTTP_HOST} ^www\.junkyardsnearme\.com [NC]
-RewriteRule ^(.*)$ https://junkyardsnearme.com/$1 [L,R=301]
+RewriteRule ^ https://junkyardsnearme.com%{REQUEST_URI} [L,R=301]
 
-# Redirect old vendor URLs to new format
-# Old: /junkyards/{state}/{id}-{vendor-name-slug}-{city}-{state}
-# New: /vendors/{id}
-RewriteRule ^junkyards/[^/]+/(\d+)-.*$ /vendors/$1 [R=301,L]
+# ─── 3. BLOG SUBDOMAIN REDIRECT ─────────────────────────────────────────────
+# If blog.junkyardsnearme.com points to this directory, redirect to /blog
+RewriteCond %{HTTP_HOST} ^blog\.junkyardsnearme\.com [NC]
+RewriteRule ^(.*)$ https://junkyardsnearme.com/blog/$1 [L,R=301]
 
-# Redirect old rating URLs to vendor pages
-# Old: /rate-junkyard/{id}-{vendor-name-slug}-{city}-{state}
-# New: /vendors/{id}
-RewriteRule ^rate-junkyard/(\d+)-.*$ /vendors/$1 [R=301,L]
+# ─── 4. LEGACY PHP CLEANUP & QUERY PARAM REMOVAL ────────────────────────────
+# Redirect old PHP files to root
+RewriteRule ^index\.php$ / [L,R=301]
+RewriteRule ^index\.html$ / [L,R=301]
 
-# Redirect old main vendor listing
-# Old: /junkyards or /junkyards?p={page}
-# New: /vendors or /vendors?p={page}
-RewriteRule ^junkyards$ /vendors [R=301,L,QSA]
+# Strip old PHP query strings like ?page_id= or ?id=
+RewriteCond %{QUERY_STRING} ^page_id=
+RewriteRule ^(.*)$ /$1? [L,R=301]
 
-# Redirect old location browsing
-# Old: /junkyards-by-location
-# New: /browse
-RewriteRule ^junkyards-by-location$ /browse [R=301,L]
+RewriteCond %{QUERY_STRING} ^id=
+RewriteRule ^(.*)$ /$1? [L,R=301]
 
-# Redirect old static pages
-# Old: /about-us
-# New: /about
-RewriteRule ^about-us$ /about [R=301,L]
+# ─── 5. HIGH-PRIORITY CANONICAL ROUTE ALIASES ───────────────────────────────
+# Fix old non-canonical aliases (React Router also handles these, but server-level 
+# 301s pass link equity much faster to Google).
+RewriteRule ^about/?$ /about-us [L,R=301]
+RewriteRule ^privacy/?$ /privacy-policy [L,R=301]
+RewriteRule ^terms/?$ /terms-and-conditions [L,R=301]
+RewriteRule ^vendors/?$ /junkyards [L,R=301]
+RewriteRule ^browse/?$ /junkyards-by-location [L,R=301]
 
-# Old: /terms-and-conditions
-# New: /terms
-RewriteRule ^terms-and-conditions$ /terms [R=301,L]
+# Map old admin registration to new get-listed page
+RewriteRule ^admin/register-junkyard/?$ /get-listed [L,R=301]
+RewriteRule ^add-yard/start/?$ /get-listed [L,R=301]
 
-# React Router - Serve index.html for all other routes
+# ─── 6. SECURITY HEADERS ────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Optional: HSTS (uncomment when confident SSL is perfectly stable)
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ─── 7. BROWSER CACHING FOR REACT STATIC ASSETS ─────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# ─── 8. DJANGO API PROXY (OPTIONAL) ─────────────────────────────────────────
+# If Django runs on a port locally (e.g. 8000), use ProxyPass.
+# (If Django is on a completely separate Azure service, ignore this section).
+# RewriteRule ^api/(.*)$ http://localhost:8000/api/$1 [P,L]
+
+# ─── 9. REACT SPA ROUTING FALLBACK ──────────────────────────────────────────
+# All remaining traffic goes to React's index.html, EXCEPT real files/dirs 
+# and the /api/ folder.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^ /index.html [L]
