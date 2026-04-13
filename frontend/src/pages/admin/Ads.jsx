@@ -129,12 +129,17 @@ export default function AdminAds() {
             fetchAds();
         } catch (error) {
             console.error('[Admin Ads] Save error:', error);
-            alert(error.message || 'Failed to save ad. Check console for details.');
+            // Show Django's detailed validation error (e.g. which field failed)
+            const detail = error.response?.data
+                ? JSON.stringify(error.response.data, null, 2)
+                : error.message;
+            alert('Save failed:\n' + detail);
         }
     };
 
     const handleEdit = (ad) => {
         setEditingAd(ad);
+        setSelectedFile(null); // Always reset so no stale file bleeds into this edit
         setFormData({
             title: ad.title,
             redirect_url: ad.redirect_url,
@@ -150,6 +155,8 @@ export default function AdminAds() {
         });
         if (ad.image) {
             setFilePreview(ad.image);
+        } else {
+            setFilePreview(null);
         }
         setShowModal(true);
     };
@@ -233,7 +240,7 @@ export default function AdminAds() {
                                                 <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">Video</span>
                                             </div>
                                         ) : (
-                                            <img src={ad.image} alt={ad.title} className="w-full h-full object-cover" />
+                                            <img src={ad.image} alt={ad.title} loading="lazy" className="w-full h-full object-cover" />
                                         )
                                     ) : (
                                         <div className="text-center">
@@ -355,7 +362,7 @@ export default function AdminAds() {
                                             {selectedFile?.type.startsWith('video/') || filePreview.endsWith('.mp4') ? (
                                                 <video src={filePreview} controls className="max-w-full h-auto rounded-lg mx-auto" />
                                             ) : (
-                                                <img src={filePreview} alt="Preview" className="max-w-full h-auto rounded-lg mx-auto" />
+                                                <img src={filePreview} alt="Preview" loading="lazy" className="max-w-full h-auto rounded-lg mx-auto" />
                                             )}
                                             <button
                                                 type="button"

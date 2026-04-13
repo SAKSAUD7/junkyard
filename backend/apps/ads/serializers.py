@@ -2,8 +2,21 @@ from rest_framework import serializers
 from .models import Advertisement
 
 
+class FlexibleImageField(serializers.ImageField):
+    """
+    ImageField that accepts both file uploads AND URL strings.
+    If a URL string is passed (e.g. the existing image URL), it's ignored
+    (treated as no-change) rather than raising a validation error.
+    """
+    def to_internal_value(self, data):
+        # If data is a string (URL), skip validation and return None (no change)
+        if isinstance(data, str):
+            return None
+        return super().to_internal_value(data)
+
+
 class AdvertisementSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    image = FlexibleImageField(required=False, allow_null=True)
 
     class Meta:
         model = Advertisement
@@ -15,19 +28,27 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['clicks', 'impressions', 'created_at', 'updated_at']
 
-    def get_image(self, obj):
-        """Return correct image URL — combines MEDIA_URL from settings with stored relative path."""
-        if not obj.image:
-            return None
-        # Read the raw stored name (e.g. 'ads/image.png' or full https:// URL)
-        raw = obj.image.name if hasattr(obj.image, 'name') and obj.image.name else str(obj.image)
-        if not raw:
-            return None
-        # If already an absolute URL, return directly (force https)
-        if raw.startswith('http://') or raw.startswith('https://'):
-            return raw.replace('http://', 'https://', 1)
-        # Relative path: combine with MEDIA_URL from settings (Azure Blob URL in production)
-        from django.conf import settings
-        media_url = settings.MEDIA_URL.rstrip('/')
-        return f"{media_url}/{raw.lstrip('/')}"
+    def update(self, instance, validated_data):
+        # If image came as None (URL string that was ignored), don't overwrite existing image
+        image = validated_data.get('image', None)
+        if 'image' in validated_data and image is None:
+            validated_data.pop('image')
+        return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if instance.image:
+            raw = instance.image.name if hasattr(instance.image, 'name') and instance.image.name else str(instance.image)
+            if raw:
+                if raw.startswith('http://') or raw.startswith('https://'):
+                    ret['image'] = raw.replace('http://', 'https://', 1)
+                else:
+                    request = self.context.get('request')
+                    if request:
+                        ret['image'] = request.build_absolute_uri(f'/media/{raw.lstrip("/")}')
+                    else:
+                        from django.conf import settings
+                        ret['image'] = f"{settings.MEDIA_URL.rstrip('/')}/{raw.lstrip('/')}"
+        else:
+            ret['image'] = None
+        return ret

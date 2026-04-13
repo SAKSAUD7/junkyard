@@ -7,6 +7,229 @@ import axios from 'axios';
 import { api } from '../services/api';
 import SEO from '../components/SEO';
 
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+function PaymentMethodCard({ method, icon, label, isSelected, onSelect }) {
+    return (
+        <div
+            onClick={() => onSelect(method)}
+            className={`relative cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 select-none
+                ${isSelected
+                    ? 'border-blue-500 bg-blue-50 shadow-lg shadow-blue-100'
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
+                }`}
+        >
+            {/* Radio indicator */}
+            <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200
+                ${isSelected
+                    ? 'border-blue-500 bg-blue-500'
+                    : 'border-gray-300 bg-white'
+                }`}>
+                {isSelected && (
+                    <div className="w-2 h-2 rounded-full bg-white" />
+                )}
+            </div>
+
+            <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all duration-200
+                    ${isSelected
+                        ? 'bg-blue-100'
+                        : 'bg-gray-100'
+                    }`}>
+                    {icon}
+                </div>
+                <div>
+                    <p className={`font-bold text-base transition-colors duration-200 ${isSelected ? 'text-blue-700' : 'text-gray-800'
+                        }`}>
+                        {label}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">Enter card details below</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function PaymentFormSection({ isVisible, cardDetails, onChange, errors }) {
+    const formatCardNumber = (val) => {
+        const digits = val.replace(/\D/g, '').slice(0, 16);
+        return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+    };
+    const formatExpiry = (val) => {
+        const digits = val.replace(/\D/g, '').slice(0, 4);
+        if (digits.length >= 3) return digits.slice(0, 2) + '/' + digits.slice(2);
+        return digits;
+    };
+
+    return (
+        <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${isVisible ? 'max-h-[700px] opacity-100 mt-5' : 'max-h-0 opacity-0'
+                }`}
+        >
+            <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl border border-blue-100 p-6">
+                <div className="flex items-center gap-2 mb-5">
+                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                    </div>
+                    <h3 className="font-bold text-gray-800 text-base">Card Details</h3>
+                </div>
+
+                <div className="space-y-4">
+                    {/* Card Number */}
+                    <div>
+                        <label className="block text-gray-700 font-semibold text-sm mb-2">Card Number *</label>
+                        <input
+                            type="text"
+                            value={cardDetails.cardNumber}
+                            onChange={(e) => onChange('cardNumber', formatCardNumber(e.target.value))}
+                            placeholder="1234 5678 9012 3456"
+                            maxLength={19}
+                            className={`w-full bg-white border rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all font-mono tracking-widest text-sm
+                                ${errors.cardNumber
+                                    ? 'border-red-400 focus:ring-red-200'
+                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
+                                }`}
+                        />
+                        {errors.cardNumber && <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>}
+                    </div>
+
+                    {/* Cardholder Name */}
+                    <div>
+                        <label className="block text-gray-700 font-semibold text-sm mb-2">Cardholder Name *</label>
+                        <input
+                            type="text"
+                            value={cardDetails.cardName}
+                            onChange={(e) => onChange('cardName', e.target.value)}
+                            placeholder="John Doe"
+                            className={`w-full bg-white border rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm
+                                ${errors.cardName
+                                    ? 'border-red-400 focus:ring-red-200'
+                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
+                                }`}
+                        />
+                        {errors.cardName && <p className="text-red-500 text-xs mt-1">{errors.cardName}</p>}
+                    </div>
+
+                    {/* Expiry + CVV row */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-gray-700 font-semibold text-sm mb-2">Expiry Date *</label>
+                            <input
+                                type="text"
+                                value={cardDetails.expiry}
+                                onChange={(e) => onChange('expiry', formatExpiry(e.target.value))}
+                                placeholder="MM/YY"
+                                maxLength={5}
+                                className={`w-full bg-white border rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm
+                                    ${errors.expiry
+                                        ? 'border-red-400 focus:ring-red-200'
+                                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
+                                    }`}
+                            />
+                            {errors.expiry && <p className="text-red-500 text-xs mt-1">{errors.expiry}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 font-semibold text-sm mb-2">CVV *</label>
+                            <input
+                                type="password"
+                                value={cardDetails.cvv}
+                                onChange={(e) => {
+                                    const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                    onChange('cvv', v);
+                                }}
+                                placeholder="•••"
+                                maxLength={4}
+                                className={`w-full bg-white border rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm
+                                    ${errors.cvv
+                                        ? 'border-red-400 focus:ring-red-200'
+                                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
+                                    }`}
+                            />
+                            {errors.cvv && <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Security badge */}
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-blue-100">
+                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-xs text-gray-500">Your payment information is encrypted and secure</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function PlanSelectionCard({ plan, isSelected, onSelect }) {
+    const planStyles = {
+        standard: { badge: 'from-blue-600 to-teal-600', ring: 'border-blue-500', bg: 'from-blue-50 to-teal-50', check: 'from-blue-600 to-teal-600' },
+        minimal: { badge: 'from-gray-700 to-gray-900', ring: 'border-gray-700', bg: 'from-gray-50 to-gray-100', check: 'from-gray-700 to-gray-900' },
+        premium: { badge: 'from-yellow-500 to-orange-500', ring: 'border-yellow-500', bg: 'from-yellow-50 to-orange-50', check: 'from-yellow-500 to-orange-500' },
+        compact: { badge: 'from-blue-500 to-cyan-500', ring: 'border-cyan-500', bg: 'from-blue-50 to-cyan-50', check: 'from-blue-500 to-cyan-500' },
+    };
+    const s = planStyles[plan.id] || planStyles.standard;
+
+    return (
+        <div
+            onClick={() => onSelect(plan.id)}
+            className={`relative cursor-pointer rounded-2xl border-2 p-6 transition-all duration-300 group
+                ${isSelected
+                    ? `${s.ring} bg-gradient-to-br ${s.bg} shadow-xl scale-[1.02]`
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg hover:scale-[1.01]'
+                }`}
+        >
+            {/* Selection checkmark */}
+            {isSelected && (
+                <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-r ${s.check} flex items-center justify-center shadow-lg`}>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            )}
+
+            {/* Plan badge */}
+            <div className={`inline-block px-4 py-1.5 rounded-lg bg-gradient-to-r ${s.badge} mb-4 shadow-sm`}>
+                <span className="text-white font-bold text-sm">{plan.name}</span>
+            </div>
+
+            {/* Description */}
+            <p className="text-gray-600 text-sm mb-5 leading-relaxed">{plan.description}</p>
+
+            {/* Feature list */}
+            <ul className="space-y-2.5">
+                {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2.5 text-sm text-gray-700">
+                        <svg className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-blue-500' : 'text-gray-400'
+                            } group-hover:text-blue-400 transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {feature}
+                    </li>
+                ))}
+            </ul>
+
+            {/* Bottom selection indicator */}
+            <div className={`mt-5 pt-4 border-t flex items-center justify-between ${isSelected ? 'border-blue-200' : 'border-gray-100'
+                }`}>
+                <span className={`text-xs font-semibold ${isSelected ? 'text-blue-600' : 'text-gray-400'
+                    }`}>
+                    {isSelected ? '✓ Selected' : 'Click to select'}
+                </span>
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+                    }`}>
+                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                </div>
+            </div>
+        </div>
+    );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function AddYardPage() {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
@@ -37,8 +260,8 @@ export default function AddYardPage() {
         owner_phone: '',
         owner_email: '',
 
-        // Payment Methods
-        payment_methods: [],
+        // Payment Method
+        payment_method: '',
 
         // Business Hours
         business_hours: {
@@ -65,9 +288,17 @@ export default function AddYardPage() {
         images: []
     });
 
-    const paymentOptions = [
-        'Cash', 'Visa', 'MasterCard', 'American Express',
-        'Discover', 'PayPal', 'Personal Check', 'Money Order'
+    const [cardDetails, setCardDetails] = useState({
+        cardNumber: '',
+        cardName: '',
+        expiry: '',
+        cvv: '',
+    });
+    const [cardErrors, setCardErrors] = useState({});
+
+    const paymentMethodOptions = [
+        { method: 'credit_card', label: 'Credit Card', icon: '💳' },
+        { method: 'debit_card', label: 'Debit Card', icon: '🏦' },
     ];
 
     const subscriptionPlans = [
@@ -109,13 +340,25 @@ export default function AddYardPage() {
         }));
     };
 
-    const handlePaymentToggle = (method) => {
+    const handlePaymentSelect = (method) => {
+        // Radio behaviour: selecting the same method deselects it
         setFormData(prev => ({
             ...prev,
-            payment_methods: prev.payment_methods.includes(method)
-                ? prev.payment_methods.filter(m => m !== method)
-                : [...prev.payment_methods, method]
+            payment_method: prev.payment_method === method ? '' : method,
         }));
+        // Reset card details when switching
+        if (formData.payment_method !== method) {
+            setCardDetails({ cardNumber: '', cardName: '', expiry: '', cvv: '' });
+            setCardErrors({});
+        }
+    };
+
+    const handleCardDetailChange = (field, value) => {
+        setCardDetails(prev => ({ ...prev, [field]: value }));
+        // Clear error on change
+        if (cardErrors[field]) {
+            setCardErrors(prev => ({ ...prev, [field]: '' }));
+        }
     };
 
     const handleHoursChange = (day, index, field, value) => {
@@ -198,7 +441,7 @@ export default function AddYardPage() {
                     return false;
                 }
                 break;
-            case 4:
+            case 5:
                 if (!formData.services) {
                     setError('Services information is required');
                     return false;
@@ -246,7 +489,7 @@ export default function AddYardPage() {
                     submitData.append(key, formData[key]);
                 } else if (key === 'images' && formData[key].length > 0) {
                     submitData.append(key, JSON.stringify([]));
-                } else if (key === 'payment_methods' || key === 'business_hours') {
+                } else if (key === 'business_hours') {
                     submitData.append(key, JSON.stringify(formData[key]));
                 } else if (formData[key] && typeof formData[key] !== 'object') {
                     submitData.append(key, formData[key]);
@@ -276,9 +519,9 @@ export default function AddYardPage() {
     const steps = [
         { number: 1, title: 'Account', icon: '🏢' },
         { number: 2, title: 'Location', icon: '📍' },
-        { number: 3, title: 'Owner', icon: '👤' },
-        { number: 4, title: 'Details', icon: '📝' },
-        { number: 5, title: 'Plan', icon: '⭐' },
+        { number: 3, title: 'Plan', icon: '⭐' },
+        { number: 4, title: 'Owner', icon: '👤' },
+        { number: 5, title: 'Details', icon: '📝' },
         { number: 6, title: 'Media', icon: '📸' }
     ];
 
@@ -338,7 +581,7 @@ export default function AddYardPage() {
             <SEO
                 title="List Your Junkyard - Add Your Auto Salvage Yard | Junkyards Near Me"
                 description="Join our marketplace and reach thousands of customers searching for quality auto parts. List your junkyard or auto salvage yard today."
-                canonicalUrl="/add-a-yard"
+                canonical="/add-a-yard"
                 noindex={true}
             />
             <Navbar />
@@ -586,8 +829,55 @@ export default function AddYardPage() {
                                     </div>
                                 )}
 
-                                {/* Step 3: Owner Information */}
+                                {/* Step 3: Plan Selection + Payment */}
                                 {step === 3 && (
+                                    <div className="space-y-6 animate-fade-in">
+                                        <div className="mb-8">
+                                            <h2 className="text-3xl font-black text-gray-900 mb-2">Choose Your Plan</h2>
+                                            <p className="text-gray-600">Select the advertising template that fits your needs</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            {subscriptionPlans.map(plan => (
+                                                <PlanSelectionCard
+                                                    key={plan.id}
+                                                    plan={plan}
+                                                    isSelected={formData.subscription_plan === plan.id}
+                                                    onSelect={(id) => setFormData(prev => ({ ...prev, subscription_plan: id }))}
+                                                />
+                                            ))}
+                                        </div>
+
+                                        {/* Payment Methods — Radio Style */}
+                                        <div className="mt-10 pt-8 border-t border-gray-100">
+                                            <label className="block text-gray-900 font-bold text-base mb-1">Payment Method</label>
+                                            <p className="text-sm text-gray-500 mb-4">Select your preferred payment method</p>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {paymentMethodOptions.map(({ method, label, icon }) => (
+                                                    <div key={method}>
+                                                        <PaymentMethodCard
+                                                            method={method}
+                                                            label={label}
+                                                            icon={icon}
+                                                            isSelected={formData.payment_method === method}
+                                                            onSelect={handlePaymentSelect}
+                                                        />
+                                                        <PaymentFormSection
+                                                            isVisible={formData.payment_method === method}
+                                                            cardDetails={cardDetails}
+                                                            onChange={handleCardDetailChange}
+                                                            errors={cardErrors}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Step 4: Owner Information + Business Hours */}
+                                {step === 4 && (
                                     <div className="space-y-6 animate-fade-in">
                                         <div className="mb-8">
                                             <h2 className="text-3xl font-black text-gray-900 mb-2">Business Owner</h2>
@@ -644,26 +934,6 @@ export default function AddYardPage() {
                                             </div>
                                         </div>
 
-                                        {/* Payment Methods */}
-                                        <div className="mt-8">
-                                            <label className="block text-gray-900 font-semibold mb-4">Payment Methods</label>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                                {paymentOptions.map(method => (
-                                                    <button
-                                                        key={method}
-                                                        type="button"
-                                                        onClick={() => handlePaymentToggle(method)}
-                                                        className={`px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${formData.payment_methods.includes(method)
-                                                            ? 'bg-blue-500 text-white border-2 border-blue-400'
-                                                            : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-500/50'
-                                                            }`}
-                                                    >
-                                                        {method}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-
                                         {/* Business Hours */}
                                         <div className="mt-8">
                                             <label className="block text-gray-900 font-semibold mb-4">Business Hours</label>
@@ -689,7 +959,6 @@ export default function AddYardPage() {
                                                                     type="time"
                                                                     value={slot.open}
                                                                     onChange={(e) => {
-                                                                        // Update Monday-Saturday hours together
                                                                         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(day => {
                                                                             handleHoursChange(day, idx, 'open', e.target.value);
                                                                         });
@@ -701,7 +970,6 @@ export default function AddYardPage() {
                                                                     type="time"
                                                                     value={slot.close}
                                                                     onChange={(e) => {
-                                                                        // Update Monday-Saturday hours together
                                                                         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(day => {
                                                                             handleHoursChange(day, idx, 'close', e.target.value);
                                                                         });
@@ -712,7 +980,6 @@ export default function AddYardPage() {
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => {
-                                                                            // Remove from all weekdays
                                                                             ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(day => {
                                                                                 removeHourSlot(day, idx);
                                                                             });
@@ -737,7 +1004,6 @@ export default function AddYardPage() {
                                                                 if (formData.business_hours.sunday.length === 0) {
                                                                     addHourSlot('sunday');
                                                                 } else {
-                                                                    // Clear all Sunday hours (mark as closed)
                                                                     setFormData(prev => ({
                                                                         ...prev,
                                                                         business_hours: {
@@ -787,8 +1053,8 @@ export default function AddYardPage() {
                                     </div>
                                 )}
 
-                                {/* Step 4: Business Details */}
-                                {step === 4 && (
+                                {/* Step 5: Business Details */}
+                                {step === 5 && (
                                     <div className="space-y-6 animate-fade-in">
                                         <div className="mb-8">
                                             <h2 className="text-3xl font-black text-gray-900 mb-2">Business Details</h2>
@@ -851,54 +1117,6 @@ export default function AddYardPage() {
                                                     )}
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Step 5: Subscription Plan */}
-                                {step === 5 && (
-                                    <div className="space-y-6 animate-fade-in">
-                                        <div className="mb-8">
-                                            <h2 className="text-3xl font-black text-gray-900 mb-2">Choose Your Plan</h2>
-                                            <p className="text-gray-600">Select the advertising template that fits your needs</p>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            {subscriptionPlans.map(plan => (
-                                                <div
-                                                    key={plan.id}
-                                                    onClick={() => setFormData(prev => ({ ...prev, subscription_plan: plan.id }))}
-                                                    className={`relative cursor-pointer rounded-2xl p-6 transition-all duration-300 ${formData.subscription_plan === plan.id
-                                                        ? 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-2 border-blue-500 scale-105'
-                                                        : 'bg-gray-50 border-2 border-white/10 hover:border-cyan-500/50'
-                                                        }`}
-                                                >
-                                                    {formData.subscription_plan === plan.id && (
-                                                        <div className="absolute -top-3 -right-3 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full p-2">
-                                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                        </div>
-                                                    )}
-
-                                                    <div className={`inline-block px-4 py-2 rounded-lg bg-gradient-to-r ${plan.color} mb-4`}>
-                                                        <span className="text-white font-bold text-sm">{plan.name}</span>
-                                                    </div>
-
-                                                    <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-
-                                                    <ul className="space-y-2">
-                                                        {plan.features.map((feature, idx) => (
-                                                            <li key={idx} className="flex items-start gap-2 text-gray-600 text-sm">
-                                                                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                                {feature}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
                                         </div>
                                     </div>
                                 )}

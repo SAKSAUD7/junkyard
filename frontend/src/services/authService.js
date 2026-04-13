@@ -17,6 +17,13 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        // If the request body is FormData (file upload), remove the default
+        // Content-Type: application/json so the browser can set the correct
+        // multipart/form-data boundary automatically. Without this, files
+        // are sent as JSON strings and Django rejects them as "not a file".
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
         return config;
     },
     (error) => Promise.reject(error)

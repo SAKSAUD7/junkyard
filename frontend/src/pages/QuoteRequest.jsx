@@ -56,8 +56,8 @@ export default function QuoteRequest() {
             year
         })
 
-        // Navigate to search results
-        navigate(`/search?make=${make}&model=${model}&part=${part}&year=${year}`)
+        // Navigate to junkyards listings instead
+        navigate(`/junkyards`)
     }
 
     const refreshSecurityCode = () => {
@@ -69,7 +69,7 @@ export default function QuoteRequest() {
             <SEO
                 title={`Get Quote - ${year} ${make} ${model} ${part} | Junkyards Near Me`}
                 description={`Request an instant quote for ${part} for your ${year} ${make} ${model}. Connect with verified auto salvage yards and get the best prices on used auto parts.`}
-                canonicalUrl="/quote"
+                canonical="/quote"
                 noindex={true}
             />
             <Navbar />

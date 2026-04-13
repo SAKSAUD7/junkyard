@@ -18,7 +18,7 @@ export const getOrganizationSchema = () => ({
     description: 'Find junkyards and auto salvage yards near you. Search by make, model, part, or location.',
     contactPoint: {
         '@type': 'ContactPoint',
-        telephone: '+1-800-555-1234',
+        telephone: '+1-866-293-3731',
         contactType: 'Customer Service',
         areaServed: 'US',
         availableLanguage: 'English'
