@@ -1,14 +1,11 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { api } from '../services/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadForm from '../components/LeadForm';
 import LocationMap from '../components/LocationMap';
 import SEO from '../components/SEO';
-import Rating from '../components/Rating';
-import VendorBadges from '../components/VendorBadges';
 import { getLocalBusinessSchema, getBreadcrumbSchema } from '../utils/structuredData';
 import { getLogoUrl } from '../utils/imageUrl';
 
@@ -24,11 +21,17 @@ const VendorDetail = () => {
         const fetchVendor = async () => {
             try {
                 setLoading(true);
+
                 let targetId = id;
+                // Support legacy URLs: /junkyards/:state/:slug
+                // Slug format: ID-SLUG (e.g., 6481441-1-morgan-highway-auto-parts)
                 if (!targetId && params.slug) {
                     const match = params.slug.match(/^(\d+)-/);
-                    if (match && match[1]) targetId = match[1];
+                    if (match && match[1]) {
+                        targetId = match[1];
+                    }
                 }
+
                 if (targetId) {
                     const data = await api.getVendor(targetId);
                     setVendor(data);
@@ -48,24 +51,37 @@ const VendorDetail = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0b0d' }}>
-                <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-500 animate-spin"></div>
+            <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50 flex items-center justify-center">
+                <div className="text-gray-900 text-xl">Loading...</div>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50 flex items-center justify-center">
+                <div className="text-gray-900 text-xl">Loading vendor details...</div>
             </div>
         );
     }
 
     if (error || !vendor) {
         return (
-            <div className="min-h-screen" style={{ background: '#0a0b0d' }}>
+            <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
                 <Navbar />
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border border-white/10 mb-6" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                        <svg className="w-10 h-10 text-white/20" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white border border-gray-200 rounded-full mb-6">
+                        <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
                     </div>
-                    <h1 className="text-4xl font-black text-white mb-4">Vendor Not Found</h1>
-                    <p className="text-white/50 mb-8 max-w-md mx-auto">The junkyard or auto salvage yard you're looking for doesn't exist or has been removed.</p>
-                    <button onClick={() => navigate('/junkyards')} className="font-bold text-black px-8 py-3 rounded-xl transition-all shadow-lg" style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
-                        ← Browse All Vendors
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Vendor Not Found</h1>
+                    <p className="text-gray-600 mb-8">The vendor you're looking for doesn't exist.</p>
+                    <button
+                        onClick={() => navigate('/vendors')}
+                        className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow"
+                    >
+                        ← Back to All Vendors
                     </button>
                 </div>
                 <Footer />
@@ -74,151 +90,233 @@ const VendorDetail = () => {
     }
 
     const logoUrl = getLogoUrl(vendor.logo);
+
+    // SEO structured data
     const localBusinessSchema = getLocalBusinessSchema({
-        name: vendor.name, address: vendor.address, city: vendor.city, state: vendor.state,
-        zipcode: vendor.zipcode, description: vendor.description, rating: vendor.rating, logo: logoUrl
+        name: vendor.name,
+        address: vendor.address,
+        city: vendor.city,
+        state: vendor.state,
+        zipcode: vendor.zipcode,
+        description: vendor.description,
+        rating: vendor.rating,
+        logo: logoUrl
     });
+
     const breadcrumbSchema = getBreadcrumbSchema([
-        { name: 'Home', url: '/' }, { name: 'Junkyards', url: '/junkyards' }, { name: vendor.name, url: `/vendors/${vendor.id}` }
+        { name: 'Home', url: '/' },
+        { name: 'Vendors', url: '/vendors' },
+        { name: vendor.name, url: `/vendors/${vendor.id}` }
     ]);
 
     return (
-        <div className="min-h-screen" style={{ background: '#0a0b0d' }}>
+        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
             <SEO
                 title={`${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}`}
-                description={vendor.description || `Find used auto parts at ${vendor.name} in ${vendor.city}, ${vendor.state}. ${vendor.rating_stars || 5} star rating. Get a quote today!`}
-                canonical={`/vendors/${vendor.id}`}
-                schema={{ '@context': 'https://schema.org', '@graph': [localBusinessSchema, breadcrumbSchema] }}
+                description={vendor.description || `Find used auto parts at ${vendor.name} in ${vendor.city}, ${vendor.state}. ${vendor.rating} customer rating. Get a quote today!`}
+                canonicalUrl={`/vendors/${vendor.id}`}
+                structuredData={[localBusinessSchema, breadcrumbSchema]}
             />
             <Navbar />
 
             {/* Breadcrumb */}
-            <div className="border-b border-white/[8%] sticky top-16 md:top-20 z-30" style={{ background: 'rgba(10,11,13,0.9)', backdropFilter: 'blur(20px)' }}>
+            <div className="bg-white/5 backdrop-blur-sm border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex items-center gap-2 text-xs md:text-sm text-white/40">
-                        <Link to="/" className="hover:text-amber-400 transition-colors">Home</Link>
-                        <span className="text-white/20">/</span>
-                        <Link to="/junkyards" className="hover:text-amber-400 transition-colors">Junkyards</Link>
-                        <span className="text-white/20">/</span>
-                        <span className="text-amber-400 font-semibold truncate">{vendor.name}</span>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <Link to="/vendors" className="hover:text-blue-600 transition-colors">Vendors</Link>
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-900 font-medium">{vendor.name}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="relative pt-6 pb-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Hero Section - Compact Mobile */}
+            <div className="relative compact-section overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                        {/* Left Column - Vendor Info */}
+                        {/* Left - Vendor Info */}
                         <div className="lg:col-span-2 space-y-6">
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                                <div className="rounded-2xl border border-white/[8%] overflow-hidden relative" style={{ background: '#111318' }}>
-                                    {/* Top ambient glow */}
-                                    <div className="absolute top-0 inset-x-0 h-1" style={{ background: 'linear-gradient(90deg, #f59e0b, #ea580c)' }} />
+                            {/* Logo & Name Card - Compact */}
+                            <div className="bg-white border border-gray-200 rounded-2xl md:rounded-3xl compact-card">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 md:gap-6">
+                                    {/* Logo */}
+                                    <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex items-center justify-center">
+                                        {logoUrl ? (
+                                            <img
+                                                src={logoUrl}
+                                                alt={vendor.name}
+                                                className="max-w-full max-h-full object-contain"
+                                                onError={(e) => {
+                                                    e.target.src = '/images/logo-placeholder.png';
+                                                }}
+                                            />
+                                        ) : (
+                                            <svg className="w-16 h-16 text-gray-200" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+                                            </svg>
+                                        )}
+                                    </div>
 
-                                    <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-                                        {/* Logo */}
-                                        <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white/5 border border-white/10 p-3 md:p-4 flex items-center justify-center">
-                                            {logoUrl ? (
-                                                <img src={logoUrl} alt={vendor.name} className="max-w-full max-h-full object-contain" onError={e => { e.target.src = '/images/logo-placeholder.png'; }} />
-                                            ) : (
-                                                <svg className="w-12 h-12 text-white/20" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" /></svg>
-                                            )}
+                                    {/* Name & Rating - Compact */}
+                                    <div className="flex-1 min-w-0">
+                                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-2 sm:mb-3 md:mb-4 break-words">
+                                            {vendor.name}
+                                        </h1>
+
+                                        {/* Rating - Compact */}
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3 md:mb-4">
+                                            <div className="flex items-center gap-0.5 sm:gap-1">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <svg
+                                                        key={i}
+                                                        className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                            <span className="text-base sm:text-lg font-bold text-gray-900">{vendor.rating}</span>
+                                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-400 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full compact-text font-semibold">
+                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                Verified
+                                            </span>
                                         </div>
 
-                                        <div className="flex-1 w-full">
-                                            <div className="mb-3">
-                                                <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} />
-                                            </div>
-                                            <h1 className="text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">{vendor.name}</h1>
-
-                                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-white/50 text-sm mb-4">
-                                                <div className="flex items-center gap-2">
-                                                    <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                                    {vendor.city}, {vendor.state} {vendor.zipcode}
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                    Est. 2005
-                                                </div>
-                                            </div>
-
-                                            <Rating stars={vendor.rating_stars || 5} percentage={vendor.rating_percentage || 100} size="lg" showPercentage={true} value={vendor.rating || '5.0'} theme="dark" />
+                                        {/* Location - Compact */}
+                                        <div className="flex items-start gap-1.5 sm:gap-2 text-gray-700 compact-text">
+                                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                            </svg>
+                                            <span className="break-words">{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
 
+                            {/* Description */}
                             {vendor.description && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-                                    <div className="rounded-2xl border border-white/[8%] p-6 md:p-8" style={{ background: '#111318' }}>
-                                        <h2 className="text-xl font-bold text-white mb-4">About This Junkyard</h2>
-                                        <p className="text-white/50 leading-relaxed text-sm md:text-base">{vendor.description}</p>
-                                    </div>
-                                </motion.div>
+                                <div className="bg-white border border-gray-200 rounded-2xl md:rounded-3xl compact-card">
+                                    <h2 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4 flex items-center gap-1.5 sm:gap-2">
+                                        <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                        </svg>
+                                        About This Vendor
+                                    </h2>
+                                    <p className="text-gray-600 compact-text leading-relaxed">
+                                        {vendor.description}
+                                    </p>
+                                </div>
                             )}
 
+
+                            {/* Review Snippet */}
                             {vendor.review_snippet && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-                                    <div className="rounded-2xl border border-amber-500/20 p-6 md:p-8 relative overflow-hidden" style={{ background: 'rgba(245,158,11,0.05)' }}>
-                                        <div className="absolute top-4 right-6 text-6xl font-black opacity-10 text-amber-500" style={{ fontFamily: 'serif' }}>"</div>
-                                        <div className="flex gap-4 relative z-10">
-                                            <div className="w-12 h-12 rounded-full border-2 border-amber-500/20 bg-amber-500/10 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold">
-                                                C
-                                            </div>
-                                            <div>
-                                                <Rating stars={5} size="sm" showValue={false} showPercentage={false} theme="dark" />
-                                                <p className="text-white/70 italic mt-2 leading-relaxed text-sm md:text-base">"{vendor.review_snippet}"</p>
-                                                <p className="text-white/30 text-xs mt-2 uppercase tracking-widest font-semibold">— Verified Customer</p>
-                                            </div>
+                                <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl md:rounded-3xl compact-card">
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex-shrink-0">
+                                            <svg className="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" />
+                                            </svg>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Customer Review</h3>
+                                            <p className="text-gray-700 italic">"{vendor.review_snippet}"</p>
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             )}
+
+
+                            {/* Quick Info Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Location Card */}
+                                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl compact-card">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="font-bold text-gray-900">Location</h3>
+                                    </div>
+                                    <p className="text-gray-600 text-sm">
+                                        {vendor.city}, {vendor.state}
+                                    </p>
+                                    <p className="text-gray-500 text-xs mt-1">ZIP: {vendor.zipcode}</p>
+                                </div>
+
+                                {/* State Card */}
+                                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl compact-card">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="font-bold text-gray-900">State</h3>
+                                    </div>
+                                    <p className="text-gray-600 text-sm font-semibold">{vendor.state}</p>
+                                </div>
+                            </div>
 
                             {/* Location Map */}
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-                                <div className="rounded-2xl border border-white/[8%] overflow-hidden" style={{ background: '#111318' }}>
-                                    <div className="p-6 md:p-8 border-b border-white/5">
-                                        <h2 className="text-xl font-bold text-white mb-2">Location</h2>
-                                        <p className="text-white/50 text-sm">{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</p>
-                                    </div>
-                                    <LocationMap address={`${vendor.address}, ${vendor.city}, ${vendor.state} ${vendor.zipcode}`} name={vendor.name} />
-                                </div>
-                            </motion.div>
+                            <LocationMap
+                                address={vendor.address}
+                                city={vendor.city}
+                                state={vendor.state}
+                                zipcode={vendor.zipcode}
+                                name={vendor.name}
+                                theme="light"
+                            />
+
                         </div>
 
-                        {/* Right Column - Sticky Quote Form */}
+                        {/* Right - Contact Form */}
                         <div className="lg:col-span-1">
-                            <div className="sticky top-28 lg:top-36 xl:top-40 z-20">
-                                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-                                    <div className="rounded-2xl border border-amber-500/30 overflow-hidden shadow-2xl relative" style={{ background: 'rgba(10,11,13,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(245,158,11,0.1)' }}>
-                                        {/* Amber accent overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 pointer-events-none" />
+                            <div className="sticky top-24">
+                                <div className="relative">
+                                    {/* Glow Effect */}
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-30 animate-pulse-slow"></div>
 
-                                        <div className="p-6 border-b border-white/10 relative z-10 text-center">
-                                            <div className="inline-block p-2 rounded-xl bg-amber-500/10 text-amber-500 mb-3">
-                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            </div>
-                                            <h2 className="text-2xl font-black text-white mb-1">Request a Quote</h2>
-                                            <p className="text-white/40 text-sm">Directly from {vendor.name}</p>
-                                        </div>
+                                    {/* Form Container */}
+                                    <div className="relative bg-white backdrop-blur-xl border border-gray-200 rounded-3xl p-6">
+                                        <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                            </svg>
+                                            Get a Quote
+                                        </h2>
+                                        <p className="text-gray-600 mb-6">Fill out the form below to request a quote from {vendor.name}</p>
+                                        <LeadForm vendorName={vendor.name} mode="vendor" />
+                                    </div>
+                                </div>
 
-                                        <div className="p-6 relative z-10">
-                                            <LeadForm layout="vertical" vendorId={id} showTitle={false} />
-                                            <p className="text-center text-xs text-white/30 mt-4 leading-relaxed">
-                                                By submitting, you agree to share your request with {vendor.name} and receive quotes via email or text.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 flex items-center justify-center gap-2 text-white/30 text-xs">
-                                        <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-                                        Your information is secure
-                                    </div>
-                                </motion.div>
+                                {/* Back Button */}
+                                <button
+                                    onClick={() => navigate('/vendors')}
+                                    className="w-full mt-6 bg-white hover:bg-gray-50 border border-gray-200 text-gray-900 font-semibold py-3 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2"
+                                >
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                                    </svg>
+                                    Back to All Vendors
+                                </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -1,6 +1,3 @@
-import AnimatedButton from './ui/AnimatedButton';
-import AnimatedInput from './ui/AnimatedInput';
-import AnimatedSelect from './ui/AnimatedSelect';
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
@@ -440,9 +437,9 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     We have received your request. <br />
                     A specialist will contact you shortly.
                 </p>
-                <AnimatedButton onClick={handleReset} className="text-amber-500 font-bold hover:text-amber-400 transition-colors uppercase tracking-wide text-sm border-b border-transparent hover:border-amber-500">
+                <button onClick={handleReset} className="text-amber-500 font-bold hover:text-amber-400 transition-colors uppercase tracking-wide text-sm border-b border-transparent hover:border-amber-500">
                     Submit Another Request
-                </AnimatedButton>
+                </button>
             </div>
         )
     }
@@ -457,7 +454,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     return (
         <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
             {/* Header */}
-            <div className={`bg-gradient-to-r from-amber-500 to-orange-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''} flex justify-between items-center px-4`}>
+            <div className={`bg-gradient-to-r from-blue-600 to-teal-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''} flex justify-between items-center px-4`}>
                 <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight flex-1`}>
                     {leadType === 'quality_auto_parts' ? 'NEED A QUALITY USED PART?' : 'FIND JUNKYARD VENDORS'}
                 </h2>
@@ -468,26 +465,26 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 )}
             </div>
 
-            <form onSubmit={handleSubmit} className={`bg-[#111318] p-3 md:p-5 rounded-b-xl border border-white/10 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'flex flex-col gap-3'}`}>
+            <form onSubmit={handleSubmit} className={`bg-white p-3 md:p-5 rounded-b-xl border border-gray-200 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'flex flex-col gap-3'}`}>
 
                 {/* Toggle Buttons (Full Width) */}
                 {/* Only show toggle if mode is NOT locked */}
                 {!mode && (
                     <div className={`${isHorizontal ? 'col-span-2' : ''} grid grid-cols-2 gap-2 mb-2`}>
-                        <AnimatedButton
+                        <button
                             type="button"
                             onClick={() => handleTypeChange('quality_auto_parts')}
-                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-amber-500 text-black border-amber-500 shadow-sm' : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'}`}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
                         >
                             Quality Auto Parts
-                        </AnimatedButton>
-                        <AnimatedButton
+                        </button>
+                        <button
                             type="button"
                             onClick={() => handleTypeChange('vendor')}
-                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-amber-500 text-black border-amber-500 shadow-sm' : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'}`}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
                         >
                             Junkyard Vendors
-                        </AnimatedButton>
+                        </button>
                     </div>
                 )}
 
@@ -505,60 +502,60 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                 {/* Left Column (Vehicle Info) */}
                 {showVehicleDetails && (
-                    <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-white/10 pr-3 md:pr-6' : ''}`}>
-                        {isHorizontal && <h3 className="text-amber-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Vehicle Details</h3>}
+                    <div className={`space-y-1.5 md:space-y-2 ${isHorizontal ? 'border-r border-gray-200 pr-3 md:pr-6' : ''}`}>
+                        {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Vehicle Details</h3>}
 
                         {/* 1. Make */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex justify-between">
-                                1. Make <span className="text-amber-500">*</span>
-                                {loadingMakes && <span className="text-[9px] text-amber-500 lowercase animate-pulse">loading...</span>}
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                1. Make <span className="text-blue-600">*</span>
+                                {loadingMakes && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
                             </label>
-                            <AnimatedSelect
+                            <select
                                 value={selectedMake}
                                 onChange={(e) => setSelectedMake(e.target.value)}
-                                className="w-full bg-white/5 text-white text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-white/10 focus:border-amber-500 outline-none"
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none"
                                 required
                             >
                                 <option value="">Select Make</option>
                                 {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
-                            </AnimatedSelect>
+                            </select>
                         </div>
 
                         {/* 2. Model */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex justify-between">
-                                2. Model <span className="text-amber-500">*</span>
-                                {loadingVehicleData && <span className="text-[9px] text-amber-500 lowercase animate-pulse">loading...</span>}
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                2. Model <span className="text-blue-600">*</span>
+                                {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
                             </label>
-                            <AnimatedSelect
+                            <select
                                 value={selectedModel}
                                 onChange={(e) => setSelectedModel(e.target.value)}
-                                className="w-full bg-white/5 text-white text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-white/10 focus:border-amber-500 outline-none disabled:bg-white/5 disabled:opacity-50"
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
                                 disabled={!selectedMake}
                                 required
                             >
                                 <option value="">Select Model</option>
                                 {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
-                            </AnimatedSelect>
+                            </select>
                         </div>
 
                         {/* 3. Year */}
                         <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex justify-between">
-                                3. Year <span className="text-amber-500">*</span>
-                                {loadingVehicleData && <span className="text-[9px] text-amber-500 lowercase animate-pulse">loading...</span>}
+                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                3. Year <span className="text-blue-600">*</span>
+                                {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
                             </label>
-                            <AnimatedSelect
+                            <select
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(e.target.value)}
-                                className="w-full bg-white/5 text-white text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-white/10 focus:border-amber-500 outline-none disabled:bg-white/5 disabled:opacity-50"
+                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
                                 disabled={!selectedModel}
                                 required
                             >
                                 <option value="">Select Year</option>
                                 {years.map(y => <option key={y} value={y}>{y}</option>)}
-                            </AnimatedSelect>
+                            </select>
                         </div>
 
                         {/* FIELDS SPECIFIC TO QUALITY AUTO PARTS */}
@@ -566,49 +563,49 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                             <>
                                 {/* 4. Part */}
                                 <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex justify-between">
-                                        4. Part <span className="text-amber-500">*</span>
-                                        {loadingVehicleData && <span className="text-[9px] text-amber-500 lowercase animate-pulse">loading...</span>}
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
+                                        4. Part <span className="text-blue-600">*</span>
+                                        {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
                                     </label>
-                                    <AnimatedSelect
+                                    <select
                                         value={selectedPart}
                                         onChange={(e) => setSelectedPart(e.target.value)}
-                                        className="w-full bg-white/5 text-white text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-white/10 focus:border-amber-500 outline-none disabled:bg-white/5 disabled:opacity-50"
+                                        className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
                                         disabled={!selectedYear}
                                         required
                                     >
                                         <option value="">Select Part</option>
                                         {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                                    </AnimatedSelect>
+                                    </select>
                                 </div>
 
                                 {/* 5. Options */}
                                 <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex items-center gap-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
                                         5. Options
-                                        {loadingHollander && <span className="text-amber-500 text-[8px]">(Loading...)</span>}
+                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
                                     </label>
-                                    <AnimatedInput
+                                    <input
                                         type="text"
                                         value={options}
                                         readOnly
                                         placeholder="Auto-populated from part specs"
-                                        className="w-full bg-white/5 text-white/50 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 outline-none cursor-not-allowed"
+                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
                                     />
                                 </div>
 
                                 {/* Hollander Number */}
                                 <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-white/70 uppercase flex items-center gap-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
                                         Hollander #
-                                        {loadingHollander && <span className="text-amber-500 text-[8px]">(Looking up...)</span>}
+                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
                                     </label>
-                                    <AnimatedInput
+                                    <input
                                         type="text"
                                         value={hollanderNumber}
                                         readOnly
                                         placeholder="Auto-populated"
-                                        className="w-full bg-white/5 text-white/50 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 outline-none cursor-not-allowed"
+                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
                                     />
                                 </div>
                             </>
@@ -616,14 +613,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                         {/* NEXT BUTTON for Step 1 */}
                         {enableSteps && (
-                            <AnimatedButton
+                            <button
                                 type="button"
                                 onClick={handleNext}
-                                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 px-4 rounded-lg shadow-md transition-all mt-4 flex items-center justify-center gap-2 group"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all mt-4 flex items-center justify-center gap-2 group"
                             >
                                 Next Step
                                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </AnimatedButton>
+                            </button>
                         )}
                     </div>
                 )}
@@ -633,77 +630,77 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     <div className="space-y-1.5 md:space-y-2">
                         {/* Step 2 Back Button */}
                         {enableSteps && (
-                            <AnimatedButton
+                            <button
                                 type="button"
                                 onClick={handleBack}
-                                className="text-xs text-gray-500 hover:text-amber-500 mb-2 flex items-center gap-1 font-semibold"
+                                className="text-xs text-gray-500 hover:text-blue-600 mb-2 flex items-center gap-1 font-semibold"
                             >
                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                                 Back to Vehicle Details
-                            </AnimatedButton>
+                            </button>
                         )}
 
-                        {isHorizontal && <h3 className="text-amber-500 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-white/10 pb-1">Contact Information</h3>}
+                        {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Contact Information</h3>}
 
                         {/* Contact Grid */}
-                        <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-white/10' : ''}`}>
+                        <div className={`grid grid-cols-2 gap-2 md:gap-3 ${!isHorizontal ? 'pt-1.5 md:pt-2 border-t border-gray-200' : ''}`}>
                             <div className="col-span-2 space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] font-bold text-white/70 uppercase">Name <span className="text-amber-500">*</span></label>
-                                <AnimatedInput
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Name <span className="text-blue-600">*</span></label>
+                                <input
                                     type="text"
                                     value={name}
                                     onChange={e => setName(e.target.value)}
                                     placeholder="Your Name"
-                                    className="w-full bg-white/5 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none placeholder-white/30"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
                                     required
                                 />
                             </div>
 
                             <div className="col-span-2 space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] font-bold text-white/70 uppercase">Email <span className="text-amber-500">*</span></label>
-                                <AnimatedInput
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Email <span className="text-blue-600">*</span></label>
+                                <input
                                     type="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                     placeholder="Your Email Address"
-                                    className="w-full bg-white/5 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none placeholder-white/30"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
                                     required
                                 />
                             </div>
 
                             <div className="col-span-2 space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] font-bold text-white/70 uppercase">Phone <span className="text-amber-500">*</span></label>
-                                <AnimatedInput
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Phone <span className="text-blue-600">*</span></label>
+                                <input
                                     type="tel"
                                     value={phone}
                                     onChange={e => setPhone(e.target.value)}
                                     placeholder="(555) 555-5555"
-                                    className="w-full bg-white/5 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none placeholder-white/30"
+                                    className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
                                     required
                                 />
                             </div>
 
                             <div className="space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] font-bold text-white/70 uppercase">State <span className="text-amber-500">*</span></label>
-                                <AnimatedSelect
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">State <span className="text-blue-600">*</span></label>
+                                <select
                                     value={state}
                                     onChange={e => handleStateChange(e.target.value)}
-                                    className="w-full bg-white/5 text-white text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 outline-none"
+                                    className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
                                     required
                                 >
                                     <option value="">State</option>
                                     {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </AnimatedSelect>
+                                </select>
                                 {loadingZipcodes && (
-                                    <p className="text-xs text-amber-500 mt-1">Loading zipcodes...</p>
+                                    <p className="text-xs text-blue-600 mt-1">Loading zipcodes...</p>
                                 )}
                             </div>
 
                             <div className="space-y-0.5 md:space-y-1">
-                                <label className="text-[10px] font-bold text-white/70 uppercase">Zip <span className="text-amber-500">*</span></label>
+                                <label className="text-[10px] font-bold text-gray-700 uppercase">Zip <span className="text-blue-600">*</span></label>
 
                                 <div className="relative">
-                                    <AnimatedInput
+                                    <input
                                         type="text"
                                         value={zip}
                                         onChange={e => {
@@ -739,7 +736,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                             setTimeout(() => setShowZipSuggestions(false), 200)
                                         }}
                                         placeholder="Zip Code"
-                                        className="w-full bg-white/5 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none placeholder-white/30"
+                                        className="w-full bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400"
                                         required
                                     />
 
@@ -751,14 +748,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                                     {/* Suggestions Dropdown */}
                                     {showZipSuggestions && zipcodes.length > 0 && (
-                                        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-white/10 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
                                             {zipcodes
                                                 .filter(z => z.postal_code.startsWith(zip))
                                                 .slice(0, 100) // Limit render
                                                 .map((z, index) => (
                                                     <div
                                                         key={`${z.postal_code}-${index}`}
-                                                        className="px-3 py-2 text-xs md:text-sm hover:bg-blue-50 cursor-pointer text-white/70 flex justify-between"
+                                                        className="px-3 py-2 text-xs md:text-sm hover:bg-blue-50 cursor-pointer text-gray-700 flex justify-between"
                                                         onMouseDown={(e) => {
                                                             e.preventDefault() // Prevent blur
                                                             setZip(z.postal_code)
@@ -788,16 +785,16 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         </div>
 
                         {/* Security Code */}
-                        <div className="bg-[#0a0b0d]/50 p-2 md:p-3 rounded-lg border border-white/10 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
-                            <div className="bg-white/5 text-white font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none shadow-sm border border-white/10 w-20 md:w-24 text-center">
+                        <div className="bg-gray-50 p-2 md:p-3 rounded-lg border border-gray-200 flex items-center justify-between gap-2 md:gap-3 mt-2 md:mt-4">
+                            <div className="bg-white text-gray-900 font-mono font-black text-base md:text-lg px-2 md:px-3 py-1 rounded tracking-widest select-none shadow-sm border border-gray-300 w-20 md:w-24 text-center">
                                 {securityCode}
                             </div>
-                            <AnimatedInput
+                            <input
                                 type="text"
                                 value={userSecurityCode}
                                 onChange={e => setUserSecurityCode(e.target.value)}
                                 placeholder="ENTER CODE"
-                                className="flex-1 bg-white/5 text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-white/10 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none placeholder-white/30 text-center uppercase font-bold"
+                                className="flex-1 bg-white text-gray-900 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none placeholder-gray-400 text-center uppercase font-bold"
                                 maxLength={4}
                                 required
                             />
@@ -810,13 +807,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                     {submitError}
                                 </div>
                             )}
-                            <AnimatedButton
+                            <button
                                 type="submit"
                                 disabled={submitting}
-                                className={`w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
+                                className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
                             >
                                 {submitting ? 'SENDING...' : (leadType === 'vendor' ? 'FIND VENDOR' : 'FIND MY PART NOW')}
-                            </AnimatedButton>
+                            </button>
                         </div>
                     </div>
                 )}

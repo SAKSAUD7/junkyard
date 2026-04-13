@@ -37,7 +37,6 @@ export default function VendorCard({ vendor, compact = false, showBadge = true }
                         <img
                             src={logoUrl}
                             alt={vendor.name}
-                            loading="lazy"
                             className="relative z-10 max-h-full max-w-full object-contain transform group-hover:scale-110 transition-transform duration-500 will-change-transform"
                             onError={(e) => {
                                 e.target.src = '/images/logo-placeholder.png';

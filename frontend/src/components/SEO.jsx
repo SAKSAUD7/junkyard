@@ -28,7 +28,7 @@ export default function SEO({
 
     // Default SEO values
     const defaultTitle = 'Find Auto Salvage Yards & Used Auto Parts';
-    const defaultDescription = 'Find junkyards and auto salvage yards near you. Search by make, model, part, or location. Get used auto parts from over 6,000 verified junkyards across the USA.';
+    const defaultDescription = 'Find junkyards and auto salvage yards near you. Search by make, model, part, or location. Get used auto parts from over 1,000 verified junkyards across the USA.';
 
     // Construct full title
     const fullTitle = title ? `${title} | ${siteName}` : `${siteName} - ${defaultTitle}`;

@@ -1,230 +1,243 @@
 import React from 'react';
 
-/* ─── Shared CTA link ─────────────────────────────────────── */
-const AdLink = ({ ad, className, children }) => (
-    <a
-        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-    >
-        {children}
-    </a>
-);
-
-/* ─── Standard Template ───────────────────────────────────── */
+// Standard Template - Modern Glassmorphism Design
 export const StandardTemplate = ({ ad }) => (
-    <div className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] group">
+    <div className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] animate-fade-in group">
         <div className="relative">
-            {/* Amber glow on hover */}
-            <div className="absolute -inset-1 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }} />
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-75 transition-all duration-500"></div>
 
-            {/* Card */}
-            <div className="relative rounded-2xl border border-white/[8%] overflow-hidden group-hover:border-amber-500/40 transition-all duration-300"
-                style={{ background: '#111318' }}>
-
+            {/* Main Card */}
+            <div className="relative bg-gradient-to-br from-dark-800/90 via-dark-900/95 to-black/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl overflow-hidden">
                 {ad.show_badge && (
-                    <div className="py-1.5 px-3 text-center relative overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                        <span className="text-[9px] uppercase tracking-widest text-black font-black relative z-10">
-                            ⭐ Featured Partner
+                    <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 py-1 sm:py-1.5 px-2 sm:px-3 text-center overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                        <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-white font-black relative z-10 drop-shadow-lg">
+                            ✨ Featured Partner
                         </span>
                     </div>
                 )}
 
                 <div className="p-3 sm:p-4">
-                    <h3 className="text-white font-black text-sm sm:text-base text-center mb-2 leading-tight">
+                    <h3 className="text-white font-black text-sm sm:text-base text-center mb-2 sm:mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {ad.title}
                     </h3>
                 </div>
 
                 {ad.image && (
-                    <div className="aspect-[4/3] relative overflow-hidden">
-                        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(17,19,24,0.7) 0%, transparent 60%)' }} />
+                    <div className="aspect-[4/3] bg-gradient-to-br from-dark-800 to-dark-900 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
                         <img
-                            src={ad.image} alt={ad.title} loading="lazy"
-                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                            onError={(e) => { e.target.style.display = 'none'; }}
+                            src={ad.image}
+                            alt={ad.title}
+                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                            }}
                         />
                     </div>
                 )}
 
                 <div className="p-3 sm:p-4">
-                    <AdLink ad={ad}
-                        className="block w-full text-black text-[10px] sm:text-xs font-black py-2 sm:py-2.5 px-3 rounded-xl transition-all duration-300 uppercase tracking-wide text-center hover:-translate-y-0.5"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', boxShadow: '0 4px 14px rgba(245,158,11,0.25)' }}
+                    <a
+                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-white text-[10px] sm:text-xs font-black py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'Explore Now'} →
-                    </AdLink>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 );
 
-/* ─── Minimal Template ────────────────────────────────────── */
+// Minimal Template - Ultra Clean Modern Design
 export const MinimalTemplate = ({ ad }) => (
-    <div className="w-full max-w-[160px] sm:max-w-[180px] md:max-w-[200px] group">
+    <div className="w-full max-w-[160px] sm:max-w-[180px] md:max-w-[200px] animate-fade-in group">
         <div className="relative">
-            <div className="absolute -inset-0.5 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }} />
+            {/* Subtle Glow */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-300 to-gray-400 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
 
-            <div className="relative rounded-2xl border border-white/[8%] overflow-hidden group-hover:border-amber-500/40 transition-all duration-300"
-                style={{ background: '#111318' }}>
-
+            {/* Main Card */}
+            <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
                 {ad.show_badge && (
-                    <div className="py-1 px-3 text-center border-b border-white/[6%]"
-                        style={{ background: 'rgba(245,158,11,0.08)' }}>
-                        <span className="text-[8px] uppercase tracking-widest text-amber-400 font-bold">⚡ Verified</span>
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-900 py-1 px-3 text-center">
+                        <span className="text-[8px] uppercase tracking-widest text-white font-bold">
+                            ⚡ Verified
+                        </span>
                     </div>
                 )}
 
                 <div className="p-2 sm:p-3">
-                    <h3 className="text-white font-black text-xs sm:text-sm text-center mb-1.5 leading-tight">
+                    <h3 className="text-gray-900 font-black text-xs sm:text-sm text-center mb-1.5 sm:mb-2 leading-tight">
                         {ad.title}
                     </h3>
                 </div>
 
                 {ad.image && (
-                    <div className="aspect-[4/3] relative overflow-hidden">
-                        <img src={ad.image} alt={ad.title} loading="lazy"
+                    <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
+                        <img
+                            src={ad.image}
+                            alt={ad.title}
                             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => { e.target.style.display = 'none'; }}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                            }}
                         />
                     </div>
                 )}
 
                 <div className="p-2 sm:p-3">
-                    <AdLink ad={ad}
-                        className="block w-full text-black text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 rounded-xl text-center transition-all duration-300 hover:-translate-y-0.5"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}
+                    <a
+                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                     >
                         {ad.button_text || 'Learn More'} →
-                    </AdLink>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 );
 
-/* ─── Premium Template ────────────────────────────────────── */
+// Premium Template - Luxury Gold Design with Epic Animations
 export const PremiumTemplate = ({ ad }) => (
-    <div className="w-full max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] group">
+    <div className="w-full max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] animate-fade-in group">
         <div className="relative">
-            <div className="absolute -inset-2 rounded-3xl blur-xl opacity-20 group-hover:opacity-50 transition-all duration-700"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }} />
+            {/* Subtle Glow Effect */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700"></div>
 
-            <div className="relative rounded-3xl border-2 border-amber-500/30 overflow-hidden group-hover:border-amber-400/60 transition-all duration-300"
-                style={{ background: 'linear-gradient(135deg, rgba(17,19,24,0.98), rgba(30,22,8,0.95))' }}>
-
+            {/* Main Card */}
+            <div className="relative bg-gradient-to-br from-yellow-900/30 via-amber-900/40 to-orange-900/30 backdrop-blur-2xl border-2 border-yellow-500/50 rounded-3xl overflow-hidden shadow-2xl">
                 {ad.show_badge && (
-                    <div className="relative py-2 px-4 text-center overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                        <span className="text-[10px] uppercase tracking-widest text-black font-black relative z-10">
+                    <div className="relative bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 py-2 px-4 text-center overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.3),transparent_50%)]"></div>
+                        <span className="text-[10px] uppercase tracking-widest text-gray-900 font-black relative z-10 drop-shadow-lg">
                             ⭐ Premium Elite Partner ⭐
                         </span>
                     </div>
                 )}
 
                 <div className="p-3 sm:p-4 md:p-5">
-                    <h3 className="font-black text-base sm:text-lg text-center mb-2 leading-tight"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <h3 className="text-white font-black text-base sm:text-lg text-center mb-2 sm:mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
                         {ad.title}
                     </h3>
                 </div>
 
                 {ad.image && (
-                    <div className="aspect-[4/3] relative overflow-hidden">
-                        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(17,19,24,0.8) 0%, transparent 60%)' }} />
-                        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.08), transparent)' }} />
-                        <img src={ad.image} alt={ad.title} loading="lazy"
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-700"
-                            onError={(e) => { e.target.style.display = 'none'; }}
+                    <div className="aspect-[4/3] bg-gradient-to-br from-yellow-900/50 to-orange-900/50 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-transparent z-10"></div>
+                        <img
+                            src={ad.image}
+                            alt={ad.title}
+                            className="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-700"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                            }}
                         />
                     </div>
                 )}
 
-                <div className="p-4 sm:p-5">
-                    <AdLink ad={ad}
-                        className="relative block w-full text-black text-xs sm:text-sm font-black py-3 sm:py-3.5 px-4 rounded-2xl transition-all duration-300 uppercase tracking-wide text-center hover:-translate-y-1 overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', boxShadow: '0 6px 20px rgba(245,158,11,0.35)' }}
+                <div className="p-5">
+                    <a
+                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative block w-full bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 hover:from-yellow-400 hover:via-amber-300 hover:to-yellow-400 text-gray-900 text-xs sm:text-sm font-black py-2.5 sm:py-3 md:py-3.5 px-3 sm:px-4 md:px-5 rounded-2xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-110 hover:-translate-y-2 shadow-2xl hover:shadow-yellow-500/80 overflow-hidden group/btn"
                     >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
                         <span className="relative z-10">{ad.button_text || 'Get Premium Access'} ✨</span>
-                    </AdLink>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 );
 
-/* ─── Compact Template ────────────────────────────────────── */
+// Compact Template - Sleek Micro Design
 export const CompactTemplate = ({ ad }) => (
-    <div className="w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] group">
+    <div className="w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] animate-fade-in group">
         <div className="relative">
-            <div className="absolute -inset-0.5 rounded-xl blur opacity-0 group-hover:opacity-50 transition-all duration-300"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }} />
+            {/* Compact Glow */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-all duration-300"></div>
 
-            <div className="relative rounded-xl border border-white/[8%] overflow-hidden group-hover:border-amber-500/40 transition-all duration-300"
-                style={{ background: '#111318' }}>
-
+            {/* Main Card */}
+            <div className="relative bg-gradient-to-br from-dark-800/95 to-dark-900/95 backdrop-blur-lg border border-cyan-500/20 rounded-xl overflow-hidden">
                 {ad.show_badge && (
-                    <div className="py-0.5 px-2 text-center"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
-                        <span className="text-[7px] uppercase tracking-wider text-black font-bold">⚡ Top Pick</span>
+                    <div className="bg-gradient-to-r from-cyan-500 to-blue-500 py-0.5 px-2 text-center">
+                        <span className="text-[7px] uppercase tracking-wider text-white font-bold">
+                            ⚡ Top Pick
+                        </span>
                     </div>
                 )}
 
                 <div className="p-2">
-                    <h3 className="text-amber-400 font-bold text-xs text-center mb-1.5 leading-tight">{ad.title}</h3>
+                    <h3 className="text-white font-bold text-xs text-center mb-1.5 leading-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                        {ad.title}
+                    </h3>
                 </div>
 
                 {ad.image && (
-                    <div className="aspect-square relative overflow-hidden">
-                        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(17,19,24,0.6) 0%, transparent 60%)' }} />
-                        <img src={ad.image} alt={ad.title} loading="lazy"
+                    <div className="aspect-square bg-gradient-to-br from-dark-800 to-dark-900 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+                        <img
+                            src={ad.image}
+                            alt={ad.title}
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                            onError={(e) => { e.target.style.display = 'none'; }}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                            }}
                         />
                     </div>
                 )}
 
                 <div className="p-2">
-                    <AdLink ad={ad}
-                        className="block w-full text-black text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center hover:-translate-y-0.5"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}
+                    <a
+                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 shadow-md hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'View'} →
-                    </AdLink>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 );
 
-/* ─── Micro Template ──────────────────────────────────────── */
+// Micro Template - Ultra Compact for Mobile Hero
 export const MicroTemplate = ({ ad }) => (
-    <div className="max-w-[85px] group">
+    <div className="max-w-[85px] animate-scale-in group">
         <div className="relative">
-            <div className="relative rounded-lg border border-white/[8%] overflow-hidden group-hover:border-amber-500/40 transition-all duration-300"
-                style={{ background: '#111318' }}>
-                <div className="aspect-square relative overflow-hidden">
-                    <img src={ad.image} alt={ad.title} loading="lazy"
+            {/* Main Card */}
+            <div className="relative bg-dark-900/80 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden shadow-lg">
+                <div className="aspect-square relative">
+                    <img
+                        src={ad.image}
+                        alt={ad.title}
                         className="w-full h-full object-cover"
                         onError={(e) => { e.target.style.display = 'none'; }}
                     />
-                    <div className="absolute top-0 right-0 text-[6px] font-black text-black px-1 py-0.5 rounded-bl"
-                        style={{ background: '#f59e0b' }}>AD</div>
+                    {/* Tiny Badge */}
+                    <div className="absolute top-0 right-0 bg-primary-600 text-[6px] font-black text-white px-1 py-0.5 rounded-bl">AD</div>
                 </div>
+
                 <div className="p-1 text-center">
-                    <AdLink ad={ad}
-                        className="block w-full text-black text-[8px] font-bold py-1 rounded transition-colors uppercase"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}
+                    <a
+                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-white/10 hover:bg-white/20 text-[8px] font-bold text-white py-1 rounded transition-colors uppercase"
                     >
                         OPEN
-                    </AdLink>
+                    </a>
                 </div>
             </div>
         </div>

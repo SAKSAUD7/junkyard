@@ -12,27 +12,12 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState('');
 
-    // Read role set by AddYardStart — only 'owner' gets business-email enforcement
-    const isOwnerFlow = sessionStorage.getItem('addYardRole') === 'owner';
-
-    const PERSONAL_DOMAINS = [
-        'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
-        'yahoo.co.uk', 'yahoo.co.in', 'icloud.com', 'me.com',
-        'aol.com', 'protonmail.com', 'live.com', 'msn.com',
-    ];
-
     const validateEmail = (value) => {
         if (!value) {
             return 'Please fill in this field';
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
             return 'Please enter a valid email';
-        }
-        if (isOwnerFlow) {
-            const domain = value.split('@')[1]?.toLowerCase();
-            if (PERSONAL_DOMAINS.includes(domain)) {
-                return 'Please use your company/business email address to continue.';
-            }
         }
         return '';
     };
@@ -69,15 +54,6 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
             newErrors.confirmPassword = validateConfirmPassword(confirmPassword);
         }
         setErrors(newErrors);
-    };
-
-    // Real-time email validation (only after first touch)
-    const handleEmailChange = (e) => {
-        const val = e.target.value;
-        setEmail(val);
-        if (touched.email) {
-            setErrors(prev => ({ ...prev, email: validateEmail(val) }));
-        }
     };
 
     const handleSubmit = async () => {
@@ -194,28 +170,17 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                 <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email Address
-                        {isOwnerFlow && (
-                            <span className="ml-1 text-blue-600 text-xs font-normal">(business email required)</span>
-                        )}
                     </label>
                     <input
                         id="email"
                         type="email"
                         value={email}
-                        onChange={handleEmailChange}
+                        onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => handleBlur('email')}
-                        placeholder={isOwnerFlow ? 'name@company.com' : 'your.email@example.com'}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            touched.email && errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                        }`}
+                        placeholder="your.email@example.com"
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'
+                            }`}
                     />
-                    {/* Helper text – shown before the field is touched */}
-                    {isOwnerFlow && !errors.email && (
-                        <p className="mt-1 text-xs text-gray-500">
-                            Use your official business email (e.g., name@company.com)
-                        </p>
-                    )}
-                    {/* Error text */}
                     {touched.email && errors.email && (
                         <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                     )}

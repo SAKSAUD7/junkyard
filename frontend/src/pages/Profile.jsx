@@ -14,7 +14,7 @@ const Profile = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <SEO title="My Profile | JYNM" description="Manage your account settings" canonical="/profile" noindex={true} />
+            <SEO title="My Profile | JYNM" description="Manage your account settings" />
             <Navbar />
 
             <div className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
