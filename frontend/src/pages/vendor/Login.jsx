@@ -34,51 +34,48 @@ const VendorLogin = () => {
         <>
             <Navbar />
 
-            <div className="min-h-screen flex items-center justify-center py-20" style={{ background: '#0a0b0d' }}>
-                <div className="w-full max-w-md px-4">
-                    <div className="rounded-2xl border border-white/[8%] p-8" style={{ background: '#111318' }}>
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 pt-24 pb-20">
+                <div className="max-w-md mx-auto px-4">
+                    <div className="bg-white rounded-2xl shadow-lg p-8">
                         {/* Header */}
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/30 mb-4"
-                                style={{ background: 'rgba(245,158,11,0.08)' }}>
-                                <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">Vendor Portal</span>
-                            </div>
-                            <h1 className="text-3xl font-black text-white mb-2">
-                                Vendor Login
+                            <h1 className="text-3xl font-black text-gray-900 mb-2">
+                                JYNM Vendor Portal
                             </h1>
-                            <p className="text-white/40 text-sm">
+                            <p className="text-gray-600">
                                 Sign in to manage your listings and leads
                             </p>
                         </div>
 
                         {/* Error Message */}
                         {error && (
-                            <div className="mb-6 p-4 rounded-xl border border-red-500/30 bg-red-500/10">
-                                <p className="text-sm text-red-400">{error}</p>
+                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600">{error}</p>
                             </div>
                         )}
 
                         {/* Demo Credentials Info */}
-                        <div className="mb-6 p-4 rounded-xl border border-amber-500/20" style={{ background: 'rgba(245,158,11,0.05)' }}>
-                            <div className="font-semibold text-amber-400 mb-2 text-sm">
+                        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div className="font-semibold text-blue-900 mb-2">
                                 🔑 Demo Credentials
                             </div>
-                            <div className="text-sm text-white/50 font-mono">
-                                <div><strong className="text-white/70">Email:</strong> vendor@test.com</div>
-                                <div><strong className="text-white/70">Password:</strong> vendor123</div>
+                            <div className="text-sm text-blue-800 font-mono">
+                                <div><strong>Email:</strong> vendor@test.com</div>
+                                <div><strong>Password:</strong> vendor123</div>
                             </div>
                         </div>
+
 
                         {/* Login Form */}
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
-                                <label htmlFor="email" className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
                                     Email Address
                                 </label>
                                 <input
                                     id="email"
                                     type="email"
-                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/20 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all text-sm"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -88,12 +85,12 @@ const VendorLogin = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
                                     Password
                                 </label>
                                 <PasswordInput
                                     id="password"
-                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/20 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all text-sm"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -105,7 +102,7 @@ const VendorLogin = () => {
                             <div className="flex items-center justify-between text-sm">
                                 <Link
                                     to="/vendor/forgot-password"
-                                    className="text-amber-400 hover:text-amber-300 font-medium transition-colors"
+                                    className="text-blue-600 hover:text-blue-700 font-medium"
                                 >
                                     Forgot password?
                                 </Link>
@@ -114,22 +111,21 @@ const VendorLogin = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-3 px-4 font-bold text-black rounded-xl transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', boxShadow: '0 4px 20px rgba(245,158,11,0.25)' }}
+                                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Signing in...' : 'Sign In'}
                             </button>
                         </form>
 
                         {/* Footer */}
-                        <div className="mt-8 pt-6 border-t border-white/[8%] text-center">
-                            <p className="text-sm text-white/30">
+                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                            <p className="text-sm text-gray-600">
                                 Need help? Contact support at{' '}
                                 <a
-                                    href="mailto:info@jynm.com"
-                                    className="text-amber-400 hover:text-amber-300 font-medium transition-colors"
+                                    href="mailto:support@jynm.com"
+                                    className="text-blue-600 hover:text-blue-700 font-medium"
                                 >
-                                    info@jynm.com
+                                    support@jynm.com
                                 </a>
                             </p>
                         </div>

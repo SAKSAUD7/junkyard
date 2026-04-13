@@ -105,7 +105,6 @@ const VendorProfile = () => {
                                 <img
                                     src={getLogoUrl(profile.logo)}
                                     alt={profile.name}
-                                    loading="lazy"
                                     className="w-full h-full object-contain p-2"
                                     onError={(e) => {
                                         e.target.style.display = 'none';

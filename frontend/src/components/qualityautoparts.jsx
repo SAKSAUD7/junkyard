@@ -17,7 +17,6 @@ export default function SponsoredAd() {
                         <img
                             src="/images/qap_logo.png"
                             alt="Quality Auto Parts"
-                            loading="lazy"
                             className="w-full h-auto object-contain mb-1"
                         />
                         <div className="text-center">

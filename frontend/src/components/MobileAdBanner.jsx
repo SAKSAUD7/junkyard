@@ -101,8 +101,8 @@ export default function MobileAdBanner({ page = 'all' }) {
             className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'
                 }`}
         >
-            {/* Backdrop */}
-            <div className="absolute inset-0 border-t border-amber-500/20" style={{ backdropFilter: 'blur(20px)', background: 'rgba(17,19,24,0.97)' }}></div>
+            {/* Backdrop blur spacer */}
+            <div className="absolute inset-0 backdrop-blur-xl bg-dark-900/95 border-t border-white/10"></div>
 
             <div
                 className="relative p-3 pb-safe"
@@ -113,8 +113,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                 {/* Close button */}
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-1 right-1 z-10 text-white/50 hover:text-white rounded-full p-1.5 transition-colors border border-white/10"
-                    style={{ background: 'rgba(255,255,255,0.05)' }}
+                    className="absolute top-1 right-1 z-10 bg-dark-800/90 text-white/70 hover:text-white rounded-full p-1.5 transition-colors"
                     aria-label="Close advertisement"
                 >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,14 +128,13 @@ export default function MobileAdBanner({ page = 'all' }) {
                     rel="noopener noreferrer"
                     className="block"
                 >
-                    <div className="flex items-center gap-3 rounded-xl overflow-hidden border border-white/[8%] hover:border-amber-500/30 transition-all" style={{ background: '#111318' }}>
+                    <div className="flex items-center gap-3 bg-gradient-to-r from-dark-800 to-dark-700 rounded-xl overflow-hidden border border-white/10 hover:border-orange-500/50 transition-all shadow-lg">
                         {/* Ad image */}
                         {currentAd.image && (
-                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24" style={{ background: '#0f1117' }}>
+                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-dark-900">
                                 <img
                                     src={currentAd.image}
                                     alt={currentAd.title}
-                                    loading="lazy"
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                         e.target.style.display = 'none'
@@ -147,13 +145,13 @@ export default function MobileAdBanner({ page = 'all' }) {
 
                         {/* Ad text */}
                         <div className="flex-1 py-2 pr-8">
-                            <div className="text-[10px] uppercase tracking-widest text-amber-400 font-bold mb-1">
+                            <div className="text-[10px] uppercase tracking-widest text-orange-400 font-bold mb-1">
                                 Sponsored
                             </div>
                             <h4 className="text-white font-bold text-sm sm:text-base mb-1 line-clamp-1">
                                 {currentAd.title}
                             </h4>
-                            <span className="inline-block text-xs sm:text-sm text-amber-400 font-semibold">
+                            <span className="inline-block text-xs sm:text-sm text-orange-400 font-semibold">
                                 {currentAd.button_text || 'Learn More'} →
                             </span>
                         </div>
@@ -164,9 +162,13 @@ export default function MobileAdBanner({ page = 'all' }) {
                 {ads.length > 1 && (
                     <div className="flex justify-center gap-1.5 mt-2">
                         {ads.map((_, index) => (
-                            <button key={index} onClick={() => setCurrentIndex(index)}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-5' : 'w-1.5'}`}
-                                style={{ background: index === currentIndex ? '#f59e0b' : 'rgba(255,255,255,0.25)' }}
+                            <button
+                                key={index}
+                                onClick={() => setCurrentIndex(index)}
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === currentIndex
+                                    ? 'bg-orange-500 w-6'
+                                    : 'bg-white/30 hover:bg-white/50'
+                                    }`}
                                 aria-label={`View ad ${index + 1}`}
                             />
                         ))}

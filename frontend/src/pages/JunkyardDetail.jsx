@@ -71,8 +71,8 @@ const JunkyardDetail = () => {
             <SEO
                 title={vendor ? `${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}` : 'Junkyard Details'}
                 description={vendor?.description || `Find used auto parts at ${vendor?.name}.`}
-                canonical={`/junkyard/${id}`}
-                schema={{ '@context': 'https://schema.org', '@graph': [localBusinessSchema, breadcrumbSchema] }}
+                canonicalUrl={`/junkyard/${id}`}
+                structuredData={[localBusinessSchema, breadcrumbSchema]}
             />
             <Navbar />
 
@@ -111,7 +111,6 @@ const JunkyardDetail = () => {
                                             <img
                                                 src={vendor.logo}
                                                 alt={vendor.name}
-                                                loading="lazy"
                                                 className="max-w-full max-h-full object-contain"
                                                 onError={(e) => {
                                                     e.target.src = '/images/logo-placeholder.png';
