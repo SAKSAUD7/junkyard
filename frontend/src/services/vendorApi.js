@@ -177,4 +177,13 @@ export const vendorNotifications = {
     markAsRead: (id) => vendorApi.post(`/notifications/${id}/read/`),
 };
 
+// ============================================
+// ADS
+// ============================================
+
+export const vendorAds = {
+    get: () => vendorApi.get('/ads/'),
+    activate: (plan_type) => vendorApi.post('/ads/', { plan_type }),
+};
+
 export default vendorApi;

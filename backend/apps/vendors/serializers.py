@@ -15,11 +15,20 @@ class VendorSerializer(serializers.ModelSerializer):
             'description', 'review_snippet', 'rating',
             'rating_stars', 'rating_percentage',
             'is_top_rated', 'is_featured', 'profile_url', 'logo',
-            'is_trusted', 'is_active', 'username', 'leads_count'
+            'is_trusted', 'trusted_vendor', 'is_active', 'username', 'leads_count', 'ad_plan'
         ]
 
     username = serializers.SerializerMethodField()
     leads_count = serializers.SerializerMethodField()
+    ad_plan = serializers.SerializerMethodField()
+    
+    def get_ad_plan(self, obj):
+        active_ad = getattr(obj, 'ads', None)
+        if active_ad:
+            ad = obj.ads.filter(status='active').first()
+            if ad:
+                return ad.plan_type
+        return None
 
     def get_logo(self, obj):
         """Return correct image URL — combines MEDIA_URL from settings with stored relative path."""
@@ -46,6 +55,7 @@ class VendorSerializer(serializers.ModelSerializer):
 
     def get_leads_count(self, obj):
         # Count the number of leads assigned to this vendor
-        # NOTE: Lead assignment is currently DISABLED, so this always returns 0
+        if hasattr(obj, 'leads'):
+            return obj.leads.count()
         return 0
 

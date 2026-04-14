@@ -10,7 +10,6 @@ import {
     ListBulletIcon,
     ChatBubbleLeftIcon,
     Cog6ToothIcon,
-    CurrencyDollarIcon,
     TruckIcon,
     DocumentTextIcon,
     ArrowRightOnRectangleIcon
@@ -28,7 +27,6 @@ export default function AdminLayout() {
         { name: 'Yard Submissions', href: '/admin-portal/yard-submissions', icon: DocumentTextIcon },
         { name: 'Vendors', href: '/admin-portal/vendors', icon: BuildingOfficeIcon },
         { name: 'Ads', href: '/admin-portal/ads', icon: MegaphoneIcon },
-        { name: 'Part Pricing', href: '/admin-portal/pricing', icon: CurrencyDollarIcon },
         { name: 'Messages', href: '/admin-portal/messages', icon: ChatBubbleLeftIcon },
         { name: 'Blog', href: '/admin-portal/blog', icon: DocumentTextIcon },
         { name: 'Settings', href: '/admin-portal/settings', icon: Cog6ToothIcon },

@@ -396,6 +396,10 @@ export default function AdminLeads() {
                                         <label className="block text-xs font-medium text-[#6b7280] mb-1">Condition</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.condition || 'Any'}</p>
                                     </div>
+                                    <div className="bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb] col-span-2">
+                                        <label className="block text-xs font-medium text-[#6b7280] mb-1">Hollander Number</label>
+                                        <p className="text-sm font-semibold text-[#1f2937]">{selectedLead.hollander_number || 'NA'}</p>
+                                    </div>
                                 </div>
                                 {selectedLead.notes && (
                                     <div className="mt-4 bg-[#f9fafb] rounded-xl p-4 border border-[#e5e7eb]">

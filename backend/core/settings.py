@@ -88,6 +88,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Always include production frontend URL
 CORS_ALLOWED_ORIGINS = [
     'https://witty-field-015b59200.6.azurestaticapps.net',
+    'https://junkyardsnearme.com',
+    'https://www.junkyardsnearme.com',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:3001',
@@ -117,6 +119,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://junkyard-api-dev.azurewebsites.net',
     'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
     'https://witty-field-015b59200.6.azurestaticapps.net',
+    'https://junkyardsnearme.com',
+    'https://www.junkyardsnearme.com',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
@@ -294,6 +298,9 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+# Allow bulk admin actions on large datasets (e.g. deleting all vendors)
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Import database signals to disable foreign key constraints
 import core.db_signals  # noqa

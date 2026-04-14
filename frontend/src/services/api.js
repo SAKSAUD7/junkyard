@@ -214,13 +214,16 @@ export const api = {
   },
 
   createVendor: async (token, data) => {
-    // Axios sets Content-Type automatically for FormData
-    const response = await axiosInstance.post('/vendors/manage/', data);
+    const response = await axiosInstance.post('/vendors/manage/', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
 
   updateVendor: async (token, id, data) => {
-    const response = await axiosInstance.patch(`/vendors/manage/${id}/`, data);
+    const response = await axiosInstance.patch(`/vendors/manage/${id}/`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
 
@@ -237,12 +240,16 @@ export const api = {
   },
 
   createAd: async (token, data) => {
-    const response = await axiosInstance.post('/ads/manage/', data);
+    const response = await axiosInstance.post('/ads/manage/', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
 
   updateAd: async (token, id, data) => {
-    const response = await axiosInstance.patch(`/ads/manage/${id}/`, data);
+    const response = await axiosInstance.patch(`/ads/manage/${id}/`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
 
