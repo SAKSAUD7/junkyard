@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from itertools import chain
 
-from apps.hollander.models import Vendor
+from apps.hollander.models import Vendor, VendorAd
 from apps.leads.models import Lead, VendorLead
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours
@@ -16,10 +16,10 @@ from .serializers import (
     VendorProfileUpdateSerializer,
     VendorInventorySerializer,
     VendorLeadSerializer,
-    VendorLeadForPortalSerializer,
     LeadStatusUpdateSerializer,
     VendorNotificationSerializer,
-    VendorBusinessHoursSerializer
+    VendorBusinessHoursSerializer,
+    VendorAdSerializer
 )
 from .permissions import IsVendorUser, IsVendorOwner, CanManageInventory
 
@@ -357,3 +357,62 @@ class VendorStatsView(APIView):
         }
         
         return Response(stats)
+
+
+class VendorAdView(APIView):
+    """
+    GET: Current active ads and ad history
+    POST: Select/activate an ad plan
+    """
+    permission_classes = [IsAuthenticated, IsVendorUser, IsVendorOwner]
+    
+    def get(self, request):
+        try:
+            vendor = request.user.vendor_profile.vendor
+        except:
+            return Response({'error': 'No vendor profile found'}, status=status.HTTP_404_NOT_FOUND)
+            
+        # Check expirations
+        ads = VendorAd.objects.filter(vendor=vendor).order_by('-created_at')
+        for ad in ads:
+            ad.check_expiration()
+            
+        active_ad = ads.filter(status='active').first()
+        
+        return Response({
+            'active_plan': VendorAdSerializer(active_ad).data if active_ad else None,
+            'history': VendorAdSerializer(ads, many=True).data
+        })
+        
+    def post(self, request):
+        try:
+            vendor = request.user.vendor_profile.vendor
+        except:
+            return Response({'error': 'No vendor profile found'}, status=status.HTTP_404_NOT_FOUND)
+            
+        plan_type = request.data.get('plan_type')
+        if not plan_type or plan_type not in ['standard', 'minimal', 'premium', 'compact']:
+            return Response({'error': 'Invalid plan type provided'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Re-check logic to ensure no double-activation
+        if VendorAd.objects.filter(vendor=vendor, status='active').exists():
+            return Response({'error': 'You already have an active plan. Please wait for it to expire.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # E.g. Standard 30 days
+        end_date = timezone.now().date() + timedelta(days=30)
+        
+        ad = VendorAd.objects.create(
+            vendor=vendor,
+            plan_type=plan_type,
+            end_date=end_date,
+            status='active'
+        )
+        
+        # Grant badges
+        if plan_type in ['premium', 'standard']:
+            vendor.is_featured = True
+        if plan_type in ['premium']:
+            vendor.is_top_rated = True
+        vendor.save()
+        
+        return Response(VendorAdSerializer(ad).data, status=status.HTTP_201_CREATED)

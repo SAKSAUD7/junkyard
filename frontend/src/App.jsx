@@ -35,6 +35,7 @@ import VendorInventory from './pages/vendor/Inventory'
 import VendorLeads from './pages/vendor/Leads'
 import VendorLeadDetail from './pages/vendor/LeadDetail'
 import VendorNotifications from './pages/vendor/Notifications'
+import VendorAds from './pages/vendor/Ads'
 
 // Admin Portal Imports
 import AdminProtectedRoute from './components/admin/ProtectedRoute'
@@ -46,7 +47,6 @@ import AdminVendorLeads from './pages/admin/VendorLeads'
 import AdminYardSubmissions from './pages/admin/YardSubmissions'
 import AdminVendors from './pages/admin/Vendors'
 import AdminAds from './pages/admin/Ads'
-import AdminPartPricing from './pages/admin/PartPricing'
 import AdminSettings from './pages/admin/Settings'
 
 // Blog imports
@@ -153,6 +153,7 @@ function App() {
           <Route path="leads" element={<VendorLeads />} />
           <Route path="leads/:id" element={<VendorLeadDetail />} />
           <Route path="notifications" element={<VendorNotifications />} />
+          <Route path="ads" element={<VendorAds />} />
         </Route>
 
         {/* Admin Portal Routes */}
@@ -168,7 +169,6 @@ function App() {
           <Route path="yard-submissions" element={<AdminYardSubmissions />} />
           <Route path="vendors" element={<AdminVendors />} />
           <Route path="ads" element={<AdminAds />} />
-          <Route path="pricing" element={<AdminPartPricing />} />
           <Route path="settings" element={<AdminSettings />} />
           {/* Blog Management */}
           <Route path="blog" element={<AdminBlogList />} />

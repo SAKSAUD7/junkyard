@@ -47,6 +47,9 @@ class Lead(models.Model):
     # Email notification tracking to prevent duplicates
     notification_sent = models.BooleanField(default=False, help_text="Whether email notification has been sent")
     
+    # NEW: Link lead to specific vendor (Admin usage)
+    vendor = models.ForeignKey('hollander.Vendor', on_delete=models.SET_NULL, null=True, blank=True, related_name='leads', help_text="Assigned vendor")
+    
     # REMOVED: assigned_vendors field - leads should NOT be assigned to vendors
     # Leads are only stored in database and emailed to admin
 

@@ -40,6 +40,7 @@ class LeadSerializer(serializers.ModelSerializer):
             'options',  # NEW - part specifications
             'hollander_number',  # NEW - Hollander interchange number
             'lead_type',  # NEW - Distinguish between Quality Auto and Vendor leads
+            'vendor',  # NEW - Linked vendor
             'status', 
             'created_at'
         ]

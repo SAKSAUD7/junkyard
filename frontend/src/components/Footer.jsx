@@ -124,7 +124,6 @@ export default function Footer() {
                         <ul className="space-y-3">
                             {[
                                 { to: '/', label: 'Home' },
-                                { to: '/search', label: 'Search Parts' },
                                 { to: '/vendors', label: 'All Vendors' },
                                 { to: '/browse', label: 'Browse by State' },
                                 { to: '/about', label: 'About Us' },

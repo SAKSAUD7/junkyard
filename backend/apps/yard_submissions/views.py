@@ -112,27 +112,37 @@ Review at: {settings.SITE_URL}/admin/yard_submissions/yardsubmission/{submission
                 status=status.HTTP_409_CONFLICT
             )
         
-        # Create vendor from submission
-        vendor = self.create_vendor_from_submission(submission)
-        
-        # Mark submission as approved
-        submission.mark_as_approved(
-            admin_user=request.user.username if request.user else None
-        )
-        submission.created_vendor = vendor
-        submission.save()
-        
-        # Send confirmation email
         try:
-            self.send_approval_email(submission)
+            # Create vendor from submission
+            vendor = self.create_vendor_from_submission(submission)
+            
+            # Mark submission as approved
+            submission.mark_as_approved(
+                admin_user=request.user.username if request.user else None
+            )
+            submission.created_vendor = vendor
+            submission.save()
+            
+            # Send confirmation email
+            try:
+                self.send_approval_email(submission)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Failed to send approval email: {e}")
+            
+            return Response({
+                'message': 'Submission approved and vendor created',
+                'vendor_id': vendor.id,
+                'submission_id': submission.id
+            }, status=status.HTTP_200_OK)
+            
         except Exception as e:
-            print(f"Failed to send approval email: {e}")
-        
-        return Response({
-            'message': 'Submission approved and vendor created',
-            'vendor_id': vendor.id,
-            'submission_id': submission.id
-        })
+            import logging
+            logging.getLogger(__name__).error(f"Error approving submission and creating vendor: {e}", exc_info=True)
+            return Response({
+                'error': 'An internal server error occurred while creating the vendor.',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=True, methods=['post'], permission_classes=[IsAdminUser])
     def reject(self, request, pk=None):
@@ -175,18 +185,29 @@ Review at: {settings.SITE_URL}/admin/yard_submissions/yardsubmission/{submission
             slug = f"{base_slug}-{counter}"
             counter += 1
         
+        # Generate or find next available yard_id
+        from django.db.models import Max
+        max_yard_id = Vendor.objects.aggregate(max_id=Max('yard_id'))['max_id']
+        next_yard_id = 1
+        if max_yard_id is not None:
+            # Adding a safe buffer or just taking max + 1
+            next_yard_id = max_yard_id + 1
+            
         vendor = Vendor.objects.create(
+            yard_id=next_yard_id,
             name=submission.business_name,
             address=submission.address,
             city=submission.city,
             state=submission.state,
-            zipcode=submission.zip_code,
+            zip_code=submission.zip_code,
+            phone=submission.phone,
+            email=submission.email,
+            website=submission.website,
             description=submission.description,
             profile_url=f'/vendors/{slug}',
             logo=submission.logo.url if submission.logo else '/images/logo-placeholder.png',
             rating="100%",  # Default rating
-            is_trusted=False,  # Can be manually set later
-            trust_level=0
+            is_trusted=False   # Can be manually set later
         )
         
         return vendor

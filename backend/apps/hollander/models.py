@@ -131,6 +131,7 @@ class Vendor(models.Model):
     is_top_rated = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     is_trusted = models.BooleanField(default=False)
+    trusted_vendor = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True, db_index=True)
     inventory_preferences = models.JSONField(blank=True, default=dict, help_text='Inventory management settings')
@@ -141,6 +142,49 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class VendorAd(models.Model):
+    """
+    Tracks vendor ad plan subscriptions
+    """
+    PLAN_CHOICES = [
+        ('standard', 'Standard Plan'),
+        ('minimal', 'Minimal Plan'),
+        ('premium', 'Premium Plan'),
+        ('compact', 'Compact Plan'),
+    ]
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+    ]
+    
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='ads', to_field='yard_id')
+    plan_type = models.CharField(max_length=20, choices=PLAN_CHOICES)
+    start_date = models.DateField(auto_now_add=True)
+    end_date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'hollander_vendor_ad'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.vendor.name} - {self.plan_type} ({self.status})"
+        
+    def check_expiration(self):
+        from django.utils import timezone
+        if self.status == 'active' and timezone.now().date() > self.end_date:
+            self.status = 'expired'
+            self.save(update_fields=['status'])
+            # Clear badge benefits upon expiration
+            self.vendor.is_featured = False
+            self.vendor.is_top_rated = False
+            self.vendor.save(update_fields=['is_featured', 'is_top_rated'])
+            return True
+        return False
 
 
 class YardMake(models.Model):
