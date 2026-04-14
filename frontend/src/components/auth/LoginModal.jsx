@@ -132,7 +132,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
 
                 <div className="flex flex-col md:flex-row">
                     {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-white">
+                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
                         <div className="text-center">
                             <div className="mb-6">
                                 <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -243,7 +243,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                                     minHeight: '3.5rem',
                                     borderRadius: '0.75rem'
                                 }}
-                                className={`w-full font-semibold text-white transition-all ${isValid && !loading
+                                className={`w-full font-semibold text-slate-800 transition-all ${isValid && !loading
                                     ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
                                     : 'bg-gray-300 cursor-not-allowed'
                                     }`}

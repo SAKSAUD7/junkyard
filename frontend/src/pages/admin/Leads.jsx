@@ -137,7 +137,7 @@ export default function AdminLeads() {
                     <button
                         onClick={handleExport}
                         disabled={exporting || filteredLeads.length === 0}
-                        className="px-5 py-2.5 bg-[#10b981] text-white rounded-xl hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium flex items-center gap-2 shadow-md transition-all"
+                        className="px-5 py-2.5 bg-[#10b981] text-slate-800 rounded-xl hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium flex items-center gap-2 shadow-md transition-all"
                     >
                         {exporting ? (
                             <>
@@ -208,7 +208,7 @@ export default function AdminLeads() {
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                                     {/* Avatar */}
                                     <div className="flex-shrink-0">
-                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] flex items-center justify-center text-white font-bold text-xl shadow-md">
+                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] flex items-center justify-center text-slate-800 font-bold text-xl shadow-md">
                                             {lead.name.charAt(0)}
                                         </div>
                                     </div>
@@ -315,7 +315,7 @@ export default function AdminLeads() {
                                             onClick={() => handleStatusUpdate(selectedLead.id, status)}
                                             disabled={updatingStatus || selectedLead.status === status}
                                             className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${selectedLead.status === status
-                                                ? 'bg-[#6366f1] text-white shadow-md'
+                                                ? 'bg-[#6366f1] text-slate-800 shadow-md'
                                                 : 'bg-white border border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb]'
                                                 } disabled:opacity-50`}
                                         >
@@ -437,14 +437,14 @@ export default function AdminLeads() {
                             <div className="flex gap-3 pt-4 border-t border-[#e5e7eb]">
                                 <a
                                     href={`tel:${selectedLead.phone}`}
-                                    className="flex-1 px-4 py-3 bg-[#10b981] text-white rounded-xl hover:bg-[#059669] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
+                                    className="flex-1 px-4 py-3 bg-[#10b981] text-slate-800 rounded-xl hover:bg-[#059669] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
                                 >
                                     <PhoneIcon className="h-4 w-4" />
                                     Call Customer
                                 </a>
                                 <a
                                     href={`mailto:${selectedLead.email}?subject=Re: ${selectedLead.part} for ${selectedLead.year} ${selectedLead.make} ${selectedLead.model}`}
-                                    className="flex-1 px-4 py-3 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
+                                    className="flex-1 px-4 py-3 bg-[#6366f1] text-slate-800 rounded-xl hover:bg-[#4f46e5] text-sm font-medium text-center flex items-center justify-center gap-2 shadow-md transition-all"
                                 >
                                     <EnvelopeIcon className="h-4 w-4" />
                                     Send Email

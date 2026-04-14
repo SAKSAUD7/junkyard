@@ -9,7 +9,7 @@ const VirtualSelect = memo(({ value, onChange, options, disabled, required, plac
         <select
             value={value}
             onChange={onChange}
-            className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
+            className="w-full bg-white text-slate-800 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-orange-500 outline-none disabled:bg-gray-200"
             disabled={disabled}
             required={required}
         >

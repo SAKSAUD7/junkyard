@@ -16,15 +16,15 @@ const LocationMap = ({ address, city, state, zipcode, name, theme = 'dark' }) =>
     const isLight = theme === 'light';
 
     return (
-        <div className={`${isLight ? 'bg-white border-gray-200' : 'bg-white/5 border-white/10'} backdrop-blur-xl border rounded-2xl md:rounded-3xl overflow-hidden`}>
-            <div className={`compact-card border-b ${isLight ? 'border-gray-200' : 'border-white/10'}`}>
-                <h2 className={`compact-title font-bold ${isLight ? 'text-gray-900' : 'text-white'} flex items-center gap-1.5 sm:gap-2`}>
+        <div className={`${isLight ? 'bg-white border-gray-200' : 'bg-white/5 border-slate-200'} backdrop-blur-xl border rounded-2xl md:rounded-3xl overflow-hidden`}>
+            <div className={`compact-card border-b ${isLight ? 'border-gray-200' : 'border-slate-200'}`}>
+                <h2 className={`compact-title font-bold ${isLight ? 'text-gray-900' : 'text-slate-800'} flex items-center gap-1.5 sm:gap-2`}>
                     <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${isLight ? 'text-blue-600' : 'text-cyan-400'}`} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     Location Map
                 </h2>
-                <p className={`${isLight ? 'text-gray-600' : 'text-white/60'} compact-text mt-1 sm:mt-2`}>{fullAddress}</p>
+                <p className={`${isLight ? 'text-gray-600' : 'text-slate-600'} compact-text mt-1 sm:mt-2`}>{fullAddress}</p>
             </div>
 
             <div className="relative w-full h-96">

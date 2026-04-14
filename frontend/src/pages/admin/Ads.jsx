@@ -201,7 +201,7 @@ export default function AdminAds() {
 
                 <button
                     onClick={() => { setEditingAd(null); setSelectedFile(null); setFilePreview(null); setShowModal(true); }}
-                    className="flex items-center px-6 py-3 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] shadow-md transition-all font-medium text-base"
+                    className="flex items-center px-6 py-3 bg-[#6366f1] text-slate-800 rounded-xl hover:bg-[#4f46e5] shadow-md transition-all font-medium text-base"
                 >
                     <PlusIcon className="h-5 w-5 mr-2" />
                     Create Ad
@@ -229,8 +229,8 @@ export default function AdminAds() {
                                     {ad.image ? (
                                         ad.image.endsWith('.mp4') ? (
                                             <div className="absolute inset-0 flex items-center justify-center bg-[#1f2937]">
-                                                <VideoCameraIcon className="h-16 w-16 text-white/50" />
-                                                <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">Video</span>
+                                                <VideoCameraIcon className="h-16 w-16 text-slate-800/50" />
+                                                <span className="absolute bottom-3 right-3 bg-black/70 text-slate-800 text-xs px-2 py-1 rounded">Video</span>
                                             </div>
                                         ) : (
                                             <img src={ad.image} alt={ad.title} className="w-full h-full object-cover" />
@@ -360,7 +360,7 @@ export default function AdminAds() {
                                             <button
                                                 type="button"
                                                 onClick={handleRemoveFile}
-                                                className="absolute top-2 right-2 bg-[#dc2626] text-white rounded-full p-2 hover:bg-[#b91c1c] shadow-lg"
+                                                className="absolute top-2 right-2 bg-[#dc2626] text-slate-800 rounded-full p-2 hover:bg-[#b91c1c] shadow-lg"
                                             >
                                                 <XMarkIcon className="w-4 h-4" />
                                             </button>
@@ -521,7 +521,7 @@ export default function AdminAds() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-5 py-2.5 bg-[#6366f1] text-white rounded-xl hover:bg-[#4f46e5] text-sm font-medium shadow-md transition-all"
+                                    className="px-5 py-2.5 bg-[#6366f1] text-slate-800 rounded-xl hover:bg-[#4f46e5] text-sm font-medium shadow-md transition-all"
                                 >
                                     {editingAd ? 'Update Ad' : 'Create Ad'}
                                 </button>

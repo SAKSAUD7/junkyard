@@ -387,10 +387,10 @@ export default function AdminVendors() {
                 <div className="relative">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <BuildingStorefrontIcon className="h-8 w-8 text-white" />
+                            <BuildingStorefrontIcon className="h-8 w-8 text-slate-800" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Vendor Management</h1>
+                            <h1 className="text-3xl font-bold text-slate-800">Vendor Management</h1>
                             <p className="text-indigo-100 mt-1">
                                 Manage automotive recyclers and their portal access
                             </p>
@@ -401,24 +401,24 @@ export default function AdminVendors() {
                     <div className="grid grid-cols-3 gap-4 mt-6">
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
-                                <SparklesIcon className="h-5 w-5 text-white" />
+                                <SparklesIcon className="h-5 w-5 text-slate-800" />
                                 <p className="text-xs text-indigo-100 font-medium">Total Vendors</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">{stats.total}</p>
+                            <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <CheckCircleIcon className="h-5 w-5 text-green-200" />
                                 <p className="text-xs text-indigo-100 font-medium">Active</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">{stats.active}</p>
+                            <p className="text-3xl font-bold text-slate-800">{stats.active}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <XCircleIcon className="h-5 w-5 text-gray-200" />
                                 <p className="text-xs text-indigo-100 font-medium">Inactive</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">{stats.inactive}</p>
+                            <p className="text-3xl font-bold text-slate-800">{stats.inactive}</p>
                         </div>
                     </div>
                 </div>
@@ -435,7 +435,7 @@ export default function AdminVendors() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab
-                                    ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                    ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 shadow-lg shadow-indigo-200'
                                     : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
                                     }`}
                             >
@@ -459,7 +459,7 @@ export default function AdminVendors() {
 
                         <button
                             onClick={handleCreateClick}
-                            className="px-4 py-2.5 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 whitespace-nowrap"
+                            className="px-4 py-2.5 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 whitespace-nowrap"
                         >
                             <PlusIcon className="h-5 w-5" />
                             Add Vendor
@@ -467,7 +467,7 @@ export default function AdminVendors() {
 
                         <button
                             onClick={() => setShowImportModal(true)}
-                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 font-medium shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 whitespace-nowrap"
+                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 font-medium shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 whitespace-nowrap"
                         >
                             <ArrowUpTrayIcon className="h-5 w-5" />
                             Import
@@ -639,7 +639,7 @@ export default function AdminVendors() {
                                             <div className="flex justify-end items-center gap-2">
                                                 <button
                                                     onClick={() => handleEditClick(vendor)}
-                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
+                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
                                                     title="Edit Details"
                                                 >
                                                     <PencilSquareIcon className="h-4 w-4" />
@@ -648,7 +648,7 @@ export default function AdminVendors() {
                                                     onClick={() => handleResetPassword(vendor)}
                                                     disabled={!vendor.is_active}
                                                     className={`p-2 rounded-lg transition-all shadow-md ${vendor.is_active
-                                                        ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-amber-200 cursor-pointer'
+                                                        ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-slate-800 hover:from-amber-600 hover:to-orange-600 shadow-amber-200 cursor-pointer'
                                                         : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-200'
                                                         }`}
                                                     title={vendor.is_active ? 'Reset Password' : 'Activate vendor first to reset password'}
@@ -658,8 +658,8 @@ export default function AdminVendors() {
                                                 <button
                                                     onClick={() => toggleStatus(vendor)}
                                                     className={`p-2 rounded-lg transition-all shadow-md ${vendor.is_active
-                                                        ? 'bg-gradient-to-br from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600 shadow-red-200'
-                                                        : 'bg-gradient-to-br from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600 shadow-emerald-200'
+                                                        ? 'bg-gradient-to-br from-red-500 to-rose-500 text-slate-800 hover:from-red-600 hover:to-rose-600 shadow-red-200'
+                                                        : 'bg-gradient-to-br from-emerald-500 to-green-500 text-slate-800 hover:from-emerald-600 hover:to-green-600 shadow-emerald-200'
                                                         }`}
                                                     title={vendor.is_active ? "Deactivate Account" : "Activate Account"}
                                                 >
@@ -706,7 +706,7 @@ export default function AdminVendors() {
                                             key={pageNum}
                                             onClick={() => setPage(pageNum)}
                                             className={`px-3 py-2 text-sm font-bold rounded-xl transition-all ${page === pageNum
-                                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 shadow-lg shadow-indigo-200'
                                                 : 'border-2 border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb]'
                                                 }`}
                                         >
@@ -734,7 +734,7 @@ export default function AdminVendors() {
 
             {/* Create/Edit Vendor Modal */}
             {(creatingVendor || editingVendor) && (
-                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
                         {/* Header */}
                         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-purple-50">
@@ -929,7 +929,7 @@ export default function AdminVendors() {
                             <button
                                 onClick={creatingVendor ? handleCreate : handleUpdate}
                                 disabled={saving}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 font-medium"
+                                className="px-4 py-2 bg-indigo-600 text-slate-800 rounded-lg hover:bg-indigo-700 disabled:opacity-50 font-medium"
                             >
                                 {saving ? 'Saving...' : (creatingVendor ? 'Create Vendor' : 'Update Vendor')}
                             </button>
@@ -940,16 +940,16 @@ export default function AdminVendors() {
 
             {/* Credentials Modal - Shows after activation or password reset */}
             {resetCredentials && (
-                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border-2 border-indigo-100">
                         {/* Header */}
                         <div className="px-6 py-5 bg-gradient-to-r from-indigo-500 to-purple-600">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-                                    <KeyIcon className="h-6 w-6 text-white" />
+                                    <KeyIcon className="h-6 w-6 text-slate-800" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white">Vendor Credentials</h3>
+                                    <h3 className="text-xl font-bold text-slate-800">Vendor Credentials</h3>
                                     <p className="text-indigo-100 text-sm mt-0.5">{resetCredentials.vendorName}</p>
                                 </div>
                             </div>
@@ -1046,7 +1046,7 @@ export default function AdminVendors() {
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
                             <button
                                 onClick={() => setResetCredentials(null)}
-                                className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 font-semibold shadow-lg shadow-indigo-200 transition-all"
+                                className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-slate-800 rounded-xl hover:from-indigo-700 hover:to-purple-700 font-semibold shadow-lg shadow-indigo-200 transition-all"
                             >
                                 Done
                             </button>

@@ -92,10 +92,10 @@ export default function AdminPartPricing() {
             <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
                     <div>
-                        <h2 className="text-xl font-bold text-white">Part Pricing Details</h2>
+                        <h2 className="text-xl font-bold text-slate-800">Part Pricing Details</h2>
                         <p className="text-sm text-indigo-100">Hollander #{item.hollander_number}</p>
                     </div>
-                    <button onClick={onClose} className="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+                    <button onClick={onClose} className="text-slate-600 hover:text-slate-800 transition-colors p-2 hover:bg-white/10 rounded-lg">
                         <XMarkIcon className="h-6 w-6" />
                     </button>
                 </div>
@@ -225,10 +225,10 @@ export default function AdminPartPricing() {
                 <div className="relative">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <CurrencyDollarIcon className="h-8 w-8 text-white" />
+                            <CurrencyDollarIcon className="h-8 w-8 text-slate-800" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Part Pricing Management</h1>
+                            <h1 className="text-3xl font-bold text-slate-800">Part Pricing Management</h1>
                             <p className="text-indigo-100 mt-1">
                                 Manage part pricing data and Hollander numbers
                             </p>
@@ -239,24 +239,24 @@ export default function AdminPartPricing() {
                     <div className="grid grid-cols-3 gap-4 mt-6">
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
-                                <DocumentTextIcon className="h-5 w-5 text-white" />
+                                <DocumentTextIcon className="h-5 w-5 text-slate-800" />
                                 <p className="text-xs text-indigo-100 font-medium">Total Records</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">{totalRecords.toLocaleString()}</p>
+                            <p className="text-3xl font-bold text-slate-800">{totalRecords.toLocaleString()}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <SparklesIcon className="h-5 w-5 text-blue-200" />
                                 <p className="text-xs text-indigo-100 font-medium">Current Page</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">{page} / {totalPages}</p>
+                            <p className="text-3xl font-bold text-slate-800">{page} / {totalPages}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <TagIcon className="h-5 w-5 text-green-200" />
                                 <p className="text-xs text-indigo-100 font-medium">Per Page</p>
                             </div>
-                            <p className="text-3xl font-bold text-white">50</p>
+                            <p className="text-3xl font-bold text-slate-800">50</p>
                         </div>
                     </div>
                 </div>
@@ -278,7 +278,7 @@ export default function AdminPartPricing() {
                     <button
                         onClick={handleExport}
                         disabled={exporting}
-                        className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
+                        className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
                     >
                         {exporting ? (
                             <>
@@ -329,7 +329,7 @@ export default function AdminPartPricing() {
                                         <tr key={item.id} className="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold shadow-md">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-bold shadow-md">
                                                         #
                                                     </div>
                                                     <span className="text-sm font-bold text-[#1f2937]">{item.hollander_number}</span>
@@ -368,7 +368,7 @@ export default function AdminPartPricing() {
                                             <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => setSelectedItem(item)}
-                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200 flex items-center gap-1.5"
+                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200 flex items-center gap-1.5"
                                                 >
                                                     <EyeIcon className="h-4 w-4" />
                                                     <span className="text-sm font-medium">View</span>
@@ -393,7 +393,7 @@ export default function AdminPartPricing() {
                                 >
                                     Previous
                                 </button>
-                                <span className="px-4 py-2 text-sm font-bold text-[#1f2937] bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl shadow-lg shadow-indigo-200">
+                                <span className="px-4 py-2 text-sm font-bold text-[#1f2937] bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl shadow-lg shadow-indigo-200">
                                     Page {page} of {totalPages}
                                 </span>
                                 <button

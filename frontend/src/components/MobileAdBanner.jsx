@@ -44,7 +44,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                     setTimeout(() => setIsVisible(true), 500)
                 }
             } catch (error) {
-                console.error('Failed to load mobile ads', error)
+                console.warn('[MobileAdBanner] Ads unavailable')
             }
         }
 
@@ -102,7 +102,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                 }`}
         >
             {/* Backdrop blur spacer */}
-            <div className="absolute inset-0 backdrop-blur-xl bg-dark-900/95 border-t border-white/10"></div>
+            <div className="absolute inset-0 backdrop-blur-xl bg-white/90 border-t border-slate-200"></div>
 
             <div
                 className="relative p-3 pb-safe"
@@ -113,7 +113,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                 {/* Close button */}
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-1 right-1 z-10 bg-dark-800/90 text-white/70 hover:text-white rounded-full p-1.5 transition-colors"
+                    className="absolute top-1 right-1 z-10 bg-slate-100/90 text-slate-600 hover:text-slate-800 rounded-full p-1.5 transition-colors"
                     aria-label="Close advertisement"
                 >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,10 +128,10 @@ export default function MobileAdBanner({ page = 'all' }) {
                     rel="noopener noreferrer"
                     className="block"
                 >
-                    <div className="flex items-center gap-3 bg-gradient-to-r from-dark-800 to-dark-700 rounded-xl overflow-hidden border border-white/10 hover:border-orange-500/50 transition-all shadow-lg">
+                    <div className="flex items-center gap-3 bg-gradient-to-r from-dark-800 to-dark-700 rounded-xl overflow-hidden border border-slate-200 hover:border-orange-500/50 transition-all shadow-lg">
                         {/* Ad image */}
                         {currentAd.image && (
-                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-dark-900">
+                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-white">
                                 <img
                                     src={currentAd.image}
                                     alt={currentAd.title}
@@ -148,7 +148,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                             <div className="text-[10px] uppercase tracking-widest text-orange-400 font-bold mb-1">
                                 Sponsored
                             </div>
-                            <h4 className="text-white font-bold text-sm sm:text-base mb-1 line-clamp-1">
+                            <h4 className="text-slate-800 font-bold text-sm sm:text-base mb-1 line-clamp-1">
                                 {currentAd.title}
                             </h4>
                             <span className="inline-block text-xs sm:text-sm text-orange-400 font-semibold">
@@ -178,10 +178,10 @@ export default function MobileAdBanner({ page = 'all' }) {
                 {/* Swipe indicator (shows on first load) */}
                 {ads.length > 1 && currentIndex === 0 && (
                     <div className="absolute top-1/2 left-0 right-0 flex justify-between px-2 pointer-events-none opacity-50">
-                        <svg className="w-6 h-6 text-white animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-6 h-6 text-slate-800 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                        <svg className="w-6 h-6 text-white animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-6 h-6 text-slate-800 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                         </svg>
                     </div>

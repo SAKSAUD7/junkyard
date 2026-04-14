@@ -97,7 +97,7 @@ const FAQ = () => {
     const schema = getFAQSchema(allFAQs);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
+        <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             {/* SEO Meta Tags */}
             <SEO
                 title="Frequently Asked Questions - Junkyard & Auto Parts Guide"
@@ -107,47 +107,77 @@ const FAQ = () => {
 
             <Navbar />
 
-            {/* Hero Section - Compact */}
-            <div className="relative compact-section overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
-                {/* Background Grid */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+            {/* Hero Section - Cinematic Car Depth */}
+            <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center text-center" style={{ minHeight: '50vh', background: 'var(--bg-base)' }}>
+                {/* PRIMARY — rows of salvage cars at sunset */}
+                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')", opacity: 0.6 }} />
+                {/* DEPTH — aerial night junkyard, blurred */}
+                <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/aerial-night.png')" }} />
+                <div className="hero-overlay-base" />
+                <div className="hero-vignette" />
+                <div className="hero-glow-teal" />
+                <div className="hero-glow-orange" />
+                <div className="hero-grid" />
+                <div className="hero-scanline" />
+                <div className="hero-fade-bottom" />
 
-                {/* Glow Effects */}
-                <div className="absolute top-0 left-1/3 w-96 h-96 bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
-                <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="hero-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className="text-left">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 shadow-xl" style={{ background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(37,99,235,0.4)', backdropFilter: 'blur(10px)' }}>
+                                <svg className="w-4 h-4 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                </svg>
+                                <span className="font-bold tracking-wider text-xs uppercase text-blue-300">HELP CENTER</span>
+                            </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full mb-8">
-                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-white text-sm font-semibold">HELP CENTER</span>
+                            <h1 className="font-black mb-4 tracking-tight px-2 text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
+                                Frequently Asked{' '}
+                                <span className="text-blue-400">Questions</span>
+                            </h1>
+                            <p className="font-light max-w-2xl mb-8 px-2 text-lg" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
+                                Everything you need to know about finding and buying used auto parts through our platform.
+                            </p>
+                        </div>
+
+                        {/* 3D GEAR SYSTEM VISUAL */}
+                        <div className="hidden lg:flex items-center justify-center relative animate-fade-in-up delay-300">
+                            <div className="relative w-full max-w-lg mx-auto pointer-events-none">
+                                {/* Ambient glow behind the gears */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-500/20 rounded-full blur-[90px]" />
+                                <img 
+                                    src="/3d/gear-core.png" 
+                                    alt="3D Intricate Gear Assembly" 
+                                    className="relative w-full h-auto"
+                                    style={{ 
+                                        mixBlendMode: 'screen', 
+                                        animation: 'float 6s ease-in-out infinite',
+                                        filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.8)) contrast(1.1) brightness(1.1)'
+                                    }} 
+                                />
+                            </div>
+                        </div>
                     </div>
-
-                    <h1 className="compact-hero font-black text-white mb-2 sm:mb-3 md:mb-4 tracking-tight px-2">
-                        Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-teal-100">Questions</span>
-                    </h1>
-                    <p className="compact-heading text-white/90 font-light max-w-2xl mx-auto px-2">
-                        Everything you need to know about finding and buying used auto parts through our platform.
-                    </p>
                 </div>
             </div>
 
-            <div className="relative max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 compact-section">
-                <div className="space-y-4 sm:space-y-6 md:space-y-8">
+            {/* Questions List */}
+            <div className="relative max-w-4xl mx-auto px-4 py-16 z-10">
+                <div className="space-y-12">
                     {categories.map((category, categoryIdx) => (
                         <div key={categoryIdx} className="animate-fade-in" style={{ animationDelay: `${categoryIdx * 100}ms` }}>
-                            <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
-                                <div className="p-1.5 sm:p-2 md:p-3 bg-blue-100 rounded-lg md:rounded-xl text-blue-600">
+                            {/* Category Header */}
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="p-3 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.08)', color: 'var(--neon-blue)', border: '1px solid rgba(37,99,235,0.2)' }}>
                                     {category.icon}
                                 </div>
-                                <h2 className="compact-title font-bold text-gray-900">
+                                <h2 className="font-bold text-2xl" style={{ fontFamily: "'Outfit', sans-serif", color: 'var(--text-primary)' }}>
                                     {category.name}
                                 </h2>
                             </div>
 
-                            {/* Questions - Compact */}
-                            <div className="space-y-2 sm:space-y-3 md:space-y-4">
+                            {/* Questions Array */}
+                            <div className="space-y-4">
                                 {category.questions.map((item, questionIdx) => {
                                     const index = `${categoryIdx}-${questionIdx}`;
                                     const isOpen = openIndex === index;
@@ -155,26 +185,28 @@ const FAQ = () => {
                                     return (
                                         <div
                                             key={questionIdx}
-                                            className="group bg-white border border-gray-200 rounded-xl md:rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300"
+                                            className="group rounded-2xl overflow-hidden transition-all duration-300"
+                                            style={{ background: '#ffffff', border: `1px solid ${isOpen ? 'rgba(37,99,235,0.3)' : 'rgba(15,23,42,0.08)'}`, boxShadow: isOpen ? '0 4px 20px rgba(37,99,235,0.08)' : '0 1px 6px rgba(0,0,0,0.04)' }}
                                         >
                                             <button
                                                 onClick={() => toggleQuestion(categoryIdx, questionIdx)}
-                                                className="w-full compact-card flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                                                className="w-full flex items-center justify-between text-left p-6 transition-colors"
+                                                style={{ background: isOpen ? 'rgba(37,99,235,0.05)' : 'transparent' }}
                                             >
-                                                <h3 className="compact-heading font-bold text-gray-900 pr-4 sm:pr-6 md:pr-8 group-hover:text-blue-600 transition-colors">
+                                                <h3 className="font-bold pr-8 transition-colors text-lg" style={{ color: isOpen ? 'var(--neon-blue)' : 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>
                                                     {item.q}
                                                 </h3>
-                                                <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-blue-100' : ''}`}>
-                                                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isOpen ? 'text-blue-600' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`} style={{ background: isOpen ? 'rgba(37,99,235,0.1)' : 'rgba(255,255,255,0.05)' }}>
+                                                    <svg className={`w-5 h-5 transition-colors`} style={{ color: isOpen ? 'var(--neon-blue)' : 'var(--text-secondary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                                     </svg>
                                                 </div>
                                             </button>
 
                                             <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-                                                <div className="compact-card pt-1 sm:pt-2">
-                                                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full mb-2 sm:mb-3 md:mb-4"></div>
-                                                    <p className="text-gray-600 leading-relaxed compact-text">
+                                                <div className="p-6 pt-0 border-t" style={{ borderColor: 'rgba(37,99,235,0.1)' }}>
+                                                    <div className="w-12 h-1 rounded-full mb-4 mt-4" style={{ background: 'linear-gradient(90deg, var(--neon-blue), transparent)' }}></div>
+                                                    <p className="leading-relaxed text-md" style={{ color: 'var(--text-secondary)' }}>
                                                         {item.a}
                                                     </p>
                                                 </div>
@@ -188,24 +220,23 @@ const FAQ = () => {
                 </div>
 
                 {/* Contact Box */}
-                <div className="mt-20 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-teal-500/10 blur-3xl"></div>
-                    <div className="relative bg-white border border-gray-200 rounded-2xl md:rounded-3xl compact-card text-center shadow-xl">
-                        <div className="inline-flex p-2 sm:p-3 md:p-4 bg-blue-100 rounded-xl md:rounded-2xl mb-3 sm:mb-4 md:mb-6">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mt-24 relative overflow-hidden rounded-3xl p-10 text-center shadow-md" style={{ border: '1px solid rgba(37,99,235,0.15)', background: 'linear-gradient(135deg, #eff6ff, #f0f9ff)', backdropFilter: 'blur(20px)' }}>
+                    <div className="relative z-10">
+                        <div className="inline-flex p-4 rounded-2xl mb-6" style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.2)' }}>
+                            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="compact-title font-bold text-gray-900 mb-2 sm:mb-3">Still have questions?</h3>
-                        <p className="text-gray-600 mb-4 sm:mb-6 md:mb-8 max-w-md mx-auto compact-text">
+                        <h3 className="font-bold mb-3 text-2xl text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Still have questions?</h3>
+                        <p className="mb-8 max-w-md mx-auto text-lg" style={{ color: 'var(--text-secondary)' }}>
                             Can't find the answer you're looking for? Our support team is here to help you 24/7.
                         </p>
                         <a
                             href="/contact"
-                            className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg md:rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 compact-text">
-
+                            className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105"
+                            style={{ background: 'var(--neon-blue)', color: 'var(--bg-base)' }}>
                             Contact Support
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </a>

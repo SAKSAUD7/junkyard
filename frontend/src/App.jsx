@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Home from './pages/Home'
 import Search from './pages/Search'
 import BrowseStates from './pages/BrowseStates'
@@ -48,10 +49,42 @@ import AdminAds from './pages/admin/Ads'
 import AdminPartPricing from './pages/admin/PartPricing'
 import AdminSettings from './pages/admin/Settings'
 
+// Blog imports
+import BlogList from './pages/blog/BlogList'
+import BlogDetail from './pages/blog/BlogDetail'
+import AdminBlogList from './pages/admin/blog/BlogList'
+import AdminBlogEditor from './pages/admin/blog/BlogEditor'
+
+
+function ScrollObserver() {
+  const location = useLocation()
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible')
+        }
+      })
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
+
+    const timeout = setTimeout(() => {
+      document.querySelectorAll('.scroll-fade-in').forEach(el => observer.observe(el))
+    }, 100)
+
+    return () => {
+      clearTimeout(timeout)
+      observer.disconnect()
+    }
+  }, [location.pathname])
+
+  return null
+}
 
 function App() {
   return (
     <>
+      <ScrollObserver />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -62,6 +95,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/login" element={<SignIn />} />
 
         {/* Protected Routes */}
         <Route path="/add-a-yard" element={
@@ -83,6 +117,10 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
+
+        {/* Blog Routes */}
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
@@ -132,6 +170,10 @@ function App() {
           <Route path="ads" element={<AdminAds />} />
           <Route path="pricing" element={<AdminPartPricing />} />
           <Route path="settings" element={<AdminSettings />} />
+          {/* Blog Management */}
+          <Route path="blog" element={<AdminBlogList />} />
+          <Route path="blog/new" element={<AdminBlogEditor />} />
+          <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

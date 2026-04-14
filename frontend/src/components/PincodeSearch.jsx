@@ -80,7 +80,7 @@ export default function PincodeSearch() {
                             onChange={(e) => setPincode(e.target.value)}
                             placeholder="Your ZIP or Postal Code"
                             maxLength={6}
-                            className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/95 backdrop-blur-sm border-2 border-gray-300 rounded-xl sm:rounded-2xl text-dark-900 placeholder-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all duration-300 text-sm sm:text-base font-medium shadow-soft"
+                            className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/95 backdrop-blur-sm border-2 border-gray-300 rounded-xl sm:rounded-2xl text-slate-800 placeholder-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all duration-300 text-sm sm:text-base font-medium shadow-soft"
                             autoComplete="off"
                         />
                         {loading && (
@@ -93,7 +93,7 @@ export default function PincodeSearch() {
                     {/* Search Button */}
                     <button
                         type="submit"
-                        className="px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-bold rounded-xl sm:rounded-2xl transition-all duration-300 shadow-soft-lg hover:shadow-glow-teal transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap"
+                        className="px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-slate-800 font-bold rounded-xl sm:rounded-2xl transition-all duration-300 shadow-soft-lg hover:shadow-glow-teal transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap"
                     >
                         SEARCH. <span className="hidden sm:inline">IT'S FREE!</span>
                     </button>
@@ -111,7 +111,7 @@ export default function PincodeSearch() {
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <div className="font-bold text-dark-900 text-sm sm:text-base group-hover:text-teal-600">
+                                        <div className="font-bold text-slate-800 text-sm sm:text-base group-hover:text-teal-600">
                                             {suggestion.postal_code}
                                         </div>
                                         <div className="text-xs sm:text-sm text-gray-600">

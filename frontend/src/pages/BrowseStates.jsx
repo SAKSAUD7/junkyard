@@ -10,7 +10,7 @@ import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structure
 
 export default function BrowseStates() {
     const [searchParams] = useSearchParams();
-    const stateParam = searchParams.get('state'); // Get state from URL parameter
+    const stateParam = searchParams.get('state');
 
     const [statesData, setStatesData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,30 +18,26 @@ export default function BrowseStates() {
     const [searchTerm, setSearchTerm] = useState('');
     const [totalVendors, setTotalVendors] = useState(0);
 
-    // Set search term from URL parameter when component mounts
     useEffect(() => {
         if (stateParam) {
             setSearchTerm(stateParam);
         }
     }, [stateParam]);
 
-    // Fetch data from backend API
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch states list and vendor counts per state
-                const [statesResponse, countsResponse] = await Promise.all([
+                // We use Promise.allSettled for graceful degradation in case the API 500s
+                const results = await Promise.allSettled([
                     api.getStates(),
                     api.getStateCounts()
                 ]);
 
-                // Handle paginated response for states if necessary (usually api.getStates is a list)
-                const statesList = statesResponse.results || statesResponse;
+                const statesResponse = results[0].status === 'fulfilled' ? results[0].value : [];
+                const countsResponse = results[1].status === 'fulfilled' ? results[1].value : {};
 
-                // Merge states with their counts
-                // statesList is [{ stateCode: 'AL', stateName: 'Alabama' }, ...]
-                // countsResponse is { 'AL': 10, 'AK': 2, ... }
+                const statesList = statesResponse.results || statesResponse || [];
 
                 let total = 0;
                 const mergedData = statesList.map(state => {
@@ -52,15 +48,20 @@ export default function BrowseStates() {
                         junkyardCount: count
                     };
                 })
-                    .filter(state => state.junkyardCount > 0) // Only show states with vendors
-                    .sort((a, b) => b.junkyardCount - a.junkyardCount); // Sort by count descending
+                .filter(state => state.junkyardCount > 0)
+                .sort((a, b) => b.junkyardCount - a.junkyardCount);
 
                 setStatesData(mergedData);
                 setTotalVendors(total);
-                setLoading(false);
+                
+                if (results[0].status === 'rejected') {
+                    // Suppress massive red banners, just log
+                    console.warn('[BrowseStates] States endpoint failed gracefully.');
+                }
             } catch (err) {
-                console.error('Error fetching data from API:', err);
+                console.warn('[BrowseStates] Data unavailable');
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -68,33 +69,19 @@ export default function BrowseStates() {
         fetchData();
     }, []);
 
-    // Scroll to top when page loads
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    // Filter states by search term (exact match for state code, partial match for state name)
     const filteredStates = statesData.filter(state => {
         const searchLower = searchTerm.toLowerCase().trim();
-
-        // If no search term, show all states
-        if (!searchLower) {
-            return true;
-        }
-
+        if (!searchLower) return true;
         const stateCodeLower = state.stateCode.toLowerCase();
         const stateNameLower = state.stateName.toLowerCase();
-
-        // If search term is 2 characters or less, do exact match on state code
-        if (searchLower.length <= 2) {
-            return stateCodeLower === searchLower;
-        }
-
-        // Otherwise, do partial match on state name
+        if (searchLower.length <= 2) return stateCodeLower === searchLower;
         return stateNameLower.includes(searchLower);
     });
 
-    // SEO structured data
     const schema = {
         '@context': 'https://schema.org',
         '@graph': [
@@ -112,8 +99,7 @@ export default function BrowseStates() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
-            {/* SEO Meta Tags */}
+        <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
                 title="Browse Junkyards by State - Find Auto Salvage Yards Near You"
                 description={`Find junkyards and auto salvage yards across ${statesData.length} states. Search ${totalVendors}+ verified vendors nationwide. Free quotes, quality used auto parts.`}
@@ -122,45 +108,54 @@ export default function BrowseStates() {
 
             <Navbar />
 
-            {/* Modern Hero Section - Light Theme */}
-            <div className="relative min-h-[35vh] sm:min-h-[45vh] md:min-h-[60vh] flex items-center overflow-hidden bg-gradient-to-br from-blue-600 to-teal-600">
+            {/* Hero - Cinematic Car Imagery */}
+            <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center text-center" style={{ minHeight: '50vh', background: 'var(--bg-base)' }}>
+                {/* PRIMARY — towering stacked crushed cars */}
+                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/stacked-cars.png')", opacity: 0.58 }} />
+                {/* DEPTH — car crusher action, blurred */}
+                <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/car-crusher.png')" }} />
+                <div className="hero-overlay-base" />
+                <div className="hero-vignette" />
+                <div className="hero-glow-teal" />
+                <div className="hero-glow-orange" />
+                <div className="hero-grid" />
+                <div className="hero-scanline" />
+                <div className="hero-fade-bottom" />
 
-                {/* Desktop Sidebar Ads */}
-                <div className="absolute top-4 left-4 z-30 flex flex-col gap-4 hidden xl:block">
+                {/* Sidebar Ads — above depth layers */}
+                <div className="absolute top-4 left-4 z-40 hidden xl:flex flex-col gap-4">
                     <DynamicAd slot="left_sidebar_ad" page="browse" />
                 </div>
-
-                <div className="absolute top-4 right-4 z-30 flex flex-col gap-4 hidden xl:block">
+                <div className="absolute top-4 right-4 z-40 hidden xl:flex flex-col gap-4">
                     <DynamicAd slot="right_sidebar_ad" page="browse" />
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full compact-section">
-                    <div className="text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
-                        {/* Premium Badge - Compact */}
-                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
-                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white compact-text font-medium">
-                                {statesData?.length || 0} States • {totalVendors}+ Verified Junkyards
-                            </span>
-                        </div>
+                <div className="hero-content relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className="text-left">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 shadow-xl" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)' }}>
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-[0_0_8px_#60a5fa]"></div>
+                                <span className="font-bold tracking-wider text-xs uppercase" style={{ color: '#ffffff' }}>
+                                    {statesData?.length || 0} States • {totalVendors}+ Vendors
+                                </span>
+                            </div>
 
-                        {/* Main Heading - Compact */}
-                        <h1 className="compact-hero font-black text-white leading-tight px-2">
-                            Browse by
-                            <span className="block">Location</span>
-                        </h1>
+                            <h1 className="font-black mb-4 tracking-tight px-2" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                                Browse by{' '}
+                                <span className="block mt-2" style={{ color: '#60a5fa' }}>
+                                    Location
+                                </span>
+                            </h1>
 
-                        <p className="compact-heading text-white/90 font-light max-w-3xl mx-auto px-2">
-                            Find <span className="font-bold">quality auto parts</span> from trusted salvage yards.
-                            Select your state to discover local junkyards.
-                        </p>
+                            <p className="font-light max-w-3xl mb-8 px-2 text-lg" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+                                Find <strong style={{ color: '#ffffff' }}>quality auto parts</strong> from trusted salvage yards. Select your state to discover local junkyards.
+                            </p>
 
-                        {/* Search Bar - Compact */}
-                        <div className="max-w-2xl mx-auto">
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                            {/* Search Bar */}
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg className="w-6 h-6 transition-colors" style={{ color: 'var(--neon-blue)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                                 <input
@@ -168,7 +163,32 @@ export default function BrowseStates() {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="Search for a state..."
-                                    className="w-full pl-10 sm:pl-12 md:pl-14 pr-3 sm:pr-4 py-2.5 sm:py-3 md:py-4 lg:py-5 bg-white border-2 border-white/50 rounded-lg md:rounded-xl text-gray-900 compact-text placeholder-gray-500 focus:border-white focus:ring-2 focus:ring-white/50 outline-none transition-all shadow-md"
+                                    className="w-full pl-14 pr-4 py-4 rounded-xl text-lg transition-all duration-300 outline-none bg-white"
+                                    style={{ 
+                                        border: '2px solid #e2e8f0', 
+                                        color: '#0f172a',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+                                    }}
+                                    onFocus={e => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 4px 20px rgba(37,99,235,0.15)'; }}
+                                    onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'; }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* 3D MAP PIN VISUAL */}
+                        <div className="hidden lg:flex items-center justify-center relative animate-fade-in-up delay-300">
+                            <div className="relative w-full max-w-lg mx-auto pointer-events-none">
+                                {/* Ambient glow behind the pin to boost the 3D effect */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]" />
+                                <img 
+                                    src="/3d/map-pin.png" 
+                                    alt="3D Glowing Location Pin" 
+                                    className="relative w-full h-auto"
+                                    style={{ 
+                                        mixBlendMode: 'screen', // This magically knocks out the pitch black background!
+                                        animation: 'float 4.5s ease-in-out infinite',
+                                        filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) contrast(1.1) brightness(1.1)'
+                                    }} 
                                 />
                             </div>
                         </div>
@@ -176,27 +196,27 @@ export default function BrowseStates() {
                 </div>
             </div>
 
-
-            {/* States Grid Section - Compact Mobile */}
-            <div className="relative compact-section">
-                <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+            {/* States Grid Section */}
+            <div className="relative py-16 z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
                     {/* Results Info */}
-                    <div className="mb-8 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-cyan-400">
-                            <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="font-bold text-lg">
+                    <div className="mb-10 flex items-center justify-between border-b pb-4" style={{ borderColor: 'rgba(37,99,235,0.1)' }}>
+                        <div className="flex items-center gap-2">
+                            <span className="font-bold text-lg" style={{ color: 'var(--neon-blue)' }}>
                                 {filteredStates?.length || 0} states available
                             </span>
                         </div>
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="text-cyan-400 hover:text-cyan-300 font-semibold text-sm flex items-center gap-1 transition-colors"
+                                className="font-semibold text-sm flex items-center gap-2 transition-colors uppercase tracking-wider"
+                                style={{ color: 'var(--neon-orange)' }}
+                                onMouseEnter={e => e.currentTarget.style.color = '#ff9500'}
+                                onMouseLeave={e => e.currentTarget.style.color = 'var(--neon-orange)'}
                             >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                                 Clear Search
                             </button>
@@ -204,75 +224,87 @@ export default function BrowseStates() {
                     </div>
 
                     {loading ? (
-                        <div className="text-center py-20">
-                            <div className="inline-block w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                            <p className="text-white/60 mt-4">Loading states...</p>
+                        <div className="text-center py-24">
+                            <div className="spinner-glow mx-auto mb-4" />
+                            <p style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.9rem' }}>
+                                Scanning states database...
+                            </p>
                         </div>
                     ) : filteredStates && filteredStates.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 compact-gap">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
                             {filteredStates.map((state) => (
                                 <Link
                                     key={state.stateCode}
                                     to={`/browse/${state.stateCode.toLowerCase()}`}
-                                    className="group relative"
+                                    className="group relative block"
                                 >
-                                    {/* Card - Compact */}
-                                    <div className="relative bg-white border border-gray-200 rounded-lg md:rounded-xl compact-card transform transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-blue-300">
-                                        {/* State Icon - Compact */}
-                                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-blue-600 to-teal-600 rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4 group-hover:scale-105 transition-transform duration-200">
-                                            <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <div className="relative rounded-2xl p-5 h-full transition-all duration-300 transform group-hover:-translate-y-2"
+                                        style={{ 
+                                            background: '#ffffff',
+                                            border: '1px solid rgba(15,23,42,0.08)',
+                                            boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+                                            backdropFilter: 'blur(10px)'
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.borderColor = 'rgba(37,99,235,0.25)';
+                                            e.currentTarget.style.boxShadow = '0 12px 32px rgba(37,99,235,0.12)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.borderColor = 'rgba(15,23,42,0.08)';
+                                            e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)';
+                                        }}
+                                    >
+                                        <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <svg className="w-5 h-5" style={{ color: 'var(--neon-blue)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </div>
+
+                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(37,99,235,0.08)', color: 'var(--neon-blue)' }}>
+                                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                             </svg>
                                         </div>
 
-                                        {/* State Name - Compact */}
-                                        <h3 className="compact-heading font-bold text-gray-900 mb-1 sm:mb-1.5 md:mb-2 group-hover:text-blue-600 transition-colors">
+                                        <h3 className="font-bold text-lg mb-1 transition-colors duration-300 group-hover:text-[var(--neon-blue)]" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>
                                             {state.stateName}
                                         </h3>
 
-                                        {/* State Abbreviation - Compact */}
-                                        <p className="text-gray-600 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 md:mb-3">
+                                        <p className="text-xs font-mono mb-4" style={{ color: 'var(--neon-orange)', letterSpacing: '0.1em' }}>
                                             {state.stateCode}
                                         </p>
 
-                                        {/* Junkyard Count */}
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-slate-100">
                                                 <div
-                                                    className="h-full bg-gradient-to-r from-blue-600 to-teal-600 transition-all duration-500"
-                                                    style={{ width: `${Math.min((state.junkyardCount / Math.max(...(statesData?.map(s => s.junkyardCount) || [1]))) * 100, 100)}%` }}
+                                                    className="h-full transition-all duration-1000 ease-out"
+                                                    style={{ 
+                                                        background: 'linear-gradient(90deg, #2563eb, #60a5fa)',
+                                                        width: `${Math.min((state.junkyardCount / Math.max(...(statesData?.map(s => s.junkyardCount) || [1]))) * 100, 100)}%` 
+                                                    }}
                                                 ></div>
                                             </div>
-                                            <span className="text-blue-600 font-bold compact-heading">
+                                            <span className="font-bold text-slate-700" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                                                 {state.junkyardCount}
                                             </span>
-                                        </div>
-                                        <p className="text-gray-600 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
-                                            {state.junkyardCount === 1 ? 'junkyard' : 'junkyards'}
-                                        </p>
-
-                                        {/* Arrow Icon */}
-                                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                            </svg>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full mb-6">
-                                <svg className="w-10 h-10 text-white/30" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        <div className="text-center py-24">
+                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.05)', border: '1px solid rgba(234,88,12,0.2)' }}>
+                                <svg className="w-10 h-10" style={{ color: 'var(--neon-orange)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">No states found</h3>
-                            <p className="text-white/60 mb-6">Try adjusting your search</p>
+                            <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>No states found</h3>
+                            <p className="mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>Try adjusting your search</p>
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow"
+                                className="font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+                                style={{ background: 'var(--neon-blue)', color: 'var(--bg-base)' }}
                             >
                                 Clear Search
                             </button>
@@ -281,7 +313,6 @@ export default function BrowseStates() {
                 </div>
             </div>
 
-            {/* Mobile Ad Banner */}
             <MobileAdBanner page="browse" />
 
             <Footer />

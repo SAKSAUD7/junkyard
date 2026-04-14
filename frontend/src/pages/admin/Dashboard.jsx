@@ -173,10 +173,10 @@ export default function AdminDashboard() {
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                                    <SparklesIcon className="h-8 w-8 text-white" />
+                                    <SparklesIcon className="h-8 w-8 text-slate-800" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
+                                    <h1 className="text-3xl font-bold text-slate-800">Dashboard Overview</h1>
                                     <p className="text-indigo-100 mt-1 flex items-center gap-2">
                                         <ClockIcon className="h-4 w-4" />
                                         Last updated: {new Date().toLocaleTimeString()}
@@ -187,11 +187,11 @@ export default function AdminDashboard() {
                         <div className="hidden md:flex items-center gap-3">
                             <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
                                 <p className="text-xs text-indigo-100">Total Vendors</p>
-                                <p className="text-2xl font-bold text-white">{stats.total_vendors}</p>
+                                <p className="text-2xl font-bold text-slate-800">{stats.total_vendors}</p>
                             </div>
                             <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
                                 <p className="text-xs text-indigo-100">Total Ads</p>
-                                <p className="text-2xl font-bold text-white">{stats.total_ads}</p>
+                                <p className="text-2xl font-bold text-slate-800">{stats.total_ads}</p>
                             </div>
                         </div>
                     </div>
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
                                 {/* Icon and Trend */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div className={`${stat.iconBg} p-3 rounded-xl shadow-lg ${stat.shadowColor} group-hover:scale-110 transition-transform duration-300`}>
-                                        <Icon className="h-6 w-6 text-white" />
+                                        <Icon className="h-6 w-6 text-slate-800" />
                                     </div>
                                     <div className="flex items-center gap-1 bg-white/80 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm">
                                         <TrendIcon className={`h-3.5 w-3.5 ${stat.textColor}`} />
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
                             <p className="text-sm text-[#6b7280] mt-1">Last 7 days performance</p>
                         </div>
                         <div className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] p-3 rounded-xl shadow-lg shadow-indigo-200">
-                            <ChartBarIcon className="h-6 w-6 text-white" />
+                            <ChartBarIcon className="h-6 w-6 text-slate-800" />
                         </div>
                     </div>
                     {stats.leads_trend && stats.leads_trend.length > 0 ? (
@@ -310,7 +310,7 @@ export default function AdminDashboard() {
                             <p className="text-sm text-[#6b7280] mt-1">Active vendor distribution</p>
                         </div>
                         <div className="bg-gradient-to-br from-[#f59e0b] to-[#d97706] p-3 rounded-xl shadow-lg shadow-amber-200">
-                            <UserGroupIcon className="h-6 w-6 text-white" />
+                            <UserGroupIcon className="h-6 w-6 text-slate-800" />
                         </div>
                     </div>
                     {stats.vendor_distribution && stats.vendor_distribution.length > 0 ? (
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
                                     className="group flex items-start gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all cursor-pointer border border-transparent hover:border-indigo-100"
                                     onClick={() => navigate('/admin-portal/leads')}
                                 >
-                                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
+                                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-xl flex items-center justify-center text-slate-800 font-bold text-lg shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
                                         {lead.name.charAt(0)}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -443,12 +443,12 @@ export default function AdminDashboard() {
 
                                     <div className="relative">
                                         <div className={`inline-flex p-2.5 rounded-lg bg-gradient-to-br ${action.gradient} shadow-lg mb-3 group-hover:scale-110 transition-transform`}>
-                                            <Icon className="h-5 w-5 text-white" />
+                                            <Icon className="h-5 w-5 text-slate-800" />
                                         </div>
-                                        <span className="block font-bold text-sm mb-1 text-[#1f2937] group-hover:text-white transition-colors">
+                                        <span className="block font-bold text-sm mb-1 text-[#1f2937] group-hover:text-slate-800 transition-colors">
                                             {action.title}
                                         </span>
-                                        <span className="text-xs text-[#6b7280] group-hover:text-white/90 transition-colors">
+                                        <span className="text-xs text-[#6b7280] group-hover:text-slate-600 transition-colors">
                                             {action.description}
                                         </span>
                                     </div>

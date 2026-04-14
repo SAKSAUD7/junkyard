@@ -77,7 +77,7 @@ export default function ModernAdminPortal() {
             <aside className="w-20 bg-white/40 backdrop-blur-xl border-r border-white/60 flex flex-col items-center py-6 gap-2">
                 {/* Logo */}
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-lg shadow-slate-900/20 flex items-center justify-center mb-6">
-                    <HomeIcon className="w-6 h-6 text-white" />
+                    <HomeIcon className="w-6 h-6 text-slate-800" />
                 </div>
 
                 {/* Navigation Icons */}
@@ -97,7 +97,7 @@ export default function ModernAdminPortal() {
                             >
                                 <Icon className="w-5 h-5" />
                                 {/* Tooltip */}
-                                <span className="absolute left-16 bg-slate-800 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                <span className="absolute left-16 bg-slate-800 text-slate-800 text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                     {item.label}
                                 </span>
                             </button>
@@ -207,7 +207,7 @@ export default function ModernAdminPortal() {
                                     <button
                                         key={idx}
                                         className={`aspect-square rounded-lg text-sm flex items-center justify-center transition-all ${day.isToday
-                                                ? 'bg-slate-700 text-white shadow-md'
+                                                ? 'bg-slate-700 text-slate-800 shadow-md'
                                                 : day.isCurrentMonth
                                                     ? 'text-slate-600 hover:bg-slate-100'
                                                     : 'text-slate-300'

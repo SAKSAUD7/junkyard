@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { getOrganizationSchema } from '../utils/structuredData'
 import { api } from '../services/api'
+import Carousel3D from '../components/Carousel3D'
 
 export default function About() {
     const [vendorCount, setVendorCount] = useState(0)
@@ -14,29 +15,33 @@ export default function About() {
     useEffect(() => {
         const fetchCounts = async () => {
             try {
-                // Fetch basic vendor info (just for count) and efficient state counts
-                // api.getVendors({ page_size: 1 }) will be fast and return total count
-                const [vendorsResponse, stateCountsResponse] = await Promise.all([
+                // We use Promise.allSettled to gracefully handle 500 errors from the backend.
+                const [vendorsResult, statesResult] = await Promise.allSettled([
                     api.getVendors({ page_size: 1 }),
                     api.getStateCounts()
                 ])
 
-                // Handle vendors count (paginated response vs array)
-                const totalVendors = vendorsResponse.count !== undefined
-                    ? vendorsResponse.count
-                    : (Array.isArray(vendorsResponse) ? vendorsResponse.length : 0);
+                if (vendorsResult.status === 'fulfilled') {
+                    const totalVendors = vendorsResult.value.count !== undefined
+                        ? vendorsResult.value.count
+                        : (Array.isArray(vendorsResult.value) ? vendorsResult.value.length : 1200);
+                    setVendorCount(totalVendors)
+                } else {
+                    setVendorCount(1200) // Fallback due to API error
+                }
 
-                setVendorCount(totalVendors)
-
-                // Count states that have at least one vendor
-                const activeStatesCount = Object.keys(stateCountsResponse).length || 0
-                setStateCount(activeStatesCount)
+                if (statesResult.status === 'fulfilled') {
+                    const activeStatesCount = Object.keys(statesResult.value).length || 50
+                    setStateCount(activeStatesCount)
+                } else {
+                    setStateCount(50) // Fallback due to API error
+                }
 
                 setLoading(false)
             } catch (error) {
                 console.error('Error fetching counts:', error)
-                // Fallback to default values
-                setVendorCount(1000)
+                // Fallback to default values if whole block fails
+                setVendorCount(1200)
                 setStateCount(50)
                 setLoading(false)
             }
@@ -46,8 +51,8 @@ export default function About() {
     }, [])
 
     const stats = [
-        { label: 'Active Junkyards', value: loading ? '...' : vendorCount.toLocaleString() },
-        { label: 'States Covered', value: loading ? '...' : stateCount },
+        { label: 'Active Junkyards', value: loading ? '...' : vendorCount.toLocaleString() + '+' },
+        { label: 'States Covered', value: loading ? '...' : stateCount + '+' },
         { label: 'Daily Searches', value: '50k+' },
         { label: 'Parts Found', value: '1M+' },
     ]
@@ -57,7 +62,7 @@ export default function About() {
             title: 'Nationwide Network',
             description: 'Determine availability across our massive network of over 1,000 verified junkyards in all 50 states.',
             icon: (
-                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-6 h-6 text-[var(--neon-blue)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             )
@@ -66,7 +71,7 @@ export default function About() {
             title: 'Smart Search',
             description: 'Instantly filter by vehicle make, model, year, and part type to find exactly what you need in seconds.',
             icon: (
-                <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-6 h-6 text-[var(--neon-orange)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             )
@@ -75,7 +80,7 @@ export default function About() {
             title: 'Direct Contact',
             description: 'Get direct access to junkyard phone numbers, addresses, and websites. No middlemen, no hidden fees.',
             icon: (
-                <svg className="w-6 h-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-6 h-6 text-[var(--neon-blue)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
             )
@@ -85,7 +90,7 @@ export default function About() {
     const organizationSchema = getOrganizationSchema();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50 text-gray-900">
+        <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
                 title="About Us - Junkyards Near Me | The Future of Auto Salvage"
                 description="Learn about Junkyards Near Me - connecting mechanics, enthusiasts, and car owners with over 1,000 verified junkyards across all 50 states. Save up to 70% on quality used auto parts."
@@ -94,48 +99,60 @@ export default function About() {
             />
             <Navbar />
 
-            {/* Hero Section - Compact */}
-            <div className="relative compact-section overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Hero Section - Cinematic Depth with Car Imagery */}
+            <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center" style={{ minHeight: '60vh', background: 'var(--bg-base)' }}>
+                {/* PRIMARY — aerial junkyard cars at night */}
+                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/aerial-night.png')", opacity: 0.6 }} />
+                {/* DEPTH — stacked crushed cars, blurred */}
+                <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/stacked-cars.png')" }} />
+                <div className="hero-overlay-base" />
+                <div className="hero-vignette" />
+                <div className="hero-glow-teal" />
+                <div className="hero-glow-orange" />
+                <div className="hero-grid" />
+                <div className="hero-scanline" />
+                <div className="hero-fade-bottom" />
+
+                <div className="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="text-center max-w-3xl mx-auto">
-                        <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-blue-100 border border-blue-200">
-                            <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent font-bold text-sm tracking-wide uppercase">
+                        <div className="inline-block mb-4 px-4 py-1.5 rounded-full" style={{ background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(37,99,235,0.4)' }}>
+                            <span className="text-blue-300 font-bold text-xs tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                                 About Us
                             </span>
                         </div>
-                        <h1 className="compact-hero font-black mb-2 sm:mb-3 md:mb-4 text-gray-900 px-2">
+                        <h1 className="font-black mb-4" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.1, textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}>
                             The Future of <br />
-                            <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                            <span style={{ color: '#60a5fa' }}>
                                 Auto Salvage
                             </span>
                         </h1>
-                        <p className="compact-heading text-gray-600 leading-relaxed mb-4 sm:mb-6 md:mb-8 px-2">
-                            We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's best extensive inventory.
+                        <p className="leading-relaxed mb-8 px-2" style={{ color: 'rgba(255,255,255,0.82)', fontSize: 'clamp(1rem, 2vw, 1.2rem)', maxWidth: '600px', margin: '0 auto' }}>
+                            We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's most extensive inventory.
                         </p>
                     </div>
 
-                    {/* Stats Grid - Compact */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 compact-gap mt-4 sm:mt-6 md:mt-8">
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
                         {stats.map((stat, index) => (
-                            <div key={index} className="bg-white border border-gray-200 p-6 rounded-xl text-center group hover:shadow-md hover:border-blue-300 transition-all duration-200">
-                                <div className="text-3xl font-black bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent mb-1 group-hover:scale-110 transition-transform duration-200">
+                            <div key={index} className="p-6 rounded-2xl text-center group hover:-translate-y-1 transition-all duration-300" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)' }}>
+                                <div className="text-3xl md:text-4xl font-black mb-2 transition-transform duration-300 group-hover:scale-110" style={{ color: index % 2 === 0 ? '#60a5fa' : '#fb923c', fontFamily: "'Outfit', sans-serif" }}>
                                     {stat.value}
                                 </div>
-                                <div className="text-sm text-gray-600 font-medium uppercase tracking-wider">{stat.label}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Mission Section - Compact */}
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 compact-section">
-                <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Mission Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="space-y-8">
-                        <h2 className="text-4xl font-bold text-gray-900">
-                            Our Mission is <span className="text-blue-600">Simple</span>
+                        <h2 className="font-bold" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                            Our Mission is <span style={{ color: '#2563eb' }}>Simple</span>
                         </h2>
-                        <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
+                        <div className="space-y-6 leading-relaxed text-lg" style={{ color: 'var(--text-secondary)' }}>
                             <p>
                                 Finding quality used auto parts shouldn't be a hassle. We built Junkyards Near Me to bridge the gap between organized inventory and the people who need it most.
                             </p>
@@ -144,19 +161,21 @@ export default function About() {
                             </p>
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-200 p-8 rounded-2xl">
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <span className="text-2xl">🌱</span> Why Choose Used?
+                        <div className="p-8 rounded-2xl" style={{ background: 'rgba(234,88,12,0.05)', border: '1px solid rgba(234,88,12,0.2)' }}>
+                            <h3 className="text-xl font-bold mb-5 flex items-center gap-3" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>
+                                <span className="text-2xl" style={{ color: 'var(--neon-orange)' }}>⚡</span> Why Choose Used?
                             </h3>
-                            <ul className="space-y-3">
+                            <ul className="space-y-4">
                                 {[
                                     'Save up to 70% compared to new parts',
-                                    'Environmentally friendly recycling',
+                                    'Environmentally friendly auto recycling',
                                     'Find rare and discontinued items',
                                     'OEM quality fit and finish'
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-gray-700">
-                                        <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-xs">✓</div>
+                                    <li key={i} className="flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
+                                        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.3)', color: 'var(--neon-blue)' }}>
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        </div>
                                         {item}
                                     </li>
                                 ))}
@@ -165,15 +184,19 @@ export default function About() {
                     </div>
 
                     <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-3xl opacity-20 rounded-full"></div>
-                        <div className="grid gap-6 relative z-10">
+                        <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle at center, rgba(37,99,235,0.08) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }}></div>
+                        <div className="grid gap-6 relative z-10 w-full max-w-lg mx-auto">
                             {features.map((feature, index) => (
-                                <div key={index} className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors duration-300">
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 border border-white/10">
-                                        {feature.icon}
+                                <div key={index} className="p-6 rounded-2xl transition-colors duration-300 group" style={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.08)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                                    <div className="flex items-start gap-5">
+                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(37,99,235,0.05)', border: '1px solid rgba(37,99,235,0.2)' }}>
+                                            {feature.icon}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>{feature.title}</h3>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>{feature.description}</p>
+                                        </div>
                                     </div>
-                                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                                    <p className="text-gray-600">{feature.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -181,7 +204,49 @@ export default function About() {
                 </div>
             </div>
 
+            {/* 3D Showcase Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mb-12">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        Premium <span className="text-blue-600">Assets</span>
+                    </h2>
+                    <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                        Take a look at the high-fidelity parts you can expect to find across our verified network.
+                    </p>
+                </div>
+                
+                <Carousel3D 
+                    items={[
+                        {
+                            image: '/3d/engine_core.png',
+                            title: 'Futuristic Engine Cores',
+                            description: 'Find premium, high-performance engine blocks sourced straight from verified suppliers.',
+                            tag: 'Power Unit'
+                        },
+                        {
+                            image: '/3d/transmission.png',
+                            title: 'Intricate Transmissions',
+                            description: 'From classic to modern EV transmissions, we connect you with the exact parts you need.',
+                            tag: 'Drivetrain'
+                        },
+                        {
+                            image: '/3d/suspension.png',
+                            title: 'Complete Suspension Systems',
+                            description: 'Ensure a smooth ride with thoroughly inspected suspension components and coilovers.',
+                            tag: 'Chassis'
+                        },
+                        {
+                            image: '/3d/salvage_yard.png',
+                            title: 'Organized Nationwide Inventory',
+                            description: 'Our network of salvage yards is mapped out digitally, ensuring zero wasted time.',
+                            tag: 'Logistics'
+                        }
+                    ]} 
+                />
+            </div>
+
             <Footer />
         </div>
     )
 }
+

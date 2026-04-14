@@ -86,7 +86,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl overflow-hidden transform transition-all scale-100 flex flex-col max-h-[85vh]">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">

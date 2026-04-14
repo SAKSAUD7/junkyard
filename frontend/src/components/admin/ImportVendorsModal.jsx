@@ -143,7 +143,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden transform transition-all scale-100">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-green-50 to-blue-50">

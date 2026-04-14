@@ -235,7 +235,7 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={!isValid || loading}
-                        className={`flex-1 py-3 px-4 rounded-lg font-semibold text-white transition-all ${isValid && !loading
+                        className={`flex-1 py-3 px-4 rounded-lg font-semibold text-slate-800 transition-all ${isValid && !loading
                             ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
                             : 'bg-gray-300 cursor-not-allowed'
                             }`}

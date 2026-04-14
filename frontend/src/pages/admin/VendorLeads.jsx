@@ -133,28 +133,28 @@ export default function AdminVendorLeads() {
         const configs = {
             new: {
                 bg: 'bg-gradient-to-r from-blue-400 to-blue-600',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'New',
                 icon: FireIcon,
                 glow: 'shadow-lg shadow-blue-200'
             },
             contacted: {
                 bg: 'bg-gradient-to-r from-amber-400 to-orange-500',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Contacted',
                 icon: ChatBubbleLeftRightIcon,
                 glow: 'shadow-lg shadow-amber-200'
             },
             converted: {
                 bg: 'bg-gradient-to-r from-emerald-400 to-green-500',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Converted',
                 icon: CheckCircleIcon,
                 glow: 'shadow-lg shadow-emerald-200'
             },
             closed: {
                 bg: 'bg-gradient-to-r from-gray-400 to-gray-600',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Closed',
                 icon: XMarkIcon,
                 glow: 'shadow-lg shadow-gray-200'
@@ -197,10 +197,10 @@ export default function AdminVendorLeads() {
                 <div className="relative">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <TruckIcon className="h-8 w-8 text-white" />
+                            <TruckIcon className="h-8 w-8 text-slate-800" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Vendor Leads Management</h1>
+                            <h1 className="text-3xl font-bold text-slate-800">Vendor Leads Management</h1>
                             <p className="text-indigo-100 mt-1">
                                 Track and manage customer inquiries to vendors
                             </p>
@@ -211,38 +211,38 @@ export default function AdminVendorLeads() {
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6">
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
                             <div className="flex items-center gap-2 mb-1">
-                                <SparklesIcon className="h-4 w-4 text-white" />
+                                <SparklesIcon className="h-4 w-4 text-slate-800" />
                                 <p className="text-xs text-indigo-100">Total</p>
                             </div>
-                            <p className="text-2xl font-bold text-white">{stats.total}</p>
+                            <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <FireIcon className="h-4 w-4 text-blue-200" />
                                 <p className="text-xs text-indigo-100">New</p>
                             </div>
-                            <p className="text-2xl font-bold text-white">{stats.new}</p>
+                            <p className="text-2xl font-bold text-slate-800">{stats.new}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <ChatBubbleLeftRightIcon className="h-4 w-4 text-amber-200" />
                                 <p className="text-xs text-indigo-100">Contacted</p>
                             </div>
-                            <p className="text-2xl font-bold text-white">{stats.contacted}</p>
+                            <p className="text-2xl font-bold text-slate-800">{stats.contacted}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <CheckCircleIcon className="h-4 w-4 text-green-200" />
                                 <p className="text-xs text-indigo-100">Converted</p>
                             </div>
-                            <p className="text-2xl font-bold text-white">{stats.converted}</p>
+                            <p className="text-2xl font-bold text-slate-800">{stats.converted}</p>
                         </div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <XMarkIcon className="h-4 w-4 text-gray-200" />
                                 <p className="text-xs text-indigo-100">Closed</p>
                             </div>
-                            <p className="text-2xl font-bold text-white">{stats.closed}</p>
+                            <p className="text-2xl font-bold text-slate-800">{stats.closed}</p>
                         </div>
                     </div>
                 </div>
@@ -260,7 +260,7 @@ export default function AdminVendorLeads() {
                                 key={status}
                                 onClick={() => setStatusFilter(status)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${statusFilter === status
-                                        ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                        ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 shadow-lg shadow-indigo-200'
                                         : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
                                     }`}
                             >
@@ -285,7 +285,7 @@ export default function AdminVendorLeads() {
                         <button
                             onClick={handleExport}
                             disabled={exporting}
-                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
+                            className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
                         >
                             {exporting ? (
                                 <>
@@ -364,7 +364,7 @@ export default function AdminVendorLeads() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold shadow-md">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-bold shadow-md">
                                                         {lead.name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
@@ -403,21 +403,21 @@ export default function AdminVendorLeads() {
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => setSelectedLead(lead)}
-                                                        className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
+                                                        className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200"
                                                         title="View Details"
                                                     >
                                                         <EyeIcon className="h-4 w-4" />
                                                     </button>
                                                     <a
                                                         href={`tel:${lead.phone}`}
-                                                        className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 text-white rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all shadow-md shadow-emerald-200"
+                                                        className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 text-slate-800 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all shadow-md shadow-emerald-200"
                                                         title="Call"
                                                     >
                                                         <PhoneIcon className="h-4 w-4" />
                                                     </a>
                                                     <a
                                                         href={`mailto:${lead.email}`}
-                                                        className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-md shadow-purple-200"
+                                                        className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 text-slate-800 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-md shadow-purple-200"
                                                         title="Email"
                                                     >
                                                         <EnvelopeIcon className="h-4 w-4" />
@@ -440,12 +440,12 @@ export default function AdminVendorLeads() {
                         {/* Modal Header */}
                         <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <h2 className="text-xl font-bold text-white">Vendor Lead Details</h2>
+                                <h2 className="text-xl font-bold text-slate-800">Vendor Lead Details</h2>
                                 <p className="text-sm text-indigo-100">ID: #{selectedLead.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedLead(null)}
-                                className="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
+                                className="text-slate-600 hover:text-slate-800 transition-colors p-2 hover:bg-white/10 rounded-lg"
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -561,14 +561,14 @@ export default function AdminVendorLeads() {
                             <div className="flex gap-3 pt-4 border-t border-[#e5e7eb]">
                                 <a
                                     href={`tel:${selectedLead.phone}`}
-                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 transition-all"
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 transition-all"
                                 >
                                     <PhoneIcon className="h-4 w-4" />
                                     Call Customer
                                 </a>
                                 <a
                                     href={`mailto:${selectedLead.email}?subject=Re: Vendor Inquiry for ${selectedLead.year} ${selectedLead.make} ${selectedLead.model}`}
-                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 transition-all"
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] text-sm font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 transition-all"
                                 >
                                     <EnvelopeIcon className="h-4 w-4" />
                                     Send Email

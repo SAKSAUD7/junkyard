@@ -97,11 +97,11 @@ const VendorProfile = () => {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12"></div>
                 <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -ml-10 -mb-10"></div>
 
-                <div className="max-w-7xl mx-auto flex justify-between items-start text-white relative z-10">
+                <div className="max-w-7xl mx-auto flex justify-between items-start text-slate-800 relative z-10">
                     <div className="flex items-center gap-4">
                         {/* Vendor Logo */}
                         {profile?.logo ? (
-                            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-white/30 shadow-lg overflow-hidden flex-shrink-0">
+                            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-slate-300 shadow-lg overflow-hidden flex-shrink-0">
                                 <img
                                     src={getLogoUrl(profile.logo)}
                                     alt={profile.name}
@@ -117,7 +117,7 @@ const VendorProfile = () => {
                                 />
                             </div>
                         ) : (
-                            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 flex-shrink-0">
+                            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-slate-300 flex-shrink-0">
                                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
@@ -133,7 +133,7 @@ const VendorProfile = () => {
                     {!isEditing && (
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 border border-white/30"
+                            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-slate-800 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 border border-slate-300"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -265,7 +265,7 @@ const VendorProfile = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all"
+                                    className="px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-800 bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all"
                                     disabled={saving}
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}

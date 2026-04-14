@@ -60,7 +60,7 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
             role="alert"
         >
             <div
-                className={`${config.bg} text-white px-6 py-4 rounded-2xl shadow-elevation-lg backdrop-blur-sm flex items-center gap-3 min-w-[300px] max-w-md`}
+                className={`${config.bg} text-slate-800 px-6 py-4 rounded-2xl shadow-elevation-lg backdrop-blur-sm flex items-center gap-3 min-w-[300px] max-w-md`}
             >
                 <div className="flex-shrink-0">{config.icon}</div>
                 <p className="font-medium flex-1">{message}</p>

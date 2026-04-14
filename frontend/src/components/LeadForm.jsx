@@ -155,7 +155,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             const data = await api.getMakes()
             setMakes(data || [])
         } catch (err) {
-            console.error("Failed to load makes", err)
+            console.warn("[LeadForm] Makes unavailable — backend 500")
         } finally {
             setLoadingMakes(false)
         }
@@ -187,13 +187,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 setModels(modelsList)
 
             } catch (err) {
-                console.error("Failed to load vehicle data", err)
+                console.warn("[LeadForm] Vehicle data unavailable")
                 // Fallback to old API if bulk fails
                 try {
                     const data = await api.getModels({ make_id: selectedMake })
                     setModels(data || [])
                 } catch (fallbackErr) {
-                    console.error("Fallback also failed", fallbackErr)
+                    console.warn("[LeadForm] Model fallback unavailable")
                 }
             } finally {
                 setLoadingVehicleData(false)
@@ -289,7 +289,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     setParts([])
                 }
             } catch (err) {
-                console.error('Parts API fallback error:', err)
+                console.warn('[LeadForm] Parts fallback unavailable')
                 setParts([])
             } finally {
                 setLoadingParts(false)
@@ -461,14 +461,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     if (isSuccess) {
         return (
-            <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-dark-900/95 backdrop-blur-md p-8 rounded-xl border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px]`}>
+            <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-white/90 backdrop-blur-md p-8 rounded-xl border border-slate-200 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px]`}>
                 <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-glow-lg animate-scale-in">
                     <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h2 className="text-3xl font-black text-white mb-2">LEAD SENT!</h2>
-                <p className="text-white/70 text-lg mb-6">
+                <h2 className="text-3xl font-black text-slate-800 mb-2">LEAD SENT!</h2>
+                <p className="text-slate-600 text-lg mb-6">
                     We have received your request. <br />
                     A specialist will contact you shortly.
                 </p>
@@ -487,20 +487,20 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const showContactInfo = !enableSteps || currentStep === 2;
 
     return (
-        <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-sm'} mx-auto font-sans transition-all duration-300`}>
+        <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-[360px]'} mx-auto font-sans transition-all duration-300`}>
             {/* Header */}
-            <div className={`bg-gradient-to-r from-blue-600 to-teal-600 rounded-t-xl p-2 md:p-3 text-center shadow-md ${isHorizontal ? 'py-2 md:py-3' : ''} flex justify-between items-center px-4`}>
-                <h2 className={`${isHorizontal ? 'text-sm md:text-lg' : 'text-sm md:text-lg'} font-black text-white uppercase tracking-wide leading-tight flex-1`}>
+            <div className={`bg-gradient-to-r from-[#2563eb] to-[#0d9488] rounded-t-xl p-3 flex justify-between items-center px-4 md:px-5`}>
+                <h2 className={`text-base md:text-lg font-black text-slate-900 uppercase tracking-tight`}>
                     {leadType === 'quality_auto_parts' ? 'NEED A QUALITY USED PART?' : 'FIND JUNKYARD VENDORS'}
                 </h2>
                 {enableSteps && (
-                    <span className="text-white/80 text-[10px] uppercase font-bold tracking-wider">
+                    <span className="text-teal-900 text-[10px] md:text-xs uppercase font-black tracking-wider opacity-60">
                         Step {currentStep} of 2
                     </span>
                 )}
             </div>
 
-            <form onSubmit={handleSubmit} className={`bg-white p-3 md:p-5 rounded-b-xl border border-gray-200 shadow-lg ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5 p-4 md:p-6' : 'flex flex-col gap-3'}`}>
+            <form onSubmit={handleSubmit} className={`bg-[#18202F] p-4 md:p-5 rounded-b-xl shadow-2xl ${isHorizontal ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4' : 'flex flex-col gap-3'}`}>
 
                 {/* Toggle Buttons (Full Width) */}
                 {/* Only show toggle if mode is NOT locked */}
@@ -509,14 +509,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         <button
                             type="button"
                             onClick={() => handleTypeChange('quality_auto_parts')}
-                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'quality_auto_parts' ? 'bg-[#2563eb] text-white border-[#2563eb] shadow-sm' : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'}`}
                         >
                             Quality Auto Parts
                         </button>
                         <button
                             type="button"
                             onClick={() => handleTypeChange('vendor')}
-                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'}`}
+                            className={`py-2 text-xs md:text-sm font-bold uppercase rounded-md transition-all border ${leadType === 'vendor' ? 'bg-[#2563eb] text-white border-[#2563eb] shadow-sm' : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'}`}
                         >
                             Junkyard Vendors
                         </button>
@@ -525,12 +525,12 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                 {/* Step Indicator Text (Optional) */}
                 {enableSteps && currentStep === 1 && (
-                    <div className="text-center text-xs text-gray-500 font-semibold uppercase tracking-wide pb-2 border-b border-gray-100 mb-2">
+                    <div className="text-center text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest pb-2 border-b border-slate-700/50 mb-0.5 mt-0.5">
                         Vehicle Details
                     </div>
                 )}
                 {enableSteps && currentStep === 2 && (
-                    <div className="text-center text-xs text-gray-500 font-semibold uppercase tracking-wide pb-2 border-b border-gray-100 mb-2">
+                    <div className="text-center text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest pb-2 border-b border-slate-700/50 mb-0.5 mt-0.5">
                         Contact Information
                     </div>
                 )}
@@ -541,15 +541,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         {isHorizontal && <h3 className="text-blue-600 font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-[10px] md:text-xs border-b border-gray-200 pb-1">Vehicle Details</h3>}
 
                         {/* 1. Make */}
-                        <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                                1. Make <span className="text-blue-600">*</span>
-                                {loadingMakes && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                        <div className="space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex justify-between tracking-wide">
+                                1. Make <span className="text-blue-500 font-black text-[10px] md:text-xs">*</span>
+                                {loadingMakes && <span className="text-[9px] text-blue-500 lowercase animate-pulse">loading...</span>}
                             </label>
                             <select
                                 value={selectedMake}
                                 onChange={(e) => setSelectedMake(e.target.value)}
-                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none"
+                                className={`w-full text-slate-900 text-[13px] md:text-sm font-semibold rounded px-3 py-2 outline-none border-none ring-1 ring-transparent focus:ring-[#2563eb] transition-colors ${selectedMake ? 'bg-white' : 'bg-white'}`}
                                 required
                             >
                                 <option value="">Select Make</option>
@@ -558,15 +558,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         </div>
 
                         {/* 2. Model */}
-                        <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                                2. Model <span className="text-blue-600">*</span>
-                                {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                        <div className="space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex justify-between tracking-wide">
+                                2. Model <span className="text-blue-500 font-black text-[10px] md:text-xs">*</span>
+                                {loadingVehicleData && <span className="text-[9px] text-blue-500 lowercase animate-pulse">loading...</span>}
                             </label>
                             <select
                                 value={selectedModel}
                                 onChange={(e) => setSelectedModel(e.target.value)}
-                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                className={`w-full text-[13px] md:text-sm font-semibold rounded px-3 py-2 outline-none border-none ring-1 ring-transparent focus:ring-[#2563eb] transition-colors ${!selectedMake ? 'bg-[#cbd5e1] text-slate-500' : 'bg-white text-slate-900'}`}
                                 disabled={!selectedMake}
                                 required
                             >
@@ -576,15 +576,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         </div>
 
                         {/* 3. Year */}
-                        <div className="space-y-0.5 md:space-y-1">
-                            <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                                3. Year <span className="text-blue-600">*</span>
-                                {loadingVehicleData && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                        <div className="space-y-1">
+                            <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex justify-between tracking-wide">
+                                3. Year <span className="text-blue-500 font-black text-[10px] md:text-xs">*</span>
+                                {loadingVehicleData && <span className="text-[9px] text-blue-500 lowercase animate-pulse">loading...</span>}
                             </label>
                             <select
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(e.target.value)}
-                                className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                className={`w-full text-[13px] md:text-sm font-semibold rounded px-3 py-2 outline-none border-none ring-1 ring-transparent focus:ring-[#2563eb] transition-colors ${!selectedModel ? 'bg-[#cbd5e1] text-slate-500' : 'bg-white text-slate-900'}`}
                                 disabled={!selectedModel}
                                 required
                             >
@@ -597,15 +597,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         {leadType === 'quality_auto_parts' && (
                             <>
                                 {/* 4. Part */}
-                                <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex justify-between">
-                                        4. Part <span className="text-blue-600">*</span>
-                                        {(loadingVehicleData || loadingParts) && <span className="text-[9px] text-blue-600 lowercase animate-pulse">loading...</span>}
+                                <div className="space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex justify-between tracking-wide">
+                                        4. Part <span className="text-blue-500 font-black text-[10px] md:text-xs">*</span>
+                                        {(loadingVehicleData || loadingParts) && <span className="text-[9px] text-blue-500 lowercase animate-pulse">loading...</span>}
                                     </label>
                                     <select
                                         value={selectedPart}
                                         onChange={(e) => setSelectedPart(e.target.value)}
-                                        className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold rounded-md px-2 md:px-3 py-1.5 md:py-2 border border-gray-300 focus:border-teal-500 outline-none disabled:bg-gray-200"
+                                        className={`w-full text-[13px] md:text-sm font-semibold rounded px-3 py-2 outline-none border-none ring-1 ring-transparent focus:ring-[#2563eb] transition-colors ${!selectedYear || loadingParts ? 'bg-[#cbd5e1] text-slate-500' : 'bg-white text-slate-900'}`}
                                         disabled={!selectedYear || loadingParts}
                                         required
                                     >
@@ -615,32 +615,32 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 </div>
 
                                 {/* 5. Options */}
-                                <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex items-center gap-1 tracking-wide">
                                         5. Options
-                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Loading...)</span>}
+                                        {loadingHollander && <span className="text-blue-500 text-[9px] lowercase">(Loading...)</span>}
                                     </label>
                                     <input
                                         type="text"
                                         value={options}
                                         readOnly
                                         placeholder="Auto-populated from part specs"
-                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                        className="w-full bg-[#f1f5f9] text-slate-500 font-semibold text-[13px] md:text-sm px-3 py-2 rounded border-none outline-none cursor-not-allowed"
                                     />
                                 </div>
 
                                 {/* Hollander Number */}
-                                <div className="space-y-0.5 md:space-y-1">
-                                    <label className="text-[10px] md:text-xs font-bold text-gray-700 uppercase flex items-center gap-1">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase flex items-center gap-1 tracking-wide">
                                         Hollander #
-                                        {loadingHollander && <span className="text-blue-600 text-[8px]">(Looking up...)</span>}
+                                        {loadingHollander && <span className="text-blue-500 text-[9px] lowercase">(Looking up...)</span>}
                                     </label>
                                     <input
                                         type="text"
                                         value={hollanderNumber}
                                         readOnly
                                         placeholder="Auto-populated"
-                                        className="w-full bg-gray-100 text-gray-600 text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 outline-none cursor-not-allowed"
+                                        className="w-full bg-[#f1f5f9] text-slate-500 font-semibold text-[13px] md:text-sm px-3 py-2 rounded border-none outline-none cursor-not-allowed"
                                     />
                                 </div>
                             </>
@@ -651,7 +651,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                             <button
                                 type="button"
                                 onClick={handleNext}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all mt-4 flex items-center justify-center gap-2 group"
+                                className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold py-2.5 px-4 rounded shadow-lg transition-all mt-4 flex items-center justify-center gap-2 group text-sm"
                             >
                                 Next Step
                                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -720,7 +720,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 <select
                                     value={state}
                                     onChange={e => handleStateChange(e.target.value)}
-                                    className="w-full bg-white text-dark-900 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
+                                    className="w-full bg-white text-slate-800 text-xs md:text-sm font-semibold px-2 md:px-3 py-1.5 md:py-2 rounded-md border border-gray-300 focus:border-teal-500 outline-none"
                                     required
                                 >
                                     <option value="">State</option>
@@ -845,7 +845,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
+                                className={`w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-slate-800 font-black text-xs md:text-sm uppercase rounded-lg shadow-soft-lg hover:shadow-elevation transition-all transform active:scale-95 disabled:opacity-50 disabled:transform-none ${isHorizontal ? 'py-3 md:py-4 text-sm md:text-base' : 'py-2.5 md:py-3'}`}
                             >
                                 {submitting ? 'SENDING...' : (leadType === 'vendor' ? 'FIND VENDOR' : 'FIND MY PART NOW')}
                             </button>

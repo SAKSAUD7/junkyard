@@ -148,10 +148,10 @@ export default function AdminSettings() {
                 <div className="relative">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <Cog6ToothIcon className="h-8 w-8 text-white" />
+                            <Cog6ToothIcon className="h-8 w-8 text-slate-800" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Settings & Preferences</h1>
+                            <h1 className="text-3xl font-bold text-slate-800">Settings & Preferences</h1>
                             <p className="text-indigo-100 mt-1">
                                 Manage your account settings and preferences
                             </p>
@@ -164,12 +164,12 @@ export default function AdminSettings() {
                             <UserCircleIcon className="h-10 w-10 text-[#6366f1]" />
                         </div>
                         <div className="flex-1">
-                            <h2 className="text-xl font-bold text-white">{user?.username || 'Admin User'}</h2>
+                            <h2 className="text-xl font-bold text-slate-800">{user?.username || 'Admin User'}</h2>
                             <p className="text-sm text-indigo-100">{user?.email || 'admin@example.com'}</p>
                         </div>
                         <div className="px-4 py-2 bg-white/30 backdrop-blur-sm rounded-lg">
                             <p className="text-xs text-indigo-100 font-medium">Role</p>
-                            <p className="text-sm font-bold text-white">
+                            <p className="text-sm font-bold text-slate-800">
                                 {user?.is_superuser ? 'Super Admin' : user?.user_type === 'admin' ? 'Admin' : 'Staff'}
                             </p>
                         </div>
@@ -184,7 +184,7 @@ export default function AdminSettings() {
                     <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-[#e5e7eb]">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-lg">
-                                <UserCircleIcon className="h-5 w-5 text-white" />
+                                <UserCircleIcon className="h-5 w-5 text-slate-800" />
                             </div>
                             <h3 className="text-lg font-bold text-[#1f2937]">Profile Information</h3>
                         </div>
@@ -225,7 +225,7 @@ export default function AdminSettings() {
                     <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-[#e5e7eb]">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg">
-                                <ShieldCheckIcon className="h-5 w-5 text-white" />
+                                <ShieldCheckIcon className="h-5 w-5 text-slate-800" />
                             </div>
                             <h3 className="text-lg font-bold text-[#1f2937]">Security</h3>
                         </div>
@@ -235,7 +235,7 @@ export default function AdminSettings() {
                             <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Password</label>
                             <button
                                 onClick={() => setShowPasswordModal(true)}
-                                className="w-full px-4 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                                className="w-full px-4 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
                             >
                                 <KeyIcon className="h-5 w-5" />
                                 Change Password
@@ -265,7 +265,7 @@ export default function AdminSettings() {
                     <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-[#e5e7eb]">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg">
-                                <BellIcon className="h-5 w-5 text-white" />
+                                <BellIcon className="h-5 w-5 text-slate-800" />
                             </div>
                             <h3 className="text-lg font-bold text-[#1f2937]">Notifications</h3>
                         </div>
@@ -311,7 +311,7 @@ export default function AdminSettings() {
 
                         <button
                             onClick={handleSavePreferences}
-                            className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 font-medium shadow-lg shadow-amber-200 transition-all"
+                            className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-800 rounded-xl hover:from-amber-600 hover:to-orange-600 font-medium shadow-lg shadow-amber-200 transition-all"
                         >
                             Save Preferences
                         </button>
@@ -323,7 +323,7 @@ export default function AdminSettings() {
                     <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-[#e5e7eb]">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                                <PaintBrushIcon className="h-5 w-5 text-white" />
+                                <PaintBrushIcon className="h-5 w-5 text-slate-800" />
                             </div>
                             <h3 className="text-lg font-bold text-[#1f2937]">Appearance</h3>
                         </div>
@@ -376,7 +376,7 @@ export default function AdminSettings() {
                 <div className="bg-gradient-to-r from-red-50 to-rose-50 px-6 py-4 border-b-2 border-red-200">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-gradient-to-br from-red-500 to-rose-500 rounded-lg">
-                            <ArrowRightOnRectangleIcon className="h-5 w-5 text-white" />
+                            <ArrowRightOnRectangleIcon className="h-5 w-5 text-slate-800" />
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-red-900">Danger Zone</h3>
@@ -392,7 +392,7 @@ export default function AdminSettings() {
                         </div>
                         <button
                             onClick={logout}
-                            className="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-xl hover:from-red-600 hover:to-rose-600 font-medium shadow-lg shadow-red-200 transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-slate-800 rounded-xl hover:from-red-600 hover:to-rose-600 font-medium shadow-lg shadow-red-200 transition-all flex items-center gap-2"
                         >
                             <ArrowRightOnRectangleIcon className="h-5 w-5" />
                             Sign Out
@@ -410,16 +410,16 @@ export default function AdminSettings() {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-                                        <KeyIcon className="h-6 w-6 text-white" />
+                                        <KeyIcon className="h-6 w-6 text-slate-800" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-white">Change Password</h3>
+                                    <h3 className="text-xl font-bold text-slate-800">Change Password</h3>
                                 </div>
                                 <button
                                     onClick={() => {
                                         setShowPasswordModal(false);
                                         setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
                                     }}
-                                    className="text-white/80 hover:text-white transition-colors"
+                                    className="text-slate-600 hover:text-slate-800 transition-colors"
                                 >
                                     <XCircleIcon className="h-6 w-6" />
                                 </button>
@@ -569,7 +569,7 @@ export default function AdminSettings() {
                             <button
                                 onClick={handleChangePassword}
                                 disabled={passwordLoading}
-                                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl hover:from-[#4f46e5] hover:to-[#7c3aed] font-medium shadow-lg shadow-indigo-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {passwordLoading ? (
                                     <>
