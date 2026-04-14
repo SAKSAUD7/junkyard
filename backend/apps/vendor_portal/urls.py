@@ -10,6 +10,7 @@ from .views import (
     VendorNotificationListView,
     VendorNotificationMarkReadView,
     VendorStatsView,
+    VendorAdView,
 )
 from .password_reset import VendorPasswordResetRequestView, VendorPasswordResetConfirmView
 
@@ -21,6 +22,7 @@ urlpatterns = [
     # Profile
     path('profile/', VendorProfileView.as_view(), name='vendor-profile'),
     path('business-hours/', VendorBusinessHoursView.as_view(), name='vendor-business-hours'),
+    path('ads/', VendorAdView.as_view(), name='vendor-ads'),
     
     # Inventory
     path('inventory/', VendorInventoryListView.as_view(), name='vendor-inventory-list'),
