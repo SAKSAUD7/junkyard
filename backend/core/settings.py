@@ -45,7 +45,10 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1,.azurewebsites.net,junkyardnearme.azurewebsites.net,junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net'
+).split(',')
 
 # Trust Azure's load balancer HTTPS forwarding
 # Azure App Service terminates SSL at the load balancer and forwards as HTTP internally
@@ -84,17 +87,19 @@ INSTALLED_APPS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CORS Configuration - Allow frontend to connect to backend
-# Always include production frontend URL
-CORS_ALLOWED_ORIGINS = [
-    'https://witty-field-015b59200.6.azurestaticapps.net',
-    'https://junkyardsnearme.com',
-    'https://www.junkyardsnearme.com',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:3001',
-    'http://127.0.0.1:3001',
-]
+# CORS Configuration - Read from env var or use default production + local origins
+_cors_env = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+if _cors_env:
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_env.split(',') if origin.strip()]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'https://witty-field-015b59200.6.azurestaticapps.net',
+        'https://junkyard-web-dev.azurestaticapps.net',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:3001',
+        'http://127.0.0.1:3001',
+    ]
 
 # Allow credentials for authentication
 CORS_ALLOW_CREDENTIALS = True
@@ -115,15 +120,21 @@ CORS_ALLOW_HEADERS = [
 # Session and Cookie Settings for Cross-Origin Requests
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_TRUSTED_ORIGINS = [
-    'https://junkyard-api-dev.azurewebsites.net',
-    'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
-    'https://witty-field-015b59200.6.azurestaticapps.net',
-    'https://junkyardsnearme.com',
-    'https://www.junkyardsnearme.com',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+
+# CSRF trusted origins - read from env var or use defaults
+_csrf_env = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if _csrf_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in _csrf_env.split(',') if origin.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://junkyard-api-dev.azurewebsites.net',
+        'https://junkyardnearme.azurewebsites.net',
+        'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
+        'https://witty-field-015b59200.6.azurestaticapps.net',
+        'https://junkyard-web-dev.azurestaticapps.net',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]
 
 
 # Email settings - SendGrid SMTP (Production)
