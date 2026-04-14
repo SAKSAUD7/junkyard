@@ -131,12 +131,12 @@ const VendorDashboard = () => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12 blur-xl animate-pulse delay-75"></div>
 
-                <div className="max-w-7xl mx-auto flex justify-between items-start text-white relative z-10">
+                <div className="max-w-7xl mx-auto flex justify-between items-start text-slate-800 relative z-10">
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1.5">
                             {/* Vendor Logo */}
                             {dashboardData?.vendor?.logo ? (
-                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border-2 border-white/30 shadow-lg overflow-hidden">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border-2 border-slate-300 shadow-lg overflow-hidden">
                                     <img
                                         src={getLogoUrl(dashboardData.vendor.logo)}
                                         alt={dashboardData.vendor.name}
@@ -152,7 +152,7 @@ const VendorDashboard = () => {
                                     />
                                 </div>
                             ) : (
-                                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-lg">
+                                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-slate-300 shadow-lg">
                                     <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
@@ -169,9 +169,9 @@ const VendorDashboard = () => {
                     {/* Enhanced Profile Avatar */}
                     <Link
                         to="/vendor/profile"
-                        className="w-11 h-11 md:w-12 md:h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/30 hover:border-white/60 hover:bg-white/30 transition-all cursor-pointer group active:scale-95"
+                        className="w-11 h-11 md:w-12 md:h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-slate-300 hover:border-white/60 hover:bg-white/30 transition-all cursor-pointer group active:scale-95"
                     >
-                        <svg className="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-6 h-6 text-slate-800 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                     </Link>
@@ -223,7 +223,7 @@ const VendorDashboard = () => {
                 </div>
 
                 {/* Enhanced Account Status Card */}
-                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl md:rounded-3xl p-5 md:p-6 text-white shadow-xl mb-6 md:mb-8 flex justify-between items-center relative overflow-hidden group">
+                <div className="bg-gradient-to-r from-white via-slate-50 to-white rounded-2xl md:rounded-3xl p-5 md:p-6 text-slate-800 shadow-xl mb-6 md:mb-8 flex justify-between items-center relative overflow-hidden group">
                     <div className="relative z-10">
                         <h3 className="text-base md:text-lg font-bold mb-1">Account Status</h3>
                         <div className="flex items-center gap-2">

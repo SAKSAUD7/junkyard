@@ -22,13 +22,22 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Handle token refresh on 401
+// Handle token refresh on 401 + silence 500 flood
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // Clear the "API down" flag on any successful response
+        if (sessionStorage.getItem('__api_down')) {
+            sessionStorage.removeItem('__api_down');
+            console.info('[API] Backend is responding again.');
+        }
+        return response;
+    },
     async (error) => {
         const originalRequest = error.config;
+        const status = error.response?.status;
 
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login')) {
+        // ── 401: Token refresh ──────────────────────────────────────────
+        if (status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login')) {
             originalRequest._retry = true;
 
             try {
@@ -50,6 +59,22 @@ api.interceptors.response.use(
                 window.location.href = '/signin';
                 return Promise.reject(refreshError);
             }
+        }
+
+        // ── 500 / Network errors: Circuit breaker ────────────────────
+        // Log only ONCE per unique endpoint per session, not every call.
+        if (status === 500 || status === 502 || status === 503 || !error.response) {
+            const endpoint = originalRequest?.url || 'unknown';
+            const seenKey = `__api_err_${endpoint}`;
+
+            if (!sessionStorage.getItem(seenKey)) {
+                sessionStorage.setItem(seenKey, '1');
+                // Single quiet warning instead of full AxiosError dump
+                console.warn(`[API] Backend unavailable (${status ?? 'no response'}) — ${endpoint}. Showing fallback UI.`);
+            }
+
+            // Mark API as globally down so components can skip calls
+            sessionStorage.setItem('__api_down', '1');
         }
 
         return Promise.reject(error);

@@ -26,13 +26,17 @@ const VendorLayout = () => {
         <div className="vendor-layout">
             {/* Sidebar */}
             <aside className={`vendor-sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <div className="vendor-sidebar-logo">
-                    <h1>JYNM Vendor</h1>
+                <div className="vendor-sidebar-logo" style={{ background: 'var(--vendor-bg-secondary)', borderBottom: '1px solid var(--vendor-border)' }}>
+                    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+                        <span style={{ color: 'var(--text-primary)', fontSize: '1.5rem', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 }}>JYNM</span>
+                        <span style={{ color: 'rgba(37,99,235,0.7)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>Vendor Portal</span>
+                    </div>
                     {/* Close button for mobile */}
                     <button
                         onClick={closeSidebar}
                         className="vendor-sidebar-close"
                         aria-label="Close menu"
+                        style={{ color: 'var(--neon-orange)' }}
                     >
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -95,30 +99,31 @@ const VendorLayout = () => {
             {/* Main Content */}
             <div className="vendor-main">
                 {/* Header */}
-                <header className="vendor-header">
+                <header className="vendor-header" style={{ background: 'var(--vendor-bg-secondary)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--vendor-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         {/* Hamburger Menu Button */}
                         <button
                             onClick={toggleSidebar}
                             className="vendor-hamburger"
                             aria-label="Toggle menu"
+                            style={{ color: 'var(--neon-blue)' }}
                         >
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
 
-                        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+                        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, fontFamily: "'Outfit', sans-serif", color: 'var(--text-primary)' }}>
                             {vendorProfile?.vendor?.name || 'JYNM Vendor'}
                         </h2>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                         <div style={{ textAlign: 'right' }} className="vendor-user-info">
-                            <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                            <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)', fontFamily: "'JetBrains Mono', monospace" }}>
                                 {user?.email}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--vendor-text-secondary)' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--neon-blue)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Vendor Account
                             </div>
                         </div>
@@ -126,7 +131,7 @@ const VendorLayout = () => {
                         <button
                             onClick={handleLogout}
                             className="vendor-btn vendor-btn-secondary"
-                            style={{ fontSize: '0.875rem' }}
+                            style={{ fontSize: '0.875rem', border: '1px solid var(--vendor-border)' }}
                         >
                             Logout
                         </button>

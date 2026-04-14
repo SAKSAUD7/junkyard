@@ -8,6 +8,38 @@ export default {
     theme: {
         extend: {
             colors: {
+                // === JYNM DARK THEME COLORS ===
+                neon: {
+                    blue: '#00d4ff',
+                    orange: '#ff6b00',
+                    green: '#00ff88',
+                },
+                cyber: {
+                    50: '#e8f9ff',
+                    100: '#c0f0ff',
+                    200: '#80dfff',
+                    300: '#40ccff',
+                    400: '#00b8ff',
+                    500: '#00d4ff',
+                    600: '#0099cc',
+                    700: '#006699',
+                    800: '#003d66',
+                    900: '#001a33',
+                    950: '#000d1a',
+                },
+                void: {
+                    50: '#e4e8f0',
+                    100: '#b3bece',
+                    200: '#7e94ac',
+                    300: '#556880',
+                    400: '#334455',
+                    500: '#1a2333',
+                    600: '#111827',
+                    700: '#0a1320',
+                    800: '#060c14',
+                    900: '#020408',
+                    950: '#010204',
+                },
                 // Electric Blue - Primary vibrant color
                 electric: {
                     50: '#eff6ff',
@@ -151,6 +183,11 @@ export default {
                 'gradient-xy': 'gradientXY 15s ease infinite',
                 'text-shimmer': 'textShimmer 3s linear infinite',
                 'border-glow': 'borderGlow 3s ease-in-out infinite',
+                // Dark theme animations
+                'scan-line': 'scanLine 8s linear infinite',
+                'neon-flicker': 'neonFlicker 5s linear infinite',
+                'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+                'blink-caret': 'blinkCaret 1s step-end infinite',
             },
             keyframes: {
                 gradient: {
@@ -258,6 +295,22 @@ export default {
                 borderGlow: {
                     '0%, 100%': { 'border-color': 'rgba(20, 184, 166, 0.3)' },
                     '50%': { 'border-color': 'rgba(20, 184, 166, 1)' },
+                },
+                scanLine: {
+                    '0%': { transform: 'translateY(-100%)' },
+                    '100%': { transform: 'translateY(100vh)' },
+                },
+                neonFlicker: {
+                    '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '1' },
+                    '20%, 24%, 55%': { opacity: '0.7' },
+                },
+                glowPulse: {
+                    '0%, 100%': { 'box-shadow': '0 0 15px rgba(0, 212, 255, 0.3)' },
+                    '50%': { 'box-shadow': '0 0 35px rgba(0, 212, 255, 0.6), 0 0 70px rgba(0, 212, 255, 0.2)' },
+                },
+                blinkCaret: {
+                    'from, to': { 'border-color': 'transparent' },
+                    '50%': { 'border-color': '#00d4ff' },
                 },
             },
             backdropBlur: {

@@ -25,7 +25,7 @@ const Toast = ({ message, type, onClose }) => {
     const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
 
     return (
-        <div className={`fixed bottom-8 right-8 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 animate-fade-in`}>
+        <div className={`fixed bottom-8 right-8 ${bgColor} text-slate-800 px-6 py-4 rounded-xl shadow-lg z-50 animate-fade-in`}>
             <p className="font-medium">{message}</p>
         </div>
     );
@@ -172,21 +172,21 @@ export default function YardSubmissions() {
         const configs = {
             pending: {
                 bg: 'bg-gradient-to-r from-amber-400 to-orange-500',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Pending Review',
                 icon: ClockIcon,
                 glow: 'shadow-lg shadow-amber-200'
             },
             approved: {
                 bg: 'bg-gradient-to-r from-emerald-400 to-green-500',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Approved',
                 icon: CheckCircleIcon,
                 glow: 'shadow-lg shadow-emerald-200'
             },
             rejected: {
                 bg: 'bg-gradient-to-r from-red-400 to-rose-500',
-                text: 'text-white',
+                text: 'text-slate-800',
                 label: 'Rejected',
                 icon: XCircleIcon,
                 glow: 'shadow-lg shadow-red-200'
@@ -214,10 +214,10 @@ export default function YardSubmissions() {
                 <div className="relative">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <DocumentTextIcon className="h-8 w-8 text-white" />
+                            <DocumentTextIcon className="h-8 w-8 text-slate-800" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Yard Submissions</h1>
+                            <h1 className="text-3xl font-bold text-slate-800">Yard Submissions</h1>
                             <p className="text-indigo-100 mt-1">
                                 Manage and review new yard applications
                             </p>
@@ -225,13 +225,13 @@ export default function YardSubmissions() {
                     </div>
                     <div className="flex items-center gap-6 mt-4">
                         <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                            <SparklesIcon className="h-5 w-5 text-white" />
-                            <span className="text-white font-semibold">{filteredSubmissions.length}</span>
+                            <SparklesIcon className="h-5 w-5 text-slate-800" />
+                            <span className="text-slate-800 font-semibold">{filteredSubmissions.length}</span>
                             <span className="text-indigo-100 text-sm">Total</span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
                             <ClockIcon className="h-5 w-5 text-amber-200" />
-                            <span className="text-white font-semibold">
+                            <span className="text-slate-800 font-semibold">
                                 {filteredSubmissions.filter(s => s.status === 'pending').length}
                             </span>
                             <span className="text-indigo-100 text-sm">Pending</span>
@@ -251,7 +251,7 @@ export default function YardSubmissions() {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${statusFilter === status
-                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-indigo-200'
+                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 shadow-lg shadow-indigo-200'
                                 : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
                                 }`}
                         >
@@ -284,7 +284,7 @@ export default function YardSubmissions() {
                             <option>Approve selected</option>
                             <option>Reject selected</option>
                         </select>
-                        <button className="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md shadow-indigo-200">
+                        <button className="bg-[#6366f1] hover:bg-[#4f46e5] text-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md shadow-indigo-200">
                             Apply
                         </button>
                     </div>
@@ -358,7 +358,7 @@ export default function YardSubmissions() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold shadow-md">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-bold shadow-md">
                                                         {submission.business_name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
@@ -428,12 +428,12 @@ export default function YardSubmissions() {
                         {/* Modal Header */}
                         <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <h2 className="text-xl font-bold text-white">Submission Details</h2>
+                                <h2 className="text-xl font-bold text-slate-800">Submission Details</h2>
                                 <p className="text-sm text-indigo-100">ID: #{selectedSubmission.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedSubmission(null)}
-                                className="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
+                                className="text-slate-600 hover:text-slate-800 transition-colors p-2 hover:bg-white/10 rounded-lg"
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -571,14 +571,14 @@ export default function YardSubmissions() {
                                     <button
                                         onClick={() => handleApprove(selectedSubmission.id)}
                                         disabled={actionLoading}
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 text-base font-bold shadow-lg shadow-emerald-200 transition-all disabled:opacity-50"
+                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 text-base font-bold shadow-lg shadow-emerald-200 transition-all disabled:opacity-50"
                                     >
                                         {actionLoading ? 'Processing...' : '✓ Approve & Create Vendor'}
                                     </button>
                                     <button
                                         onClick={() => setShowRejectModal(true)}
                                         disabled={actionLoading}
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-xl hover:from-red-600 hover:to-rose-600 text-base font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
+                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-slate-800 rounded-xl hover:from-red-600 hover:to-rose-600 text-base font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
                                     >
                                         ✕ Reject Submission
                                     </button>
@@ -594,7 +594,7 @@ export default function YardSubmissions() {
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
                         <div className="px-6 py-4 bg-gradient-to-r from-red-500 to-rose-500 rounded-t-2xl">
-                            <h3 className="text-xl font-bold text-white">Reject Submission</h3>
+                            <h3 className="text-xl font-bold text-slate-800">Reject Submission</h3>
                         </div>
                         <div className="p-6 space-y-4">
                             <p className="text-[#6b7280]">
@@ -625,7 +625,7 @@ export default function YardSubmissions() {
                                 <button
                                     onClick={() => handleReject(selectedSubmission.id)}
                                     disabled={actionLoading}
-                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-slate-800 rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
                                 >
                                     {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
                                 </button>

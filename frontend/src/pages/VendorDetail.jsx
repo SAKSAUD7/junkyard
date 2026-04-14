@@ -57,13 +57,6 @@ const VendorDetail = () => {
         );
     }
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50 flex items-center justify-center">
-                <div className="text-gray-900 text-xl">Loading vendor details...</div>
-            </div>
-        );
-    }
 
     if (error || !vendor) {
         return (
@@ -120,7 +113,7 @@ const VendorDetail = () => {
             <Navbar />
 
             {/* Breadcrumb */}
-            <div className="bg-white/5 backdrop-blur-sm border-b border-white/10">
+            <div className="bg-white/5 backdrop-blur-sm border-b border-slate-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
@@ -221,10 +214,9 @@ const VendorDetail = () => {
                                 </div>
                             )}
 
-
                             {/* Review Snippet */}
                             {vendor.review_snippet && (
-                                <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl md:rounded-3xl compact-card">
+                                <div className="bg-blue-50 border border-blue-100 rounded-2xl md:rounded-3xl compact-card">
                                     <div className="flex items-start gap-4">
                                         <div className="flex-shrink-0">
                                             <svg className="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
@@ -232,8 +224,8 @@ const VendorDetail = () => {
                                             </svg>
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Customer Review</h3>
-                                            <p className="text-gray-700 italic">"{vendor.review_snippet}"</p>
+                                            <h3 className="text-lg font-bold text-slate-900 mb-2">Customer Review</h3>
+                                            <p className="text-slate-700 italic">"{vendor.review_snippet}"</p>
                                         </div>
                                     </div>
                                 </div>
@@ -243,14 +235,14 @@ const VendorDetail = () => {
                             {/* Quick Info Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* Location Card */}
-                                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl compact-card">
+                                <div className="bg-white border border-slate-100 rounded-xl md:rounded-2xl compact-card">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                             </svg>
                                         </div>
-                                        <h3 className="font-bold text-gray-900">Location</h3>
+                                        <h3 className="font-bold text-slate-900">Location</h3>
                                     </div>
                                     <p className="text-gray-600 text-sm">
                                         {vendor.city}, {vendor.state}
@@ -259,14 +251,14 @@ const VendorDetail = () => {
                                 </div>
 
                                 {/* State Card */}
-                                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl compact-card">
+                                <div className="bg-white border border-slate-100 rounded-xl md:rounded-2xl compact-card">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <div className="w-10 h-10 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
                                             </svg>
                                         </div>
-                                        <h3 className="font-bold text-gray-900">State</h3>
+                                        <h3 className="font-bold text-slate-900">State</h3>
                                     </div>
                                     <p className="text-gray-600 text-sm font-semibold">{vendor.state}</p>
                                 </div>

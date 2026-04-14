@@ -113,8 +113,7 @@ export default function BrowseState() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-teal-50">
-            {/* SEO Meta Tags */}
+        <div style={{ background: 'var(--bg-base, var(--bg-base))', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
                 title={`Junkyards in ${stateName} - ${totalCount} Auto Salvage Yards`}
                 description={`Find ${totalCount} verified junkyards in ${stateName}. Search used auto parts from trusted salvage yards. Free quotes, nationwide shipping available.`}
@@ -123,187 +122,192 @@ export default function BrowseState() {
 
             <Navbar />
 
-            {/* Hero Section - Compact Mobile */}
-            <div className="relative min-h-[20vh] sm:min-h-[40vh] md:min-h-[50vh] bg-gradient-to-br from-blue-600 to-teal-600 flex items-center overflow-hidden">
+            {/* Dark Hero with Animation */}
+            <div className="hero-depth relative pt-24 pb-12 overflow-hidden flex items-center" style={{ minHeight: '40vh', background: 'var(--bg-base)' }}>
 
-                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full compact-section">
-                    <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in">
-                        {/* Breadcrumb - Compact */}
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 compact-text">
-                            <Link to="/browse" className="hover:text-white transition-colors">
+                {/* Animation background */}
+                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')", opacity: 0.58 }} />
+                <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/stacked-cars.png')" }} />
+                <div className="hero-overlay-base" />
+                <div className="hero-vignette" />
+                <div className="hero-glow-teal" />
+                <div className="hero-glow-orange" />
+                <div className="hero-grid" />
+                <div className="hero-scanline" />
+                <div className="hero-fade-bottom" />
+
+                <div className="hero-content relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+                    <div className="space-y-4">
+                        {/* Breadcrumb */}
+                        <div className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: "'JetBrains Mono', monospace" }}>
+                            <Link to="/browse" className="transition-colors" style={{ color: 'rgba(255,255,255,0.7)' }}
+                                onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+                                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>
                                 Browse States
                             </Link>
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-white">{stateName}</span>
+                            <span style={{ color: 'rgba(255,255,255,0.5)' }}>›</span>
+                            <span style={{ color: '#ffffff' }}>{stateName}</span>
                         </div>
 
-                        {/* Premium Badge - Compact */}
-                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
-                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white compact-text font-medium">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)' }}>
+                            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }}></div>
+                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#ffffff' }}>
                                 {totalCount} Verified Junkyards
                             </span>
                         </div>
 
-                        {/* Main Heading - Compact Mobile */}
-                        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight px-2">
+                        <h1 className="font-black leading-tight px-0" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif" }}>
                             Junkyards in
-                            <span className="block">{stateName}</span>
+                            <span className="block" style={{ color: '#60a5fa' }}>{stateName}</span>
                         </h1>
 
-                        <p className="compact-heading text-white/90 font-light max-w-2xl px-2">
-                            Explore <span className="font-bold">{totalCount} auto salvage yards</span> in {stateName}.
+                        <p className="text-lg font-light" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                            Explore <strong style={{ color: '#ffffff' }}>{totalCount} auto salvage yards</strong> in {stateName}.
                         </p>
                     </div>
                 </div>
             </div>
 
 
-            {/* Search & Filter Section - Compact */}
-            <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/90 border-b border-gray-200 shadow-lg">
-                <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6">
-                    {/* Search Input */}
+            {/* Sticky Search & Filter Bar */}
+            <div className="sticky top-0 z-40" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(37,99,235,0.1)' }}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                            <svg className="w-5 h-5" style={{ color: 'var(--neon-blue)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
                         <input
                             type="text"
                             value={searchTerm}
-                            onChange={(e) => {
-                                setSearchTerm(e.target.value);
-                                setCurrentPage(1);
-                            }}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             placeholder="Search by junkyard name or city..."
-                            className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 md:py-4 bg-white border-2 border-gray-300 rounded-lg md:rounded-2xl text-gray-900 compact-text placeholder-gray-400 focus:border-blue-500 focus:bg-white outline-none transition-all"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder-gray-600"
+                            style={{ background: 'rgba(240,245,250,0.8)', border: '1px solid rgba(37,99,235,0.15)', color: 'var(--text-primary)' }}
+                            onFocus={e => e.target.style.borderColor = 'var(--neon-blue)'}
+                            onBlur={e => e.target.style.borderColor = 'rgba(37,99,235,0.15)'}
                         />
                     </div>
 
-                    {/* Results Info */}
-                    <div className="mt-4 flex items-center justify-between text-gray-600">
-                        <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                            </svg>
-                            <span className="font-semibold">
-                                Showing {((currentPage - 1) * vendorsPerPage) + 1}-{Math.min(currentPage * vendorsPerPage, totalCount)} of {totalCount} junkyards
-                            </span>
-                        </div>
+                    <div className="mt-3 flex items-center justify-between">
+                        <span className="text-sm" style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
+                            Showing {Math.min(((currentPage - 1) * vendorsPerPage) + 1, totalCount)}–{Math.min(currentPage * vendorsPerPage, totalCount)} of <strong style={{ color: 'var(--neon-blue)' }}>{totalCount}</strong> junkyards
+                        </span>
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-1 transition-colors"
+                                className="text-xs font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
+                                style={{ color: 'var(--neon-orange)' }}
+                                onMouseEnter={e => e.currentTarget.style.color = '#ff9500'}
+                                onMouseLeave={e => e.currentTarget.style.color = 'var(--neon-orange)'}
                             >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
-                                Clear Search
+                                Clear
                             </button>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Vendors Grid - Compact Mobile */}
-            <div className="relative compact-section">
-                <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+            {/* Vendors Grid */}
+            <div className="relative py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {loading ? (
-                        <div className="text-center py-20">
-                            <div className="inline-block w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <p className="text-gray-500 mt-4">Loading junkyards...</p>
+                        <div className="text-center py-24">
+                            <div className="spinner-glow mx-auto mb-4" />
+                            <p style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.9rem' }}>Scanning junkyard database...</p>
                         </div>
                     ) : junkyards.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                             {junkyards.map((vendor) => (
                                 <Link
                                     key={vendor.id}
                                     to={`/vendors/${vendor.id}`}
-                                    className="group relative"
+                                    className="group relative block"
                                 >
-                                    {/* Card Glow Effect */}
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 rounded-3xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
-
-                                    {/* Card - Compact Mobile */}
-                                    <div className="relative bg-white border border-gray-200 rounded-lg md:rounded-2xl overflow-hidden transform transition-all duration-500 hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-2xl hover:border-blue-500">
-                                        {/* Logo Area - Compact for Mobile */}
-                                        <div className="aspect-[16/9] sm:aspect-[16/8] bg-gradient-to-br from-gray-50 to-gray-100 p-1.5 sm:p-2 md:p-3 lg:p-4 flex items-center justify-center">
+                                    <div
+                                        className="relative rounded-2xl overflow-hidden h-full transition-all duration-300 transform group-hover:-translate-y-2"
+                                        style={{
+                                            background: '#ffffff',
+                                            border: '1px solid rgba(15,23,42,0.08)',
+                                            boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.borderColor = 'rgba(37,99,235,0.25)';
+                                            e.currentTarget.style.boxShadow = '0 12px 32px rgba(37,99,235,0.1)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.borderColor = 'rgba(15,23,42,0.08)';
+                                            e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)';
+                                        }}
+                                    >
+                                        {/* Logo Area */}
+                                        <div className="aspect-video flex items-center justify-center p-4" style={{ background: 'rgba(37,99,235,0.03)' }}>
                                             {vendor.logo ? (
                                                 <img
                                                     src={vendor.logo}
                                                     alt={vendor.name}
-                                                    className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
-                                                    onError={(e) => {
-                                                        e.target.src = '/images/logo-placeholder.png';
-                                                    }}
+                                                    className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                                    onError={(e) => { e.target.src = '/images/logo-placeholder.png'; }}
                                                 />
                                             ) : (
-                                                <div className="text-gray-200">
-                                                    <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" fill="currentColor" viewBox="0 0 20 20">
+                                                <div className="flex items-center justify-center">
+                                                    <svg className="w-12 h-12" style={{ color: 'rgba(37,99,235,0.2)' }} fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
                                                     </svg>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Content - Compact Mobile */}
-                                        <div className="p-1.5 sm:p-3 md:p-4 flex flex-col flex-grow">
-                                            {/* Vendor Name - Compact */}
-                                            <h3 className="font-bold text-xs sm:text-base md:text-lg mb-0.5 sm:mb-1.5 text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[1.75rem] sm:min-h-[2.5rem]">
-
+                                        {/* Content */}
+                                        <div className="p-4 flex flex-col">
+                                            <h3 className="font-bold text-sm sm:text-base mb-1 line-clamp-2 transition-colors duration-300 group-hover:text-[var(--neon-blue)]" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {vendor.name}
                                             </h3>
 
-                                            {/* Location - Compact */}
-                                            <div className="flex items-center gap-1 sm:gap-1.5 text-gray-500 mb-1 sm:mb-1.5 mt-auto">
-                                                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <div className="flex items-center gap-1.5 mb-3 mt-1">
+                                                <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--neon-orange)' }} fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                                 </svg>
-                                                <span className="text-[10px] sm:text-sm font-medium text-gray-500">{vendor.city}, {vendor.state}</span>
+                                                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{vendor.city}, {vendor.state}</span>
                                             </div>
 
-                                            {/* Rating - Compact */}
-                                            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 mb-2 sm:mb-3 md:mb-4">
-                                                <div className="flex items-center gap-0.5 sm:gap-1">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <svg
-                                                            key={i}
-                                                            className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-yellow-400"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                        </svg>
-                                                    ))}
-                                                </div>
-                                                <span className="text-sm sm:text-base font-semibold text-gray-900">{vendor.rating}</span>
+                                            <div className="flex items-center gap-1 mb-3">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <svg key={i} className="w-3 h-3" fill={i < Math.round(vendor.rating || 0) ? '#fbbf24' : 'rgba(255,255,255,0.1)'} viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                                <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>{vendor.rating}</span>
                                             </div>
 
-                                            {/* CTA Button - Compact */}
-                                            <button className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white border-0 font-semibold py-1 sm:py-2 md:py-2.5 px-1.5 sm:px-3 rounded-md sm:rounded-lg text-[10px] sm:text-sm transition-all duration-300 shadow-md group-hover:shadow-lg">
+                                            <div className="mt-auto font-bold py-2 px-3 rounded-lg text-xs uppercase tracking-wider text-center transition-all"
+                                                style={{ background: 'rgba(37,99,235,0.1)', color: 'var(--neon-blue)', border: '1px solid rgba(37,99,235,0.2)' }}
+                                            >
                                                 View Details →
-                                            </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full mb-6">
-                                <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        <div className="text-center py-24">
+                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.05)', border: '1px solid rgba(234,88,12,0.2)' }}>
+                                <svg className="w-10 h-10" style={{ color: 'var(--neon-orange)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">No junkyards found</h3>
-                            <p className="text-gray-500 mb-6">Try adjusting your search</p>
+                            <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>No junkyards found</h3>
+                            <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>Try adjusting your search</p>
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow"
+                                className="font-bold px-8 py-3 rounded-xl transition-all transform hover:-translate-y-1"
+                                style={{ background: 'var(--neon-blue)', color: 'var(--bg-base)' }}
                             >
                                 Clear Search
                             </button>
@@ -312,63 +316,47 @@ export default function BrowseState() {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="mt-8 sm:mt-10 md:mt-12 flex justify-center">
-                            <div className="inline-flex items-center gap-1 sm:gap-2 bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-1.5 sm:p-2">
-                                {/* Previous Button */}
+                        <div className="mt-12 flex justify-center">
+                            <div className="inline-flex items-center gap-2 rounded-2xl p-2" style={{ background: 'rgba(240,245,250,0.8)', border: '1px solid rgba(37,99,235,0.1)' }}>
                                 <button
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className={`px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 ${currentPage === 1
-                                        ? 'text-gray-400 cursor-not-allowed'
-                                        : 'text-gray-900 hover:bg-gray-100'
-                                        }`}
+                                    className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                                    style={{ color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', background: 'transparent' }}
                                 >
-                                    ← Previous
+                                    ← Prev
                                 </button>
 
-                                {/* Page Numbers */}
                                 <div className="flex items-center gap-1">
                                     {[...Array(totalPages)].map((_, index) => {
                                         const pageNumber = index + 1;
-                                        if (
-                                            pageNumber === 1 ||
-                                            pageNumber === totalPages ||
-                                            (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                                        ) {
+                                        if (pageNumber === 1 || pageNumber === totalPages || (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)) {
                                             return (
                                                 <button
                                                     key={pageNumber}
                                                     onClick={() => paginate(pageNumber)}
-                                                    className={`min-w-[32px] sm:min-w-[40px] px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 ${currentPage === pageNumber
-                                                        ? 'bg-gradient-to-r from-blue-600 to-teal-600 text-white shadow-md'
-                                                        : 'text-gray-600 hover:bg-white/10 hover:text-white'
-                                                        }`}
+                                                    className="min-w-[36px] px-3 py-2 rounded-xl text-sm font-bold transition-all"
+                                                    style={{
+                                                        background: currentPage === pageNumber ? 'var(--neon-blue)' : 'transparent',
+                                                        color: currentPage === pageNumber ? 'var(--bg-base)' : 'var(--text-secondary)',
+                                                        boxShadow: currentPage === pageNumber ? '0 0 12px rgba(37,99,235,0.4)' : 'none'
+                                                    }}
                                                 >
                                                     {pageNumber}
                                                 </button>
                                             );
-                                        } else if (
-                                            pageNumber === currentPage - 2 ||
-                                            pageNumber === currentPage + 2
-                                        ) {
-                                            return (
-                                                <span key={pageNumber} className="text-gray-400 px-1 sm:px-2 text-xs sm:text-sm">
-                                                    ...
-                                                </span>
-                                            );
+                                        } else if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
+                                            return <span key={pageNumber} style={{ color: 'var(--text-muted)', padding: '0 4px' }}>…</span>;
                                         }
                                         return null;
                                     })}
                                 </div>
 
-                                {/* Next Button */}
                                 <button
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className={`px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 ${currentPage === totalPages
-                                        ? 'text-gray-400 cursor-not-allowed'
-                                        : 'text-gray-900 hover:bg-gray-100'
-                                        }`}
+                                    className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                                    style={{ color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', background: 'transparent' }}
                                 >
                                     Next →
                                 </button>

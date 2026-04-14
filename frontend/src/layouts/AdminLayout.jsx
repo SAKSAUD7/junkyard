@@ -30,6 +30,7 @@ export default function AdminLayout() {
         { name: 'Ads', href: '/admin-portal/ads', icon: MegaphoneIcon },
         { name: 'Part Pricing', href: '/admin-portal/pricing', icon: CurrencyDollarIcon },
         { name: 'Messages', href: '/admin-portal/messages', icon: ChatBubbleLeftIcon },
+        { name: 'Blog', href: '/admin-portal/blog', icon: DocumentTextIcon },
         { name: 'Settings', href: '/admin-portal/settings', icon: Cog6ToothIcon },
     ];
 
@@ -50,13 +51,13 @@ export default function AdminLayout() {
                                 to={item.href}
                                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative ${active
                                     ? 'bg-white/95 shadow-lg shadow-black/10 text-[#3d4451]'
-                                    : 'text-[#9ca3af] hover:text-white hover:bg-white/10'
+                                    : 'text-[#9ca3af] hover:text-slate-800 hover:bg-white/10'
                                     }`}
                                 title={item.name}
                             >
                                 <Icon className="w-5 h-5" />
                                 {/* Tooltip */}
-                                <span className="absolute left-16 bg-[#2d3340] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                                <span className="absolute left-16 bg-[#2d3340] text-slate-800 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
                                     {item.name}
                                 </span>
                             </Link>
@@ -71,7 +72,7 @@ export default function AdminLayout() {
                     title="Logout"
                 >
                     <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                    <span className="absolute left-16 bg-[#2d3340] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    <span className="absolute left-16 bg-[#2d3340] text-slate-800 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
                         Logout
                     </span>
                 </button>
@@ -96,7 +97,7 @@ export default function AdminLayout() {
                             <span className="text-base text-[#6b7280]">
                                 Welcome, <span className="font-semibold text-[#1f2937]">{user?.username || 'admin'}</span>
                             </span>
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold shadow-md shadow-indigo-200 text-base">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-semibold shadow-md shadow-indigo-200 text-base">
                                 {(user?.username || 'A').charAt(0).toUpperCase()}
                             </div>
                         </div>

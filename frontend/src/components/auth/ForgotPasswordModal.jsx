@@ -89,7 +89,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
 
                 <div className="flex flex-col md:flex-row">
                     {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-white">
+                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
                         <div className="text-center">
                             <div className="mb-6">
                                 <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -149,7 +149,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
                                     <button
                                         type="submit"
                                         disabled={!isValid || loading}
-                                        className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all ${isValid && !loading
+                                        className={`w-full py-3 px-4 rounded-lg font-semibold text-slate-800 transition-all ${isValid && !loading
                                                 ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
                                                 : 'bg-gray-300 cursor-not-allowed'
                                             }`}
@@ -196,7 +196,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
 
                                 <button
                                     onClick={handleBackToLogin}
-                                    className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg transition-all"
+                                    className="w-full py-3 px-4 rounded-lg font-semibold text-slate-800 bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg transition-all"
                                 >
                                     Back to Sign In
                                 </button>

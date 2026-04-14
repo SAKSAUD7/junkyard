@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "apps.ads",
     "apps.yard_submissions",  # New marketplace app
     "apps.vendor_portal",  # NEW: Vendor portal
+    "apps.blog",           # Blog system
 ]
 
 # Media files (for ad images and submissions)

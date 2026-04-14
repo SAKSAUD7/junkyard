@@ -350,18 +350,18 @@ export default function AddYardPage() {
                 <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full compact-section">
                     <div className="text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
                         {/* Premium Badge - Compact */}
-                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
+                        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm border border-slate-300 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full">
                             <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                            <span className="text-white compact-text font-medium">Create New Account</span>
+                            <span className="text-slate-800 compact-text font-medium">Create New Account</span>
                         </div>
 
                         {/* Main Heading with Gradient Text - Compact */}
-                        <h1 className="compact-hero font-black text-white leading-tight px-2">
+                        <h1 className="compact-hero font-black text-slate-800 leading-tight px-2">
                             List Your
                             <span className="block">Junkyard</span>
                         </h1>
 
-                        <p className="compact-heading text-white/90 font-light max-w-3xl mx-auto px-2">
+                        <p className="compact-heading text-slate-600 font-light max-w-3xl mx-auto px-2">
                             Join our marketplace and reach <span className="font-bold">thousands of customers</span> searching for quality auto parts
                         </p>
                     </div>
@@ -870,7 +870,7 @@ export default function AddYardPage() {
                                                     onClick={() => setFormData(prev => ({ ...prev, subscription_plan: plan.id }))}
                                                     className={`relative cursor-pointer rounded-2xl p-6 transition-all duration-300 ${formData.subscription_plan === plan.id
                                                         ? 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border-2 border-blue-500 scale-105'
-                                                        : 'bg-gray-50 border-2 border-white/10 hover:border-cyan-500/50'
+                                                        : 'bg-gray-50 border-2 border-slate-200 hover:border-cyan-500/50'
                                                         }`}
                                                 >
                                                     {formData.subscription_plan === plan.id && (
@@ -882,7 +882,7 @@ export default function AddYardPage() {
                                                     )}
 
                                                     <div className={`inline-block px-4 py-2 rounded-lg bg-gradient-to-r ${plan.color} mb-4`}>
-                                                        <span className="text-white font-bold text-sm">{plan.name}</span>
+                                                        <span className="text-slate-800 font-bold text-sm">{plan.name}</span>
                                                     </div>
 
                                                     <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
@@ -920,7 +920,7 @@ export default function AddYardPage() {
                                                         name="logo"
                                                         accept="image/*"
                                                         onChange={handleFileChange}
-                                                        className="w-full bg-dark-700/50 border-2 border-dashed border-white/10 rounded-xl px-5 py-8 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:font-semibold hover:file:bg-cyan-600 cursor-pointer focus:border-cyan-500 focus:outline-none transition-all"
+                                                        className="w-full bg-white border-2 border-dashed border-slate-200 rounded-xl px-5 py-8 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:font-semibold hover:file:bg-blue-700 cursor-pointer focus:border-cyan-500 focus:outline-none transition-all"
                                                     />
                                                     <p className="text-gray-400 text-sm mt-2">Max 2MB, JPG or PNG</p>
                                                 </div>
@@ -935,7 +935,7 @@ export default function AddYardPage() {
                                                         accept="image/*"
                                                         multiple
                                                         onChange={handleFileChange}
-                                                        className="w-full bg-dark-700/50 border-2 border-dashed border-white/10 rounded-xl px-5 py-8 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:font-semibold hover:file:bg-blue-600 cursor-pointer focus:border-cyan-500 focus:outline-none transition-all"
+                                                        className="w-full bg-white border-2 border-dashed border-slate-200 rounded-xl px-5 py-8 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:font-semibold hover:file:bg-blue-600 cursor-pointer focus:border-cyan-500 focus:outline-none transition-all"
                                                     />
                                                     <p className="text-gray-400 text-sm mt-2">Max 5 images, 5MB each</p>
                                                 </div>
@@ -955,7 +955,7 @@ export default function AddYardPage() {
                                 )}
 
                                 {/* Navigation Buttons */}
-                                <div className="flex items-center justify-between mt-12 pt-8 border-t border-white/10">
+                                <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-200">
                                     {step > 1 ? (
                                         <button
                                             type="button"
@@ -989,7 +989,7 @@ export default function AddYardPage() {
                                         <button
                                             type="submit"
                                             disabled={loading}
-                                            className="group relative px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                            className="group relative px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-slate-800 font-bold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
                                             <span className="relative flex items-center gap-2">

@@ -44,12 +44,12 @@ export default function Rating({
                 {renderStars()}
             </div>
             {showPercentage && (
-                <span className={`text-xs sm:text-sm font-medium ${isLight ? 'text-gray-700' : 'text-white/70'}`}>
+                <span className={`text-xs sm:text-sm font-medium ${isLight ? 'text-gray-700' : 'text-slate-600'}`}>
                     {percentage}%
                 </span>
             )}
             {showValue && (
-                <span className={`text-xs sm:text-sm font-bold ${isLight ? 'text-gray-900' : 'text-white'}`}>
+                <span className={`text-xs sm:text-sm font-bold ${isLight ? 'text-gray-900' : 'text-slate-800'}`}>
                     {value}
                 </span>
             )}

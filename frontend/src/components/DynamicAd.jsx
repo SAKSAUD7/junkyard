@@ -21,7 +21,7 @@ export default function DynamicAd({ slot, page = 'all', templateOverride = null 
                     setAds(results)
                 }
             } catch (error) {
-                console.error("Failed to load ads", error)
+                console.warn("[DynamicAd] Ads unavailable — backend 500")
             } finally {
                 setLoading(false)
             }

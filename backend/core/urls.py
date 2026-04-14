@@ -107,6 +107,7 @@ urlpatterns = [
     
     # Part Pricing API
     path("api/", include(pricing_router.urls)),
+    path("api/blog/", include("apps.blog.urls")),  # Blog system
 ]
 
 

@@ -105,10 +105,10 @@ const VendorInventory = () => {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12"></div>
                 <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -ml-10 -mb-10"></div>
 
-                <div className="max-w-7xl mx-auto flex justify-between items-start text-white relative z-10">
+                <div className="max-w-7xl mx-auto flex justify-between items-start text-slate-800 relative z-10">
                     <div>
                         <div className="flex items-center gap-2.5 mb-1.5">
-                            <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
+                            <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-slate-300">
                                 <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
@@ -119,7 +119,7 @@ const VendorInventory = () => {
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 border border-white/30 transition-all hover:scale-105 shadow-lg"
+                        className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-slate-800 px-4 py-2 rounded-xl font-bold flex items-center gap-2 border border-slate-300 transition-all hover:scale-105 shadow-lg"
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -356,7 +356,7 @@ const VendorInventory = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all"
+                                    className="flex-1 py-3 rounded-xl text-sm font-bold text-slate-800 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all"
                                 >
                                     Add Item
                                 </button>

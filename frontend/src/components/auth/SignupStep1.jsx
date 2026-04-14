@@ -130,7 +130,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
                 <button
                     onClick={handleNext}
                     disabled={!isValid}
-                    className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all ${isValid
+                    className={`w-full py-3 px-4 rounded-lg font-semibold text-slate-800 transition-all ${isValid
                         ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
                         : 'bg-gray-300 cursor-not-allowed'
                         }`}

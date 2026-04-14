@@ -177,7 +177,7 @@ export default function AdminMessages() {
     return (
         <div className="space-y-6">
             {/* Enhanced Header with Gradient */}
-            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl p-8 text-white">
+            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl p-8 text-slate-800">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
@@ -242,7 +242,7 @@ export default function AdminMessages() {
             {selectedIds.length > 0 && (
                 <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-4 flex items-center justify-between shadow-md">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-500 text-white rounded-lg">
+                        <div className="p-2 bg-indigo-500 text-slate-800 rounded-lg">
                             <CheckCircleIcon className="h-5 w-5" />
                         </div>
                         <span className="text-sm font-semibold text-indigo-900">
@@ -252,7 +252,7 @@ export default function AdminMessages() {
                     <div className="flex gap-2">
                         <button
                             onClick={handleBulkDeleteClick}
-                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 text-sm font-medium flex items-center gap-2 shadow-lg shadow-red-200 transition-all"
+                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-slate-800 rounded-lg hover:from-red-600 hover:to-pink-600 text-sm font-medium flex items-center gap-2 shadow-lg shadow-red-200 transition-all"
                         >
                             <TrashIcon className="h-4 w-4" />
                             Delete Selected
@@ -284,7 +284,7 @@ export default function AdminMessages() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={handleBulkDeleteConfirm}
-                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 font-semibold shadow-md transition-all flex items-center gap-2"
+                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-slate-800 rounded-lg hover:from-red-700 hover:to-pink-700 font-semibold shadow-md transition-all flex items-center gap-2"
                                 >
                                     <TrashIcon className="h-4 w-4" />
                                     Yes, Delete {selectedIds.length} Message{selectedIds.length > 1 ? 's' : ''}
@@ -370,7 +370,7 @@ export default function AdminMessages() {
                                                         <div className="flex gap-2">
                                                             <button
                                                                 onClick={handleDeleteConfirm}
-                                                                className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 font-semibold text-sm shadow-md transition-all flex items-center gap-2"
+                                                                className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-slate-800 rounded-lg hover:from-red-700 hover:to-pink-700 font-semibold text-sm shadow-md transition-all flex items-center gap-2"
                                                             >
                                                                 <TrashIcon className="h-4 w-4" />
                                                                 Delete
@@ -402,7 +402,7 @@ export default function AdminMessages() {
                                                             Read
                                                         </span>
                                                     ) : (
-                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md">
+                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-slate-800 shadow-md">
                                                             <EnvelopeIcon className="h-3.5 w-3.5" />
                                                             New
                                                         </span>
@@ -410,7 +410,7 @@ export default function AdminMessages() {
                                                 </td>
                                                 <td className="px-4 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-semibold shadow-md">
+                                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-slate-800 font-semibold shadow-md">
                                                             {message.name.charAt(0).toUpperCase()}
                                                         </div>
                                                         <div>
@@ -440,14 +440,14 @@ export default function AdminMessages() {
                                                     <div className="flex gap-2">
                                                         <button
                                                             onClick={() => handleViewMessage(message)}
-                                                            className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md shadow-indigo-200"
+                                                            className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 text-slate-800 hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md shadow-indigo-200"
                                                             title="View message"
                                                         >
                                                             <EyeIcon className="h-4 w-4" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteClick(message.id)}
-                                                            className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all shadow-md shadow-red-200"
+                                                            className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 text-slate-800 hover:from-red-600 hover:to-pink-600 transition-all shadow-md shadow-red-200"
                                                             title="Delete message"
                                                         >
                                                             <TrashIcon className="h-4 w-4" />
@@ -466,10 +466,10 @@ export default function AdminMessages() {
 
             {/* Message Detail Modal */}
             {selectedMessage && (
-                <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
                         {/* Modal Header */}
-                        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-6 py-5 text-white">
+                        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-6 py-5 text-slate-800">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl font-bold shadow-lg">
@@ -482,7 +482,7 @@ export default function AdminMessages() {
                                 </div>
                                 <button
                                     onClick={() => setSelectedMessage(null)}
-                                    className="text-white/80 hover:text-white p-2 hover:bg-white/20 rounded-lg transition-all"
+                                    className="text-slate-600 hover:text-slate-800 p-2 hover:bg-white/20 rounded-lg transition-all"
                                 >
                                     <XCircleIcon className="h-6 w-6" />
                                 </button>
@@ -553,7 +553,7 @@ export default function AdminMessages() {
                                     handleDeleteClick(selectedMessage.id);
                                     setSelectedMessage(null);
                                 }}
-                                className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 font-medium shadow-lg shadow-red-200 transition-all flex items-center gap-2"
+                                className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-slate-800 rounded-lg hover:from-red-600 hover:to-pink-600 font-medium shadow-lg shadow-red-200 transition-all flex items-center gap-2"
                             >
                                 <TrashIcon className="h-4 w-4" />
                                 Delete Message

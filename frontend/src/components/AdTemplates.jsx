@@ -12,14 +12,14 @@ export const StandardTemplate = ({ ad }) => (
                 {ad.show_badge && (
                     <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 py-1 sm:py-1.5 px-2 sm:px-3 text-center overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                        <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-white font-black relative z-10 drop-shadow-lg">
+                        <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-800 font-black relative z-10 drop-shadow-lg">
                             ✨ Featured Partner
                         </span>
                     </div>
                 )}
 
                 <div className="p-3 sm:p-4">
-                    <h3 className="text-white font-black text-sm sm:text-base text-center mb-2 sm:mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    <h3 className="text-slate-800 font-black text-sm sm:text-base text-center mb-2 sm:mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {ad.title}
                     </h3>
                 </div>
@@ -43,7 +43,7 @@ export const StandardTemplate = ({ ad }) => (
                         href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-white text-[10px] sm:text-xs font-black py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
+                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-slate-800 text-[10px] sm:text-xs font-black py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'Explore Now'} →
                     </a>
@@ -64,7 +64,7 @@ export const MinimalTemplate = ({ ad }) => (
             <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
                 {ad.show_badge && (
                     <div className="bg-gradient-to-r from-gray-800 to-gray-900 py-1 px-3 text-center">
-                        <span className="text-[8px] uppercase tracking-widest text-white font-bold">
+                        <span className="text-[8px] uppercase tracking-widest text-slate-800 font-bold">
                             ⚡ Verified
                         </span>
                     </div>
@@ -94,7 +94,7 @@ export const MinimalTemplate = ({ ad }) => (
                         href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-slate-800 text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                     >
                         {ad.button_text || 'Learn More'} →
                     </a>
@@ -124,7 +124,7 @@ export const PremiumTemplate = ({ ad }) => (
                 )}
 
                 <div className="p-3 sm:p-4 md:p-5">
-                    <h3 className="text-white font-black text-base sm:text-lg text-center mb-2 sm:mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
+                    <h3 className="text-slate-800 font-black text-base sm:text-lg text-center mb-2 sm:mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
                         {ad.title}
                     </h3>
                 </div>
@@ -171,14 +171,14 @@ export const CompactTemplate = ({ ad }) => (
             <div className="relative bg-gradient-to-br from-dark-800/95 to-dark-900/95 backdrop-blur-lg border border-cyan-500/20 rounded-xl overflow-hidden">
                 {ad.show_badge && (
                     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 py-0.5 px-2 text-center">
-                        <span className="text-[7px] uppercase tracking-wider text-white font-bold">
+                        <span className="text-[7px] uppercase tracking-wider text-slate-800 font-bold">
                             ⚡ Top Pick
                         </span>
                     </div>
                 )}
 
                 <div className="p-2">
-                    <h3 className="text-white font-bold text-xs text-center mb-1.5 leading-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    <h3 className="text-slate-800 font-bold text-xs text-center mb-1.5 leading-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                         {ad.title}
                     </h3>
                 </div>
@@ -202,7 +202,7 @@ export const CompactTemplate = ({ ad }) => (
                         href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 shadow-md hover:shadow-cyan-500/50"
+                        className="block w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 shadow-md hover:shadow-cyan-500/50"
                     >
                         {ad.button_text || 'View'} →
                     </a>
@@ -217,7 +217,7 @@ export const MicroTemplate = ({ ad }) => (
     <div className="max-w-[85px] animate-scale-in group">
         <div className="relative">
             {/* Main Card */}
-            <div className="relative bg-dark-900/80 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden shadow-lg">
+            <div className="relative bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg overflow-hidden shadow-lg">
                 <div className="aspect-square relative">
                     <img
                         src={ad.image}
@@ -226,7 +226,7 @@ export const MicroTemplate = ({ ad }) => (
                         onError={(e) => { e.target.style.display = 'none'; }}
                     />
                     {/* Tiny Badge */}
-                    <div className="absolute top-0 right-0 bg-primary-600 text-[6px] font-black text-white px-1 py-0.5 rounded-bl">AD</div>
+                    <div className="absolute top-0 right-0 bg-primary-600 text-[6px] font-black text-slate-800 px-1 py-0.5 rounded-bl">AD</div>
                 </div>
 
                 <div className="p-1 text-center">
@@ -234,7 +234,7 @@ export const MicroTemplate = ({ ad }) => (
                         href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full bg-white/10 hover:bg-white/20 text-[8px] font-bold text-white py-1 rounded transition-colors uppercase"
+                        className="block w-full bg-white/10 hover:bg-white/20 text-[8px] font-bold text-slate-800 py-1 rounded transition-colors uppercase"
                     >
                         OPEN
                     </a>

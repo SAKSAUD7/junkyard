@@ -28,7 +28,7 @@ export default function SponsoredAd() {
 
                     {/* Minimal Content */}
                     <div className="text-center">
-                        <p className="text-white/70 text-[10px] mb-2 leading-tight hidden sm:block">
+                        <p className="text-slate-600 text-[10px] mb-2 leading-tight hidden sm:block">
                             Millions of quality used parts.
                         </p>
 
@@ -37,7 +37,7 @@ export default function SponsoredAd() {
                                 href="https://www.qualityautoparts.com/?camp=null&adg=null&source=null&gclid=null"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block w-full bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-bold py-1.5 rounded transition-colors uppercase tracking-wide"
+                                className="block w-full bg-orange-600 hover:bg-orange-500 text-slate-800 text-[10px] font-bold py-1.5 rounded transition-colors uppercase tracking-wide"
                             >
                                 Order: 1-866-293-3731
                             </a>

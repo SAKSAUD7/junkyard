@@ -1,17 +1,17 @@
 /* ============================================
    VENDOR PORTAL STYLES
-   Light Theme, Professional B2B Design
+   Premium Light Theme
    ============================================ */
 
 :root {
     /* Vendor Portal Color Palette */
     --vendor-primary: #2563eb;
     --vendor-primary-dark: #1d4ed8;
-    --vendor-primary-light: #3b82f6;
+    --vendor-primary-light: #60a5fa;
 
-    --vendor-secondary: #64748b;
-    --vendor-secondary-dark: #475569;
-    --vendor-secondary-light: #94a3b8;
+    --vendor-secondary: #475569;
+    --vendor-secondary-dark: #334155;
+    --vendor-secondary-light: #cbd5e1;
 
     --vendor-success: #10b981;
     --vendor-warning: #f59e0b;
@@ -19,24 +19,25 @@
     --vendor-info: #3b82f6;
 
     /* Backgrounds */
-    --vendor-bg-primary: #ffffff;
-    --vendor-bg-secondary: #f8fafc;
-    --vendor-bg-tertiary: #f1f5f9;
+    --vendor-bg-primary: #ffffff;  /* surface */
+    --vendor-bg-secondary: #f8fafc; /* base */
+    --vendor-bg-tertiary: #f1f5f9;  /* Elevated surface */
 
     /* Text Colors */
     --vendor-text-primary: #0f172a;
     --vendor-text-secondary: #475569;
-    --vendor-text-tertiary: #94a3b8;
+    --vendor-text-tertiary: #64748b;
 
     /* Borders */
-    --vendor-border: #e2e8f0;
-    --vendor-border-light: #f1f5f9;
+    --vendor-border: rgba(15, 23, 42, 0.08);
+    --vendor-border-light: rgba(15, 23, 42, 0.04);
 
     /* Shadows */
     --vendor-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --vendor-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-    --vendor-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    --vendor-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --vendor-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --vendor-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --vendor-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+
 
     /* Spacing */
     --vendor-spacing-xs: 0.25rem;
@@ -48,14 +49,15 @@
 
     /* Border Radius */
     --vendor-radius-sm: 0.25rem;
-    --vendor-radius: 0.375rem;
-    --vendor-radius-md: 0.5rem;
-    --vendor-radius-lg: 0.75rem;
-    --vendor-radius-xl: 1rem;
+    --vendor-radius: 0.5rem;
+    --vendor-radius-md: 0.75rem;
+    --vendor-radius-lg: 1rem;
+    --vendor-radius-xl: 1.5rem;
 
     /* Typography */
-    --vendor-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    --vendor-font-mono: 'Courier New', monospace;
+    --vendor-font-sans: 'Inter', -apple-system, sans-serif;
+    --vendor-font-mono: 'JetBrains Mono', monospace;
+    --vendor-font-display: 'Outfit', sans-serif;
 }
 
 /* ============================================
@@ -562,11 +564,11 @@
 .vendor-form-select {
     width: 100% !important;
     padding: 0.875rem 1rem !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid var(--vendor-border) !important;
     border-radius: 0.875rem !important;
     font-size: 1rem !important;
-    color: #1f2937 !important;
-    background-color: #ffffff !important;
+    color: var(--vendor-text-primary) !important;
+    background-color: rgba(10, 22, 40, 0.7) !important;
     transition: all 0.2s ease !important;
     font-family: var(--vendor-font-sans) !important;
     line-height: 1.5 !important;
@@ -581,15 +583,15 @@
 .vendor-form-textarea:focus,
 .vendor-form-select:focus {
     outline: none !important;
-    border-color: #9ca3af !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.1) !important;
+    border-color: var(--vendor-primary) !important;
+    background-color: var(--vendor-bg-tertiary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15) !important;
 }
 
 .vendor-form-input::placeholder,
 .vendor-form-textarea::placeholder,
 .vendor-form-select::placeholder {
-    color: #9ca3af !important;
+    color: var(--vendor-text-tertiary) !important;
     font-weight: 400 !important;
     font-size: 0.9375rem !important;
 }
