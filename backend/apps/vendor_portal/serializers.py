@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.hollander.models import Vendor
+from apps.hollander.models import Vendor, VendorAd
 from apps.leads.models import Lead, VendorLead
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours
@@ -176,3 +176,11 @@ class VendorNotificationSerializer(serializers.ModelSerializer):
                 'part': obj.lead.part
             }
         return None
+
+
+class VendorAdSerializer(serializers.ModelSerializer):
+    """Serializer for Vendor Ads"""
+    class Meta:
+        model = VendorAd
+        fields = ['id', 'plan_type', 'start_date', 'end_date', 'status', 'created_at']
+        read_only_fields = ['id', 'start_date', 'end_date', 'status', 'created_at']

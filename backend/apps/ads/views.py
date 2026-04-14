@@ -50,6 +50,7 @@ class AdClickView(APIView):
         return redirect(ad.redirect_url)
 
 from rest_framework import viewsets, permissions
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 class AdvertisementViewSet(viewsets.ModelViewSet):
     """
@@ -59,4 +60,19 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
     queryset = Advertisement.objects.all()
     serializer_class = AdvertisementSerializer
     permission_classes = [permissions.IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def create(self, request, *args, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Incoming Ad Creation - Body: {request.data}")
+        logger.info(f"Incoming Ad Creation - Files: {request.FILES}")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Incoming Ad Update - Body: {request.data}")
+        logger.info(f"Incoming Ad Update - Files: {request.FILES}")
+        return super().update(request, *args, **kwargs)
 

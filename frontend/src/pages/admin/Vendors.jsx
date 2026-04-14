@@ -109,9 +109,7 @@ export default function AdminVendors() {
         rating: '100%',
         rating_stars: 5,
         rating_percentage: 100,
-        is_top_rated: false,
-        is_featured: false,
-        is_trusted: false,
+        trusted_vendor: false,
         is_active: false
     });
 
@@ -281,9 +279,7 @@ export default function AdminVendors() {
             rating: '100%',
             rating_stars: 5,
             rating_percentage: 100,
-            is_top_rated: false,
-            is_featured: false,
-            is_trusted: false,
+            trusted_vendor: false,
             is_active: false
         });
     };
@@ -341,7 +337,9 @@ export default function AdminVendors() {
             description: vendor.description || '',
             review_snippet: vendor.review_snippet || '',
             rating_stars: vendor.rating_stars || 5,
-            rating_percentage: vendor.rating_percentage || 100
+            rating_percentage: vendor.rating_percentage || 100,
+            is_active: vendor.is_active || false,
+            trusted_vendor: vendor.trusted_vendor || false
         });
     };
 
@@ -521,6 +519,7 @@ export default function AdminVendors() {
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Contact</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Description</th>
                                 <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Rating</th>
+                                <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Ad Plan</th>
                                 <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Leads</th>
                                 <th className="px-6 py-4 text-center text-xs font-bold text-[#6b7280] uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-4 text-right text-xs font-bold text-[#6b7280] uppercase tracking-wider">Actions</th>
@@ -614,6 +613,17 @@ export default function AdminVendors() {
                                                 </div>
                                                 <span className="text-xs font-semibold text-[#6b7280]">{vendor.rating_percentage || 0}%</span>
                                             </div>
+                                        </td>
+
+                                        {/* Ad Plan */}
+                                        <td className="px-6 py-4 text-center">
+                                            {vendor.ad_plan ? (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-purple-50 to-fuchsia-50 text-fuchsia-600 border border-fuchsia-200">
+                                                    {vendor.ad_plan.charAt(0).toUpperCase() + vendor.ad_plan.slice(1)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">None</span>
+                                            )}
                                         </td>
 
                                         {/* Leads Count */}
@@ -896,20 +906,11 @@ export default function AdminVendors() {
                                     <label className="flex items-center gap-2">
                                         <input
                                             type="checkbox"
-                                            checked={formData.is_featured}
-                                            onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                                            checked={formData.trusted_vendor}
+                                            onChange={(e) => setFormData({ ...formData, trusted_vendor: e.target.checked })}
                                             className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                        <span className="text-sm font-medium text-gray-700">Featured</span>
-                                    </label>
-                                    <label className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.is_top_rated}
-                                            onChange={(e) => setFormData({ ...formData, is_top_rated: e.target.checked })}
-                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Top Rated</span>
+                                        <span className="text-sm font-medium text-gray-700">Trusted Vendor</span>
                                     </label>
                                 </div>
                             </div>

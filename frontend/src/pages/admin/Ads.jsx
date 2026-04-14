@@ -129,7 +129,8 @@ export default function AdminAds() {
             fetchAds();
         } catch (error) {
             console.error('[Admin Ads] Save error:', error);
-            alert(error.message || 'Failed to save ad. Check console for details.');
+            const errorDetail = error.response?.data ? JSON.stringify(error.response.data, null, 2) : error.message;
+            alert(errorDetail || 'Failed to save ad. Check console for details.');
         }
     };
 
@@ -430,34 +431,50 @@ export default function AdminAds() {
 
                             {/* Scheduling */}
                             <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-[#374151] mb-2">Start Date</label>
-                                    <input
-                                        type="date"
-                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
-                                        value={formData.start_date}
-                                        onChange={e => setFormData({ ...formData, start_date: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-[#374151] mb-2">End Date</label>
-                                    <input
-                                        type="date"
-                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
-                                        value={formData.end_date}
-                                        onChange={e => setFormData({ ...formData, end_date: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-[#374151] mb-2">Priority</label>
-                                    <input
-                                        type="number"
-                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
-                                        value={formData.priority}
-                                        onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                                        placeholder="0"
-                                    />
-                                </div>
+                                {(() => {
+                                    const today = new Date().toISOString().split('T')[0];
+                                    return (
+                                        <>
+                                            <div>
+                                                <label className="block text-sm font-medium text-[#374151] mb-2">Start Date</label>
+                                                <input
+                                                    type="date"
+                                                    min={today}
+                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    value={formData.start_date}
+                                                    onChange={e => {
+                                                        const newStart = e.target.value;
+                                                        const updates = { start_date: newStart };
+                                                        if (formData.end_date && newStart > formData.end_date) {
+                                                            updates.end_date = '';
+                                                        }
+                                                        setFormData({ ...formData, ...updates });
+                                                    }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-[#374151] mb-2">End Date</label>
+                                                <input
+                                                    type="date"
+                                                    min={formData.start_date || today}
+                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    value={formData.end_date}
+                                                    onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-[#374151] mb-2">Priority</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    value={formData.priority}
+                                                    onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
+                                                    placeholder="0"
+                                                />
+                                            </div>
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             {/* Template Options */}
