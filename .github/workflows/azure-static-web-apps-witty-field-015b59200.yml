@@ -36,15 +36,20 @@ jobs:
 
       - name: Download StaticSitesClient (Linux)
         run: |
+          BUILD_ID="08e29138cd3dcda4ffda6d587aa580028110c1c7"
           mkdir -p ~/.swa/deploy
-          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/08e29138cd3dcda4ffda6d587aa580028110c1c7/linux/StaticSitesClient" -o ~/.swa/deploy/StaticSitesClient
+          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
+            -o ~/.swa/deploy/StaticSitesClient
           chmod +x ~/.swa/deploy/StaticSitesClient
+          file ~/.swa/deploy/StaticSitesClient
+          ldd ~/.swa/deploy/StaticSitesClient || true
 
       - name: Deploy to Azure Static Web Apps
         run: ~/.swa/deploy/StaticSitesClient
         env:
           DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}
-          APP_LOCATION: ${{ github.workspace }}/frontend/dist
+          # APP_LOCATION is RELATIVE to REPOSITORY_BASE on Linux (binary concatenates them)
+          APP_LOCATION: "dist"
           OUTPUT_LOCATION: ""
           SKIP_APP_BUILD: "true"
           SKIP_API_BUILD: "true"
@@ -52,6 +57,7 @@ jobs:
           DEPLOYMENT_PROVIDER: "DevOps"
           REPOSITORY_BASE: ${{ github.workspace }}/frontend
           CONFIG_FILE_LOCATION: ${{ github.workspace }}/frontend
+          VERBOSE: "true"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -60,8 +66,10 @@ jobs:
     steps:
       - name: Download StaticSitesClient (Linux)
         run: |
+          BUILD_ID="08e29138cd3dcda4ffda6d587aa580028110c1c7"
           mkdir -p ~/.swa/deploy
-          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/08e29138cd3dcda4ffda6d587aa580028110c1c7/linux/StaticSitesClient" -o ~/.swa/deploy/StaticSitesClient
+          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
+            -o ~/.swa/deploy/StaticSitesClient
           chmod +x ~/.swa/deploy/StaticSitesClient
 
       - name: Close Pull Request
@@ -71,3 +79,4 @@ jobs:
           DEPLOYMENT_ACTION: "close"
           DEPLOYMENT_PROVIDER: "DevOps"
           APP_LOCATION: "."
+          REPOSITORY_BASE: ${{ github.workspace }}
