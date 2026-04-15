@@ -93,6 +93,7 @@ if _cors_env:
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_env.split(',') if origin.strip()]
 else:
     CORS_ALLOWED_ORIGINS = [
+        'https://nice-pebble-067605800.7.azurestaticapps.net',
         'https://witty-field-015b59200.6.azurestaticapps.net',
         'https://junkyard-web-dev.azurestaticapps.net',
         'http://localhost:3000',
@@ -130,6 +131,7 @@ else:
         'https://junkyard-api-dev.azurewebsites.net',
         'https://junkyardnearme.azurewebsites.net',
         'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
+        'https://nice-pebble-067605800.7.azurestaticapps.net',
         'https://witty-field-015b59200.6.azurestaticapps.net',
         'https://junkyard-web-dev.azurestaticapps.net',
         'http://localhost:3000',
@@ -255,7 +257,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (User uploads) - Azure Blob Storage
-AZURE_ACCOUNT_NAME = os.environ.get('AZURE_ACCOUNT_NAME', 'junkyardstoragedev')
+AZURE_ACCOUNT_NAME = os.environ.get('AZURE_ACCOUNT_NAME', 'junkyardstorage2026')
 AZURE_ACCOUNT_KEY = os.environ.get('AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = os.environ.get('AZURE_CONTAINER', 'media')
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
