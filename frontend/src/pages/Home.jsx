@@ -10,6 +10,64 @@ import MobileAdBanner from '../components/MobileAdBanner'
 import SEO from '../components/SEO'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
+// ─── useSiteStats ────────────────────────────────────────────────────────────
+// Fetches live site statistics from the public /api/site-stats/ endpoint.
+// Results are cached in sessionStorage for 5 minutes so the hero and stats
+// strip stay consistent for the duration of a user's visit.
+// Falls back to conservative defaults if the network request fails.
+function useSiteStats() {
+    const CACHE_KEY = 'site_stats_cache'
+    const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+    const DEFAULTS = {
+        vendors_count: 1200,
+        states_covered: 50,
+        parts_listed: 50000,
+        savings_percent: 80,
+    }
+
+    const [stats, setStats] = useState(() => {
+        try {
+            const cached = sessionStorage.getItem(CACHE_KEY)
+            if (cached) {
+                const { data, ts } = JSON.parse(cached)
+                if (Date.now() - ts < CACHE_TTL) return data
+            }
+        } catch (_) {}
+        return DEFAULTS
+    })
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const cached = sessionStorage.getItem(CACHE_KEY)
+                if (cached) {
+                    const { data, ts } = JSON.parse(cached)
+                    if (Date.now() - ts < CACHE_TTL) { setStats(data); return }
+                }
+            } catch (_) {}
+
+            try {
+                const res = await fetch(`${API_BASE}/api/site-stats/`)
+                if (!res.ok) throw new Error('non-ok')
+                const data = await res.json()
+                const merged = { ...DEFAULTS, ...data }
+                setStats(merged)
+                try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: merged, ts: Date.now() })) }
+                catch (_) {}
+            } catch (_) {
+                // keep defaults — no visual error needed
+            }
+        }
+        fetchStats()
+    }, [])
+
+    return stats
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 // --- ANIMATED COUNTER ---
 function AnimatedCounter({ target, suffix = '', prefix = '' }) {
     const [count, setCount] = useState(0)
@@ -73,6 +131,7 @@ function ParticleField() {
 
 export default function Home() {
     const navigate = useNavigate()
+    const siteStats = useSiteStats()
 
     const combinedSchema = {
         '@context': 'https://schema.org',
@@ -266,10 +325,10 @@ export default function Home() {
                         {/* Inline trust strip — below CTAs */}
                         <div className="flex flex-wrap items-center justify-center gap-5 mt-8 animate-fade-in-up delay-700">
                             {[
-                                { icon: '✓', text: '1,200+ Verified Yards' },
+                                { icon: '✓', text: `${siteStats.vendors_count.toLocaleString()}+ Verified Yards` },
                                 { icon: '🛡', text: 'No Spam Guarantee' },
                                 { icon: '⚡', text: 'Instant Quotes' },
-                                { icon: '💰', text: 'Up to 80% Savings' },
+                                { icon: '💰', text: `Up to ${siteStats.savings_percent}% Savings` },
                             ].map((item, i) => (
                                 <span key={i} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.03em' }}>
                                     <span>{item.icon}</span> {item.text}
@@ -293,10 +352,10 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         {[
-                            { value: 1200, suffix: '+', label: 'Verified Junkyards', color: 'var(--neon-blue)' },
-                            { value: 50000, suffix: '+', label: 'Parts Listed', color: 'var(--neon-orange)' },
-                            { value: 50, suffix: ' States', label: 'Coverage', color: 'var(--neon-blue)' },
-                            { value: 80, suffix: '%', prefix: 'Up to ', label: 'Savings vs. Dealer', color: 'var(--neon-orange)' }
+                            { value: siteStats.vendors_count, suffix: '+', label: 'Verified Junkyards', color: 'var(--neon-blue)' },
+                            { value: siteStats.parts_listed, suffix: '+', label: 'Parts Listed', color: 'var(--neon-orange)' },
+                            { value: siteStats.states_covered, suffix: ' States', label: 'Coverage', color: 'var(--neon-blue)' },
+                            { value: siteStats.savings_percent, suffix: '%', prefix: 'Up to ', label: 'Savings vs. Dealer', color: 'var(--neon-orange)' }
                         ].map((s, i) => (
                             <div key={i} className="scroll-fade-in text-center" style={{ animationDelay: `${i * 80}ms` }}>
                                 <div

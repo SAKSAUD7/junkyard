@@ -97,7 +97,61 @@ from apps.leads.models import Lead
 from apps.hollander.models import Vendor
 from apps.ads.models import Advertisement
 
+class SiteStatsView(APIView):
+    """
+    Public endpoint for homepage stats.
+    Returns live counts: vendors, states covered, parts listed.
+    Results are cached for 5 minutes to avoid repeated DB hits.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        from django.core.cache import cache
+        from apps.hollander.models import Vendor, YardPart
+
+        cache_key = 'site_stats_public'
+        stats = None
+        try:
+            stats = cache.get(cache_key)
+        except Exception:
+            pass
+
+        if stats is None:
+            active_vendors = Vendor.objects.filter(is_active=True).count()
+
+            # Count distinct states that have at least one active vendor
+            states_covered = (
+                Vendor.objects.filter(is_active=True)
+                .values('state')
+                .exclude(state__isnull=True)
+                .exclude(state__exact='')
+                .distinct()
+                .count()
+            )
+
+            # Total parts listed across all yards
+            try:
+                parts_listed = YardPart.objects.count()
+            except Exception:
+                parts_listed = 0
+
+            stats = {
+                'vendors_count': active_vendors,
+                'states_covered': states_covered,
+                'parts_listed': parts_listed,
+                # Savings % is a fixed marketing metric, not data-driven
+                'savings_percent': 80,
+            }
+            try:
+                cache.set(cache_key, stats, 300)  # cache for 5 minutes
+            except Exception:
+                pass
+
+        return Response(stats)
+
+
 class AdminStatsView(APIView):
+
     """
     Returns statistics for the admin dashboard.
     Only accessible by admins.
