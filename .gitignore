@@ -111,3 +111,9 @@ backend/db.sqlite3
 backend/db.sqlite3-journal
 migration_report.txt
 backend/pricing_recovered.json
+fresh_logs/
+logs_out/
+logs.zip
+fresh_logs.zip
+backend_deploy.zip
+backend_clean.zip

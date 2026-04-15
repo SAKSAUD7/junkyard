@@ -1,5 +1,0 @@
-<step title="Startup Request" date="2026-03-17T10:16:37.308" instance="533d67" url="/api/deployments/?$orderby=ReceivedTime%20desc&amp;$top=20&amp;api-version=2022-03-01" method="GET" type="request" pid="770,1,7" ScmType="GitHubAction" SCM_DO_BUILD_DURING_DEPLOYMENT="1" >
-  <step title="Cleanup Xml Logs" date="2026-03-17T10:16:37.337" >
-    <step title="Cleanup Infos" date="2026-03-17T10:16:39.931" totalFiles="1218" totalCleanup="1058" /><!-- duration: 6ms -->
-  </step><!-- duration: 2612ms -->
-</step><!-- duration: 2648ms -->
