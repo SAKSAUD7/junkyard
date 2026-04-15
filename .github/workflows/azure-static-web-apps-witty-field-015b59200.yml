@@ -41,14 +41,16 @@ jobs:
           curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
             -o ~/.swa/deploy/StaticSitesClient
           chmod +x ~/.swa/deploy/StaticSitesClient
-          file ~/.swa/deploy/StaticSitesClient
-          ldd ~/.swa/deploy/StaticSitesClient || true
 
       - name: Deploy to Azure Static Web Apps
-        run: ~/.swa/deploy/StaticSitesClient
+        run: |
+          # Unset GITHUB_ACTIONS so the binary uses DevOps auth path (not GitHub OAuth)
+          unset GITHUB_ACTIONS
+          GITHUB_ACTIONS=false ~/.swa/deploy/StaticSitesClient
         env:
+          GITHUB_ACTIONS: "false"
+          CI: "false"
           DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}
-          # APP_LOCATION is RELATIVE to REPOSITORY_BASE on Linux (binary concatenates them)
           APP_LOCATION: "dist"
           OUTPUT_LOCATION: ""
           SKIP_APP_BUILD: "true"
@@ -73,8 +75,9 @@ jobs:
           chmod +x ~/.swa/deploy/StaticSitesClient
 
       - name: Close Pull Request
-        run: ~/.swa/deploy/StaticSitesClient
+        run: GITHUB_ACTIONS=false ~/.swa/deploy/StaticSitesClient
         env:
+          GITHUB_ACTIONS: "false"
           DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}
           DEPLOYMENT_ACTION: "close"
           DEPLOYMENT_PROVIDER: "DevOps"
