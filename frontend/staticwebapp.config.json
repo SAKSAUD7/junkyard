@@ -1,10 +1,56 @@
 {
+  "globalHeaders": {
+    "cache-control": "no-cache",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "mimeTypes": {
+    ".xml": "application/xml",
+    ".txt": "text/plain"
+  },
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
-      "/assets/*.{png,jpg,jpeg,gif,bmp,svg,ico,webp,js,css}",
-      "/*.{png,jpg,jpeg,gif,bmp,svg,ico,webp,js,css}",
-      "/images/*"
+      "/*.{png,jpg,jpeg,gif,bmp,svg,ico,webp,js,css,xml,txt}",
+      "/images/*",
+      "/sitemap.xml",
+      "/robots.txt"
     ]
-  }
+  },
+  "routes": [
+    {
+      "route": "/sitemap.xml",
+      "headers": {
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "route": "/robots.txt",
+      "headers": {
+        "content-type": "text/plain"
+      }
+    },
+    {
+      "route": "/junkyards-by-location",
+      "redirect": "/browse",
+      "statusCode": 301
+    },
+    {
+      "route": "/about-us",
+      "redirect": "/about",
+      "statusCode": 301
+    },
+    {
+      "route": "/terms-and-conditions",
+      "redirect": "/terms",
+      "statusCode": 301
+    },
+    {
+      "route": "/privacy-policy",
+      "redirect": "/privacy",
+      "statusCode": 301
+    }
+  ]
 }

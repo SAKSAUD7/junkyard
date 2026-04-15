@@ -55,6 +55,22 @@ import BlogDetail from './pages/blog/BlogDetail'
 import AdminBlogList from './pages/admin/blog/BlogList'
 import AdminBlogEditor from './pages/admin/blog/BlogEditor'
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SEO: Pattern-based redirect for ALL legacy /junkyards/* URLs (5200+ routes)
+// Replaces the old staticwebapp.config.json routes that exceeded Azure's 100KB limit
+// Pattern 1: /junkyards/:state           → /browse/:state
+// Pattern 2: /junkyards/:state/:slug     → /vendors/:slug
+// ─────────────────────────────────────────────────────────────────────────────
+function JunkyardRedirect() {
+  const location = useLocation()
+  const parts = location.pathname.replace(/^\/junkyards\//, '').split('/')
+  // If there's a vendor slug (2 parts: state + slug) → /vendors/:slug
+  if (parts.length >= 2 && parts[1]) {
+    return <Navigate to={`/vendors/${parts[1]}`} replace />
+  }
+  // Otherwise state-level → /browse/:state
+  return <Navigate to={`/browse/${parts[0]}`} replace />
+}
 
 function ScrollObserver() {
   const location = useLocation()
@@ -117,6 +133,14 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/faq" element={<FAQ />} />
+
+        {/* ── Legacy SEO Redirects (covers all 5200+ /junkyards/* URLs) ── */}
+        <Route path="/junkyards-by-location" element={<Navigate to="/browse" replace />} />
+        <Route path="/junkyards/:state" element={<JunkyardRedirect />} />
+        <Route path="/junkyards/:state/:vendorSlug" element={<JunkyardRedirect />} />
+        {/* Other legacy static redirects */}
+        <Route path="/terms-and-conditions" element={<Navigate to="/terms" replace />} />
+        <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
 
         {/* Blog Routes */}
         <Route path="/blog" element={<BlogList />} />
