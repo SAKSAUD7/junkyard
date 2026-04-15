@@ -34,54 +34,24 @@ jobs:
         env:
           VITE_API_URL: https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net
 
-      - name: Download StaticSitesClient (Linux)
-        run: |
-          BUILD_ID="08e29138cd3dcda4ffda6d587aa580028110c1c7"
-          mkdir -p ~/.swa/deploy
-          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
-            -o ~/.swa/deploy/StaticSitesClient
-          chmod +x ~/.swa/deploy/StaticSitesClient
-
       - name: Deploy to Azure Static Web Apps
-        # Use env -i to run binary with CLEAN environment (no GITHUB_ACTIONS, CI, etc.)
-        # This forces the binary to use DevOps token auth instead of GitHub OAuth
         run: |
-          env -i \
-            HOME="$HOME" \
-            PATH="$PATH" \
-            DEPLOYMENT_TOKEN="${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
-            APP_LOCATION="dist" \
-            OUTPUT_LOCATION="" \
-            SKIP_APP_BUILD="true" \
-            SKIP_API_BUILD="true" \
-            DEPLOYMENT_ACTION="upload" \
-            DEPLOYMENT_PROVIDER="DevOps" \
-            REPOSITORY_BASE="${{ github.workspace }}/frontend" \
-            CONFIG_FILE_LOCATION="${{ github.workspace }}/frontend" \
-            VERBOSE="true" \
-            ~/.swa/deploy/StaticSitesClient
+          npx --yes @azure/static-web-apps-cli deploy ./dist \
+            --deployment-token "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
+            --env production \
+            --no-use-keychain \
+            --verbose
+        working-directory: frontend
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
-      - name: Download StaticSitesClient (Linux)
-        run: |
-          BUILD_ID="08e29138cd3dcda4ffda6d587aa580028110c1c7"
-          mkdir -p ~/.swa/deploy
-          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
-            -o ~/.swa/deploy/StaticSitesClient
-          chmod +x ~/.swa/deploy/StaticSitesClient
-
       - name: Close Pull Request
         run: |
-          env -i \
-            HOME="$HOME" \
-            PATH="$PATH" \
-            DEPLOYMENT_TOKEN="${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
-            DEPLOYMENT_ACTION="close" \
-            DEPLOYMENT_PROVIDER="DevOps" \
-            APP_LOCATION="." \
-            REPOSITORY_BASE="${{ github.workspace }}" \
-            ~/.swa/deploy/StaticSitesClient
+          npx --yes @azure/static-web-apps-cli deploy \
+            --deployment-token "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
+            --env production \
+            --no-use-keychain \
+            --action close
