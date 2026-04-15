@@ -505,24 +505,9 @@ export default function Home() {
             </section>
 
             {/* ============================================================
-                TRUSTED VENDORS (dynamic from API — no hardcoded content)
+                TRUSTED VENDORS — self-contained section (heading inside component)
             ============================================================ */}
-            <section style={{ background: 'var(--bg-surface)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                    <div className="text-center mb-12 scroll-fade-in">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4" style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.2)' }}>
-                            <span style={{ color: 'var(--neon-blue)', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>Top Vendors</span>
-                        </div>
-                        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            Trusted{' '}
-                            <span style={{ color: '#2563eb' }}>
-                                Salvage Yards
-                            </span>
-                        </h2>
-                    </div>
-                    <TrustedVendors />
-                </div>
-            </section>
+            <TrustedVendors />
 
             {/* ============================================================
                 3D ENGINE SHOWCASE + WHY CHOOSE US (side by side on desktop)
