@@ -43,23 +43,23 @@ jobs:
           chmod +x ~/.swa/deploy/StaticSitesClient
 
       - name: Deploy to Azure Static Web Apps
+        # Use env -i to run binary with CLEAN environment (no GITHUB_ACTIONS, CI, etc.)
+        # This forces the binary to use DevOps token auth instead of GitHub OAuth
         run: |
-          # Unset GITHUB_ACTIONS so the binary uses DevOps auth path (not GitHub OAuth)
-          unset GITHUB_ACTIONS
-          GITHUB_ACTIONS=false ~/.swa/deploy/StaticSitesClient
-        env:
-          GITHUB_ACTIONS: "false"
-          CI: "false"
-          DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}
-          APP_LOCATION: "dist"
-          OUTPUT_LOCATION: ""
-          SKIP_APP_BUILD: "true"
-          SKIP_API_BUILD: "true"
-          DEPLOYMENT_ACTION: "upload"
-          DEPLOYMENT_PROVIDER: "DevOps"
-          REPOSITORY_BASE: ${{ github.workspace }}/frontend
-          CONFIG_FILE_LOCATION: ${{ github.workspace }}/frontend
-          VERBOSE: "true"
+          env -i \
+            HOME="$HOME" \
+            PATH="$PATH" \
+            DEPLOYMENT_TOKEN="${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
+            APP_LOCATION="dist" \
+            OUTPUT_LOCATION="" \
+            SKIP_APP_BUILD="true" \
+            SKIP_API_BUILD="true" \
+            DEPLOYMENT_ACTION="upload" \
+            DEPLOYMENT_PROVIDER="DevOps" \
+            REPOSITORY_BASE="${{ github.workspace }}/frontend" \
+            CONFIG_FILE_LOCATION="${{ github.workspace }}/frontend" \
+            VERBOSE="true" \
+            ~/.swa/deploy/StaticSitesClient
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -75,11 +75,13 @@ jobs:
           chmod +x ~/.swa/deploy/StaticSitesClient
 
       - name: Close Pull Request
-        run: GITHUB_ACTIONS=false ~/.swa/deploy/StaticSitesClient
-        env:
-          GITHUB_ACTIONS: "false"
-          DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}
-          DEPLOYMENT_ACTION: "close"
-          DEPLOYMENT_PROVIDER: "DevOps"
-          APP_LOCATION: "."
-          REPOSITORY_BASE: ${{ github.workspace }}
+        run: |
+          env -i \
+            HOME="$HOME" \
+            PATH="$PATH" \
+            DEPLOYMENT_TOKEN="${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_FIELD_015B59200 }}" \
+            DEPLOYMENT_ACTION="close" \
+            DEPLOYMENT_PROVIDER="DevOps" \
+            APP_LOCATION="." \
+            REPOSITORY_BASE="${{ github.workspace }}" \
+            ~/.swa/deploy/StaticSitesClient
