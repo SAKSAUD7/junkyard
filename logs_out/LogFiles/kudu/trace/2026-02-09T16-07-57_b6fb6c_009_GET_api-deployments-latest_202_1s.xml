@@ -1,0 +1,11 @@
+<step title="Incoming Request" date="2026-02-09T16:07:57.008" instance="b6fb6c" url="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-02-09_16-07-32Z" method="GET" type="request" pid="770,1,29" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_12a37266a339bb7f00b54b572dcd1aa77bc65bf6e17d65dec7edd56d035775ab" Authorization="Bas..." Content-Type="application/json; charset=utf-8" Cookie="ARRAffinity=b6fb6c880260cf0d9960bbf7f86fdd24290155046ea7a680eec8969c03db7fc6;Path=/;HttpOnly;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net; ARRAffinitySameSite=b6fb6c880260cf0d9960bbf7f86fdd24290155046ea7a680eec8969c03db7fc6;Path=/;HttpOnly;SameSite=None;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" Content-Length="0" X-ARR-LOG-ID="50e7d778-8934-4c85-a691-5308b5050e85" CLIENT-IP="64.236.153.81:4104" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-02-09_16-07-32Z" X-Client-IP="64.236.153.81" X-Client-Port="4104" >
+  <step title="Cleanup Xml Logs" date="2026-02-09T16:07:57.018" >
+    <step title="Cleanup Infos" date="2026-02-09T16:07:57.099" totalFiles="534" totalCleanup="374" /><!-- duration: 30ms -->
+  </step><!-- duration: 132ms -->
+  <step title="DeploymentService.GetResult" date="2026-02-09T16:07:57.209" >
+    <step title="DeploymentService.GetLatestDeployment" date="2026-02-09T16:07:57.211" >
+      <step title="DeploymentManager.GetResults" date="2026-02-09T16:07:57.241" /><!-- duration: 1056ms -->
+    </step><!-- duration: 1089ms -->
+  </step><!-- duration: 1092ms -->
+  <step title="Outgoing response" date="2026-02-09T16:07:58.308" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 1ms -->
+</step><!-- duration: 1302ms -->

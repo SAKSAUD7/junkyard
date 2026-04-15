@@ -1,0 +1,147 @@
+2026-04-15T18:44:48  Fetching changes.
+2026-04-15T18:44:48    Starting  LocalZipHandler
+2026-04-15T18:44:48    Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/0145e173-453e-408d-96e7-02cdccf0c63a.zip (106.81 MB) to /tmp/zipdeploy/extracted
+2026-04-15T18:45:00  Updating submodules.
+2026-04-15T18:45:00  Preparing deployment for commit id 'e28cb77c-2'.
+2026-04-15T18:45:01  PreDeployment: context.CleanOutputPath False
+2026-04-15T18:45:01  PreDeployment: context.OutputPath /home/site/wwwroot
+2026-04-15T18:45:01  Repository path is /tmp/zipdeploy/extracted
+2026-04-15T18:45:01  Running oryx build...
+2026-04-15T18:45:01    Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform python --platform-version 3.10 -p virtualenv_name=antenv --log-file /tmp/build-debug.log  -i /tmp/8de9b1f19b7b593 --compress-destination-dir | tee /tmp/oryx-build.log
+2026-04-15T18:45:06    Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2026-04-15T18:45:06    You can report issues at https://github.com/Microsoft/Oryx/issues
+2026-04-15T18:45:06    
+2026-04-15T18:45:06    Oryx Version: 0.2.20260204.1+0fdbe200b286be083841ff7fa201c6c2316dc6b9, Commit: 0fdbe200b286be083841ff7fa201c6c2316dc6b9, ReleaseTagName: 20260204.1
+2026-04-15T18:45:06    
+2026-04-15T18:45:06    Build Operation ID: 653d824e8d323b3a
+2026-04-15T18:45:06    Repository Commit : e28cb77c-2e7d-42cc-8bdf-d87b5dd2a9f4
+2026-04-15T18:45:06    OS Type           : bullseye
+2026-04-15T18:45:07    Image Type        : githubactions
+2026-04-15T18:45:07    
+2026-04-15T18:45:07    Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2026-04-15T18:45:07    Backup SDK Storage URL: 
+2026-04-15T18:45:07    Detecting platforms...
+2026-04-15T18:45:07    External SDK provider is enabled.
+2026-04-15T18:45:07    Requesting metadata for platform python from external SDK provider
+2026-04-15T18:45:10    Requesting metadata for platform python from external SDK provider
+2026-04-15T18:45:10    Detected following platforms:
+2026-04-15T18:45:10      python: 3.10.20
+2026-04-15T18:45:11    Requesting metadata for platform python from external SDK provider
+2026-04-15T18:45:13    Version '3.10.20' of platform 'python' is not installed. Generating script to install it...
+2026-04-15T18:45:13    
+2026-04-15T18:45:13    Using intermediate directory '/tmp/8de9b1f19b7b593'.
+2026-04-15T18:45:13    
+2026-04-15T18:45:13    Copying files to the intermediate directory...
+2026-04-15T18:45:27    Copying files to intermediate directory done in 13 sec(s).
+2026-04-15T18:45:27    
+2026-04-15T18:45:27    Source directory     : /tmp/8de9b1f19b7b593
+2026-04-15T18:45:27    Destination directory: /home/site/wwwroot
+2026-04-15T18:45:27    
+2026-04-15T18:45:27    Installing platform...
+2026-04-15T18:45:27    
+2026-04-15T18:45:27    Downloading and extracting 'python' version '3.10.20' to '/tmp/oryx/platforms/python/3.10.20'...
+2026-04-15T18:45:27    Detected image debian flavor: bullseye.
+2026-04-15T18:45:27    Skipping download of python version 3.10.20 as it is available in external sdk provider cache...
+2026-04-15T18:45:27    Extracting contents...
+2026-04-15T18:45:40    Successfully extracted python version 3.10.20 from external sdk provider cache...
+2026-04-15T18:45:40    
+2026-04-15T18:45:40    image detector file exists, platform is python..
+2026-04-15T18:45:40    OS detector file exists, OS is bullseye..
+2026-04-15T18:45:40    Platform installation done in 14 sec(s).
+2026-04-15T18:45:40    Running build script snippets...
+2026-04-15T18:45:40    Python Version: /tmp/oryx/platforms/python/3.10.20/bin/python3.10
+2026-04-15T18:45:40    Creating directory for command manifest file if it does not exist
+2026-04-15T18:45:40    Removing existing manifest file
+2026-04-15T18:45:41    Python Virtual Environment: antenv
+2026-04-15T18:45:41    Creating virtual environment...
+2026-04-15T18:45:41    Executing: /tmp/oryx/platforms/python/3.10.20/bin/python3.10 -m venv antenv --copies --system-site-packages
+2026-04-15T18:45:57    Activating virtual environment...
+2026-04-15T18:45:57    Fast build is enabled
+2026-04-15T18:45:57    Installing uv...
+2026-04-15T18:46:02    Collecting uv
+2026-04-15T18:46:03      Using cached uv-0.11.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25.0 MB)
+2026-04-15T18:46:06    Installing collected packages: uv
+2026-04-15T18:46:08    Successfully installed uv-0.11.6
+2026-04-15T18:46:08    
+2026-04-15T18:46:08    [notice] A new release of pip is available: 23.0.1 -> 26.0.1
+2026-04-15T18:46:08    [notice] To update, run: pip install --upgrade pip
+2026-04-15T18:46:09    Running uv pip install...
+2026-04-15T18:46:27    Using Python 3.10.20 environment at: antenv
+2026-04-15T18:46:27    Resolved 29 packages in 900ms
+2026-04-15T18:46:27    Downloading cryptography (4.2MiB)
+2026-04-15T18:46:27    Downloading psycopg2-binary (4.0MiB)
+2026-04-15T18:46:27    Downloading pillow (4.3MiB)
+2026-04-15T18:46:28    Downloading djangorestframework (1.0MiB)
+2026-04-15T18:46:28    Downloading django (7.8MiB)
+2026-04-15T18:46:28     Downloaded psycopg2-binary
+2026-04-15T18:46:28     Downloaded cryptography
+2026-04-15T18:46:28     Downloaded pillow
+2026-04-15T18:46:28     Downloaded djangorestframework
+2026-04-15T18:46:28     Downloaded django
+2026-04-15T18:46:28    Prepared 29 packages in 3.70s
+2026-04-15T18:46:28    Installed 29 packages in 1.39s
+2026-04-15T18:46:28    Bytecode compiled 2483 files in 10.89s
+2026-04-15T18:46:28     + asgiref==3.11.1
+2026-04-15T18:46:28     + azure-core==1.39.0
+2026-04-15T18:46:28     + azure-storage-blob==12.28.0
+2026-04-15T18:46:28     + certifi==2026.2.25
+2026-04-15T18:46:28     + cffi==2.0.0
+2026-04-15T18:46:28     + charset-normalizer==3.4.7
+2026-04-15T18:46:28     + cryptography==46.0.7
+2026-04-15T18:46:28     + django==5.0
+2026-04-15T18:46:28     + django-cors-headers==4.3.1
+2026-04-15T18:46:28     + django-filter==23.5
+2026-04-15T18:46:28     + django-storages==1.14.6
+2026-04-15T18:46:28     + djangorestframework==3.14.0
+2026-04-15T18:46:28     + djangorestframework-simplejwt==5.3.1
+2026-04-15T18:46:29     + gunicorn==25.3.0
+2026-04-15T18:46:29     + idna==3.11
+2026-04-15T18:46:29     + ijson==3.5.0
+2026-04-15T18:46:29     + isodate==0.7.2
+2026-04-15T18:46:29     + packaging==26.1
+2026-04-15T18:46:29     + pillow==10.2.0
+2026-04-15T18:46:29     + psycopg2-binary==2.9.11
+2026-04-15T18:46:29     + pycparser==3.0
+2026-04-15T18:46:29     + pyjwt==2.12.1
+2026-04-15T18:46:29     + python-dotenv==1.0.0
+2026-04-15T18:46:29     + pytz==2026.1.post1
+2026-04-15T18:46:29     + requests==2.33.1
+2026-04-15T18:46:29     + sqlparse==0.5.5
+2026-04-15T18:46:29     + typing-extensions==4.15.0
+2026-04-15T18:46:29     + urllib3==2.6.3
+2026-04-15T18:46:29     + whitenoise==6.12.0
+2026-04-15T18:46:29    uv pip install done in 29 sec(s).
+2026-04-15T18:46:29    
+2026-04-15T18:46:29    Content in source directory is a Django app
+2026-04-15T18:46:29    Running collectstatic...
+2026-04-15T18:46:34    Warning: Could not load .env file: [Errno 2] No such file or directory: '/tmp/8de9b1f19b7b593/.env'
+2026-04-15T18:46:34    
+2026-04-15T18:46:34    161 static files copied to '/tmp/8de9b1f19b7b593/staticfiles', 465 post-processed.
+2026-04-15T18:46:34    collectstatic done in 8 sec(s).
+2026-04-15T18:46:34    Not a vso image, so not writing build commands
+2026-04-15T18:46:34    Build script snippets done in 54 sec(s).
+2026-04-15T18:46:34    Preparing output...
+2026-04-15T18:46:34    Compressing source directory directly to destination (optimized path)...
+2026-04-15T18:46:34    Using zstd for compression
+2026-04-15T18:46:55    Copied the compressed output to '/home/site/wwwroot'
+2026-04-15T18:46:55    Direct compression with zstd done in 20 sec(s).
+2026-04-15T18:46:55    
+2026-04-15T18:46:55    Removing existing manifest file
+2026-04-15T18:46:55    Creating a manifest file...
+2026-04-15T18:46:55    Manifest file created.
+2026-04-15T18:46:55    Copying .ostype to manifest output directory.
+2026-04-15T18:46:55    
+2026-04-15T18:46:55    Total execution done in 102 sec(s).
+2026-04-15T18:46:56  Running post deployment command(s)...
+2026-04-15T18:46:56  
+2026-04-15T18:46:56  Generating summary of Oryx build
+2026-04-15T18:46:56  Parsing the build logs
+2026-04-15T18:46:56  Found 0 issue(s)
+2026-04-15T18:46:57  
+2026-04-15T18:46:57  Build Summary :
+2026-04-15T18:46:57  ===============
+2026-04-15T18:46:57  Errors (0)
+2026-04-15T18:46:57  Warnings (0)
+2026-04-15T18:46:57  
+2026-04-15T18:46:57  Triggering container recycle for OneDeploy by adding/updating restartTrigger.txt to the site root path
+2026-04-15T18:46:57  Deployment successful. deployer = OneDeploy deploymentPath = OneDeploy

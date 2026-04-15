@@ -1,0 +1,11 @@
+<step title="Incoming Request" date="2026-04-14T20:34:22.221" instance="3ec91d" url="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-04-14_20-33-04Z" method="GET" type="request" pid="772,1,24" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_12a37266a339bb7f00b54b572dcd1aa77bc65bf6e17d65dec7edd56d035775ab_v3.0.8" Authorization="Bas..." Content-Type="application/json; charset=utf-8" Cookie="ARRAffinity=3ec91d743b2c80e844e85b3dc7d352c6e9c80200186fe3334ebc6358f8b57a2a;Path=/;HttpOnly;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net; ARRAffinitySameSite=3ec91d743b2c80e844e85b3dc7d352c6e9c80200186fe3334ebc6358f8b57a2a;Path=/;HttpOnly;SameSite=None;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" Content-Length="0" X-ARR-LOG-ID="97a1342a-2ec5-4903-83f6-c7d87adcc32c" CLIENT-IP="20.161.45.116:58304" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-04-14_20-33-04Z" X-Client-IP="20.161.45.116" X-Client-Port="58304" >
+  <step title="Cleanup Xml Logs" date="2026-04-14T20:34:22.241" >
+    <step title="Cleanup Infos" date="2026-04-14T20:34:22.370" totalFiles="1541" totalCleanup="1381" /><!-- duration: 20ms -->
+  </step><!-- duration: 158ms -->
+  <step title="DeploymentService.GetResult" date="2026-04-14T20:34:22.411" >
+    <step title="DeploymentService.GetLatestDeployment" date="2026-04-14T20:34:22.419" >
+      <step title="DeploymentManager.GetResults" date="2026-04-14T20:34:22.429" /><!-- duration: 946ms -->
+    </step><!-- duration: 979ms -->
+  </step><!-- duration: 1006ms -->
+  <step title="Outgoing response" date="2026-04-14T20:34:23.428" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 10ms -->
+</step><!-- duration: 1235ms -->

@@ -1,0 +1,7 @@
+<step title="Incoming Request" date="2026-02-17T14:04:19.979" instance="51943e" url="/diagnostics/runtime" method="GET" type="request" pid="768,1,42" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_12a37266a339bb7f00b54b572dcd1aa77bc65bf6e17d65dec7edd56d035775ab" Authorization="Bas..." Content-Type="application/json; charset=utf-8" Content-Length="0" X-ARR-LOG-ID="d24d9ee4-f58d-41b7-825e-b72bce1321b5" CLIENT-IP="52.176.37.65:38848" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/diagnostics/runtime" X-Client-IP="52.176.37.65" X-Client-Port="38848" >
+  <step title="Cleanup Xml Logs" date="2026-02-17T14:04:19.997" >
+    <step title="Cleanup Infos" date="2026-02-17T14:04:20.085" totalFiles="890" totalCleanup="730" /><!-- duration: 11ms -->
+  </step><!-- duration: 107ms -->
+  <step title="RuntimeController.GetRuntimeVersions" date="2026-02-17T14:04:20.117" /><!-- duration: 7ms -->
+  <step title="Outgoing response" date="2026-02-17T14:04:20.134" type="response" statusCode="200" statusText="OK" /><!-- duration: 10ms -->
+</step><!-- duration: 176ms -->

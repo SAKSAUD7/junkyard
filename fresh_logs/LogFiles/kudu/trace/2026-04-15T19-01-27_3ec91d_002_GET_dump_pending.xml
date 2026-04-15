@@ -1,0 +1,4 @@
+<step title="Incoming Request" date="2026-04-15T19:01:27.651" instance="3ec91d" url="/dump" method="GET" type="request" pid="768,1,20" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="AZURECLI/2.80.0 (MSI)" Accept-Encoding="identity" Authorization="Bas..." x-ms-client-request-id="7f578065-38fd-11f1-8d29-9c2f9d8ba926" X-ARR-LOG-ID="7f578065-38fd-11f1-8d29-9c2f9d8ba926" CLIENT-IP="106.51.242.146:54060" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/dump" X-Client-IP="106.51.242.146" X-Client-Port="54060" >
+  <step title="Cleanup Xml Logs" date="2026-04-15T19:01:27.652" >
+    <step title="Cleanup Infos" date="2026-04-15T19:01:27.681" totalFiles="1864" totalCleanup="1704" /><!-- duration: 16ms -->
+  </step><!-- duration: 47ms -->

@@ -49,7 +49,7 @@ function useSiteStats() {
             } catch (_) {}
 
             try {
-                const res = await fetch(`${API_BASE}/api/site-stats/`)
+                const res = await fetch(`${API_BASE}/api/common/site-stats/`)
                 if (!res.ok) throw new Error('non-ok')
                 const data = await res.json()
                 const merged = { ...DEFAULTS, ...data }

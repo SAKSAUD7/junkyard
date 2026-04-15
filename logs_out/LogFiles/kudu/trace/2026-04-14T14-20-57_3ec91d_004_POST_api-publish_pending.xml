@@ -1,0 +1,20 @@
+<step title="Incoming Request" date="2026-04-14T14:20:57.162" instance="3ec91d" url="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%22dd95dcfa55951841d07076d30e488ef002113a74%22%2C%22repoName%22%3A%22SAKSAUD7%2Fjunkyard%22%2C%22actor%22%3A%22SAKSAUD7%22%2C%22slotName%22%3A%22Production%22%2C%22commitMessage%22%3A%22feat%3A%20Premium%20UI%20overhaul%20-%20cinematic%203D%20auth%20pages%2C%20global%20scroll%20animations%2C%20mobile%20responsive%20layouts%2C%20HowItWorks%20hero%20cleanup%2C%20admin%2Flogin%20route%20fix%2C%20Trending%20section%20removed%22%7D" method="POST" type="request" pid="770,1,29" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_12a37266a339bb7f00b54b572dcd1aa77bc65bf6e17d65dec7edd56d035775ab_v3.0.8" Authorization="Bas..." Content-Type="application/octet-stream" Cookie="ARRAffinity=3ec91d743b2c80e844e85b3dc7d352c6e9c80200186fe3334ebc6358f8b57a2a;Path=/;HttpOnly;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net; ARRAffinitySameSite=3ec91d743b2c80e844e85b3dc7d352c6e9c80200186fe3334ebc6358f8b57a2a;Path=/;HttpOnly;SameSite=None;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" Transfer-Encoding="chunked" X-ARR-LOG-ID="a9524511-eda4-4cf7-8b43-2843e94de2b1" CLIENT-IP="68.220.62.149:50225" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%22dd95dcfa55951841d07076d30e488ef002113a74%22%2C%22repoName%22%3A%22SAKSAUD7%2Fjunkyard%22%2C%22actor%22%3A%22SAKSAUD7%22%2C%22slotName%22%3A%22Production%22%2C%22commitMessage%22%3A%22feat%3A%20Premium%20UI%20overhaul%20-%20cinematic%203D%20auth%20pages%2C%20global%20scroll%20animations%2C%20mobile%20responsive%20layouts%2C%20HowItWorks%20hero%20cleanup%2C%20admin%2Flogin%20route%20fix%2C%20Trending%20section%20removed%22%7D" X-Client-IP="68.220.62.149" X-Client-Port="50225" >
+  <step title="Cleanup Xml Logs" date="2026-04-14T14:20:57.165" >
+    <step title="Cleanup Infos" date="2026-04-14T14:20:57.228" totalFiles="1229" totalCleanup="1069" /><!-- duration: 14ms -->
+  </step><!-- duration: 88ms -->
+  <step title="OneDeploy" date="2026-04-14T14:20:57.380" >
+    <step title="None repository commit" date="2026-04-14T14:20:57.432" >
+      <step title="Commit id: 622892db-fe80-456d-8f03-d6fc28521547" date="2026-04-14T14:20:57.435" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 1ms -->
+    </step><!-- duration: 6ms -->
+    <step title="Starting PushDeployAsync" date="2026-04-14T14:20:57.439" /><!-- duration: 1ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/743a2244-5b51-4384-9430-bf5ac701b6f4.zip" date="2026-04-14T14:20:57.484" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/743a2244-5b51-4384-9430-bf5ac701b6f4.zip" date="2026-04-14T14:20:57.504" /><!-- duration: 18ms -->
+    </step><!-- duration: 14350ms -->
+    <step title="Removing previous build artifact&apos;s manifest file" date="2026-04-14T14:21:11.847" >
+      <step title="Start deployment in the background" date="2026-04-14T14:21:11.904" >
+        <step title="Acquiring Deployment Lock" date="2026-04-14T14:21:11.965" /><!-- duration: 10ms -->
+        <step title="Acquired Deployment Lock" date="2026-04-14T14:21:12.084" /><!-- duration: 1ms -->
+      </step><!-- duration: 325ms -->
+    </step><!-- duration: 484ms -->
+    <step title="Outgoing response" date="2026-04-14T14:21:12.562" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 2ms -->
+  </step><!-- duration: 15202ms -->

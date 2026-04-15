@@ -1,0 +1,17 @@
+<step title="Incoming Request" date="2026-02-12T08:56:44.342" instance="b6fb6c" url="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%2292680bb41595fc9dc2cdaf4ead2964e4d708c703%22%2C%22repoName%22%3A%22SAKSAUD7%2Fjunkyard%22%2C%22actor%22%3A%22SAKSAUD7%22%2C%22slotName%22%3A%22Production%22%2C%22commitMessage%22%3A%22Fix%20all%20backend-frontend%20connections%3A%20Correct%20API%20URL%2C%20verify%20endpoints%2C%20rebuild%20frontend%22%7D" method="POST" type="request" pid="770,1,20" Host="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_12a37266a339bb7f00b54b572dcd1aa77bc65bf6e17d65dec7edd56d035775ab" Authorization="Bas..." Content-Type="application/octet-stream" Cookie="ARRAffinity=b6fb6c880260cf0d9960bbf7f86fdd24290155046ea7a680eec8969c03db7fc6;Path=/;HttpOnly;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net; ARRAffinitySameSite=b6fb6c880260cf0d9960bbf7f86fdd24290155046ea7a680eec8969c03db7fc6;Path=/;HttpOnly;SameSite=None;Secure;Domain=junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" Transfer-Encoding="chunked" X-ARR-LOG-ID="a044a920-bc46-4c80-b3e2-c19bf6ffb112" CLIENT-IP="20.109.38.166:56705" X-SITE-DEPLOYMENT-ID="junkyardnearme" WAS-DEFAULT-HOSTNAME="junkyardnearme-g6ghdqf5g8gvd2eq.scm.centralindia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%2292680bb41595fc9dc2cdaf4ead2964e4d708c703%22%2C%22repoName%22%3A%22SAKSAUD7%2Fjunkyard%22%2C%22actor%22%3A%22SAKSAUD7%22%2C%22slotName%22%3A%22Production%22%2C%22commitMessage%22%3A%22Fix%20all%20backend-frontend%20connections%3A%20Correct%20API%20URL%2C%20verify%20endpoints%2C%20rebuild%20frontend%22%7D" X-Client-IP="20.109.38.166" X-Client-Port="56705" >
+  <step title="Cleanup Xml Logs" date="2026-02-12T08:56:44.344" >
+    <step title="Cleanup Infos" date="2026-02-12T08:56:44.368" totalFiles="679" totalCleanup="519" /><!-- duration: 5ms -->
+  </step><!-- duration: 33ms -->
+  <step title="OneDeploy" date="2026-02-12T08:56:44.399" >
+    <step title="Starting PushDeployAsync" date="2026-02-12T08:56:44.403" /><!-- duration: 1ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/257c43f4-6d20-44f0-9b27-e61a95a7baec.zip" date="2026-02-12T08:56:44.410" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/257c43f4-6d20-44f0-9b27-e61a95a7baec.zip" date="2026-02-12T08:56:44.420" /><!-- duration: 29ms -->
+    </step><!-- duration: 9757ms -->
+    <step title="Removing previous build artifact&apos;s manifest file" date="2026-02-12T08:56:54.172" >
+      <step title="Start deployment in the background" date="2026-02-12T08:56:54.191" >
+        <step title="Acquiring Deployment Lock" date="2026-02-12T08:56:54.260" /><!-- duration: 2ms -->
+        <step title="Acquired Deployment Lock" date="2026-02-12T08:56:54.282" /><!-- duration: 2ms -->
+      </step><!-- duration: 264ms -->
+    </step><!-- duration: 296ms -->
+    <step title="Outgoing response" date="2026-02-12T08:56:54.471" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 2ms -->
+  </step><!-- duration: 10075ms -->
