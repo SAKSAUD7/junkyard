@@ -1,13 +1,13 @@
 /* ================================================
-   TrustedVendors — Orbital Floating Circles UI
-   Full mobile responsiveness + 10 vendor slots
+   TrustedVendors — True Orbital Layout
+   4 top · 2 middle · 4 bottom around center text
    ================================================ */
 
 /* ---------- SECTION ---------- */
 .tv-section {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(160deg, #f8faff 0%, #ffffff 50%, #f5f0ff 100%);
+  background: linear-gradient(160deg, #f8faff 0%, #ffffff 55%, #f5f0ff 100%);
 }
 
 /* ---------- BLOBS ---------- */
@@ -18,36 +18,33 @@
   pointer-events: none;
 }
 .tv-blob-1 {
-  width: 500px; height: 500px;
-  background: rgba(99, 102, 241, 0.07);
+  width: 600px; height: 600px;
+  background: rgba(99, 102, 241, 0.06);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
 }
-.tv-blob-2 { width: 280px; height: 280px; background: rgba(37, 99, 235, 0.06); top: 0; right: 0; }
-.tv-blob-3 { width: 240px; height: 240px; background: rgba(139, 92, 246, 0.06); bottom: 0; left: 0; }
+.tv-blob-2 { width: 260px; height: 260px; background: rgba(37,99,235,0.06); top: 0; right: 0; }
+.tv-blob-3 { width: 200px; height: 200px; background: rgba(139,92,246,0.06); bottom: 0; left: 0; }
 
 /* ======================================================================
-   DESKTOP ORBITAL LAYOUT (≥ 1100px)
+   DESKTOP ORBITAL  (≥ 1100px)
+   Layout: 4 top, 2 side, 4 bottom — 10 total orbiting center text
    ====================================================================== */
-.tv-orbital-wrapper {
-  display: none; /* hidden on mobile, shown on desktop */
-}
+.tv-orbital-wrapper { display: none; }
 
 @media (min-width: 1100px) {
   .tv-orbital-wrapper {
     display: block;
     position: relative;
-    min-height: 960px;
-    max-width: 1400px;
+    min-height: 820px;
+    max-width: 1350px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
   }
 }
 
-/* CENTER TEXT — always centered horizontally & vertically on desktop */
-.tv-center-text {
-  display: none;
-}
+/* CENTER TEXT */
+.tv-center-text { display: none; }
 @media (min-width: 1100px) {
   .tv-center-text {
     display: flex;
@@ -59,15 +56,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 380px;
+    width: 360px;
     z-index: 2;
   }
 }
 
-/* ORBITAL CARDS CONTAINER */
-.tv-orbital-cards {
-  display: none;
-}
+/* ORBITAL CARDS SHELL */
+.tv-orbital-cards { display: none; }
 @media (min-width: 1100px) {
   .tv-orbital-cards {
     display: block;
@@ -78,62 +73,69 @@
   }
 }
 
-/* Individual slot wrapper */
 .tv-orbit-slot {
   position: absolute;
   pointer-events: all;
 }
 
 /*
-  10 positions: 5 on left side, 5 on right side
-  Left  = tv-orbit-0..4
-  Right = tv-orbit-5..9
+  True orbital — 10 positions surrounding center text
+  ┌────────────────────────────────────────────────────┐
+  │  [0]           [1]         [2]           [3]       │
+  │                                                    │
+  │  [4]       ┌──────────┐               [5]         │
+  │             │  CENTER  │                            │
+  │  [6]       └──────────┘               [7]         │
+  │                                                    │
+  │  [8]           [9]  (centered bottom pair)         │
+  └────────────────────────────────────────────────────┘
+  Actually: 4 top, left, right, 4 bottom
 */
-.tv-orbit-0 { top:  30px;  left:  40px; }
-.tv-orbit-1 { top: 190px;  left:   4px; }
-.tv-orbit-2 { top: 375px;  left:  40px; }
-.tv-orbit-3 { top: 555px;  left:   4px; }
-.tv-orbit-4 { bottom: 30px; left: 60px; }
 
-.tv-orbit-5 { top:  30px;  right:  40px; }
-.tv-orbit-6 { top: 190px;  right:   4px; }
-.tv-orbit-7 { top: 375px;  right:  40px; }
-.tv-orbit-8 { top: 555px;  right:   4px; }
-.tv-orbit-9 { bottom: 30px; right: 60px; }
+/* TOP ROW — 4 across */
+.tv-orbit-0 { top: 44px;  left:  44px; }
+.tv-orbit-1 { top: 20px;  left:  calc(25% - 94px); }
+.tv-orbit-2 { top: 20px;  right: calc(25% - 94px); }
+.tv-orbit-3 { top: 44px;  right:  44px; }
+
+/* MIDDLE ROW — 1 each side */
+.tv-orbit-4 { top: 50%; left:  16px; transform: translateY(-50%); }
+.tv-orbit-5 { top: 50%; right: 16px; transform: translateY(-50%); }
+
+/* BOTTOM ROW — 4 across */
+.tv-orbit-6 { bottom: 44px;  left:  44px; }
+.tv-orbit-7 { bottom: 20px;  left:  calc(25% - 94px); }
+.tv-orbit-8 { bottom: 20px;  right: calc(25% - 94px); }
+.tv-orbit-9 { bottom: 44px;  right:  44px; }
 
 /* ======================================================================
-   MOBILE / TABLET LAYOUT (< 1100px)
+   MOBILE / TABLET  (< 1100px)
    ====================================================================== */
 .tv-mobile-section {
   display: block;
-  padding: 60px 20px 72px;
+  padding: 56px 16px 68px;
 }
-@media (min-width: 1100px) {
-  .tv-mobile-section { display: none; }
-}
+@media (min-width: 1100px) { .tv-mobile-section { display: none; } }
 
 .tv-mobile-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .tv-grid-fallback {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
   justify-items: center;
-  max-width: 760px;
+  max-width: 860px;
   margin: 0 auto;
 }
-@media (min-width: 560px) {
-  .tv-grid-fallback { grid-template-columns: repeat(3, 1fr); }
-}
-@media (min-width: 768px) {
-  .tv-grid-fallback { grid-template-columns: repeat(4, 1fr); gap: 24px; }
-}
+@media (min-width: 480px)  { .tv-grid-fallback { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+@media (min-width: 700px)  { .tv-grid-fallback { grid-template-columns: repeat(4, 1fr); gap: 22px; } }
+@media (min-width: 900px)  { .tv-grid-fallback { grid-template-columns: repeat(5, 1fr); gap: 24px; } }
 
 /* ======================================================================
    BADGE
@@ -144,35 +146,32 @@
   gap: 8px;
   padding: 6px 16px;
   border-radius: 100px;
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.22);
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.22);
   margin-bottom: 16px;
 }
 .tv-badge-dot {
   width: 7px; height: 7px;
   border-radius: 50%;
   background: #6366f1;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+  box-shadow: 0 0 8px rgba(99,102,241,0.85);
   animation: tv-pulse 2s ease-in-out infinite;
 }
 @keyframes tv-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(1.5); }
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.5; transform:scale(1.5); }
 }
 .tv-badge-text {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #6366f1;
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #6366f1; font-family: 'JetBrains Mono', monospace;
 }
 
 /* ======================================================================
    HEADING & SUBHEAD
    ====================================================================== */
 .tv-heading {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.7rem);
   font-weight: 900;
   color: #0f172a;
   letter-spacing: -0.03em;
@@ -188,12 +187,12 @@
   background-clip: text;
 }
 .tv-subhead {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: #64748b;
   line-height: 1.65;
   margin-bottom: 28px;
   text-align: center;
-  max-width: 380px;
+  max-width: 340px;
 }
 
 /* ======================================================================
@@ -203,20 +202,20 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 28px;
+  padding: 12px 28px;
   border-radius: 100px;
   background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
   color: #fff;
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   font-weight: 800;
   font-family: 'Outfit', sans-serif;
   text-decoration: none;
-  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35);
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+  box-shadow: 0 8px 28px rgba(99,102,241,0.35);
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease;
 }
 .tv-view-all-btn:hover {
   transform: scale(1.06) translateY(-2px);
-  box-shadow: 0 14px 40px rgba(99, 102, 241, 0.48);
+  box-shadow: 0 14px 40px rgba(99,102,241,0.48);
 }
 .tv-view-all-btn svg { width: 16px; height: 16px; transition: transform 0.2s; }
 .tv-view-all-btn:hover svg { transform: translateX(4px); }
@@ -227,14 +226,17 @@
 .tv-circle-link { text-decoration: none; display: block; outline: none; }
 
 .tv-circle-card {
-  width: 188px;
-  height: 188px;
+  width: 186px;
+  height: 186px;
   border-radius: 50%;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid rgba(255,255,255,0.95);
-  box-shadow: 0 4px 24px rgba(15,23,42,0.09), 0 1px 6px rgba(15,23,42,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+  box-shadow:
+    0 4px 24px rgba(15,23,42,0.09),
+    0 1px 6px rgba(15,23,42,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -242,33 +244,45 @@
   padding: 16px;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
   animation: tv-float-card 6s ease-in-out infinite alternate;
 }
 
-/* Responsive card sizing on mobile grid */
-@media (max-width: 559px) {
-  .tv-circle-card { width: 150px; height: 150px; padding: 12px; }
-  .tv-circle-logo { width: 46px !important; height: 46px !important; }
+/* Mobile smaller circles */
+@media (max-width: 479px) {
+  .tv-circle-card { width: 145px; height: 145px; padding: 10px; }
+  .tv-circle-logo { width: 42px !important; height: 42px !important; margin-bottom: 5px !important; }
+  .tv-circle-name { font-size: 0.62rem !important; max-width: 110px !important; }
+  .tv-circle-location, .tv-circle-pct { display: none; }
 }
 
-/* Stagger float per slot */
-.tv-float-0 { animation-delay:  0s;   animation-duration: 6.0s; }
+/* Staggered float animation per card */
+.tv-float-0 { animation-delay:  0.0s; animation-duration: 6.0s; }
 .tv-float-1 { animation-delay: -1.2s; animation-duration: 7.0s; }
-.tv-float-2 { animation-delay: -2.4s; animation-duration: 5.5s; }
-.tv-float-3 { animation-delay: -0.6s; animation-duration: 6.8s; }
-.tv-float-4 { animation-delay: -3.6s; animation-duration: 7.5s; }
-.tv-float-5 { animation-delay: -0.9s; animation-duration: 6.2s; }
-.tv-float-6 { animation-delay: -2.1s; animation-duration: 5.8s; }
-.tv-float-7 { animation-delay: -3.3s; animation-duration: 7.2s; }
-.tv-float-8 { animation-delay: -4.5s; animation-duration: 5.2s; }
-.tv-float-9 { animation-delay: -1.8s; animation-duration: 6.5s; }
+.tv-float-2 { animation-delay: -2.5s; animation-duration: 5.6s; }
+.tv-float-3 { animation-delay: -0.7s; animation-duration: 6.8s; }
+.tv-float-4 { animation-delay: -3.8s; animation-duration: 7.4s; }
+.tv-float-5 { animation-delay: -1.0s; animation-duration: 5.9s; }
+.tv-float-6 { animation-delay: -2.2s; animation-duration: 6.4s; }
+.tv-float-7 { animation-delay: -0.4s; animation-duration: 7.2s; }
+.tv-float-8 { animation-delay: -4.1s; animation-duration: 5.3s; }
+.tv-float-9 { animation-delay: -1.6s; animation-duration: 6.7s; }
 
 @keyframes tv-float-card {
   0%   { transform: translateY(0px); }
-  100% { transform: translateY(-14px); }
+  100% { transform: translateY(-13px); }
+}
+
+/* Middle-side cards need translateY reset — override via inline or handle separately */
+.tv-orbit-4 .tv-circle-card,
+.tv-orbit-5 .tv-circle-card {
+  animation-name: tv-float-card-side;
+}
+@keyframes tv-float-card-side {
+  0%   { transform: translateY(0px); }
+  100% { transform: translateY(-13px); }
 }
 
 .tv-circle-card:hover {
@@ -290,10 +304,8 @@
 
 /* Verified badge */
 .tv-circle-verified {
-  position: absolute;
-  top: 18px; right: 18px;
-  width: 22px; height: 22px;
-  border-radius: 50%;
+  position: absolute; top: 18px; right: 18px;
+  width: 22px; height: 22px; border-radius: 50%;
   background: linear-gradient(135deg, #2563eb, #7c3aed);
   box-shadow: 0 0 8px rgba(99,102,241,0.5);
   display: flex; align-items: center; justify-content: center;
@@ -302,42 +314,31 @@
 
 /* Logo */
 .tv-circle-logo {
-  width: 58px; height: 58px;
-  border-radius: 50%;
+  width: 56px; height: 56px; border-radius: 50%;
   background: linear-gradient(135deg, #f0f4ff, #f8f5ff);
   border: 1.5px solid rgba(99,102,241,0.15);
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  margin-bottom: 7px;
-  flex-shrink: 0;
+  overflow: hidden; margin-bottom: 7px; flex-shrink: 0;
   box-shadow: 0 2px 10px rgba(99,102,241,0.1);
 }
-.tv-circle-logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+.tv-circle-logo img { width:100%; height:100%; object-fit:contain; border-radius:50%; }
 
 /* Name */
 .tv-circle-name {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: #0f172a;
-  font-family: 'Outfit', sans-serif;
-  line-height: 1.25;
+  font-size: 0.69rem; font-weight: 800; color: #0f172a;
+  font-family: 'Outfit', sans-serif; line-height: 1.25;
   margin-bottom: 3px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  max-width: 128px;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  max-width: 126px;
 }
 .tv-circle-card:hover .tv-circle-name { color: #4f46e5; }
 
 /* Location */
 .tv-circle-location {
   display: flex; align-items: center; justify-content: center; gap: 3px;
-  font-size: 0.62rem;
-  color: #94a3b8;
-  margin-bottom: 4px;
-  max-width: 128px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 0.61rem; color: #94a3b8; margin-bottom: 4px;
+  max-width: 126px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
 /* Stars */
@@ -350,9 +351,8 @@
 /* CTA */
 .tv-circle-cta {
   display: flex; align-items: center; gap: 2px;
-  font-size: 0.62rem; font-weight: 700; color: #6366f1;
-  padding-top: 5px;
-  border-top: 1px solid rgba(99,102,241,0.1);
+  font-size: 0.61rem; font-weight: 700; color: #6366f1;
+  padding-top: 5px; border-top: 1px solid rgba(99,102,241,0.1);
   transition: gap 0.2s;
 }
 .tv-circle-card:hover .tv-circle-cta { gap: 5px; }
