@@ -44,7 +44,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         # Filter for trusted vendors
         trusted = self.request.query_params.get('trusted', None)
         if trusted and trusted.lower() == 'true':
-            queryset = queryset.filter(is_active=True).order_by('id')
+            queryset = queryset.filter(trusted_vendor=True)
 
         # Filter for featured vendors
         featured = self.request.query_params.get('featured', None)

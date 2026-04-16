@@ -893,24 +893,74 @@ export default function AdminVendors() {
                                 </div>
 
                                 {/* Status Toggles */}
-                                <div className="col-span-2 space-y-2">
-                                    <label className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.is_active}
-                                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Active</span>
+                                <div className="col-span-2 space-y-3">
+                                    {/* Active Toggle */}
+                                    <label className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${formData.is_active ? 'bg-emerald-100' : 'bg-gray-200'}`}>
+                                                <CheckCircleIcon className={`h-5 w-5 ${formData.is_active ? 'text-emerald-600' : 'text-gray-400'}`} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-gray-800">Active</p>
+                                                <p className="text-xs text-gray-500">Vendor is visible on the platform</p>
+                                            </div>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.is_active}
+                                                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                                className="sr-only"
+                                            />
+                                            <div
+                                                onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
+                                                className={`w-11 h-6 rounded-full transition-all duration-300 cursor-pointer flex items-center px-0.5 ${formData.is_active ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                                            >
+                                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${formData.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
+                                            </div>
+                                        </div>
                                     </label>
-                                    <label className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.trusted_vendor}
-                                            onChange={(e) => setFormData({ ...formData, trusted_vendor: e.target.checked })}
-                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Trusted Vendor</span>
+
+                                    {/* Trusted Vendor Toggle — Premium Card */}
+                                    <label
+                                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${formData.trusted_vendor
+                                            ? 'border-indigo-300 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-md shadow-indigo-100'
+                                            : 'border-gray-200 bg-gray-50 hover:border-indigo-200 hover:bg-indigo-50/30'}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.trusted_vendor ? 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-200' : 'bg-gray-200'}`}>
+                                                <StarIcon className={`h-5 w-5 ${formData.trusted_vendor ? 'text-white fill-white' : 'text-gray-400'}`} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Trusted Vendor
+                                                    {formData.trusted_vendor && (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                                            ✓ Featured on Homepage
+                                                        </span>
+                                                    )}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    {formData.trusted_vendor
+                                                        ? 'Shown in the "Trusted Salvage Yards" section on the home page'
+                                                        : 'Enable to show this vendor on the homepage trusted section'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="relative ml-4 flex-shrink-0">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.trusted_vendor}
+                                                onChange={(e) => setFormData({ ...formData, trusted_vendor: e.target.checked })}
+                                                className="sr-only"
+                                            />
+                                            <div
+                                                onClick={() => setFormData({ ...formData, trusted_vendor: !formData.trusted_vendor })}
+                                                className={`w-12 h-6 rounded-full transition-all duration-300 cursor-pointer flex items-center px-0.5 ${formData.trusted_vendor ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gray-300'}`}
+                                            >
+                                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${formData.trusted_vendor ? 'translate-x-6' : 'translate-x-0'}`} />
+                                            </div>
+                                        </div>
                                     </label>
                                 </div>
                             </div>
