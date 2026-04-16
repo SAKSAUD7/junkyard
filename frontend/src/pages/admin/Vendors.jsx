@@ -635,13 +635,21 @@ export default function AdminVendors() {
 
                                         {/* Status */}
                                         <td className="px-6 py-4 text-center">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border-2 ${vendor.is_active
-                                                ? 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200'
-                                                : 'bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200'
-                                                }`}>
-                                                <span className={`h-2 w-2 rounded-full ${vendor.is_active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}></span>
-                                                {vendor.is_active ? 'Active' : 'Inactive'}
-                                            </span>
+                                            <div className="flex flex-col items-center gap-1.5">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border-2 ${vendor.is_active
+                                                    ? 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200'
+                                                    : 'bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200'
+                                                    }`}>
+                                                    <span className={`h-2 w-2 rounded-full ${vendor.is_active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}></span>
+                                                    {vendor.is_active ? 'Active' : 'Inactive'}
+                                                </span>
+                                                {vendor.trusted_vendor && (
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border border-indigo-200">
+                                                        <StarIcon className="h-3 w-3 text-indigo-500" />
+                                                        Trusted
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
 
                                         {/* Actions */}
