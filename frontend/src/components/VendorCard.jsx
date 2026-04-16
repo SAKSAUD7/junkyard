@@ -37,7 +37,7 @@ export default function VendorCard({ vendor, compact = false, showBadge = true }
                             alt={`${vendor.name} logo`}
                             loading="lazy"
                             className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                            onError={e => { e.target.src = '/images/logo-placeholder.png'; }}
+                            onError={e => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M20 75 L50 30 L80 75 Z' fill='%23cbd5e1'/%3E%3Ccircle cx='70' cy='28' r='10' fill='%23cbd5e1'/%3E%3C/svg%3E"; }}
                         />
                     ) : (
                         <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-blue-50 border border-blue-100">
