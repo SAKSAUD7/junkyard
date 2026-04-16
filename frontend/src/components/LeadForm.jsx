@@ -461,8 +461,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     if (isSuccess) {
         return (
-            <div className={`w-full ${layout === 'horizontal' ? 'max-w-xl' : 'max-w-sm'} mx-auto font-sans bg-white/90 backdrop-blur-md p-8 rounded-xl border border-slate-200 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px]`}>
-                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-glow-lg animate-scale-in">
+            <div className={`w-full ${layout === 'horizontal' ? 'w-full md:max-w-xl' : 'w-full max-w-[360px] px-4 sm:px-0'} mx-auto font-sans bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-xl border border-slate-200 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px] overflow-hidden`}>
                     <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
@@ -487,7 +486,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const showContactInfo = !enableSteps || currentStep === 2;
 
     return (
-        <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'max-w-[360px]'} mx-auto font-sans transition-all duration-300`}>
+        <div className={`w-full ${isHorizontal ? 'max-w-4xl' : 'w-[calc(100vw-32px)] max-w-[360px]'} mx-auto font-sans transition-all duration-300`}>
             {/* Header */}
             <div className={`bg-gradient-to-r from-[#2563eb] to-[#0d9488] rounded-t-xl p-3 flex justify-between items-center px-4 md:px-5`}>
                 <h2 className={`text-base md:text-lg font-black text-slate-900 uppercase tracking-tight`}>
