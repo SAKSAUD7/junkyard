@@ -9,6 +9,7 @@ class SiteContent(models.Model):
     """
     CONTENT_TYPE_CHOICES = [
         ('text', 'Plain Text'),
+        ('textarea', 'Long Text / Paragraph'),
         ('html', 'HTML'),
         ('url', 'URL / Link'),
         ('boolean', 'Boolean (visible/hidden)'),
@@ -27,6 +28,7 @@ class SiteContent(models.Model):
         ('how_it_works', 'How It Works'),
         ('navbar', 'Navbar (Global)'),
         ('footer', 'Footer (Global)'),
+        ('global', 'Global / Shared'),
         ('seo_home', 'SEO – Home'),
         ('seo_about', 'SEO – About'),
         ('seo_contact', 'SEO – Contact'),
