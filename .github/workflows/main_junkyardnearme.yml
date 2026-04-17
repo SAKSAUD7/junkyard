@@ -27,23 +27,6 @@ jobs:
           cd backend
           pip install -r requirements.txt
 
-      - name: Run migrations & seed CMS data
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DB_ENGINE: django.db.backends.postgresql
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DEBUG: "False"
-        run: |
-          source antenv/bin/activate
-          cd backend
-          python manage.py migrate --noinput
-          python manage.py seed_cms
-          echo "✅ Migrations and CMS seed complete"
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
