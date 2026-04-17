@@ -8,16 +8,16 @@ class CmsConfig(AppConfig):
 
     def ready(self):
         """
-        Auto-seed CMS default content when Django starts.
-        - Only inserts MISSING entries (uses get_or_create — never overwrites edits)
-        - Wrapped in try/except so it never crashes startup (e.g. during initial migrations)
-        - Only runs once Django is fully loaded and DB is available
+        Auto-seed CMS default content when Django starts on Azure.
+        - Only inserts MISSING entries (get_or_create — never overwrites user edits)
+        - Wrapped in try/except so startup never crashes (e.g. during initial migrations)
+        - Skipped during management commands that don't need content (migrate, test, etc.)
         """
-        import os
-        # Skip during management commands like migrate, test, makemigrations
         import sys
-        skip_commands = {'migrate', 'makemigrations', 'test', 'shell', 'dbshell',
-                         'createsuperuser', 'collectstatic', 'showmigrations'}
+        skip_commands = {
+            'migrate', 'makemigrations', 'test', 'shell', 'dbshell',
+            'createsuperuser', 'collectstatic', 'showmigrations', 'sqlmigrate',
+        }
         if len(sys.argv) > 1 and sys.argv[1] in skip_commands:
             return
 
@@ -27,7 +27,7 @@ class CmsConfig(AppConfig):
 
             created = 0
             for entry in DEFAULT_CMS_CONTENT:
-                _, was_created = SiteContent.objects.get_or_create(
+                obj, was_created = SiteContent.objects.get_or_create(
                     page=entry['page'],
                     section=entry['section'],
                     key=entry['key'],
@@ -40,6 +40,10 @@ class CmsConfig(AppConfig):
                 )
                 if was_created:
                     created += 1
+                elif not obj.label and entry.get('label'):
+                    # Backfill labels non-destructively
+                    obj.label = entry['label']
+                    obj.save(update_fields=['label'])
 
             if created:
                 import logging
@@ -47,5 +51,5 @@ class CmsConfig(AppConfig):
                 logger.info(f'CMS auto-seed: {created} new default entries added.')
 
         except Exception:
-            # Never crash startup — DB might not be ready yet (e.g. first deploy)
+            # Never crash startup — DB might not be ready yet (e.g. first deploy before migrate)
             pass
