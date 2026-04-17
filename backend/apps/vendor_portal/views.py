@@ -16,6 +16,7 @@ from .serializers import (
     VendorProfileUpdateSerializer,
     VendorInventorySerializer,
     VendorLeadSerializer,
+    VendorLeadForPortalSerializer,
     LeadStatusUpdateSerializer,
     VendorNotificationSerializer,
     VendorBusinessHoursSerializer,

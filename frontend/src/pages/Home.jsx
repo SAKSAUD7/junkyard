@@ -141,38 +141,13 @@ export default function Home() {
                         {/* Brand lockup */}
                         <div className="mb-6 animate-fade-in">
                             <div
-                                className="inline-flex flex-col items-center px-8 py-4 rounded-2xl"
-                                style={{
-                                    background: 'rgba(255,255,255,0.08)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    backdropFilter: 'blur(16px)'
-                                }}
+                                className="inline-flex flex-col items-center px-1 py-1 rounded-2xl"
                             >
-                                <span
-                                    style={{
-                                        fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-                                        fontWeight: 900,
-                                        color: '#ffffff',
-                                        fontFamily: "'Outfit', sans-serif",
-                                        letterSpacing: '-0.04em',
-                                        lineHeight: 1,
-                                        textShadow: '0 2px 20px rgba(0,0,0,0.5)'
-                                    }}
-                                >
-                                    JYNM
-                                </span>
-                                <span
-                                    style={{
-                                        fontSize: '0.7rem',
-                                        letterSpacing: '0.25em',
-                                        color: 'rgba(147,197,253,0.9)',
-                                        fontFamily: "'JetBrains Mono', monospace",
-                                        textTransform: 'uppercase',
-                                        marginTop: '4px'
-                                    }}
-                                >
-                                    JUNKYARDSNEARME.COM
-                                </span>
+                                <img 
+                                    src="/logo.png" 
+                                    alt="JunkYardsNearMe Logo" 
+                                    className="h-32 sm:h-48 md:h-64 lg:h-[22rem] w-auto object-contain mx-auto drop-shadow-2xl opacity-100"
+                                />
                             </div>
                         </div>
 

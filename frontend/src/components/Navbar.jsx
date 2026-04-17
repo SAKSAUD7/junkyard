@@ -72,45 +72,11 @@ export default function Navbar() {
 
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group" aria-label="JYNM Home">
-                            <div className="relative">
-                                <div
-                                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center transition-all duration-300"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(37,99,235,0.15), rgba(0,100,180,0.1))',
-                                        border: '1px solid rgba(37,99,235,0.35)',
-                                        boxShadow: '0 0 15px rgba(37,99,235,0.15)'
-                                    }}
-                                >
-                                    <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                        <path d="M2 17l10 5 10-5" stroke="var(--neon-orange)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                        <path d="M2 12l10 5 10-5" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round" opacity="0.6"/>
-                                    </svg>
-                                </div>
-                                {/* Glow dot */}
-                                <span
-                                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full"
-                                    style={{
-                                        background: 'var(--neon-blue)',
-                                        boxShadow: '0 0 6px var(--neon-blue)',
-                                        animation: 'pulse 2s ease-in-out infinite'
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col leading-none">
-                                <span
-                                    className="text-xl md:text-2xl font-black tracking-tighter"
-                                    style={{ color: '#0f172a', letterSpacing: '-0.03em' }}
-                                >
-                                    JYNM
-                                </span>
-                                <span
-                                    className="text-[8px] md:text-[9px] uppercase tracking-[0.2em]"
-                                    style={{ color: '#64748b', fontFamily: "'JetBrains Mono', monospace" }}
-                                >
-                                    AutoParts Hub
-                                </span>
-                            </div>
+                            <img 
+                                src="/logo.png" 
+                                alt="JYNM Logo" 
+                                className="h-10 md:h-12 lg:h-14 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
+                            />
                         </Link>
 
                         {/* Desktop Nav */}

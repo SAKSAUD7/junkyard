@@ -29,25 +29,12 @@ export default function Footer() {
 
                     {/* Brand Column */}
                     <div className="col-span-2 md:col-span-1">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div
-                                className="w-10 h-10 rounded-lg flex items-center justify-center"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(37,99,235,0.15), rgba(0,100,180,0.08))',
-                                    border: '1px solid rgba(37,99,235,0.3)',
-                                    boxShadow: '0 0 15px rgba(37,99,235,0.1)'
-                                }}
-                            >
-                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                    <path d="M2 17l10 5 10-5" stroke="var(--neon-orange)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                    <path d="M2 12l10 5 10-5" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round" opacity="0.6"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style={{ color: 'var(--text-primary)', fontSize: '1.25rem', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 }}>JYNM</div>
-                                <div style={{ color: 'rgba(37,99,235,0.6)', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>AutoParts Hub</div>
-                            </div>
+                        <div className="mb-6">
+                            <img 
+                                src="/logo.png" 
+                                alt="JYNM Logo" 
+                                className="h-20 w-auto object-contain drop-shadow-sm"
+                            />
                         </div>
 
                         <p style={{ color: '#667788', fontSize: '0.875rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>

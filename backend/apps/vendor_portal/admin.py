@@ -18,6 +18,7 @@ class VendorNotificationAdmin(admin.ModelAdmin):
     readonly_fields = ['lead', 'vendor_lead', 'created_at']
     ordering = ['-created_at']
     
+    @admin.display(description='State', ordering='vendor_lead__state')
     def get_state(self, obj):
         """Display the state from vendor_lead or lead"""
         if obj.vendor_lead:
@@ -25,8 +26,6 @@ class VendorNotificationAdmin(admin.ModelAdmin):
         elif obj.lead:
             return obj.lead.state if hasattr(obj.lead, 'state') else '-'
         return '-'
-    get_state.short_description = 'State'
-    get_state.admin_order_field = 'vendor_lead__state'
 
 
 @admin.register(VendorBusinessHours)
