@@ -174,6 +174,6 @@ export default function TrustedVendors() {
                     </svg>
                 </Link>
             </div>
-        </div>
+        </section>
     );
 }
