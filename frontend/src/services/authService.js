@@ -37,11 +37,12 @@ api.interceptors.response.use(
         const status = error.response?.status;
 
         // ── 401: Token refresh ──────────────────────────────────────────
-        if (status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login')) {
+        if (status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login') && !originalRequest.url.includes('/auth/token/refresh')) {
             originalRequest._retry = true;
 
             try {
                 const refreshToken = localStorage.getItem('refresh_token');
+                if (!refreshToken) throw new Error('No refresh token');
                 const response = await axios.post(`${API_URL}/auth/token/refresh/`, {
                     refresh: refreshToken,
                 });
@@ -52,11 +53,14 @@ api.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${access}`;
                 return api(originalRequest);
             } catch (refreshError) {
-                // Refresh failed, logout user
+                // Refresh failed — clear auth and redirect to appropriate login
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('user');
-                window.location.href = '/signin';
+                localStorage.removeItem('vendor_profile');
+                // Redirect admin users to admin login, others to signin
+                const isAdminRoute = window.location.pathname.startsWith('/admin');
+                window.location.href = isAdminRoute ? '/admin/login' : '/signin';
                 return Promise.reject(refreshError);
             }
         }
