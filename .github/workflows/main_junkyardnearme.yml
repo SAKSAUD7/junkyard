@@ -27,22 +27,6 @@ jobs:
           cd backend
           pip install -r requirements.txt
 
-      - name: Run Django Migrations on Production DB
-        working-directory: backend
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DB_ENGINE: django.db.backends.postgresql
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DEBUG: "False"
-        run: |
-          source ../antenv/bin/activate
-          python manage.py migrate --noinput
-          echo "Migrations complete"
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
