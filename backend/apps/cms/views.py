@@ -28,9 +28,10 @@ class PublicCMSView(APIView):
     authentication_classes = []
 
     def get(self, request):
-        page = request.query_params.get('page', '')
+        # NOTE: we use 'cms_page' to avoid collision with DRF PageNumberPagination's '?page=' param
+        page = request.query_params.get('cms_page', '') or request.query_params.get('page', '')
         if not page:
-            return Response({'error': 'page query param required'}, status=400)
+            return Response({'error': 'cms_page query param required'}, status=400)
 
         qs = SiteContent.objects.filter(page=page, is_active=True)
         # Return as nested dict: { section: { key: value } }
@@ -62,7 +63,8 @@ class AdminCMSViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        page = self.request.query_params.get('page')
+        # Use 'cms_page' to avoid collision with DRF's built-in '?page=' pagination param
+        page = self.request.query_params.get('cms_page') or self.request.query_params.get('page')
         section = self.request.query_params.get('section')
         if page:
             qs = qs.filter(page=page)

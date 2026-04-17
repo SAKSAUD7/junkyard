@@ -333,12 +333,19 @@ export const api = {
   cms: {
     // Public: fetch flat content map for a page
     getPageContent: async (page) => {
-      const response = await axiosInstance.get(`/cms/content/?page=${page}`);
+      // NOTE: use cms_page to avoid DRF pagination param collision
+      const response = await axiosInstance.get(`/cms/content/?cms_page=${page}`);
       return response.data;
     },
-    // Admin: list all entries (with optional ?page=, ?section= filters)
+    // Admin: list all entries filtered by cms_page (avoids DRF ?page= pagination collision)
     getAllContent: async (params = {}) => {
-      const qs = new URLSearchParams(params).toString();
+      // Rename 'page' key to 'cms_page' to avoid DRF PageNumberPagination conflict
+      const fixedParams = { ...params };
+      if (fixedParams.page !== undefined) {
+        fixedParams.cms_page = fixedParams.page;
+        delete fixedParams.page;
+      }
+      const qs = new URLSearchParams(fixedParams).toString();
       const response = await axiosInstance.get(`/cms/admin/content/${qs ? `?${qs}` : ''}`);
       return response.data;
     },
