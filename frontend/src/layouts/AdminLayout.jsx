@@ -18,7 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function AdminLayout() {
-    const { logout, user } = useContext(AuthContext);
+    const { logout, user, isAdmin } = useContext(AuthContext);
     const { hasPermission, roleName, roleColor } = usePermissions();
     const location = useLocation();
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function AdminLayout() {
 
     // Superusers bypass all RBAC — others filtered by permissions
     const navigation = allNavItems.filter(item =>
-        !item.permission || user?.is_superuser || user?.user_type === 'admin' || hasPermission(item.permission)
+        !item.permission || isAdmin || hasPermission(item.permission)
     );
 
     const isActive = (path) => location.pathname.startsWith(path) && (

@@ -19,7 +19,7 @@ const EMPTY_PERMISSIONS = {
 }
 
 export function PermissionProvider({ children }) {
-    const { user, isAuthenticated } = useContext(AuthContext)
+    const { user, isAuthenticated, isAdmin } = useContext(AuthContext)
     const [permissions, setPermissions] = useState(EMPTY_PERMISSIONS)
     const [roleName, setRoleName] = useState(null)
     const [roleColor, setRoleColor] = useState(null)
@@ -33,7 +33,7 @@ export function PermissionProvider({ children }) {
         }
 
         // Superusers bypass all RBAC — grant everything
-        if (user.is_superuser || user.user_type === 'admin') {
+        if (isAdmin || user.is_superuser) {
             const allPerms = Object.fromEntries(
                 Object.keys(EMPTY_PERMISSIONS).map(k => [k, k === 'can_view_only' ? false : true])
             )
