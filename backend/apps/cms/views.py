@@ -4,7 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import AllowAny
+from .permissions import IsAdminOrStaff
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import SiteContent, MediaAsset
@@ -56,7 +57,7 @@ class AdminCMSViewSet(viewsets.ModelViewSet):
     """
     queryset = SiteContent.objects.all().order_by('page', 'section', 'key')
     serializer_class = SiteContentSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrStaff]
     authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
@@ -150,7 +151,7 @@ class AdminMediaViewSet(viewsets.ModelViewSet):
     """
     queryset = MediaAsset.objects.all()
     serializer_class = MediaAssetSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrStaff]
     authentication_classes = [JWTAuthentication]
     parser_classes = [MultiPartParser, FormParser]
 

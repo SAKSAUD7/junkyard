@@ -4,7 +4,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrStaff
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
 
@@ -34,7 +35,7 @@ class StaffRoleViewSet(viewsets.ModelViewSet):
     """
     queryset = StaffRole.objects.all()
     serializer_class = StaffRoleSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrStaff]
     authentication_classes = [JWTAuthentication]
 
     def destroy(self, request, *args, **kwargs):
@@ -119,7 +120,7 @@ class StaffMemberViewSet(viewsets.ModelViewSet):
     """
     queryset = StaffMember.objects.select_related('user', 'role', 'invited_by').all()
     serializer_class = StaffMemberSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrStaff]
     authentication_classes = [JWTAuthentication]
 
     def perform_create(self, serializer):
