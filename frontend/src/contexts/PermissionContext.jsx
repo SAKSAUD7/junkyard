@@ -33,7 +33,7 @@ export function PermissionProvider({ children }) {
         }
 
         // Superusers bypass all RBAC — grant everything
-        if (user.is_superuser) {
+        if (user.is_superuser || user.user_type === 'admin') {
             const allPerms = Object.fromEntries(
                 Object.keys(EMPTY_PERMISSIONS).map(k => [k, k === 'can_view_only' ? false : true])
             )

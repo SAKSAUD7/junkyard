@@ -39,9 +39,9 @@ export default function AdminLayout() {
         { name: 'Settings',        href: '/admin-portal/settings',          icon: Cog6ToothIcon,      permission: 'can_manage_settings' },
     ];
 
-    // Superusers always see everything; others filtered by permissions
+    // Superusers bypass all RBAC — others filtered by permissions
     const navigation = allNavItems.filter(item =>
-        !item.permission || user?.is_superuser || hasPermission(item.permission)
+        !item.permission || user?.is_superuser || user?.user_type === 'admin' || hasPermission(item.permission)
     );
 
     const isActive = (path) => location.pathname.startsWith(path) && (
