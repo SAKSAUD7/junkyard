@@ -42,6 +42,38 @@ function TiltCard({ children }) {
 
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
 
+// 3D Tilt Card Wrapper
+function TiltCard({ children }) {
+    const ref = useRef(null);
+    const handleMove = (e) => {
+        const el = ref.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const rotateX = ((y - cy) / cy) * -6;
+        const rotateY = ((x - cx) / cx) * 6;
+        el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(4px)`;
+    };
+    const handleLeave = () => {
+        if (ref.current) ref.current.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateZ(0)';
+    };
+    return (
+        <div
+            ref={ref}
+            onMouseMove={handleMove}
+            onMouseLeave={handleLeave}
+            style={{ transition: 'transform 0.1s ease', willChange: 'transform' }}
+        >
+            {children}
+        </div>
+    );
+}
+
+const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+
 const AllVendors = () => {
     const { get } = useCMS('vendors');
     const [vendors, setVendors] = useState([]);

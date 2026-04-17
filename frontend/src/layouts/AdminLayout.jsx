@@ -65,7 +65,7 @@ export default function AdminLayout() {
                                 to={item.href}
                                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative flex-shrink-0 ${active
                                     ? 'bg-white/95 shadow-lg shadow-black/10 text-[#3d4451]'
-                                    : 'text-[#9ca3af] hover:text-white hover:bg-white/10'
+                                    : 'text-[#9ca3af] hover:text-slate-800 hover:bg-white/10'
                                     }`}
                                 title={item.name}
                             >
@@ -120,7 +120,7 @@ export default function AdminLayout() {
                             <span className="text-base text-[#6b7280]">
                                 Welcome, <span className="font-semibold text-[#1f2937]">{user?.username || 'admin'}</span>
                             </span>
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold shadow-md shadow-indigo-200 text-base">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-semibold shadow-md shadow-indigo-200 text-base">
                                 {(user?.username || 'A').charAt(0).toUpperCase()}
                             </div>
                         </div>

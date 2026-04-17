@@ -1,13 +1,49 @@
-import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import USAMap from '../components/USAMap';
 import { api } from '../services/api';
 import DynamicAd from '../components/DynamicAd';
 import MobileAdBanner from '../components/MobileAdBanner';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
+
+// Lightweight floating particles canvas
+function ParticleField() {
+    const canvasRef = useRef(null);
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animId;
+        const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+        resize();
+        window.addEventListener('resize', resize);
+        const particles = Array.from({ length: 45 }, () => ({
+            x: Math.random() * 1600, y: Math.random() * 900,
+            vx: (Math.random() - 0.5) * 0.25, vy: -Math.random() * 0.3 - 0.05,
+            r: Math.random() * 1.2 + 0.3,
+            color: Math.random() > 0.5 ? '#2563eb' : '#06b6d4',
+            alpha: Math.random() * 0.4 + 0.1
+        }));
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.y < -5) { p.y = canvas.height + 5; p.x = Math.random() * canvas.width; }
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2, '0');
+                ctx.fill();
+            });
+            animId = requestAnimationFrame(draw);
+        };
+        draw();
+        return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(animId); };
+    }, []);
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
+}
 
 export default function BrowseStates() {
     const [searchParams] = useSearchParams();
@@ -16,14 +52,13 @@ export default function BrowseStates() {
 
     const [statesData, setStatesData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [totalVendors, setTotalVendors] = useState(0);
+    const [introVisible, setIntroVisible] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (stateParam) {
-            setSearchTerm(stateParam);
-        }
+        if (stateParam) setSearchTerm(stateParam);
     }, [stateParam]);
 
     useEffect(() => {
@@ -42,7 +77,7 @@ export default function BrowseStates() {
                 const statesList = statesResponse.results || statesResponse || [];
 
                 let total = 0;
-                const mergedData = statesList.map(state => {
+                const merged = statesList.map(state => {
                     const count = countsResponse[state.stateCode] || 0;
                     total += count;
                     return {
@@ -65,9 +100,9 @@ export default function BrowseStates() {
                 setError(err.message);
             } finally {
                 setLoading(false);
+                setTimeout(() => setIntroVisible(true), 100);
             }
         };
-
         fetchData();
     }, []);
 
@@ -93,18 +128,15 @@ export default function BrowseStates() {
                 url: typeof window !== 'undefined' ? window.location.href : '',
                 numberOfItems: statesData.length
             }),
-            getBreadcrumbSchema([
-                { name: 'Home', url: '/' },
-                { name: 'Browse States', url: '/browse' }
-            ])
+            getBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Browse States', url: '/browse' }])
         ]
     };
 
     return (
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
-                title="Browse Junkyards by State - Find Auto Salvage Yards Near You"
-                description={`Find junkyards and auto salvage yards across ${statesData.length} states. Search ${totalVendors}+ verified vendors nationwide. Free quotes, quality used auto parts.`}
+                title="Browse Junkyards by State – Interactive USA Map | JunkyardsNearMe"
+                description={`Explore ${statesData.length} states on our interactive map. Find ${totalVendors}+ verified junkyards nationwide. Click any state to see local listings.`}
                 schema={schema}
             />
 
@@ -185,11 +217,20 @@ export default function BrowseStates() {
                                         filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) contrast(1.1) brightness(1.1)'
                                     }} 
                                 />
+                                {searchTerm && (
+                                    <button
+                                        onClick={() => setSearchTerm('')}
+                                        className="absolute inset-y-0 right-3 flex items-center"
+                                        style={{ color: '#475569' }}
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
             {/* States Grid Section */}
             <div className="relative py-16 z-10">
@@ -306,10 +347,9 @@ export default function BrowseStates() {
                         </div>
                     )}
                 </div>
-            </div>
+            </section>
 
             <MobileAdBanner page="browse" />
-
             <Footer />
         </div>
     );

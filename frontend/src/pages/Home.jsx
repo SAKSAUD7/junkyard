@@ -130,6 +130,67 @@ function ParticleField() {
     return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 2 }} />
 }
 
+// --- ANIMATED COUNTER ---
+function AnimatedCounter({ target, suffix = '', prefix = '' }) {
+    const [count, setCount] = useState(0)
+    const ref = useRef(null)
+    const started = useRef(false)
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting && !started.current) {
+                started.current = true
+                const steps = 60
+                const increment = target / steps
+                let current = 0
+                const timer = setInterval(() => {
+                    current += increment
+                    if (current >= target) { setCount(target); clearInterval(timer) }
+                    else setCount(Math.floor(current))
+                }, 2000 / steps)
+            }
+        }, { threshold: 0.5 })
+        if (ref.current) observer.observe(ref.current)
+        return () => observer.disconnect()
+    }, [target])
+    return <span ref={ref}>{prefix}{count.toLocaleString()}{suffix}</span>
+}
+
+
+// --- FLOATING PARTICLE CANVAS (lightweight) ---
+function ParticleField() {
+    const canvasRef = useRef(null)
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        let animId
+        const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight }
+        resize()
+        window.addEventListener('resize', resize)
+        const particles = Array.from({ length: 60 }, () => ({
+            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.3, vy: -Math.random() * 0.4 - 0.05,
+            r: Math.random() * 1.2 + 0.3,
+            color: Math.random() > 0.65 ? 'var(--neon-orange)' : 'var(--neon-blue)',
+            alpha: Math.random() * 0.5 + 0.1
+        }))
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy
+                if (p.y < -5) { p.y = canvas.height + 5; p.x = Math.random() * canvas.width }
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+                ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2, '0')
+                ctx.fill()
+            })
+            animId = requestAnimationFrame(draw)
+        }
+        draw()
+        return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(animId) }
+    }, [])
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 2 }} />
+}
+
 export default function Home() {
     const navigate = useNavigate()
     const siteStats = useSiteStats()

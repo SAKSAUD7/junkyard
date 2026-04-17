@@ -48,6 +48,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
+      - name: Download StaticSitesClient (Linux)
+        run: |
+          BUILD_ID="08e29138cd3dcda4ffda6d587aa580028110c1c7"
+          mkdir -p ~/.swa/deploy
+          curl -fsSL "https://swalocaldeployv2-bndtgugjgqc3dhdx.b01.azurefd.net/downloads/${BUILD_ID}/linux/StaticSitesClient" \
+            -o ~/.swa/deploy/StaticSitesClient
+          chmod +x ~/.swa/deploy/StaticSitesClient
+
       - name: Close Pull Request
         run: |
           npx --yes @azure/static-web-apps-cli deploy \

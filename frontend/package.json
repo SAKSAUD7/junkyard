@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@react-three/drei": "^9.121.4",
+    "@react-three/fiber": "^8.17.10",
     "@sentry/react": "^10.32.1",
     "axios": "^1.13.2",
     "framer-motion": "^12.38.0",
@@ -22,9 +24,14 @@
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.5",
     "react-intersection-observer": "^10.0.2",
+    "react-is": "18.3.1",
     "react-router-dom": "^6.20.0",
+    "react-simple-maps": "^3.0.0",
     "react-window": "^2.2.5",
-    "recharts": "^3.6.0"
+    "recharts": "^3.6.0",
+    "three": "^0.166.0",
+    "topojson-client": "^3.1.0",
+    "us-atlas": "^3.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

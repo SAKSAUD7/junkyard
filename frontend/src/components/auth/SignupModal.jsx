@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SignupStep1 from './SignupStep1';
 import SignupStep2 from './SignupStep2';
+import LogoImage from '../../assets/jynm_logo.png';
 
 const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const [step, setStep] = useState(1);
@@ -69,13 +70,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
                         <div className="text-center">
                             <div className="mb-6">
-                                <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                                    </svg>
-                                </div>
-                                <h2 className="text-3xl font-black mb-2">JYNM</h2>
-                                <p className="text-blue-100 text-sm">JunkYardsNearMe.com</p>
+                                <img src={LogoImage} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
                             </div>
                             <p className="text-lg font-medium mb-2">Find Auto Parts</p>
                             <p className="text-blue-100 text-sm">Connect with trusted junkyards nationwide</p>

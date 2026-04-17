@@ -165,6 +165,15 @@ export default function TrustedVendors() {
                     </Link>
                 </div>
             </div>
-        </section>
+
+            <div className="text-center mt-8">
+                <Link to="/vendors" id="trusted-vendors-view-all" className="btn-primary" style={{ fontSize: '0.875rem', display: 'inline-flex' }}>
+                    <span>View All Vendors</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </Link>
+            </div>
+        </div>
     );
 }
