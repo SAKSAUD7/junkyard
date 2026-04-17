@@ -7,10 +7,12 @@ import DynamicAd from '../components/DynamicAd';
 import MobileAdBanner from '../components/MobileAdBanner';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
+import { useCMS } from '../hooks/useCMS';
 
 export default function BrowseStates() {
     const [searchParams] = useSearchParams();
     const stateParam = searchParams.get('state');
+    const { get } = useCMS('browse');
 
     const [statesData, setStatesData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -140,16 +142,9 @@ export default function BrowseStates() {
                                 </span>
                             </div>
 
-                            <h1 className="font-black mb-4 tracking-tight px-2" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                                Browse by{' '}
-                                <span className="block mt-2" style={{ color: '#60a5fa' }}>
-                                    Location
-                                </span>
-                            </h1>
+                            <h1 className="font-black mb-4 tracking-tight px-2" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Browse by <span class="block mt-2" style="color: #60a5fa">Location</span>') }} />
 
-                            <p className="font-light max-w-3xl mb-8 px-2 text-lg" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-                                Find <strong style={{ color: '#ffffff' }}>quality auto parts</strong> from trusted salvage yards. Select your state to discover local junkyards.
-                            </p>
+                            <p className="font-light max-w-3xl mb-8 px-2 text-lg" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Find <strong style="color: #ffffff">quality auto parts</strong> from trusted salvage yards. Select your state to discover local junkyards.') }} />
 
                             {/* Search Bar */}
                             <div className="relative group">

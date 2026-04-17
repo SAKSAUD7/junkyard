@@ -8,6 +8,7 @@ import SEO from '../components/SEO';
 import { getCollectionPageSchema } from '../utils/structuredData';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
+import { useCMS } from '../hooks/useCMS';
 
 // 3D Tilt Card Wrapper
 function TiltCard({ children }) {
@@ -42,6 +43,7 @@ function TiltCard({ children }) {
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
 
 const AllVendors = () => {
+    const { get } = useCMS('vendors');
     const [vendors, setVendors] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -128,16 +130,9 @@ const AllVendors = () => {
                         </span>
                     </div>
 
-                    <h1 className="font-black mb-4 tracking-tight px-2 animate-fade-in-up" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                        Browse All{' '}
-                        <span className="block md:inline mt-2 md:mt-0" style={{ color: '#60a5fa' }}>
-                            Junkyards
-                        </span>
-                    </h1>
+                    <h1 className="font-black mb-4 tracking-tight px-2 animate-fade-in-up" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Browse All <span class="block md:inline mt-2 md:mt-0" style="color: #60a5fa">Junkyards</span>') }} />
 
-                    <p className="font-light max-w-3xl mx-auto mb-10 px-2 text-lg animate-fade-in-up delay-100" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-                        Find <strong style={{ color: '#ffffff' }}>quality auto parts</strong> from trusted salvage yards statewide. Filter by location and connect instantly.
-                    </p>
+                    <p className="font-light max-w-3xl mx-auto mb-10 px-2 text-lg animate-fade-in-up delay-100" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Find <strong style="color: #ffffff">quality auto parts</strong> from trusted salvage yards statewide. Filter by location and connect instantly.') }} />
 
                     {/* Integrated Search Bar inside Hero */}
                     <div className="max-w-4xl mx-auto mt-8 animate-fade-in-up delay-200 text-left">

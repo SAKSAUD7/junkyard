@@ -327,5 +327,106 @@ export const api = {
       const response = await axiosInstance.get(`/vendors/import/${batchId}/error_report/`, { responseType: 'blob' });
       return response.data;
     }
-  }
+  },
+
+  // ── CMS ────────────────────────────────────────────────────────────────────
+  cms: {
+    // Public: fetch flat content map for a page
+    getPageContent: async (page) => {
+      const response = await axiosInstance.get(`/cms/content/?page=${page}`);
+      return response.data;
+    },
+    // Admin: list all entries (with optional ?page=, ?section= filters)
+    getAllContent: async (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      const response = await axiosInstance.get(`/cms/admin/content/${qs ? `?${qs}` : ''}`);
+      return response.data;
+    },
+    // Admin: update a single field
+    updateContent: async (id, data) => {
+      const response = await axiosInstance.patch(`/cms/admin/content/${id}/`, data);
+      return response.data;
+    },
+    // Admin: bulk update multiple fields
+    bulkUpdate: async (updates) => {
+      const response = await axiosInstance.post('/cms/admin/content/bulk/', { updates });
+      return response.data;
+    },
+    // Admin: create a new content entry
+    createContent: async (data) => {
+      const response = await axiosInstance.post('/cms/admin/content/', data);
+      return response.data;
+    },
+    // Admin: seed default content
+    seedDefaults: async () => {
+      const response = await axiosInstance.post('/cms/admin/content/seed/');
+      return response.data;
+    },
+    // Media: list all assets
+    getMedia: async () => {
+      const response = await axiosInstance.get('/cms/admin/media/');
+      return response.data;
+    },
+    // Media: upload a new asset
+    uploadMedia: async (file, name = '', altText = '') => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', name || file.name);
+      if (altText) formData.append('alt_text', altText);
+      const response = await axiosInstance.post('/cms/admin/media/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    },
+    // Media: delete an asset
+    deleteMedia: async (id) => {
+      await axiosInstance.delete(`/cms/admin/media/${id}/`);
+    },
+  },
+
+  // ── RBAC ───────────────────────────────────────────────────────────────────
+  rbac: {
+    // Current user's permissions
+    getMyPermissions: async () => {
+      const response = await axiosInstance.get('/rbac/me/');
+      return response.data;
+    },
+    // Roles CRUD
+    getRoles: async () => {
+      const response = await axiosInstance.get('/rbac/roles/');
+      return response.data;
+    },
+    createRole: async (data) => {
+      const response = await axiosInstance.post('/rbac/roles/', data);
+      return response.data;
+    },
+    updateRole: async (id, data) => {
+      const response = await axiosInstance.patch(`/rbac/roles/${id}/`, data);
+      return response.data;
+    },
+    deleteRole: async (id) => {
+      await axiosInstance.delete(`/rbac/roles/${id}/`);
+    },
+    seedRoles: async () => {
+      const response = await axiosInstance.post('/rbac/roles/seed/');
+      return response.data;
+    },
+    // Staff CRUD
+    getStaff: async () => {
+      const response = await axiosInstance.get('/rbac/staff/');
+      return response.data;
+    },
+    inviteStaff: async (data) => {
+      const response = await axiosInstance.post('/rbac/staff/invite/', data);
+      return response.data;
+    },
+    updateStaff: async (id, data) => {
+      const response = await axiosInstance.patch(`/rbac/staff/${id}/`, data);
+      return response.data;
+    },
+    deleteStaff: async (id) => {
+      await axiosInstance.delete(`/rbac/staff/${id}/`);
+    },
+  },
 };
+

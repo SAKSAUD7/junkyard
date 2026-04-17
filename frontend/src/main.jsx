@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
+import { CMSProvider } from './contexts/CMSContext'
+import { PermissionProvider } from './contexts/PermissionContext'
 import App from './App.jsx'
 import './index.css'
 
@@ -11,7 +13,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
-          <App />
+          <CMSProvider>
+            <PermissionProvider>
+              <App />
+            </PermissionProvider>
+          </CMSProvider>
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>

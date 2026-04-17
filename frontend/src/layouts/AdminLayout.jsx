@@ -1,45 +1,61 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import { usePermissions } from '../contexts/PermissionContext';
 import {
     HomeIcon,
-    BellIcon,
     BuildingOfficeIcon,
-    UserIcon,
     MegaphoneIcon,
     ListBulletIcon,
     ChatBubbleLeftIcon,
     Cog6ToothIcon,
     TruckIcon,
     DocumentTextIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    PencilSquareIcon,
+    ShieldCheckIcon,
+    NewspaperIcon,
 } from '@heroicons/react/24/outline';
 
 export default function AdminLayout() {
     const { logout, user } = useContext(AuthContext);
+    const { hasPermission, roleName, roleColor } = usePermissions();
     const location = useLocation();
     const navigate = useNavigate();
 
-    const navigation = [
-        { name: 'Dashboard', href: '/admin-portal/dashboard', icon: HomeIcon },
-        { name: 'Leads', href: '/admin-portal/leads', icon: ListBulletIcon },
-        { name: 'Vendor Leads', href: '/admin-portal/vendor-leads', icon: TruckIcon },
-        { name: 'Yard Submissions', href: '/admin-portal/yard-submissions', icon: DocumentTextIcon },
-        { name: 'Vendors', href: '/admin-portal/vendors', icon: BuildingOfficeIcon },
-        { name: 'Ads', href: '/admin-portal/ads', icon: MegaphoneIcon },
-        { name: 'Messages', href: '/admin-portal/messages', icon: ChatBubbleLeftIcon },
-        { name: 'Blog', href: '/admin-portal/blog', icon: DocumentTextIcon },
-        { name: 'Settings', href: '/admin-portal/settings', icon: Cog6ToothIcon },
+    const allNavItems = [
+        { name: 'Dashboard',        href: '/admin-portal/dashboard',        icon: HomeIcon,           permission: null },
+        { name: 'Leads',            href: '/admin-portal/leads',            icon: ListBulletIcon,     permission: 'can_manage_leads' },
+        { name: 'Vendor Leads',     href: '/admin-portal/vendor-leads',     icon: TruckIcon,          permission: 'can_manage_leads' },
+        { name: 'Yard Submissions', href: '/admin-portal/yard-submissions',  icon: DocumentTextIcon,   permission: 'can_manage_yard_submissions' },
+        { name: 'Vendors',         href: '/admin-portal/vendors',           icon: BuildingOfficeIcon,  permission: 'can_manage_vendors' },
+        { name: 'Ads',             href: '/admin-portal/ads',               icon: MegaphoneIcon,      permission: 'can_manage_ads' },
+        { name: 'Messages',        href: '/admin-portal/messages',          icon: ChatBubbleLeftIcon,  permission: 'can_manage_messages' },
+        { name: 'Blog',            href: '/admin-portal/blog',              icon: NewspaperIcon,      permission: 'can_manage_blog' },
+        // ── NEW ──────────────────────────────────────────────────────────────
+        { name: 'CMS',             href: '/admin-portal/cms',               icon: PencilSquareIcon,   permission: 'can_manage_cms' },
+        { name: 'Roles',           href: '/admin-portal/roles',             icon: ShieldCheckIcon,    permission: 'can_manage_roles' },
+        // ─────────────────────────────────────────────────────────────────────
+        { name: 'Settings',        href: '/admin-portal/settings',          icon: Cog6ToothIcon,      permission: 'can_manage_settings' },
     ];
 
-    const isActive = (path) => location.pathname === path;
+    // Superusers always see everything; others filtered by permissions
+    const navigation = allNavItems.filter(item =>
+        !item.permission || user?.is_superuser || hasPermission(item.permission)
+    );
+
+    const isActive = (path) => location.pathname.startsWith(path) && (
+        path === '/admin-portal/dashboard'
+            ? location.pathname === path
+            : true
+    );
 
     return (
         <div className="flex h-screen bg-[#f5f5f7] overflow-hidden font-['Inter',sans-serif]">
             {/* Slim Icon Sidebar - Dark Theme */}
             <aside className="w-20 bg-[#3d4451]/95 backdrop-blur-xl border-r border-[#4a5160]/30 flex flex-col items-center py-6 gap-2 shadow-xl">
                 {/* Navigation Icons */}
-                <div className="flex flex-col gap-2 flex-1 mt-2">
+                <div className="flex flex-col gap-2 flex-1 mt-2 overflow-y-auto scrollbar-hide">
                     {navigation.map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.href);
@@ -47,15 +63,15 @@ export default function AdminLayout() {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative ${active
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative flex-shrink-0 ${active
                                     ? 'bg-white/95 shadow-lg shadow-black/10 text-[#3d4451]'
-                                    : 'text-[#9ca3af] hover:text-slate-800 hover:bg-white/10'
+                                    : 'text-[#9ca3af] hover:text-white hover:bg-white/10'
                                     }`}
                                 title={item.name}
                             >
                                 <Icon className="w-5 h-5" />
                                 {/* Tooltip */}
-                                <span className="absolute left-16 bg-[#2d3340] text-slate-800 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                                <span className="absolute left-16 bg-[#1f2937] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg border border-white/10">
                                     {item.name}
                                 </span>
                             </Link>
@@ -66,11 +82,11 @@ export default function AdminLayout() {
                 {/* Logout Button */}
                 <button
                     onClick={logout}
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-[#9ca3af] hover:text-red-400 hover:bg-white/10 transition-all group relative"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-[#9ca3af] hover:text-red-400 hover:bg-white/10 transition-all group relative flex-shrink-0"
                     title="Logout"
                 >
                     <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                    <span className="absolute left-16 bg-[#2d3340] text-slate-800 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    <span className="absolute left-16 bg-[#1f2937] text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg border border-white/10">
                         Logout
                     </span>
                 </button>
@@ -92,10 +108,19 @@ export default function AdminLayout() {
                             </h1>
                         </div>
                         <div className="flex items-center gap-3">
+                            {/* Role badge */}
+                            {roleName && (
+                                <span
+                                    className="text-xs font-bold px-2.5 py-1 rounded-full text-white"
+                                    style={{ background: roleColor || '#6366f1' }}
+                                >
+                                    {roleName}
+                                </span>
+                            )}
                             <span className="text-base text-[#6b7280]">
                                 Welcome, <span className="font-semibold text-[#1f2937]">{user?.username || 'admin'}</span>
                             </span>
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-semibold shadow-md shadow-indigo-200 text-base">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold shadow-md shadow-indigo-200 text-base">
                                 {(user?.username || 'A').charAt(0).toUpperCase()}
                             </div>
                         </div>

@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
+import { useCMS } from '../hooks/useCMS'
 
 export default function Footer() {
     const currentYear = new Date().getFullYear()
+    const { get } = useCMS('footer')
 
     return (
         <footer
@@ -51,7 +53,7 @@ export default function Footer() {
                         </div>
 
                         <p style={{ color: '#667788', fontSize: '0.875rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-                            The nation's most trusted marketplace for verified used auto parts. Connecting mechanics and enthusiasts with salvage yards nationwide.
+                            {get('brand', 'description', "The nation's most trusted marketplace for verified used auto parts. Connecting mechanics and enthusiasts with salvage yards nationwide.")}
                         </p>
 
                         {/* Social Links */}
@@ -59,7 +61,7 @@ export default function Footer() {
                             {[
                                 {
                                     name: 'Facebook',
-                                    url: 'https://www.facebook.com/JunkYardsNearMe',
+                                    url: get('social', 'facebook', 'https://www.facebook.com/JunkYardsNearMe'),
                                     icon: (
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
@@ -68,7 +70,7 @@ export default function Footer() {
                                 },
                                 {
                                     name: 'X / Twitter',
-                                    url: 'https://x.com/junkyardsnearme',
+                                    url: get('social', 'twitter', 'https://x.com/junkyardsnearme'),
                                     icon: (
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -77,7 +79,7 @@ export default function Footer() {
                                 },
                                 {
                                     name: 'Pinterest',
-                                    url: 'https://www.pinterest.com/junkyardsnearme/',
+                                    url: get('social', 'pinterest', 'https://www.pinterest.com/junkyardsnearme/'),
                                     icon: (
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.72-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.111.224.082.345-.098.403-.315 1.285-.357 1.455-.055.225-.183.272-.421.162-1.565-.728-2.544-3.015-2.544-4.852 0-3.951 2.87-7.579 8.274-7.579 4.344 0 7.719 3.095 7.719 7.229 0 4.316-2.722 7.791-6.501 7.791-1.27 0-2.463-.659-2.871-1.438l-.782 2.977c-.283 1.077-1.048 2.427-1.558 3.262 1.077.332 2.222.513 3.411.513 6.621 0 11.988-5.367 11.988-11.988C24.005 5.367 18.638 0 12.017 0z" />
@@ -187,7 +189,7 @@ export default function Footer() {
                         </h3>
                         <div className="space-y-4">
                             <a
-                                href="tel:1-866-293-3731"
+                                href={`tel:${get('contact', 'phone', '1-866-293-3731')}`}
                                 className="flex items-center gap-3 transition-all duration-200"
                                 style={{ color: '#667788', textDecoration: 'none' }}
                                 onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-blue)'}
@@ -201,11 +203,11 @@ export default function Footer() {
                                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                                     </svg>
                                 </div>
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.825rem' }}>1-866-293-3731</span>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.825rem' }}>{get('contact', 'phone', '1-866-293-3731')}</span>
                             </a>
 
                             <a
-                                href="mailto:info@jynm.com"
+                                href={`mailto:${get('contact', 'email', 'info@jynm.com')}`}
                                 className="flex items-center gap-3 transition-all duration-200"
                                 style={{ color: '#667788', textDecoration: 'none' }}
                                 onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-blue)'}
@@ -220,7 +222,7 @@ export default function Footer() {
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                     </svg>
                                 </div>
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.825rem' }}>info@jynm.com</span>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.825rem' }}>{get('contact', 'email', 'info@jynm.com')}</span>
                             </a>
 
                             <div

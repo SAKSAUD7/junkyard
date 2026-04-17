@@ -3,9 +3,11 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { getFAQSchema } from '../utils/structuredData';
+import { useCMS } from '../hooks/useCMS';
 
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(null);
+    const { get } = useCMS('faq');
 
     const categories = [
         {
@@ -131,12 +133,11 @@ const FAQ = () => {
                                 <span className="font-bold tracking-wider text-xs uppercase text-blue-300">HELP CENTER</span>
                             </div>
 
-                            <h1 className="font-black mb-4 tracking-tight px-2 text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
-                                Frequently Asked{' '}
-                                <span className="text-blue-400">Questions</span>
-                            </h1>
+                            <h1 className="font-black mb-4 tracking-tight px-2 text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+                                dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Frequently Asked <span class="text-blue-400">Questions</span>') }}
+                            />
                             <p className="font-light max-w-2xl mb-8 px-2 text-lg" style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
-                                Everything you need to know about finding and buying used auto parts through our platform.
+                                {get('hero', 'subheading', 'Everything you need to know about finding and buying used auto parts through our platform.')}
                             </p>
                         </div>
 

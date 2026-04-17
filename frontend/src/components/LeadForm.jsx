@@ -462,6 +462,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     if (isSuccess) {
         return (
             <div className={`w-full ${layout === 'horizontal' ? 'w-full md:max-w-xl' : 'w-full max-w-[360px] px-4 sm:px-0'} mx-auto font-sans bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-xl border border-slate-200 shadow-2xl text-center flex flex-col items-center justify-center min-h-[400px] overflow-hidden`}>
+                <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center mb-4">
                     <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>

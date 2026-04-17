@@ -9,6 +9,7 @@ import DynamicAd from '../components/DynamicAd'
 import MobileAdBanner from '../components/MobileAdBanner'
 import SEO from '../components/SEO'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
+import { useCMS } from '../hooks/useCMS'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -132,6 +133,7 @@ function ParticleField() {
 export default function Home() {
     const navigate = useNavigate()
     const siteStats = useSiteStats()
+    const { get } = useCMS('home')
 
     const combinedSchema = {
         '@context': 'https://schema.org',
@@ -249,12 +251,12 @@ export default function Home() {
                                 textShadow: '0 2px 20px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.4)'
                             }}
                         >
-                            FIND THE{' '}
-                            <span className="text-blue-400">JUNKYARD</span>
-                            <br />
-                            AUTO PARTS YOU NEED —
-                            <br />
-                            <span style={{ color: '#93c5fd' }}>SEARCH IN SECONDS.</span>
+                            {get('hero', 'heading', 'FIND THE JUNKYARD\\nAUTO PARTS YOU NEED —\\nSEARCH IN SECONDS.').split('\\n').map((line, i) => (
+                                <span key={i}>
+                                    {line}
+                                    <br />
+                                </span>
+                            ))}
                         </h1>
 
                         {/* Subheadline */}
@@ -268,10 +270,8 @@ export default function Home() {
                                 fontWeight: 500,
                                 textShadow: '0 1px 6px rgba(0,0,0,0.5)'
                             }}
-                        >
-                            Locate quality used auto parts from{' '}
-                            <span style={{ color: '#fb923c', fontWeight: 800 }}>verified junkyards</span>{' '}near you!
-                        </p>
+                            dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Locate quality used auto parts from <span style="color: #fb923c; font-weight: 800">verified junkyards</span> near you!') }}
+                        />
 
                         {/* ZIP Code Search Box */}
                         <div
@@ -308,17 +308,17 @@ export default function Home() {
 
                         {/* CTA Buttons */}
                         <div className="flex flex-wrap items-center justify-center gap-4 mt-8 animate-fade-in-up delay-500">
-                            <Link to="/vendors" id="hero-browse-vendors-btn" className="btn-primary">
+                            <Link to={get('hero', 'cta_primary_link', '/vendors')} id="hero-browse-vendors-btn" className="btn-primary">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                Browse All Vendors
+                                {get('hero', 'cta_primary_text', 'Browse All Vendors')}
                             </Link>
-                            <Link to="/how-it-works" id="hero-how-it-works-btn" className="btn-neon">
+                            <Link to={get('hero', 'cta_secondary_link', '/how-it-works')} id="hero-how-it-works-btn" className="btn-neon">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                How It Works
+                                {get('hero', 'cta_secondary_text', 'How It Works')}
                             </Link>
                         </div>
 
@@ -326,8 +326,8 @@ export default function Home() {
                         <div className="flex flex-wrap items-center justify-center gap-5 mt-8 animate-fade-in-up delay-700">
                             {[
                                 { icon: '✓', text: `${siteStats.vendors_count.toLocaleString()}+ Verified Yards` },
-                                { icon: '🛡', text: 'No Spam Guarantee' },
-                                { icon: '⚡', text: 'Instant Quotes' },
+                                { icon: '🛡', text: get('hero', 'trust_badge_1', 'No Spam Guarantee') },
+                                { icon: '⚡', text: get('hero', 'trust_badge_2', 'Instant Quotes') },
                                 { icon: '💰', text: `Up to ${siteStats.savings_percent}% Savings` },
                             ].map((item, i) => (
                                 <span key={i} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.03em' }}>
@@ -388,10 +388,8 @@ export default function Home() {
             <section className="py-16 md:py-20" style={{ background: '#f8fafc' }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12 scroll-fade-in">
-                        <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Why Trust JYNM</p>
-                        <h2 className="text-2xl md:text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            Built on <span className="text-blue-600">Reliability</span> & Transparency
-                        </h2>
+                        <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{get('trust_pillars', 'badge_label', 'Why Trust JYNM')}</p>
+                        <h2 className="text-2xl md:text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: get('trust_pillars', 'heading', 'Built on <span class="text-blue-600">Reliability</span> & Transparency') }} />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {[
@@ -446,11 +444,9 @@ export default function Home() {
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4" style={{ background: 'rgba(234,88,12,0.08)', border: '1px solid rgba(234,88,12,0.2)' }}>
                             <span style={{ color: 'var(--neon-orange)', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>Process</span>
                         </div>
-                        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>
-                            How It <span style={{ color: '#2563eb' }}>Works</span>
-                        </h2>
+                        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.75rem' }} dangerouslySetInnerHTML={{ __html: get('how_it_works', 'heading', 'How It <span style="color: #2563eb">Works</span>') }} />
                         <p style={{ color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontSize: '0.9rem' }}>
-                            Three simple steps to find the exact used auto parts you need at the best price.
+                            {get('how_it_works', 'subheading', 'Three simple steps to find the exact used auto parts you need at the best price.')}
                         </p>
                     </div>
 
@@ -459,20 +455,20 @@ export default function Home() {
                             {
                                 step: '01', color: 'var(--neon-blue)',
                                 icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
-                                title: 'Search & Locate',
-                                desc: 'Enter your ZIP code or vehicle details. Our system instantly finds verified junkyards near you with the parts you need.'
+                                title: get('how_it_works', 'step1_title', 'Search & Locate'),
+                                desc: get('how_it_works', 'step1_desc', 'Enter your ZIP code or vehicle details. Our system instantly finds verified junkyards near you with the parts you need.')
                             },
                             {
                                 step: '02', color: 'var(--neon-orange)',
                                 icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
-                                title: 'Get Free Quotes',
-                                desc: 'Submit a single request to multiple vendors simultaneously. Compare prices, availability, and shipping options in real time.'
+                                title: get('how_it_works', 'step2_title', 'Get Free Quotes'),
+                                desc: get('how_it_works', 'step2_desc', 'Submit a single request to multiple vendors simultaneously. Compare prices, availability, and shipping options in real time.')
                             },
                             {
                                 step: '03', color: 'var(--neon-blue)',
                                 icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>,
-                                title: 'Order & Save',
-                                desc: 'Choose the best deal, order your parts, and save up to 80% compared to dealer prices. Fast shipping nationwide.'
+                                title: get('how_it_works', 'step3_title', 'Order & Save'),
+                                desc: get('how_it_works', 'step3_desc', 'Choose the best deal, order your parts, and save up to 80% compared to dealer prices. Fast shipping nationwide.')
                             }
                         ].map((item, i) => (
                             <div
@@ -607,17 +603,13 @@ export default function Home() {
                     <h2
                         className="scroll-fade-in"
                         style={{ fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 900, color: '#ffffff', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '1rem' }}
-                    >
-                        Ready to Find Your{' '}
-                        <span style={{ background: 'linear-gradient(135deg, #93c5fd, #bfdbfe)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                            Perfect Part?
-                        </span>
-                    </h2>
+                        dangerouslySetInnerHTML={{ __html: get('cta_banner', 'heading', 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>') }}
+                    />
                     <p className="scroll-fade-in" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.95rem', lineHeight: 1.7, maxWidth: '480px', margin: '0 auto 2.5rem' }}>
-                        Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.
+                        {get('cta_banner', 'subheading', 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.')}
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4 scroll-fade-in">
-                        <Link to="/quote" id="cta-get-quote-btn" className="btn-orange">Get Free Quote Now</Link>
+                        <Link to="/quote" id="cta-get-quote-btn" className="btn-orange">{get('cta_banner', 'button_text', 'Get Free Quote Now')}</Link>
                         <Link to="/vendors" id="cta-browse-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.9rem', color: 'white', background: 'rgba(255,255,255,0.15)', border: '1.5px solid rgba(255,255,255,0.4)', borderRadius: '0.625rem', textDecoration: 'none', transition: 'all 0.3s ease', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Browse All Vendors</Link>
                     </div>
                 </div>

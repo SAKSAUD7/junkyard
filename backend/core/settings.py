@@ -81,6 +81,8 @@ INSTALLED_APPS = [
     "apps.yard_submissions",  # New marketplace app
     "apps.vendor_portal",  # NEW: Vendor portal
     "apps.blog",           # Blog system
+    "apps.cms",            # Website CMS
+    "apps.rbac",           # Role-Based Access Control
 ]
 
 # Media files (for ad images and submissions)

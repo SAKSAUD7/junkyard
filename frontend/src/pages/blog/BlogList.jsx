@@ -6,6 +6,7 @@ import SEO from '../../components/SEO';
 import BlogCard from '../../components/BlogCard';
 import BlogSkeletonCard from '../../components/BlogSkeletonCard';
 import { blogApi } from '../../services/blogApi';
+import { useCMS } from '../../hooks/useCMS';
 
 // ─── Sample data for when the backend isn't returning posts yet ────────────
 const SAMPLE_POSTS = [
@@ -69,6 +70,7 @@ const SAMPLE_CATEGORIES = [
 
 export default function BlogList() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { get } = useCMS('blog');
   const [posts, setPosts] = useState([]);
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -139,8 +141,8 @@ export default function BlogList() {
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
       <SEO
-        title="Blog — Junkyard Near Me | Auto Parts Tips & Guides"
-        description="Expert guides on buying used auto parts, DIY repairs, salvage yard tips, and industry news. Save money on your next repair with JYNM."
+        title={get('meta', 'title', 'Blog — Junkyard Near Me | Auto Parts Tips & Guides')}
+        description={get('meta', 'description', 'Expert guides on buying used auto parts, DIY repairs, salvage yard tips, and industry news. Save money on your next repair with JYNM.')}
         canonicalUrl="/blog"
       />
       <Navbar />
@@ -165,10 +167,10 @@ export default function BlogList() {
           </div>
           
           <h1 className="animate-fade-in-up text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '1rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-            The Junkyard <span className="text-blue-400">Journal</span>
+            {get('hero', 'heading', 'The Junkyard')} <span className="text-blue-400">{get('hero', 'heading_accent', 'Journal')}</span>
           </h1>
           <p className="animate-fade-in-up delay-100 text-white/80" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', maxWidth: '540px', margin: '0 auto 2.5rem', lineHeight: 1.7, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-            Expert guides on pulling parts, salvaging tips, and the latest news from the used auto parts industry.
+            {get('hero', 'subheading', 'Expert guides on pulling parts, salvaging tips, and the latest news from the used auto parts industry.')}
           </p>
 
           <form onSubmit={e => { e.preventDefault(); updateFilter('search', e.target.search.value); }} className="flex gap-2 max-w-xl mx-auto animate-fade-in-up delay-200">

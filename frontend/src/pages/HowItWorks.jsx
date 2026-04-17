@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { useCMS } from '../hooks/useCMS';
 
 const HowItWorks = () => {
     const navigate = useNavigate();
+    const { get } = useCMS('how_it_works');
 
     // Scroll to top when page loads
     useEffect(() => {
@@ -125,13 +127,12 @@ const HowItWorks = () => {
                         <span className="text-sm font-medium text-white/70">Find parts in minutes</span>
                     </div>
 
-                    <h1 className="font-black mb-4 tracking-tight text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
-                        How It{' '}
-                        <span className="text-blue-400">Works</span>
-                    </h1>
+                    <h1 className="font-black mb-4 tracking-tight text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+                        dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'How It <span class="text-blue-400">Works</span>') }}
+                    />
 
                     <p className="font-light max-w-2xl mx-auto mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.6 }}>
-                        Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide — no more endless phone calls or wasted time.
+                        {get('hero', 'subheading', "Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide — no more endless phone calls or wasted time.")}
                     </p>
                 </div>
             </div>

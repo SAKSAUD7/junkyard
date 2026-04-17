@@ -3,8 +3,10 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { api } from '../services/api'
+import { useCMS } from '../hooks/useCMS'
 
 export default function Contact() {
+    const { get } = useCMS('contact')
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -48,8 +50,8 @@ export default function Contact() {
     return (
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
-                title="Contact Us - Get Help Finding Auto Parts"
-                description="Contact Junkyards Near Me for support. Questions about finding parts, vendor inquiries, or technical support. We're here to help connect you with the right salvage yard."
+                title={get('meta', 'title', 'Contact Us - Get Help Finding Auto Parts')}
+                description={get('meta', 'description', "Contact Junkyards Near Me for support. Questions about finding parts, vendor inquiries, or technical support. We're here to help connect you with the right salvage yard.")}
             />
 
             <Navbar />
@@ -76,13 +78,13 @@ export default function Contact() {
                             </span>
                         </div>
                         <h1 className="font-black mb-4 px-2 text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
-                            We'd Love to <br />
+                            {get('hero', 'heading', "We'd Love to")} <br />
                             <span className="text-blue-400">
-                                Hear from You
+                                {get('hero', 'heading_accent', 'Hear from You')}
                             </span>
                         </h1>
                         <p className="font-light leading-relaxed px-2 text-lg" style={{ color: 'var(--text-secondary)' }}>
-                            Have questions about finding a part? Need help using our platform? Our team is here to assist you 24/7.
+                            {get('hero', 'subheading', 'Have questions about finding a part? Need help using our platform? Our team is here to assist you 24/7.')}
                         </p>
                     </div>
                 </div>
@@ -108,9 +110,7 @@ export default function Contact() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     <span className="leading-relaxed">
-                                        123 Auto Salvage Way<br />
-                                        Phoenix, AZ 85001<br />
-                                        United States
+                                        {get('info', 'address', '123 Auto Salvage Way, Phoenix, AZ 85001, United States')}
                                     </span>
                                 </p>
                             </div>
@@ -126,17 +126,17 @@ export default function Contact() {
                                 Direct Contact
                             </h3>
                             <div className="space-y-4 text-base" style={{ color: 'var(--text-secondary)' }}>
-                                <a href="mailto:support@jynm.com" className="flex items-center gap-4 transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-blue)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
+                                <a href={`mailto:${get('info', 'email', 'support@jynm.com')}`} className="flex items-center gap-4 transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-blue)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
                                     <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
-                                    support@jynm.com
+                                    {get('info', 'email', 'support@jynm.com')}
                                 </a>
-                                <a href="tel:+18005551234" className="flex items-center gap-4 transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-orange)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
+                                <a href={`tel:${get('info', 'phone', '+18005551234').replace(/[^+0-9]/g,'')}`} className="flex items-center gap-4 transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--neon-orange)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
                                     <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
-                                    +1 (800) 555-1234
+                                    {get('info', 'phone', '+1 (800) 555-1234')}
                                 </a>
                             </div>
                         </div>

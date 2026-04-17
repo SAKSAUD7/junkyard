@@ -108,6 +108,8 @@ urlpatterns = [
     # Part Pricing API
     path("api/", include(pricing_router.urls)),
     path("api/blog/", include("apps.blog.urls")),  # Blog system
+    path("api/cms/", include("apps.cms.urls")),    # Website CMS
+    path("api/rbac/", include("apps.rbac.urls")),  # Role-Based Access Control
 ]
 
 

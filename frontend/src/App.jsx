@@ -49,6 +49,10 @@ import AdminVendors from './pages/admin/Vendors'
 import AdminAds from './pages/admin/Ads'
 import AdminSettings from './pages/admin/Settings'
 
+// CMS + RBAC
+import AdminCMS from './pages/admin/CMS'
+import AdminRoles from './pages/admin/Roles'
+
 // Blog imports
 import BlogList from './pages/blog/BlogList'
 import BlogDetail from './pages/blog/BlogDetail'
@@ -198,6 +202,11 @@ function App() {
           <Route path="blog" element={<AdminBlogList />} />
           <Route path="blog/new" element={<AdminBlogEditor />} />
           <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
+          {/* CMS */}
+          <Route path="cms" element={<AdminCMS />} />
+          <Route path="cms/:page" element={<AdminCMS />} />
+          {/* RBAC */}
+          <Route path="roles" element={<AdminRoles />} />
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

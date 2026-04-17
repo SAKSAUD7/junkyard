@@ -5,8 +5,10 @@ import SEO from '../components/SEO'
 import { getOrganizationSchema } from '../utils/structuredData'
 import { api } from '../services/api'
 import Carousel3D from '../components/Carousel3D'
+import { useCMS } from '../hooks/useCMS'
 
 export default function About() {
+    const { get } = useCMS('about')
     const [vendorCount, setVendorCount] = useState(0)
     const [stateCount, setStateCount] = useState(0)
     const [loading, setLoading] = useState(true)
@@ -51,10 +53,10 @@ export default function About() {
     }, [])
 
     const stats = [
-        { label: 'Active Junkyards', value: loading ? '...' : vendorCount.toLocaleString() + '+' },
-        { label: 'States Covered', value: loading ? '...' : stateCount + '+' },
-        { label: 'Daily Searches', value: '50k+' },
-        { label: 'Parts Found', value: '1M+' },
+        { label: get('stats', 'label_1', 'Active Junkyards'), value: loading ? '...' : vendorCount.toLocaleString() + '+' },
+        { label: get('stats', 'label_2', 'States Covered'), value: loading ? '...' : stateCount + '+' },
+        { label: get('stats', 'label_3', 'Daily Searches'), value: get('stats', 'value_3', '50k+') },
+        { label: get('stats', 'label_4', 'Parts Found'), value: get('stats', 'value_4', '1M+') },
     ]
 
     const features = [
@@ -92,8 +94,8 @@ export default function About() {
     return (
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             <SEO
-                title="About Us - Junkyards Near Me | The Future of Auto Salvage"
-                description="Learn about Junkyards Near Me - connecting mechanics, enthusiasts, and car owners with over 1,000 verified junkyards across all 50 states. Save up to 70% on quality used auto parts."
+                title={get('meta', 'title', 'About Us - Junkyards Near Me | The Future of Auto Salvage')}
+                description={get('meta', 'description', 'Learn about Junkyards Near Me - connecting mechanics, enthusiasts, and car owners with over 1,000 verified junkyards across all 50 states. Save up to 70% on quality used auto parts.')}
                 canonicalUrl="/about"
                 structuredData={[organizationSchema]}
             />
@@ -121,13 +123,13 @@ export default function About() {
                             </span>
                         </div>
                         <h1 className="font-black mb-4" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.1, textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}>
-                            The Future of <br />
+                            {get('hero', 'heading', 'The Future of')} <br />
                             <span style={{ color: '#60a5fa' }}>
-                                Auto Salvage
+                                {get('hero', 'heading_accent', 'Auto Salvage')}
                             </span>
                         </h1>
                         <p className="leading-relaxed mb-8 px-2" style={{ color: 'rgba(255,255,255,0.82)', fontSize: 'clamp(1rem, 2vw, 1.2rem)', maxWidth: '600px', margin: '0 auto' }}>
-                            We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's most extensive inventory.
+                            {get('hero', 'subheading', "We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's most extensive inventory.")}
                         </p>
                     </div>
 
@@ -150,14 +152,14 @@ export default function About() {
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="space-y-8">
                         <h2 className="font-bold" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            Our Mission is <span style={{ color: '#2563eb' }}>Simple</span>
+                            {get('mission', 'title', 'Our Mission is')} <span style={{ color: '#2563eb' }}>{get('mission', 'title_accent', 'Simple')}</span>
                         </h2>
                         <div className="space-y-6 leading-relaxed text-lg" style={{ color: 'var(--text-secondary)' }}>
                             <p>
-                                Finding quality used auto parts shouldn't be a hassle. We built Junkyards Near Me to bridge the gap between organized inventory and the people who need it most.
+                                {get('mission', 'para_1', "Finding quality used auto parts shouldn't be a hassle. We built Junkyards Near Me to bridge the gap between organized inventory and the people who need it most.")}
                             </p>
                             <p>
-                                Whether you're restoring a classic, fixing a daily driver, or running a repair shop, our platform gives you instant access to millions of parts across the country.
+                                {get('mission', 'para_2', "Whether you're restoring a classic, fixing a daily driver, or running a repair shop, our platform gives you instant access to millions of parts across the country.")}
                             </p>
                         </div>
 
