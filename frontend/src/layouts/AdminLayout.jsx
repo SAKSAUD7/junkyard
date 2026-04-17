@@ -127,8 +127,8 @@ export default function AdminLayout() {
                     </div>
                 </header>
 
-                {/* Page Content */}
-                <main className="flex-1 overflow-y-auto p-8 bg-[#e5e7eb]">
+                {/* Page Content — no padding for CMS (it manages its own layout) */}
+                <main className={`flex-1 overflow-hidden ${location.pathname.includes('/cms') ? 'flex flex-col' : 'overflow-y-auto p-8 bg-[#e5e7eb]'}`}>
                     <Outlet />
                 </main>
             </div>
