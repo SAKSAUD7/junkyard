@@ -132,6 +132,7 @@ class Vendor(models.Model):
     is_featured = models.BooleanField(default=False)
     is_trusted = models.BooleanField(default=False)
     trusted_vendor = models.BooleanField(default=False)
+    profile_views = models.IntegerField(default=0)
 
     is_active = models.BooleanField(default=True, db_index=True)
     inventory_preferences = models.JSONField(blank=True, default=dict, help_text='Inventory management settings')
@@ -159,11 +160,20 @@ class VendorAd(models.Model):
         ('expired', 'Expired'),
     ]
     
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='ads', to_field='yard_id')
     plan_type = models.CharField(max_length=20, choices=PLAN_CHOICES)
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    transaction_id = models.CharField(max_length=100, blank=True, default='')
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -173,6 +183,16 @@ class VendorAd(models.Model):
 
     def __str__(self):
         return f"{self.vendor.name} - {self.plan_type} ({self.status})"
+        
+    @property
+    def is_active(self):
+        """Returns True only if the ad is active AND payment is completed."""
+        from django.utils import timezone
+        if self.status != 'active' or self.payment_status != 'completed':
+            return False
+        if timezone.now().date() > self.end_date:
+            return False
+        return True
         
     def check_expiration(self):
         from django.utils import timezone

@@ -181,9 +181,9 @@ export const vendorNotifications = {
 // ADS
 // ============================================
 
-export const vendorAds = {
-    get: () => vendorApi.get('/ads/'),
-    activate: (plan_type) => vendorApi.post('/ads/', { plan_type }),
+export const vendorAdApi = {
+    getCurrentAd: () => vendorApi.get('/ads/'),
+    purchaseAd: (data) => vendorApi.post('/ads/', data),
 };
 
 export default vendorApi;

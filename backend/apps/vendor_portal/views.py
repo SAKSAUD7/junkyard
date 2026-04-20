@@ -49,6 +49,11 @@ class VendorDashboardView(APIView):
         converted_leads = vendor_leads.filter(status='converted').count()
         closed_leads = vendor_leads.filter(status='closed').count()
         
+        # Calculate new SaaS metrics
+        total_listings = VendorInventory.objects.filter(vendor=vendor).count()
+        active_ads = VendorAd.objects.filter(vendor=vendor, status='active', payment_status='completed').count()
+        total_profile_views_value = getattr(vendor, 'profile_views', 0)
+        
         # Get recent leads
         recent_combined = list(vendor_leads.order_by('-created_at')[:5])
         
@@ -58,6 +63,9 @@ class VendorDashboardView(APIView):
             'contacted_leads': contacted_leads,
             'converted_leads': converted_leads,
             'closed_leads': closed_leads,
+            'total_listings': total_listings,
+            'active_ads': active_ads,
+            'total_views': total_profile_views_value,
             'recent_leads': recent_combined,
             'account_status': 'Active' if getattr(vendor, 'is_active', True) else 'Inactive',
             'unread_notifications': VendorNotification.objects.filter(
@@ -393,26 +401,39 @@ class VendorAdView(APIView):
         plan_type = request.data.get('plan_type')
         if not plan_type or plan_type not in ['standard', 'minimal', 'premium', 'compact']:
             return Response({'error': 'Invalid plan type provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        duration = int(request.data.get('duration', 30))
+        payment_status = request.data.get('payment_status', 'pending')
+        transaction_id = request.data.get('transaction_id', '')
             
-        # Re-check logic to ensure no double-activation
-        if VendorAd.objects.filter(vendor=vendor, status='active').exists():
+        # Re-check logic to ensure no double-activation of already COMPLETED plans
+        active_plan_exists = VendorAd.objects.filter(
+            vendor=vendor, 
+            status='active', 
+            payment_status='completed',
+            end_date__gte=timezone.now().date()
+        ).exists()
+        
+        if active_plan_exists and payment_status == 'completed':
             return Response({'error': 'You already have an active plan. Please wait for it to expire.'}, status=status.HTTP_400_BAD_REQUEST)
             
-        # E.g. Standard 30 days
-        end_date = timezone.now().date() + timedelta(days=30)
+        end_date = timezone.now().date() + timedelta(days=duration)
         
         ad = VendorAd.objects.create(
             vendor=vendor,
             plan_type=plan_type,
             end_date=end_date,
-            status='active'
+            status='active' if payment_status == 'completed' else 'pending',
+            payment_status=payment_status,
+            transaction_id=transaction_id
         )
         
-        # Grant badges
-        if plan_type in ['premium', 'standard']:
-            vendor.is_featured = True
-        if plan_type in ['premium']:
-            vendor.is_top_rated = True
-        vendor.save()
+        # Grant badges ONLY IF the payment has explicitly cleared
+        if payment_status == 'completed':
+            if plan_type in ['premium', 'standard']:
+                vendor.is_featured = True
+            if plan_type in ['premium']:
+                vendor.is_top_rated = True
+            vendor.save()
         
         return Response(VendorAdSerializer(ad).data, status=status.HTTP_201_CREATED)

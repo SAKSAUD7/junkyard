@@ -184,31 +184,33 @@ const VendorDashboard = () => {
                     <div className="bg-white p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                             </svg>
                         </div>
-                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.total_leads || 0}</span>
-                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Total Leads</span>
+                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.total_listings || 0}</span>
+                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Total Listings</span>
                     </div>
 
                     <div className="bg-white p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
                             </svg>
                         </div>
-                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.new_leads || 0}</span>
-                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">New Leads</span>
+                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.active_ads || 0}</span>
+                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Active Ads</span>
                     </div>
 
                     <div className="bg-white p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-50 to-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </div>
-                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.contacted_leads || 0}</span>
-                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">In Progress</span>
+                        <span className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{dashboardData?.total_views || 0}</span>
+                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Total Profile Views</span>
                     </div>
 
                     <div className="bg-white p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">

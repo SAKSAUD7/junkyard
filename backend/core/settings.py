@@ -215,7 +215,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
-        } if os.environ.get('DB_HOST') else {},
+        } if os.environ.get('DB_HOST') and 'localhost' not in os.environ.get('DB_HOST') and '127.0.0.1' not in os.environ.get('DB_HOST') else {},
     }
 }
 

@@ -1,181 +1,289 @@
 import React, { useState, useEffect } from 'react';
-import { vendorAds } from '../../services/vendorApi';
-import { Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { vendorAdApi } from '../../services/vendorApi';
+import { LoadingButton, EmptyState } from '../../components/vendor/UIElements';
 
-const VendorAds = () => {
-    const [adsData, setAdsData] = useState({ active_plan: null, history: [] });
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+export default function Ads() {
+    const [step, setStep] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [activeAd, setActiveAd] = useState(null);
+    const [fetchingActive, setFetchingActive] = useState(true);
 
-    const plans = [
-        {
-            type: 'standard',
-            title: 'Standard Plan',
-            price: '$29/mo',
-            features: ['Basic Visibility', 'Standard Support', 'Monthly Reports']
-        },
-        {
-            type: 'minimal',
-            title: 'Minimal Plan',
-            price: '$9/mo',
-            features: ['Listing Only', 'Community Support']
-        },
-        {
-            type: 'premium',
-            title: 'Premium Plan',
-            price: '$59/mo',
-            features: ['Top Position', 'Priority Support', 'Weekly Reports', 'Featured Badge']
-        },
-        {
-            type: 'compact',
-            title: 'Compact Plan',
-            price: '$19/mo',
-            features: ['Better Visibility', 'Email Support']
-        }
+    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [duration, setDuration] = useState(30);
+    const [placement, setPlacement] = useState('featured');
+
+    const subscriptionPlans = [
+        { id: 'standard', name: 'Standard Boost', price: 99, color: 'from-blue-600 to-teal-600', popular: false, features: ['Featured Results', 'High Priority Support'] },
+        { id: 'premium', name: 'Premium Elite', price: 199, color: 'from-yellow-400 to-orange-500', popular: true, features: ['Top #1 Placement', 'Gold Styling', 'Guaranteed Traffic'] }
     ];
 
-    const fetchAds = async () => {
-        try {
-            const data = await vendorAds.get();
-            setAdsData(data.data);
-            setLoading(false);
-        } catch (err) {
-            setError('Failed to load ads data');
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchAds();
+        const fetchCurrentAd = async () => {
+            try {
+                const response = await vendorAdApi.getCurrentAd();
+                if (response.data && response.data.status === 'active') {
+                    setActiveAd(response.data);
+                }
+            } catch (err) {
+                // If no active ad, backend might return 404
+            } finally {
+                setFetchingActive(false);
+            }
+        };
+        fetchCurrentAd();
     }, []);
 
-    const activatePlan = async (planType) => {
-        setActionLoading(true);
-        setError('');
-        setSuccess('');
+    const handleCheckout = async () => {
+        setLoading(true);
         try {
-            await vendorAds.activate(planType);
-            setSuccess(`Successfully activated ${planType} plan!`);
-            await fetchAds();
+            // Mocking payment processing delay
+            await new Promise(r => setTimeout(r, 2000));
+            await vendorAdApi.purchaseAd({
+                plan_type: selectedPlan.id,
+                duration: duration,
+                placement: placement,
+                payment_status: 'completed',
+                transaction_id: 'txn_' + Math.random().toString(36).substr(2, 9)
+            });
+            window.location.reload();
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to activate plan');
+            console.error('Checkout failed', err);
+            alert(err.response?.data?.error || 'Payment failed');
         } finally {
-            setActionLoading(false);
+            setLoading(false);
         }
     };
 
-    if (loading) return <div className="p-8 text-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div></div>;
+    if (fetchingActive) {
+        return <div className="p-8"><div className="animate-pulse bg-slate-200 h-64 rounded-2xl w-full"></div></div>;
+    }
 
-    return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900">Ad Management</h1>
-            
-            {error && (
-                <div className="bg-red-50 text-red-700 p-4 rounded-md flex items-center">
-                    <AlertTriangle className="w-5 h-5 mr-2" />
-                    {error}
-                </div>
-            )}
-            
-            {success && (
-                <div className="bg-green-50 text-green-700 p-4 rounded-md flex items-center">
-                    <CheckCircle className="w-5 h-5 mr-2" />
-                    {success}
-                </div>
-            )}
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h2 className="text-xl font-semibold mb-4">Current Active Plan</h2>
-                {adsData.active_plan ? (
-                    <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <span className="text-sm font-medium text-blue-800 uppercase bg-blue-200 px-2 py-1 rounded inline-block mb-2">
-                                    {adsData.active_plan.plan_type}
-                                </span>
-                                <p className="text-gray-700">Valid until: <span className="font-semibold">{adsData.active_plan.end_date}</span></p>
-                            </div>
-                            <span className="flex items-center text-green-600 font-medium">
-                                <CheckCircle className="w-5 h-5 mr-1" /> Active
-                            </span>
+    if (activeAd) {
+        return (
+            <div className="p-8">
+                <div className="vendor-glass-card p-10 bg-gradient-to-r from-blue-50 to-teal-50">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-3xl font-black text-slate-800">Your Active Campaign</h2>
+                        <span className="vendor-badge vendor-badge-success py-2 px-4 shadow-sm animate-pulse">Running</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                            <p className="text-sm text-slate-500 font-bold mb-2">Plan Tier</p>
+                            <p className="text-2xl font-black capitalize text-blue-600">{activeAd.plan_type}</p>
+                        </div>
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                            <p className="text-sm text-slate-500 font-bold mb-2">Started On</p>
+                            <p className="text-xl font-bold text-slate-800">{new Date(activeAd.start_date).toLocaleDateString()}</p>
+                        </div>
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                            <p className="text-sm text-slate-500 font-bold mb-2">Ends On</p>
+                            <p className="text-xl font-bold text-slate-800">{new Date(activeAd.end_date).toLocaleDateString()}</p>
                         </div>
                     </div>
-                ) : (
-                    <p className="text-gray-500 italic">You do not have any active ad plans. Select a plan below.</p>
-                )}
+                    
+                    <p className="text-slate-600 text-sm">To change or extend your plan, please wait until the current billing cycle expires or contact priority vendor support.</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="mb-10 text-center">
+                <h1 className="text-4xl font-black text-slate-800 mb-3">Marketplace 
+                    <span className="vendor-gradient-text ml-2">Advertising</span>
+                </h1>
+                <p className="text-slate-500">Boost your yard's visibility globally and dominate the search results.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {plans.map((plan) => (
-                    <div key={plan.type} className={`bg-white border rounded-lg shadow-sm overflow-hidden flex flex-col ${adsData.active_plan?.plan_type === plan.type ? 'ring-2 ring-blue-500 border-transparent' : 'border-gray-200'}`}>
-                        <div className="p-6 flex-grow">
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">{plan.title}</h3>
-                            <div className="text-2xl font-black text-blue-600 mb-4">{plan.price}</div>
-                            <ul className="space-y-2 mb-6">
-                                {plan.features.map((feature, i) => (
-                                    <li key={i} className="flex items-center text-sm text-gray-600">
-                                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
+            {/* Stepper Header */}
+            <div className="flex justify-center mb-10">
+                {[1,2,3,4].map(s => (
+                    <div key={s} className="flex items-center">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                            step >= s ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-200 text-slate-400'
+                        }`}>
+                            {step > s ? '✓' : s}
                         </div>
-                        <div className="p-6 bg-gray-50 border-t border-gray-100">
-                            <button
-                                onClick={() => activatePlan(plan.type)}
-                                disabled={actionLoading || !!adsData.active_plan}
-                                className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                                    adsData.active_plan?.plan_type === plan.type 
-                                        ? 'bg-blue-100 text-blue-800 cursor-not-allowed'
-                                        : !!adsData.active_plan 
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
-                                }`}
-                            >
-                                {adsData.active_plan?.plan_type === plan.type ? 'Current Plan' : 'Activate Plan'}
-                            </button>
-                        </div>
+                        {s < 4 && <div className={`w-16 h-1 mx-2 transition-all ${step > s ? 'bg-blue-600' : 'bg-slate-200'}`}></div>}
                     </div>
                 ))}
             </div>
-            
-            {adsData.history.length > 0 && (
-                <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">Ad History</h2>
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {adsData.history.map((ad, idx) => (
-                                    <tr key={idx}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">{ad.plan_type}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ad.start_date}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ad.end_date}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                ad.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+
+            <div className="vendor-card">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={step}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {/* Step 1: Browse Plans */}
+                        {step === 1 && (
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Select a Plan</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {subscriptionPlans.map(plan => (
+                                        <div 
+                                            key={plan.id}
+                                            onClick={() => { setSelectedPlan(plan); setStep(2); }}
+                                            className={`relative cursor-pointer rounded-2xl p-8 border-2 transition-all hover:-translate-y-1 ${
+                                                selectedPlan?.id === plan.id ? 'border-blue-600 shadow-xl bg-blue-50/20' : 'border-slate-200 hover:shadow-md'
+                                            }`}
+                                        >
+                                            {plan.popular && (
+                                                <div className="absolute top-0 right-8 transform -translate-y-1/2">
+                                                    <span className="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                                        Most Popular
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className={`inline-block px-4 py-1.5 rounded-lg bg-gradient-to-r ${plan.color} mb-6`}>
+                                                <span className="text-white font-bold text-sm tracking-wide">{plan.name}</span>
+                                            </div>
+                                            <div className="mb-6 border-b border-slate-100 pb-6">
+                                                <span className="text-5xl font-black text-slate-800">${plan.price}</span>
+                                                <span className="text-slate-500 font-medium">/mo</span>
+                                            </div>
+                                            <ul className="space-y-4">
+                                                {plan.features.map((feature, i) => (
+                                                    <li key={i} className="flex gap-3 text-slate-600 font-medium items-center">
+                                                        <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                        {feature}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 2: Duration */}
+                        {step === 2 && (
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Choose Duration</h2>
+                                <div className="max-w-xl mx-auto space-y-4">
+                                    {[
+                                        { label: '1 Month', value: 30, discount: 0 },
+                                        { label: '3 Months', value: 90, discount: 10 },
+                                        { label: '6 Months', value: 180, discount: 20 },
+                                    ].map(opt => (
+                                        <div 
+                                            key={opt.value}
+                                            onClick={() => setDuration(opt.value)}
+                                            className={`flex items-center justify-between p-6 rounded-xl cursor-pointer border-2 transition-all ${
+                                                duration === opt.value ? 'bg-blue-50 border-blue-600' : 'border-slate-200 hover:border-blue-300'
+                                            }`}
+                                        >
+                                            <div>
+                                                <h3 className="font-bold text-lg text-slate-800">{opt.label}</h3>
+                                                {opt.discount > 0 && <span className="text-green-600 text-sm font-bold mt-1 block">Save {opt.discount}%!</span>}
+                                            </div>
+                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                                duration === opt.value ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
                                             }`}>
-                                                {ad.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                                {duration === opt.value && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 3: Placement */}
+                        {step === 3 && (
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Select Placement</h2>
+                                <div className="max-w-xl mx-auto space-y-4">
+                                    {[
+                                        { id: 'featured', label: 'Featured Search Results', desc: 'Appear at the very top of part searches' },
+                                        { id: 'homepage', label: 'Homepage Banner', desc: 'High visibility across the main landing page' },
+                                        { id: 'both', label: 'Maximum Visibility (Both)', desc: 'Dominate both search and homepage traffic' },
+                                    ].map(opt => (
+                                        <div 
+                                            key={opt.id}
+                                            onClick={() => setPlacement(opt.id)}
+                                            className={`flex items-center justify-between p-6 rounded-xl cursor-pointer border-2 transition-all ${
+                                                placement === opt.id ? 'bg-blue-50 border-blue-600' : 'border-slate-200 hover:border-blue-300'
+                                            }`}
+                                        >
+                                            <div>
+                                                <h3 className="font-bold text-lg text-slate-800">{opt.label}</h3>
+                                                <span className="text-slate-500 text-sm mt-1 block">{opt.desc}</span>
+                                            </div>
+                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                                placement === opt.id ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
+                                            }`}>
+                                                {placement === opt.id && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 4: Checkout */}
+                        {step === 4 && (
+                            <div className="max-w-2xl mx-auto">
+                                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Secure Checkout</h2>
+                                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 mb-8">
+                                    <div className="flex justify-between items-center mb-4 text-lg">
+                                        <span className="text-slate-600 font-medium">Selected Plan</span>
+                                        <span className="font-bold text-slate-800">{selectedPlan.name}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-4 text-lg border-b border-slate-200 pb-4">
+                                        <span className="text-slate-600 font-medium">Placement</span>
+                                        <span className="font-bold text-slate-800 capitalize">{placement}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-6 text-lg border-b border-slate-200 pb-6">
+                                        <span className="text-slate-600 font-medium">Duration</span>
+                                        <span className="font-bold text-slate-800">{duration / 30} Month(s)</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-2xl font-black">
+                                        <span className="text-slate-800">Total Due</span>
+                                        <span className="text-blue-600">${selectedPlan.price * (duration / 30)}</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="text-center rounded-xl overflow-hidden shadow-sm border border-slate-200">
+                                    {/* Mock Credit Card UI representation */}
+                                    <div className="bg-slate-800 p-6 text-left">
+                                        <p className="text-slate-400 text-sm uppercase tracking-widest mb-4">Payment Method</p>
+                                        <div className="font-mono text-white text-lg tracking-widest mb-4">**** **** **** 4242</div>
+                                        <div className="flex justify-between text-slate-300 text-sm w-1/2">
+                                            <span>EXP 12/28</span>
+                                            <span>CVC ***</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Footer Controls */}
+                <div className="flex justify-between items-center mt-10 pt-6 border-t border-slate-100">
+                    {step > 1 ? (
+                        <button onClick={() => setStep(step - 1)} className="px-6 py-2 text-slate-600 font-medium hover:text-slate-900 transition-colors">
+                            Back
+                        </button>
+                    ) : <div></div>}
+                    
+                    {step < 4 ? (
+                        <button onClick={() => setStep(step + 1)} className="vendor-btn vendor-btn-primary px-10">
+                            Continue
+                        </button>
+                    ) : (
+                        <LoadingButton isLoading={loading} onClick={handleCheckout} className="!bg-green-600 hover:!bg-green-700 text-white px-10 shadow-lg shadow-green-500/30">
+                            Pay & Activate Securely
+                        </LoadingButton>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
-};
-
-export default VendorAds;
+}

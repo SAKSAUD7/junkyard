@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { vendorInventory } from '../../services/vendorApi';
+import { EmptyState } from '../../components/vendor/UIElements';
 
 const VendorInventory = () => {
     const [inventory, setInventory] = useState([]);
@@ -140,77 +141,73 @@ const VendorInventory = () => {
                     </div>
                 )}
 
-                {/* Inventory List as Cards */}
-                <div className="space-y-4">
+                {/* Inventory Table */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     {inventory.length > 0 ? (
-                        inventory.map((item) => (
-                            <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${item.item_type === 'make' ? 'bg-blue-100 text-blue-700' :
-                                                item.item_type === 'model' ? 'bg-purple-100 text-purple-700' :
-                                                    'bg-amber-100 text-amber-700'
-                                                }`}>
-                                                {item.item_type}
-                                            </span>
-                                            {item.year_start && (
-                                                <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                                                    {item.year_start} - {item.year_end || 'Present'}
+                        <div className="overflow-x-auto">
+                            <table className="vendor-table w-full text-left">
+                                <thead className="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Years</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {inventory.map((item) => (
+                                        <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${item.item_type === 'make' ? 'bg-blue-100 text-blue-700' :
+                                                    item.item_type === 'model' ? 'bg-purple-100 text-purple-700' :
+                                                        'bg-amber-100 text-amber-700'
+                                                    }`}>
+                                                    {item.item_type}
                                                 </span>
-                                            )}
-                                        </div>
-                                        <h3 className="text-lg font-bold text-gray-900">
-                                            {item.make} {item.model}
-                                        </h3>
-                                        {item.part_name && (
-                                            <p className="text-gray-600 font-medium">{item.part_name}</p>
-                                        )}
-                                        {item.notes && (
-                                            <p className="text-sm text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg inline-block">
-                                                {item.notes}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <button
-                                            onClick={() => handleToggleAvailability(item)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${item.is_available
-                                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                                                }`}
-                                        >
-                                            {item.is_available ? 'Active' : 'Hidden'}
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-center py-16 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                </svg>
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-1">No items yet</h3>
-                            <p className="text-gray-500 mb-6">Add makes, models, or parts you support.</p>
-                            <button
-                                onClick={() => setShowAddModal(true)}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
-                            >
-                                Add First Item
-                            </button>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="font-bold text-slate-900">{item.make} {item.model}</div>
+                                                {item.part_name && <div className="text-sm text-slate-500 mt-1">{item.part_name}</div>}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
+                                                {item.year_start ? `${item.year_start} - ${item.year_end || 'Present'}` : '-'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <button
+                                                    onClick={() => handleToggleAvailability(item)}
+                                                    title={item.is_available ? "Hide Item from Public" : "Make Item Public"}
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${item.is_available
+                                                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                                        }`}
+                                                >
+                                                    {item.is_available ? 'Active' : 'Hidden'}
+                                                </button>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <button
+                                                    onClick={() => handleDelete(item.id)}
+                                                    title="Delete Inventory Item"
+                                                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
+                    ) : (
+                        <EmptyState 
+                            title="No items yet"
+                            description="Add makes, models, or parts you support to match with incoming leads."
+                            actionText="Add First Item"
+                            onAction={() => setShowAddModal(true)}
+                        />
                     )}
                 </div>
             </div>

@@ -29,6 +29,8 @@ class SiteContent(models.Model):
         ('navbar', 'Navbar (Global)'),
         ('footer', 'Footer (Global)'),
         ('global', 'Global / Shared'),
+        ('add_a_yard', 'Add a Yard'),
+        ('vendor_portal', 'Vendor Portal'),
         ('seo_home', 'SEO – Home'),
         ('seo_about', 'SEO – About'),
         ('seo_contact', 'SEO – Contact'),
