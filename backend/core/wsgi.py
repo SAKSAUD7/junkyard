@@ -13,7 +13,10 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
+application = get_wsgi_application()
+
 # Auto-apply database migrations on startup (Important for Azure deployment)
+# Must run AFTER get_wsgi_application() to ensure django app registry is fully ready.
 from django.core.management import call_command
 try:
     import logging
@@ -23,5 +26,3 @@ try:
     logger.info("Database migrations completed successfully.")
 except Exception as e:
     print(f"Error running automatic migrations: {e}")
-
-application = get_wsgi_application()
