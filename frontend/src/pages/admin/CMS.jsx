@@ -24,6 +24,7 @@ const PAGES = [
     { key: 'global',       label: 'Global / SEO',   icon: '🌐' },
     { key: 'add_a_yard',   label: 'Add A Yard',     icon: '🏗️' },
     { key: 'vendor_portal',label: 'Vendor Portal',  icon: '💼' },
+    { key: 'quote_request',label: 'Quote Request',  icon: '📝' },
 ];
 
 const TYPE_META = {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { api } from '../services/api'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
@@ -15,7 +16,28 @@ export default function QuoteRequest() {
     const year = searchParams.get('year') || ''
 
     // Generate random security code
-    const [securityCode] = useState(Math.random().toString(36).substring(2, 8).toUpperCase())
+    const [securityCode, setSecurityCode] = useState('')
+    
+    // CMS Data
+    const [cmsData, setCmsData] = useState({})
+
+    useEffect(() => {
+        setSecurityCode(Math.random().toString(36).substring(2, 8).toUpperCase())
+        
+        const fetchCMS = async () => {
+            try {
+                const response = await api.cms.getContent('quote_request');
+                if (response?.data) {
+                    const contentMap = {};
+                    response.data.forEach(item => { contentMap[item.key] = item.value; });
+                    setCmsData(contentMap);
+                }
+            } catch (err) {
+                console.error('Failed to fetch CMS configuration:', err);
+            }
+        };
+        fetchCMS();
+    }, []);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -61,7 +83,8 @@ export default function QuoteRequest() {
     }
 
     const refreshSecurityCode = () => {
-        window.location.reload()
+        setSecurityCode(Math.random().toString(36).substring(2, 8).toUpperCase())
+        setFormData({...formData, securityCodeInput: ''})
     }
 
     return (
@@ -93,9 +116,13 @@ export default function QuoteRequest() {
                         </span>
                     </div>
 
-                    <h1 className="animate-fade-in-up text-white" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                        You have selected a
-                    </h1>
+                    {cmsData.hero_heading ? (
+                        <h1 className="animate-fade-in-up text-white" dangerouslySetInnerHTML={{ __html: cmsData.hero_heading }} style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }} />
+                    ) : (
+                        <h1 className="animate-fade-in-up text-white" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 900, fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                            You have selected a
+                        </h1>
+                    )}
                     
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 mb-6 shadow-2xl inline-block min-w-[300px] animate-fade-in-up delay-100">
                         <p className="text-3xl md:text-4xl font-black text-white" style={{ fontFamily: "'Outfit', sans-serif", textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
@@ -110,9 +137,13 @@ export default function QuoteRequest() {
 
             <div className="relative pb-16 px-4 bg-white">
                 <div className="relative max-w-3xl mx-auto -mt-16 z-20">
-                    <p className="text-xl text-slate-600 text-center mb-6 font-semibold">
-                        Complete the fields below to get an <span className="text-blue-600 font-bold">Instant Quote</span>
-                    </p>
+                    {cmsData.instruction_text ? (
+                        <p className="text-xl text-slate-600 text-center mb-6 font-semibold" dangerouslySetInnerHTML={{ __html: cmsData.instruction_text }} />
+                    ) : (
+                        <p className="text-xl text-slate-600 text-center mb-6 font-semibold">
+                            Complete the fields below to get an <span className="text-blue-600 font-bold">Instant Quote</span>
+                        </p>
+                    )}
 
                     {/* Quote Form Card */}
                     <div className="relative animate-scale-in">
@@ -124,7 +155,9 @@ export default function QuoteRequest() {
                             <div className="relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700"></div>
                                 <div className="relative py-6 px-6 text-center">
-                                    <h2 className="text-2xl font-black text-white" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '0.05em' }}>GET A QUOTE NOW</h2>
+                                    <h2 className="text-2xl font-black text-white" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '0.05em' }}>
+                                        {cmsData.form_heading || 'GET A QUOTE NOW'}
+                                    </h2>
                                 </div>
                             </div>
 
@@ -214,7 +247,7 @@ export default function QuoteRequest() {
                                         <svg className="w-5 h-5 text-secondary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                                         </svg>
-                                        Security Code <span className="text-red-500 ml-1">*</span>
+                                        {cmsData.security_code_label || 'Security Code'} <span className="text-red-500 ml-1">*</span>
                                     </label>
                                     <div className="flex items-center gap-4 mb-3">
                                         <div className="bg-gradient-to-br from-gray-100 to-gray-200 px-8 py-4 rounded-xl border-2 border-gray-300 shadow-inner">
@@ -227,7 +260,7 @@ export default function QuoteRequest() {
                                             onClick={refreshSecurityCode}
                                             className="text-cyan-500 hover:text-cyan-600 font-semibold text-sm underline"
                                         >
-                                            Change?
+                                            {cmsData.security_code_change_text || 'Change?'}
                                         </button>
                                     </div>
                                     <input
@@ -249,7 +282,7 @@ export default function QuoteRequest() {
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 animate-gradient"></div>
                                     <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:from-blue-600 group-hover:to-cyan-600 text-slate-800 font-black py-5 px-6 rounded-xl text-xl transition-all duration-300 shadow-glow group-hover:shadow-glow-lg transform group-hover:scale-[1.02]">
-                                        FIND MY PART NOW →
+                                        {cmsData.form_submit_button || 'FIND MY PART NOW →'}
                                     </div>
                                 </button>
                             </form>
@@ -264,7 +297,7 @@ export default function QuoteRequest() {
                                 <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-glow">
                                     <span className="text-3xl font-black text-slate-800">100%</span>
                                 </div>
-                                <p className="text-xs text-slate-600 font-semibold">SATISFACTION<br />GUARANTEE</p>
+                                <p className="text-xs text-slate-600 font-semibold uppercase whitespace-pre-line text-center hover:scale-105 transition-transform" dangerouslySetInnerHTML={{ __html: cmsData.trust_badge_1?.replace(/\|/g, '<br />') || '100%<br />SATISFACTION<br />GUARANTEE' }} />
                             </div>
 
                             {/* Payment Methods */}
@@ -287,13 +320,13 @@ export default function QuoteRequest() {
                                         <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                 </div>
-                                <p className="text-xs text-slate-600 font-semibold">VERISIGN<br />SECURED</p>
+                                <p className="text-xs text-slate-600 font-semibold uppercase whitespace-pre-line text-center hover:scale-105 transition-transform" dangerouslySetInnerHTML={{ __html: cmsData.trust_badge_2?.replace(/\|/g, '<br />') || 'VERISIGN<br />SECURED' }} />
                             </div>
 
                             {/* Authorize.net */}
                             <div className="text-center">
                                 <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-glow">
-                                    <span className="text-xs font-black text-slate-800 leading-tight">AUTHORIZE<br />.NET</span>
+                                    <span className="text-xs font-black text-slate-800 leading-tight uppercase whitespace-pre-line text-center hover:scale-105 transition-transform" dangerouslySetInnerHTML={{ __html: cmsData.trust_badge_3?.replace(/\|/g, '<br />') || 'AUTHORIZE<br />.NET' }} />
                                 </div>
                             </div>
                         </div>
