@@ -245,15 +245,13 @@ export default function AdminVendors() {
             showToast('Password reset successful', 'success');
         } catch (error) {
             console.error(error);
-            // Provide user-friendly error messages
+            const backendError = error.response?.data?.error || error.message || '';
             let errorMessage = 'Failed to reset password';
 
-            if (error.message.includes('No user account found') || error.message.includes('activate')) {
+            if (backendError.includes('No user account found') || backendError.includes('activate')) {
                 errorMessage = 'Vendor account not found. Please activate the vendor first, then try resetting the password.';
-            } else if (error.message.includes('404')) {
-                errorMessage = 'Password reset endpoint not found. Please contact support.';
-            } else if (error.message) {
-                errorMessage = error.message;
+            } else {
+                errorMessage = backendError;
             }
 
             showToast(errorMessage, 'error');

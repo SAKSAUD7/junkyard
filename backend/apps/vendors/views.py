@@ -311,30 +311,71 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     def reset_password(self, request, pk=None):
         """
         Reset the password for the vendor's user account.
+        Will auto-generate the user account if it doesn't exist yet but the vendor is active.
         """
         import secrets
+        from django.contrib.auth import get_user_model
+        from apps.users.models import VendorProfile
+        
         vendor = self.get_object()
         
         # Find associated user via VendorProfile
         profile = vendor.profiles.first()
-        if not profile or not profile.user:
-            return Response(
-                {'error': 'No user account found for this vendor. Please activate the vendor first.'},
-                status=404
+        
+        User = get_user_model()
+        user = None
+        
+        if profile and profile.user:
+            user = profile.user
+            # Generate new password
+            temp_password = secrets.token_urlsafe(12)
+            user.set_password(temp_password)
+            user.save()
+            logger.info(f"Password reset for vendor {vendor.name} (User: {user.username})")
+        else:
+            # If no profile exists, but they are trying to reset password, auto-create one if email exists!
+            if not vendor.email:
+                return Response(
+                    {'error': 'Vendor has no email address. Cannot generate a user account for them.'},
+                    status=400
+                )
+                
+            existing_user = User.objects.filter(email=vendor.email).first()
+            if existing_user:
+                user = existing_user
+                temp_password = secrets.token_urlsafe(12)
+                user.set_password(temp_password)
+                user.save()
+            else:
+                username = vendor.email.split('@')[0]
+                base_username = username
+                counter = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                
+                temp_password = secrets.token_urlsafe(12)
+                user = User.objects.create_user(
+                    username=username,
+                    email=vendor.email,
+                    password=temp_password,
+                    is_vendor=True,
+                    is_active=True
+                )
+                logger.info(f"Auto-generated User struct for imported vendor {vendor.name}")
+                
+            VendorProfile.objects.create(
+                user=user,
+                vendor=vendor,
+                is_owner=True,
+                can_edit=True,
+                can_respond_reviews=True,
+                can_manage_inventory=True
             )
-            
-        user = profile.user
-        
-        # Generate new password
-        temp_password = secrets.token_urlsafe(12)
-        user.set_password(temp_password)
-        user.save()
-        
-        # Log password reset (DO NOT log the actual password)
-        logger.info(f"Password reset for vendor {vendor.name} (User: {user.username})")
-        
+            logger.info(f"Auto-generated VendorProfile for {user.username}")
+
         return Response({
-            'message': 'Password reset successfully',
+            'message': 'Password reset successfully (Account generated if missing)',
             'username': user.username,
             'temp_password': temp_password,
             'email': user.email
