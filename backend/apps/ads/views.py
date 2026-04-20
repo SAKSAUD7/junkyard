@@ -57,10 +57,13 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
     Admin ViewSet for managing advertisements.
     Only accessible by admin users.
     """
-    queryset = Advertisement.objects.all()
+    queryset = Advertisement.objects.all().order_by('-id')
     serializer_class = AdvertisementSerializer
     permission_classes = [permissions.IsAdminUser]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    
+    from apps.vendors.views import StandardResultsSetPagination
+    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         import logging
