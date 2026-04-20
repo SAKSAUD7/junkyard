@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { api } from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
 import { usePermissions } from '../contexts/PermissionContext';
 import {
@@ -22,6 +23,22 @@ export default function AdminLayout() {
     const { hasPermission, roleName, roleColor } = usePermissions();
     const location = useLocation();
     const navigate = useNavigate();
+    const [logo, setLogo] = useState('');
+
+    useEffect(() => {
+        const fetchBrand = async () => {
+            try {
+                const response = await api.cms.getContent('global');
+                if (response?.data) {
+                    const logoItem = response.data.find(i => i.key === 'portal_logo');
+                    if (logoItem?.value) setLogo(logoItem.value);
+                }
+            } catch (err) {
+                console.error("CMS Admin Logo Fetch Failed", err);
+            }
+        };
+        fetchBrand();
+    }, []);
 
     const allNavItems = [
         { name: 'Dashboard',        href: '/admin-portal/dashboard',        icon: HomeIcon,           permission: null },
@@ -54,8 +71,20 @@ export default function AdminLayout() {
         <div className="flex h-screen bg-[#f5f5f7] overflow-hidden font-['Inter',sans-serif]">
             {/* Slim Icon Sidebar - Dark Theme */}
             <aside className="w-20 bg-[#3d4451]/95 backdrop-blur-xl border-r border-[#4a5160]/30 flex flex-col items-center py-6 gap-2 shadow-xl">
+                
+                {/* CMS Injected Context Logo */}
+                {logo ? (
+                    <div className="w-12 h-12 flex items-center justify-center mb-4">
+                        <img src={logo} alt="JYNM Logo" className="w-full h-full object-contain filter drop-shadow-md" />
+                    </div>
+                ) : (
+                    <div className="w-12 h-12 flex items-center justify-center mb-4">
+                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">JYNM</span>
+                    </div>
+                )}
+
                 {/* Navigation Icons */}
-                <div className="flex flex-col gap-2 flex-1 mt-2 overflow-y-auto scrollbar-hide">
+                <div className="flex flex-col gap-2 flex-1 overflow-y-auto scrollbar-hide">
                     {navigation.map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.href);
