@@ -729,6 +729,20 @@ DEFAULT_CMS_CONTENT = [
     # ══════════════════════════════════════════════════════════════════
     # ADD A YARD PAGE
     # ══════════════════════════════════════════════════════════════════
+    {'page': 'add_a_yard', 'section': 'header', 'key': 'title',
+     'label': 'Page Title', 'value': 'Vendor Onboarding', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'header', 'key': 'subtitle',
+     'label': 'Page Subtitle', 'value': 'Join thousands of yards expanding their business online.', 'content_type': 'text'},
+
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'title',
+     'label': 'Success Screen Title', 'value': 'Application Submitted!', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'message',
+     'label': 'Success Screen Message', 'value': 'Thank you for joining our platform. You will be able to manage your Premium Ads and inventory from your Dashboard once approved.', 'content_type': 'textarea'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'btn_home',
+     'label': 'Success Button: Home', 'value': 'Back to Home', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'btn_login',
+     'label': 'Success Button: Login', 'value': 'Go to Vendor Login', 'content_type': 'text'},
+
     {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_title',
      'label': 'Step 1 Title', 'value': 'Basic Info', 'content_type': 'text'},
     {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_subtitle',
@@ -746,16 +760,30 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'add_a_yard', 'section': 'steps', 'key': 'step4_subtitle',
      'label': 'Step 4 Subtitle', 'value': 'Final check', 'content_type': 'text'},
 
+    {'page': 'add_a_yard', 'section': 'controls', 'key': 'btn_back',
+     'label': 'Back Button Text', 'value': 'Back', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'controls', 'key': 'btn_continue',
+     'label': 'Continue Button Text', 'value': 'Continue', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'controls', 'key': 'btn_submit',
+     'label': 'Submit Button Text', 'value': 'Submit Application', 'content_type': 'text'},
+
     # ══════════════════════════════════════════════════════════════════
     # VENDOR PORTAL
     # ══════════════════════════════════════════════════════════════════
     {'page': 'vendor_portal', 'section': 'ads', 'key': 'ad_plans',
      'label': 'Ad Plans Configuration (JSON format)',
-     'value': '[{"type": "standard", "name": "Standard Boost", "pricing": 99, "duration": 30, "placement": "featured"}, {"type": "premium", "name": "Premium Spotlight", "pricing": 199, "duration": 30, "placement": "homepage"}]',
+     'value': '[\n  {\n    "id": "minimal",\n    "name": "Minimal Plan",\n    "price": 49,\n    "color": "from-slate-600 to-slate-500",\n    "popular": false,\n    "features": ["Basic Visibility", "Standard Support"]\n  },\n  {\n    "id": "standard",\n    "name": "Standard Plan",\n    "price": 99,\n    "color": "from-blue-600 to-teal-600",\n    "popular": false,\n    "features": ["Featured Results", "High Priority Support"]\n  },\n  {\n    "id": "compact",\n    "name": "Compact Plan",\n    "price": 149,\n    "color": "from-purple-600 to-pink-500",\n    "popular": false,\n    "features": ["Highlighted Results", "Premium Badge"]\n  },\n  {\n    "id": "premium",\n    "name": "Premium Plan",\n    "price": 199,\n    "color": "from-yellow-400 to-orange-500",\n    "popular": true,\n    "features": ["Top #1 Placement", "Gold Styling", "Guaranteed Traffic"]\n  }\n]',
      'content_type': 'json'},
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_title',
+     'label': 'Ads Header Title (HTML)',
+     'value': 'Marketplace <span class="vendor-gradient-text ml-2">Advertising</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_desc',
+     'label': 'Ads Header Description',
+     'value': 'Boost your yard\'s visibility globally and dominate the search results.', 'content_type': 'textarea'},
+
     {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'welcome_text',
      'label': 'Dashboard Welcome Title',
-     'value': 'Welcome to Vendor Portal', 'content_type': 'text'},
+     'value': 'Welcome back!', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'help_text',
      'label': 'Dashboard Help Subtext',
      'value': 'Manage your parts inventory, track views, and publish ads directly.', 'content_type': 'textarea'},

@@ -326,6 +326,85 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
     );
 }
 
+// ─── JSON Editor Field ──────────────────────────────────────────────────────────
+function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
+    const [jsonError, setJsonError] = useState('');
+    const [localString, setLocalString] = useState('');
+
+    // Format gracefully on mount/value change from parent
+    useEffect(() => {
+        try {
+            const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+            setLocalString(JSON.stringify(parsed, null, 2));
+            setJsonError('');
+        } catch {
+            setLocalString(value || '');
+            if (value) setJsonError('Invalid JSON format');
+        }
+    }, [value]);
+
+    const handleChange = (newVal) => {
+        setLocalString(newVal);
+        try {
+            JSON.parse(newVal);
+            setJsonError('');
+            onChange(entryId, newVal); // Pass raw string to parent
+        } catch (e) {
+            setJsonError(e.message);
+            onChange(entryId, newVal); // Still mark dirty, but parent will save broken string
+        }
+    };
+
+    const handleFormat = () => {
+        try {
+            const parsed = JSON.parse(localString);
+            const formatted = JSON.stringify(parsed, null, 2);
+            setLocalString(formatted);
+            onChange(entryId, formatted);
+            setJsonError('');
+        } catch (e) {
+            setJsonError('Cannot format: ' + e.message);
+        }
+    };
+
+    return (
+        <div className="space-y-2">
+            <div className="flex justify-between items-center">
+                <button
+                    onClick={handleFormat}
+                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                    {'{ }'} Pretty Print Format
+                </button>
+                {dirty && (
+                    <button
+                        onClick={() => !jsonError && onSave(entryId)}
+                        disabled={saving || !!jsonError}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
+                            text-white text-xs font-semibold disabled:opacity-50 transition-all"
+                    >
+                        {saving ? <ArrowPathIcon className="w-3 h-3 animate-spin" /> : <CheckIcon className="w-3 h-3" />}
+                        Save JSON
+                    </button>
+                )}
+            </div>
+            <textarea
+                value={localString}
+                onChange={e => handleChange(e.target.value)}
+                rows={8}
+                className={`w-full px-3 py-2.5 text-sm rounded-lg bg-slate-800 text-green-400 font-mono resize-y focus:outline-none focus:ring-2 border-2 ${
+                    jsonError ? 'border-red-500 focus:ring-red-200' : 'border-slate-700 focus:ring-indigo-500'
+                }`}
+                placeholder="{ ... }"
+                spellCheck={false}
+            />
+            {jsonError && (
+                <p className="text-xs text-red-500 font-medium">⚠️ {jsonError}</p>
+            )}
+        </div>
+    );
+}
+
 // ─── HTML Preview Field ───────────────────────────────────────────────────────
 function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
     const [showPreview, setShowPreview] = useState(false);
@@ -431,6 +510,16 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
 
                 ) : entry.content_type === 'html' ? (
                     <HtmlField
+                        value={value}
+                        onChange={onValueChange}
+                        entryId={entry.id}
+                        onSave={onSave}
+                        saving={saving}
+                        dirty={dirty}
+                    />
+
+                ) : entry.content_type === 'json' ? (
+                    <JsonField
                         value={value}
                         onChange={onValueChange}
                         entryId={entry.id}

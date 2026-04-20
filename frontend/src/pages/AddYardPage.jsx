@@ -186,16 +186,18 @@ export default function AddYardPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h2 className="text-3xl font-bold text-slate-800 mb-4">Application Submitted!</h2>
-                        <p className="text-slate-600 mb-8">
-                            Thank you for joining our platform. You will be able to manage your Premium Ads and inventory from your Dashboard once approved.
+                        <h2 className="text-3xl font-bold text-slate-800 mb-4">
+                            {cmsData.success_title || 'Application Submitted!'}
+                        </h2>
+                        <p className="text-slate-600 mb-8 whitespace-pre-wrap">
+                            {cmsData.success_message || 'Thank you for joining our platform. You will be able to manage your Premium Ads and inventory from your Dashboard once approved.'}
                         </p>
                         <div className="flex justify-center gap-4">
                             <button onClick={() => navigate('/')} className="vendor-btn vendor-btn-secondary">
-                                Back to Home
+                                {cmsData.btn_home || 'Back to Home'}
                             </button>
                             <button onClick={() => navigate('/signin')} className="vendor-btn vendor-btn-primary">
-                                Go to Vendor Login
+                                {cmsData.btn_login || 'Go to Vendor Login'}
                             </button>
                         </div>
                     </motion.div>
@@ -214,8 +216,12 @@ export default function AddYardPage() {
                     
                     {/* Header */}
                     <div className="text-center mb-12">
-                        <h1 className="text-4xl font-bold text-slate-800 mb-4">Vendor Onboarding</h1>
-                        <p className="text-slate-600">Join thousands of yards expanding their business online.</p>
+                        <h1 className="text-4xl font-bold text-slate-800 mb-4">
+                            {cmsData.title || 'Vendor Onboarding'}
+                        </h1>
+                        <p className="text-slate-600">
+                            {cmsData.subtitle || 'Join thousands of yards expanding their business online.'}
+                        </p>
                     </div>
 
                     {/* Stepper */}
@@ -348,17 +354,17 @@ export default function AddYardPage() {
                         <div className="flex justify-between items-center mt-10 pt-6 border-t border-slate-100">
                             {step > 1 ? (
                                 <button type="button" onClick={prevStep} className="px-6 py-2 text-slate-600 font-medium hover:text-slate-900 transition-colors">
-                                    Back
+                                    {cmsData.btn_back || 'Back'}
                                 </button>
                             ) : <div></div>}
 
                             {step < 4 ? (
                                 <button type="button" onClick={nextStep} className="vendor-btn vendor-btn-primary px-8">
-                                    Continue
+                                    {cmsData.btn_continue || 'Continue'}
                                 </button>
                             ) : (
                                 <LoadingButton isLoading={loading} onClick={handleSubmit} className="!bg-green-600 hover:!bg-green-700 text-white px-8">
-                                    Submit Application
+                                    {cmsData.btn_submit || 'Submit Application'}
                                 </LoadingButton>
                             )}
                         </div>

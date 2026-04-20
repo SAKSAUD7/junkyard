@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { vendorAdApi } from '../../services/vendorApi';
+import { api } from '../../services/api';
 import { LoadingButton, EmptyState } from '../../components/vendor/UIElements';
 
 export default function Ads() {
@@ -12,13 +13,32 @@ export default function Ads() {
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [duration, setDuration] = useState(30);
     const [placement, setPlacement] = useState('featured');
-
-    const subscriptionPlans = [
-        { id: 'standard', name: 'Standard Boost', price: 99, color: 'from-blue-600 to-teal-600', popular: false, features: ['Featured Results', 'High Priority Support'] },
-        { id: 'premium', name: 'Premium Elite', price: 199, color: 'from-yellow-400 to-orange-500', popular: true, features: ['Top #1 Placement', 'Gold Styling', 'Guaranteed Traffic'] }
-    ];
+    
+    // CMS Data
+    const [cmsData, setCmsData] = useState({});
+    const [subscriptionPlans, setSubscriptionPlans] = useState([]);
 
     useEffect(() => {
+        const fetchCMS = async () => {
+            try {
+                const response = await api.cms.getContent('vendor_portal');
+                const contentMap = {};
+                if (response?.data) {
+                    response.data.forEach(item => { contentMap[item.key] = item.value; });
+                    setCmsData(contentMap);
+                    
+                    if (contentMap.ad_plans) {
+                        try {
+                            const parsedPlans = JSON.parse(contentMap.ad_plans);
+                            if (Array.isArray(parsedPlans)) setSubscriptionPlans(parsedPlans);
+                        } catch (e) { console.error('Failed to parse ad_plans JSON:', e); }
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch CMS configuration:', err);
+            }
+        };
+
         const fetchCurrentAd = async () => {
             try {
                 const response = await vendorAdApi.getCurrentAd();
@@ -31,6 +51,8 @@ export default function Ads() {
                 setFetchingActive(false);
             }
         };
+
+        fetchCMS();
         fetchCurrentAd();
     }, []);
 
@@ -92,10 +114,17 @@ export default function Ads() {
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <div className="mb-10 text-center">
-                <h1 className="text-4xl font-black text-slate-800 mb-3">Marketplace 
-                    <span className="vendor-gradient-text ml-2">Advertising</span>
-                </h1>
-                <p className="text-slate-500">Boost your yard's visibility globally and dominate the search results.</p>
+                {cmsData.header_title ? (
+                    <h1 className="text-4xl font-black text-slate-800 mb-3" dangerouslySetInnerHTML={{ __html: cmsData.header_title }} />
+                ) : (
+                    <h1 className="text-4xl font-black text-slate-800 mb-3">Marketplace 
+                        <span className="vendor-gradient-text ml-2">Advertising</span>
+                    </h1>
+                )}
+                
+                <p className="text-slate-500">
+                    {cmsData.header_desc || "Boost your yard's visibility globally and dominate the search results."}
+                </p>
             </div>
 
             {/* Stepper Header */}
