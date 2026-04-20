@@ -58,8 +58,8 @@ export default function Contact() {
 
             {/* Hero Section - Cinematic Car Imagery */}
             <div className="hero-depth pt-24 pb-20 flex flex-col justify-center items-center text-center" style={{ minHeight: '40vh', background: 'var(--bg-base)' }}>
-                {/* PRIMARY — aerial junkyard cars at night */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/aerial-night.png')", opacity: 0.55 }} />
+                {/* PRIMARY — CMS-controlled hero image */}
+                <div className="hero-bg-primary" style={{ backgroundImage: `url('${get('hero', 'bg_image', '/heroes/aerial-night.png')}')`, opacity: 0.55 }} />
                 {/* DEPTH — stacked crushed cars, blurred */}
                 <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/stacked-cars.png')" }} />
                 <div className="hero-overlay-base" />

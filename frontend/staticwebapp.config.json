@@ -13,10 +13,21 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
-      "/*.{png,jpg,jpeg,gif,bmp,svg,ico,webp,js,css,xml,txt}",
+      "/assets/*",
       "/images/*",
-      "/sitemap.xml",
-      "/robots.txt"
+      "/heroes/*",
+      "/3d/*",
+      "/*.css",
+      "/*.js",
+      "/*.png",
+      "/*.jpg",
+      "/*.jpeg",
+      "/*.gif",
+      "/*.svg",
+      "/*.ico",
+      "/*.webp",
+      "/*.xml",
+      "/*.txt"
     ]
   },
   "routes": [

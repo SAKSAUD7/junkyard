@@ -383,6 +383,80 @@ export default function Home() {
             </section>
 
             {/* ============================================================
+                ADD YOUR YARD CTA — Vendor Network Hub
+            ============================================================ */}
+
+            <section className="relative py-24 md:py-32 overflow-hidden shadow-2xl" style={{ margin: '4rem 1rem', borderRadius: '2rem', background: '#0a0f18', border: '1px solid rgba(234,88,12,0.2)' }}>
+                {/* Visual Depth / Ambience */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none mix-blend-overlay" />
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                        <div className="text-left scroll-fade-in pr-0 lg:pr-12">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.1)', border: '1px solid rgba(234,88,12,0.25)', boxShadow: '0 0 20px rgba(234,88,12,0.15)' }}>
+                                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_#ea580c]" />
+                                <span style={{ color: '#fed7aa', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Vendor Network Hub</span>
+                            </div>
+
+                            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#ffffff', fontWeight: 900, fontFamily: "'Outfit', sans-serif", lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+                                Transform Your Salvage{' '}
+                                <span style={{ display: 'block', background: 'linear-gradient(135deg, #ea580c, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                                    Business Today
+                                </span>
+                            </h2>
+
+                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: 1.8, maxWidth: '500px', marginBottom: '2.5rem' }}>
+                                Millions of buyers are searching for auto parts immediately. Partner with <strong>JYNM</strong> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
+                            </p>
+
+                            <div className="flex flex-wrap gap-4">
+                                <Link
+                                    to="/add-a-yard"
+                                    id="yard-cta-add-btn"
+                                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:-translate-y-1"
+                                    style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 10px 25px rgba(234,88,12,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
+                                >
+                                    Add Your Junkyard
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </Link>
+                                <Link
+                                    to="/vendor/login"
+                                    id="yard-cta-login-btn"
+                                    className="inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10"
+                                    style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.15)' }}
+                                >
+                                    Vendor Login
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* 3D Visual Asset */}
+                        <div className="hidden lg:flex items-center justify-center relative">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] border border-blue-500/20 rounded-full animate-spin-slow pointer-events-none" />
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-orange-500/10 rounded-full animate-spin-slow-reverse pointer-events-none" />
+                            <img
+                                src="/3d/gear-core.png"
+                                alt="Advanced Vendor Tech"
+                                className="relative z-10 w-full max-w-[480px] h-auto pointer-events-none"
+                                style={{
+                                    mixBlendMode: 'screen',
+                                    animation: 'float 6s ease-in-out infinite',
+                                    filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9)) contrast(1.1) brightness(1.2)'
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ============================================================
+                TRUSTED VENDORS — self-contained section (heading inside component)
+            ============================================================ */}
+            <TrustedVendors />
+
+            {/* ============================================================
                 HOW IT WORKS
             ============================================================ */}
 
@@ -503,11 +577,6 @@ export default function Home() {
             </section>
 
             {/* ============================================================
-                TRUSTED VENDORS — self-contained section (heading inside component)
-            ============================================================ */}
-            <TrustedVendors />
-
-            {/* ============================================================
                 3D ENGINE SHOWCASE + WHY CHOOSE US (side by side on desktop)
             ============================================================ */}
             <section className="py-20 md:py-28" style={{ background: 'var(--bg-base)' }}>
@@ -618,74 +687,6 @@ export default function Home() {
             </section>
 
 
-
-            {/* ADD YOUR YARD CTA */}
-
-            <section className="relative py-24 md:py-32 overflow-hidden shadow-2xl" style={{ margin: '4rem 1rem', borderRadius: '2rem', background: '#0a0f18', border: '1px solid rgba(234,88,12,0.2)' }}>
-                {/* Visual Depth / Ambience */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none mix-blend-overlay" />
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-                        <div className="text-left scroll-fade-in pr-0 lg:pr-12">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.1)', border: '1px solid rgba(234,88,12,0.25)', boxShadow: '0 0 20px rgba(234,88,12,0.15)' }}>
-                                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_#ea580c]" />
-                                <span style={{ color: '#fed7aa', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Vendor Network Hub</span>
-                            </div>
-                            
-                            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#ffffff', fontWeight: 900, fontFamily: "'Outfit', sans-serif", lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-                                Transform Your Salvage{' '}
-                                <span style={{ display: 'block', background: 'linear-gradient(135deg, #ea580c, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                    Business Today
-                                </span>
-                            </h2>
-                            
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: 1.8, maxWidth: '500px', marginBottom: '2.5rem' }}>
-                                Millions of buyers are searching for auto parts immediately. Partner with <strong>JYNM</strong> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
-                            </p>
-                            
-                            <div className="flex flex-wrap gap-4">
-                                <Link 
-                                    to="/add-a-yard" 
-                                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:-translate-y-1"
-                                    style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 10px 25px rgba(234,88,12,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
-                                >
-                                    Add Your Junkyard
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                </Link>
-                                <Link 
-                                    to="/vendor/login" 
-                                    className="inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10"
-                                    style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.15)' }}
-                                >
-                                    Vendor Login
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* 3D Visual Asset */}
-                        <div className="hidden lg:flex items-center justify-center relative">
-                            {/* Ambient base */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] border border-blue-500/20 rounded-full animate-spin-slow pointer-events-none" />
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-orange-500/10 rounded-full animate-spin-slow-reverse pointer-events-none" />
-                            
-                            {/* We use the Search Lens or Gear Core to emphasize technology and partnership */}
-                            <img 
-                                src="/3d/gear-core.png" 
-                                alt="Advanced Vendor Tech" 
-                                className="relative z-10 w-full max-w-[480px] h-auto pointer-events-none"
-                                style={{
-                                    mixBlendMode: 'screen',
-                                    animation: 'float 6s ease-in-out infinite',
-                                    filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9)) contrast(1.1) brightness(1.2)'
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Mobile Ad Banner — renders all ads as swipe carousel (MobileAdBanner logic unchanged) */}
             <MobileAdBanner page="home" />

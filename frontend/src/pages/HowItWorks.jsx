@@ -16,9 +16,9 @@ const HowItWorks = () => {
 
     const steps = [
         {
-            number: '01',
-            title: 'Tell Us What You Need',
-            description: 'Fill out our simple form with your vehicle details (make, model, year) and the specific part you\'re looking for. Add your contact information and location.',
+            number: get('steps', 'step1_number', '01'),
+            title: get('steps', 'step1_title', 'Tell Us What You Need'),
+            description: get('steps', 'step1_desc', "Fill out our simple form with your vehicle details (make, model, year) and the specific part you're looking for. Add your contact information and location."),
             icon: (
                 <svg className="w-8 h-8 text-[var(--neon-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -26,9 +26,9 @@ const HowItWorks = () => {
             )
         },
         {
-            number: '02',
-            title: 'We Connect You',
-            description: 'Your request is instantly sent to our network of verified junkyards and auto salvage yards in your area. No need to call around - we do the work for you.',
+            number: get('steps', 'step2_number', '02'),
+            title: get('steps', 'step2_title', 'We Notify Our Network'),
+            description: get('steps', 'step2_desc', 'Your request is instantly sent to our network of verified junkyards and auto salvage yards in your area. No need to call around - we do the work for you.'),
             icon: (
                 <svg className="w-8 h-8 text-[var(--neon-orange)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -36,9 +36,9 @@ const HowItWorks = () => {
             )
         },
         {
-            number: '03',
-            title: 'Receive Quotes Directly',
-            description: 'Junkyards with your part in stock will contact you directly with pricing, availability, and shipping options. Compare offers and choose the best deal.',
+            number: get('steps', 'step3_number', '03'),
+            title: get('steps', 'step3_title', 'Receive Free Quotes'),
+            description: get('steps', 'step3_desc', 'Junkyards with your part in stock will contact you directly with pricing, availability, and shipping options. Compare offers and choose the best deal.'),
             icon: (
                 <svg className="w-8 h-8 text-[var(--neon-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -46,9 +46,9 @@ const HowItWorks = () => {
             )
         },
         {
-            number: '04',
-            title: 'Get Your Part',
-            description: 'Purchase directly from the junkyard of your choice. Arrange pickup or shipping, and get your quality used part at a fraction of the cost of new.',
+            number: get('steps', 'step4_number', '04'),
+            title: get('steps', 'step4_title', 'Order & Save'),
+            description: get('steps', 'step4_desc', 'Purchase directly from the junkyard of your choice. Arrange pickup or shipping, and get your quality used part at a fraction of the cost of new.'),
             icon: (
                 <svg className="w-8 h-8 justify-center items-center text-[var(--neon-orange)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -100,16 +100,16 @@ const HowItWorks = () => {
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             {/* SEO Meta Tags */}
             <SEO
-                title="How It Works - Find Used Auto Parts in 4 Easy Steps"
-                description="Learn how to find quality used auto parts through our network of verified junkyards. Simple 4-step process: Tell us what you need, we connect you with vendors, receive quotes, get your part."
+                title={get('meta', 'title', 'How It Works - Find Used Auto Parts in 4 Easy Steps')}
+                description={get('meta', 'description', 'Learn how to find quality used auto parts through our network of verified junkyards. Simple 4-step process.')}
             />
 
             <Navbar />
 
             {/* Hero Section - Cinematic Depth Car Imagery */}
             <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center text-center" style={{ minHeight: '50vh', background: 'var(--bg-base)' }}>
-                {/* PRIMARY — car crusher, sparks flying */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/car-crusher.png')", opacity: 0.58 }} />
+                {/* PRIMARY — CMS-controlled hero image */}
+                <div className="hero-bg-primary" style={{ backgroundImage: `url('${get('hero', 'bg_image', '/heroes/car-crusher.png')}')`, opacity: 0.58 }} />
                 {/* DEPTH — salvage yard sunset, blurred */}
                 <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')" }} />
                 <div className="hero-overlay-base" />
@@ -204,15 +204,15 @@ const HowItWorks = () => {
                     <div className="rounded-3xl relative overflow-hidden text-center shadow-sm p-12" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e40af 100%)', border: '1px solid rgba(37,99,235,0.3)' }}>
                         <div className="absolute top-0 left-1/3 w-64 h-64 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
                         <div className="relative z-10">
-                            <h2 className="font-black mb-4 text-3xl md:text-4xl text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>Ready to Find Your Part?</h2>
+                            <h2 className="font-black mb-4 text-3xl md:text-4xl text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('cta', 'heading', 'Ready to Find Your Part?')}</h2>
                             <p className="mb-8 max-w-2xl mx-auto text-lg text-blue-100">
-                                Join thousands of satisfied customers who found their parts through our network of trusted junkyards.
+                                {get('cta', 'subtext', "It's 100% free and takes less than 2 minutes to submit your request.")}
                             </p>
                             <button
-                                onClick={() => navigate('/')}
+                                onClick={() => navigate(get('cta', 'button_link', '/'))}
                                 className="font-bold px-8 py-4 rounded-xl shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl uppercase tracking-wide bg-white text-blue-700 hover:bg-blue-50"
                             >
-                                Get Started - It's Free →
+                                {get('cta', 'button_text', 'Submit a Free Request')} →
                             </button>
                         </div>
                     </div>

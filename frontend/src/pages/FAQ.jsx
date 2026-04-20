@@ -102,8 +102,8 @@ const FAQ = () => {
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh', color: 'var(--text-primary)' }}>
             {/* SEO Meta Tags */}
             <SEO
-                title="Frequently Asked Questions - Junkyard & Auto Parts Guide"
-                description="Common questions about finding used auto parts, junkyard services, shipping, returns, warranties, and more. Get answers to your auto salvage questions."
+                title={get('meta', 'title', 'Frequently Asked Questions - Junkyard & Auto Parts Guide')}
+                description={get('meta', 'description', 'Common questions about finding used auto parts, junkyard services, shipping, returns, warranties, and more.')}
                 schema={schema}
             />
 
@@ -111,8 +111,8 @@ const FAQ = () => {
 
             {/* Hero Section - Cinematic Car Depth */}
             <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center text-center" style={{ minHeight: '50vh', background: 'var(--bg-base)' }}>
-                {/* PRIMARY — rows of salvage cars at sunset */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')", opacity: 0.6 }} />
+                {/* PRIMARY — CMS-controlled hero image */}
+                <div className="hero-bg-primary" style={{ backgroundImage: `url('${get('hero', 'bg_image', '/heroes/salvage-sunset.png')}')`, opacity: 0.6 }} />
                 {/* DEPTH — aerial night junkyard, blurred */}
                 <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/aerial-night.png')" }} />
                 <div className="hero-overlay-base" />
@@ -228,15 +228,15 @@ const FAQ = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="font-bold mb-3 text-2xl text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Still have questions?</h3>
+                        <h3 className="font-bold mb-3 text-2xl text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('cta', 'heading', 'Still Have Questions?')}</h3>
                         <p className="mb-8 max-w-md mx-auto text-lg" style={{ color: 'var(--text-secondary)' }}>
-                            Can't find the answer you're looking for? Our support team is here to help you 24/7.
+                            {get('cta', 'subtext', "Can't find the answer you're looking for? Our support team is here to help you 24/7.")}
                         </p>
                         <a
-                            href="/contact"
+                            href={get('cta', 'button_link', '/contact')}
                             className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105"
                             style={{ background: 'var(--neon-blue)', color: 'var(--bg-base)' }}>
-                            Contact Support
+                            {get('cta', 'button_text', 'Contact Support')}
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>

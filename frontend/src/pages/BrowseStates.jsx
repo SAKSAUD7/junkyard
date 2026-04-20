@@ -8,6 +8,7 @@ import DynamicAd from '../components/DynamicAd';
 import MobileAdBanner from '../components/MobileAdBanner';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
+import { useCMS } from '../hooks/useCMS';
 
 // Lightweight floating particles canvas
 function ParticleField() {
@@ -45,6 +46,7 @@ function ParticleField() {
 }
 
 export default function BrowseStates() {
+    const { get } = useCMS('browse');
     const [searchParams] = useSearchParams();
     const stateParam = searchParams.get('state');
 
@@ -170,13 +172,13 @@ export default function BrowseStates() {
                                     className="font-black mb-2"
                                     style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', color: '#f1f5f9', lineHeight: 1.1 }}
                                 >
-                                    Explore Junkyards{' '}
+                                    {get('hero', 'heading', 'Explore Junkyards')}{' '}
                                     <span style={{ background: 'linear-gradient(135deg, #60a5fa, #22d3ee)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                                         by State
                                     </span>
                                 </h1>
                                 <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '520px' }}>
-                                    Click any state on the map to browse verified junkyards. Hover for a quick preview.
+                                    {get('browse', 'subheading', get('map', 'heading', 'Click any state on the map to browse verified junkyards. Hover for a quick preview.'))}
                                 </p>
                             </div>
 
@@ -191,7 +193,7 @@ export default function BrowseStates() {
                                     type="text"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder="Find a state..."
+                                    placeholder={get('map', 'search_placeholder', 'Find a state...')}
                                     className="w-full md:w-64 pl-10 pr-10 py-2.5 rounded-xl text-sm outline-none transition-all duration-300"
                                     style={{
                                         background: 'rgba(15,23,42,0.8)',

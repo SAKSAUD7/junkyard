@@ -61,8 +61,8 @@ export default function About() {
 
     const features = [
         {
-            title: 'Nationwide Network',
-            description: 'Determine availability across our massive network of over 1,000 verified junkyards in all 50 states.',
+            title: get('features', 'feature1_title', 'Nationwide Network'),
+            description: get('features', 'feature1_desc', 'Determine availability across our massive network of over 1,000 verified junkyards in all 50 states.'),
             icon: (
                 <svg className="w-6 h-6 text-[var(--neon-blue)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -70,8 +70,8 @@ export default function About() {
             )
         },
         {
-            title: 'Smart Search',
-            description: 'Instantly filter by vehicle make, model, year, and part type to find exactly what you need in seconds.',
+            title: get('features', 'feature2_title', 'Smart Search'),
+            description: get('features', 'feature2_desc', 'Instantly filter by vehicle make, model, year, and part type to find exactly what you need in seconds.'),
             icon: (
                 <svg className="w-6 h-6 text-[var(--neon-orange)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -79,8 +79,8 @@ export default function About() {
             )
         },
         {
-            title: 'Direct Contact',
-            description: 'Get direct access to junkyard phone numbers, addresses, and websites. No middlemen, no hidden fees.',
+            title: get('features', 'feature3_title', 'Direct Contact'),
+            description: get('features', 'feature3_desc', 'Get direct access to junkyard phone numbers, addresses, and websites. No middlemen, no hidden fees.'),
             icon: (
                 <svg className="w-6 h-6 text-[var(--neon-blue)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -103,8 +103,8 @@ export default function About() {
 
             {/* Hero Section - Cinematic Depth with Car Imagery */}
             <div className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center" style={{ minHeight: '60vh', background: 'var(--bg-base)' }}>
-                {/* PRIMARY — aerial junkyard cars at night */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/aerial-night.png')", opacity: 0.6 }} />
+                {/* PRIMARY — CMS-controlled hero image */}
+                <div className="hero-bg-primary" style={{ backgroundImage: `url('${get('hero', 'bg_image', '/heroes/aerial-night.png')}')`, opacity: 0.6 }} />
                 {/* DEPTH — stacked crushed cars, blurred */}
                 <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/stacked-cars.png')" }} />
                 <div className="hero-overlay-base" />

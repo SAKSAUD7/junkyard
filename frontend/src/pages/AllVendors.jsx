@@ -110,8 +110,8 @@ const AllVendors = () => {
                 className="hero-depth pt-24 pb-16 flex flex-col justify-center items-center text-center"
                 style={{ minHeight: '40vh', background: 'var(--bg-base)' }}
             >
-                {/* PRIMARY — sunset salvage yard */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')", opacity: 0.6 }} />
+                {/* PRIMARY — CMS-controlled hero image */}
+                <div className="hero-bg-primary" style={{ backgroundImage: `url('${get('hero', 'bg_image', '/heroes/salvage-sunset.png')}')`, opacity: 0.6 }} />
                 {/* DEPTH — car crusher blur */}
                 <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/car-crusher.png')" }} />
                 
