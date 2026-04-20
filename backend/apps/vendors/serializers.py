@@ -23,12 +23,15 @@ class VendorSerializer(serializers.ModelSerializer):
     ad_plan = serializers.SerializerMethodField()
     
     def get_ad_plan(self, obj):
-        active_ad = getattr(obj, 'ads', None)
-        if active_ad:
-            ad = obj.ads.filter(status='active').first()
-            if ad:
-                return ad.plan_type
-        return None
+        try:
+            active_ad = getattr(obj, 'ads', None)
+            if active_ad:
+                ad = obj.ads.filter(status='active').first()
+                if ad:
+                    return ad.plan_type
+            return None
+        except Exception:
+            return None
 
     def get_logo(self, obj):
         """Return correct image URL — combines MEDIA_URL from settings with stored relative path."""
@@ -54,8 +57,11 @@ class VendorSerializer(serializers.ModelSerializer):
         return None
 
     def get_leads_count(self, obj):
-        # Count the number of leads assigned to this vendor
-        if hasattr(obj, 'leads'):
-            return obj.leads.count()
-        return 0
+        try:
+            # Count the number of leads assigned to this vendor
+            if hasattr(obj, 'leads'):
+                return obj.leads.count()
+            return 0
+        except Exception:
+            return 0
 
