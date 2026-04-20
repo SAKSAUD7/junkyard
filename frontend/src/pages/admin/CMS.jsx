@@ -22,6 +22,8 @@ const PAGES = [
     { key: 'navbar',       label: 'Navbar',         icon: '📌' },
     { key: 'footer',       label: 'Footer',         icon: '🦶' },
     { key: 'global',       label: 'Global / SEO',   icon: '🌐' },
+    { key: 'add_a_yard',   label: 'Add A Yard',     icon: '🏗️' },
+    { key: 'vendor_portal',label: 'Vendor Portal',  icon: '💼' },
 ];
 
 const TYPE_META = {
