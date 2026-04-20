@@ -140,7 +140,7 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     """
     Admin ViewSet for full vendor management.
     """
-    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user').all().order_by('-id')
+    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user').all().order_by('id')
     serializer_class = VendorSerializer
     permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
