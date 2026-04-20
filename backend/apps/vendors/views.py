@@ -149,6 +149,17 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     filterset_fields = ['is_active', 'state']
     pagination_class = StandardResultsSetPagination
     
+    def list(self, request, *args, **kwargs):
+        try:
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            import traceback
+            import sys
+            return Response({
+                'error': str(e),
+                'traceback': traceback.format_exc()
+            }, status=500)
+
     def update(self, request, *args, **kwargs):
         """
         Override update to create user account when vendor is activated.
