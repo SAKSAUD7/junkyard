@@ -4,6 +4,59 @@ import { vendorAdApi } from '../../services/vendorApi';
 import { api } from '../../services/api';
 import { LoadingButton, EmptyState } from '../../components/vendor/UIElements';
 
+const DEFAULT_PLANS = [
+    {
+        id: 'premium',
+        name: 'Premium Plan',
+        price: 99,
+        color: 'from-purple-500 to-indigo-600',
+        popular: true,
+        features: [
+            'Top placement in all search results',
+            'Featured rotating Homepage Banner',
+            'Priority Lead generation mapping',
+            '"Top Rated" trusted vendor badge'
+        ]
+    },
+    {
+        id: 'standard',
+        name: 'Standard Plan',
+        price: 49,
+        color: 'from-blue-500 to-cyan-500',
+        popular: false,
+        features: [
+            'Elevated search standing',
+            '"Featured" vendor status badge',
+            'Unlimited profile impressions',
+            'Dashboard analytics unlocked'
+        ]
+    },
+    {
+        id: 'compact',
+        name: 'Compact Listing',
+        price: 29,
+        color: 'from-amber-400 to-orange-500',
+        popular: false,
+        features: [
+            'Highlighted layout aesthetic',
+            'Verified badge on profile',
+            'Mobile-optimized profile snippet'
+        ]
+    },
+    {
+        id: 'minimal',
+        name: 'Minimal Tier',
+        price: 19,
+        color: 'from-emerald-400 to-teal-500',
+        popular: false,
+        features: [
+            'Basic marketplace visibility',
+            'Standard SEO indexing',
+            'Base catalog linkage'
+        ]
+    }
+];
+
 export default function Ads() {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -30,20 +83,26 @@ export default function Ads() {
                     if (contentMap.ad_plans) {
                         try {
                             const parsedPlans = JSON.parse(contentMap.ad_plans);
-                            if (Array.isArray(parsedPlans)) setSubscriptionPlans(parsedPlans);
+                            if (Array.isArray(parsedPlans) && parsedPlans.length > 0){
+                                setSubscriptionPlans(parsedPlans);
+                                return; // Successfully ingested dynamic CMS array
+                            }
                         } catch (e) { console.error('Failed to parse ad_plans JSON:', e); }
                     }
                 }
             } catch (err) {
                 console.error('Failed to fetch CMS configuration:', err);
             }
+            // Execute Fallback Sequence if dynamic CMS is empty
+            setSubscriptionPlans(DEFAULT_PLANS);
         };
 
         const fetchCurrentAd = async () => {
             try {
                 const response = await vendorAdApi.getCurrentAd();
-                if (response.data && response.data.status === 'active') {
-                    setActiveAd(response.data);
+                // Destructure active_plan from the backend's wrapper response
+                if (response.data && response.data.active_plan && response.data.active_plan.status === 'active') {
+                    setActiveAd(response.data.active_plan);
                 }
             } catch (err) {
                 // If no active ad, backend might return 404
