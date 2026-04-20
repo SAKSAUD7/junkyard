@@ -30,18 +30,19 @@ class FlexibleImageField(serializers.ImageField):
 
 class AdvertisementSerializer(serializers.ModelSerializer):
     image = FlexibleImageField(required=False, allow_null=True)
+    resolved_image_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Advertisement
         fields = [
-            'id', 'title', 'slot', 'page', 'image', 'redirect_url',
+            'id', 'title', 'slot', 'page', 'image', 'resolved_image_url', 'redirect_url',
             'is_active', 'template_type', 'button_text', 'show_badge',
             'start_date', 'end_date', 'priority', 'clicks', 'impressions',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['clicks', 'impressions', 'created_at', 'updated_at']
+        read_only_fields = ['clicks', 'impressions', 'created_at', 'updated_at', 'resolved_image_url']
 
-    def get_image(self, obj):
+    def get_resolved_image_url(self, obj):
         """Return correct image URL using Django's storage backend (.url property).
 
         Works correctly with both Azure Blob Storage (production) and
@@ -92,18 +93,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        if instance.image:
-            raw = instance.image.name if hasattr(instance.image, 'name') and instance.image.name else str(instance.image)
-            if raw:
-                if raw.startswith('http://') or raw.startswith('https://'):
-                    ret['image'] = raw.replace('http://', 'https://', 1)
-                else:
-                    request = self.context.get('request')
-                    if request:
-                        ret['image'] = request.build_absolute_uri(f'/media/{raw.lstrip("/")}')
-                    else:
-                        from django.conf import settings
-                        ret['image'] = f"{settings.MEDIA_URL.rstrip('/')}/{raw.lstrip('/')}"
-        else:
-            ret['image'] = None
+        # Override the normal image field representation with our resolved URL
+        # so frontend doesn't need to change `ad.image` to `ad.resolved_image_url`
+        ret['image'] = ret.get('resolved_image_url', None)
         return ret

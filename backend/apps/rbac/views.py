@@ -14,6 +14,7 @@ from .serializers import (
     StaffRoleSerializer,
     StaffMemberSerializer,
     InviteStaffSerializer,
+    ResetPasswordSerializer,
     MyPermissionsSerializer,
 )
 
@@ -150,8 +151,10 @@ class StaffMemberViewSet(viewsets.ModelViewSet):
                 app_member.save()
                 return Response({'message': f'Existing user {email} reassigned to role {role.name}.'})
         else:
-            # Create new user with a random temp password
-            temp_password = secrets.token_urlsafe(12)
+            # Create new user with given password or random temp password
+            given_password = serializer.validated_data.get('password', '').strip()
+            temp_password = given_password if given_password else secrets.token_urlsafe(12)
+            
             user = User.objects.create_user(
                 email=email,
                 username=email.split('@')[0],
@@ -161,7 +164,7 @@ class StaffMemberViewSet(viewsets.ModelViewSet):
                 user_type='admin',
                 is_staff=True,
             )
-            logger.info(f'[RBAC] Created new staff user: {email} (temp_password logged for dev only)')
+            logger.info(f'[RBAC] Created new staff user: {email} (temp_password generated: {not bool(given_password)})')
 
         member = StaffMember.objects.create(
             user=user,
@@ -173,6 +176,24 @@ class StaffMemberViewSet(viewsets.ModelViewSet):
             StaffMemberSerializer(member).data,
             status=status.HTTP_201_CREATED
         )
+
+    @action(detail=True, methods=['post'], url_path='reset_password')
+    def reset_password(self, request, pk=None):
+        """Allows an admin to manually reset the password of a staff member."""
+        member = self.get_object()
+        
+        serializer = ResetPasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+            
+        new_password = serializer.validated_data['new_password']
+        
+        user = member.user
+        user.set_password(new_password)
+        user.save()
+        
+        logger.info(f"[RBAC] Password reset for {user.email} by {request.user.email}")
+        return Response({'message': f'Password for {user.email} has been successfully reset.'})
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import {
     ShieldCheckIcon, UserPlusIcon, PencilIcon, TrashIcon,
     CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon,
-    XCircleIcon, UserGroupIcon, LockClosedIcon, LockOpenIcon
+    XCircleIcon, UserGroupIcon, LockClosedIcon, LockOpenIcon, KeyIcon
 } from '@heroicons/react/24/outline'
 import { api } from '../../services/api'
 
@@ -169,29 +169,35 @@ function RoleDrawer({ role, onClose, onSave }) {
     )
 }
 
-// ─── Invite Staff Modal ────────────────────────────────────────────────────────
-function InviteModal({ roles, onClose, onInvite }) {
-    const [form, setForm] = useState({ email: '', first_name: '', last_name: '', role_id: roles[0]?.id || '' })
+// ─── Create Staff Modal ────────────────────────────────────────────────────────
+function CreateStaffModal({ roles, onClose, onCreate }) {
+    const [form, setForm] = useState({ email: '', password: '', first_name: '', last_name: '', role_id: roles[0]?.id || '' })
     const [saving, setSaving] = useState(false)
 
     const handleSubmit = async () => {
         if (!form.email || !form.role_id) return
         setSaving(true)
-        try { await onInvite(form) } finally { setSaving(false) }
+        try { await onCreate(form) } finally { setSaving(false) }
     }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
             <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Invite Staff Member</h2>
-                <p className="text-sm text-gray-500 mb-6">A new user account will be created and assigned a role.</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Create Staff Member</h2>
+                <p className="text-sm text-gray-500 mb-6">A new user account will be created and manually assigned a role.</p>
                 <div className="space-y-4">
                     <div>
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Email *</label>
                         <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                             className="w-full px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm"
                             placeholder="staff@example.com" />
+                    </div>
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Password</label>
+                        <input type="text" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm"
+                            placeholder="Leave blank for a random password" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
@@ -215,11 +221,49 @@ function InviteModal({ roles, onClose, onInvite }) {
                     </div>
                 </div>
                 <div className="flex gap-3 mt-6">
-                    <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50">Cancel</button>
+                    <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</button>
                     <button onClick={handleSubmit} disabled={saving}
-                        className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 flex items-center justify-center gap-2 disabled:opacity-60">
+                        className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                         {saving && <ArrowPathIcon className="w-4 h-4 animate-spin" />}
-                        {saving ? 'Inviting…' : 'Send Invite'}
+                        {saving ? 'Creating…' : 'Create Staff'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// ─── Reset Password Modal ──────────────────────────────────────────────────────
+function ResetPasswordModal({ member, onClose, onReset }) {
+    const [password, setPassword] = useState('')
+    const [saving, setSaving] = useState(false)
+
+    const handleSubmit = async () => {
+        if (!password || password.length < 6) return
+        setSaving(true)
+        try { await onReset(member.id, password) } finally { setSaving(false) }
+    }
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Reset Password</h2>
+                <p className="text-sm text-gray-500 mb-6">Enter a new password for <span className="font-semibold text-gray-700">{member.user?.email}</span></p>
+                <div className="space-y-4">
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">New Password *</label>
+                        <input type="text" value={password} onChange={e => setPassword(e.target.value)}
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm"
+                            placeholder="Minimum 6 characters" />
+                    </div>
+                </div>
+                <div className="flex gap-3 mt-6">
+                    <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button onClick={handleSubmit} disabled={saving || password.length < 6}
+                        className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                        {saving && <ArrowPathIcon className="w-4 h-4 animate-spin" />}
+                        {saving ? 'Saving…' : 'Reset Password'}
                     </button>
                 </div>
             </div>
@@ -310,7 +354,8 @@ function StaffTab({ toast }) {
     const [staff, setStaff] = useState([])
     const [roles, setRoles] = useState([])
     const [loading, setLoading] = useState(true)
-    const [showInvite, setShowInvite] = useState(false)
+    const [showCreate, setShowCreate] = useState(false)
+    const [resetMemberModal, setResetMemberModal] = useState(null)
 
     const loadData = useCallback(async () => {
         try {
@@ -323,14 +368,24 @@ function StaffTab({ toast }) {
 
     useEffect(() => { loadData() }, [loadData])
 
-    const handleInvite = async (form) => {
+    const handleCreate = async (form) => {
         try {
             await api.rbac.inviteStaff({ ...form, role_id: parseInt(form.role_id) })
-            toast('Staff member invited!')
-            setShowInvite(false)
+            toast('Staff account created!')
+            setShowCreate(false)
             loadData()
         } catch (e) {
-            toast(e?.response?.data?.error || 'Invite failed', 'error')
+            toast(e?.response?.data?.error || 'Staff creation failed', 'error')
+        }
+    }
+
+    const handleResetPassword = async (memberId, password) => {
+        try {
+            await api.rbac.resetStaffPassword(memberId, { new_password: password })
+            toast('Password reset successfully!')
+            setResetMemberModal(null)
+        } catch (e) {
+            toast(e?.response?.data?.error || 'Password reset failed', 'error')
         }
     }
 
@@ -358,12 +413,14 @@ function StaffTab({ toast }) {
 
     return (
         <div>
-            {showInvite && <InviteModal roles={roles} onClose={() => setShowInvite(false)} onInvite={handleInvite} />}
+            {showCreate && <CreateStaffModal roles={roles} onClose={() => setShowCreate(false)} onCreate={handleCreate} />}
+            {resetMemberModal && <ResetPasswordModal member={resetMemberModal} onClose={() => setResetMemberModal(null)} onReset={handleResetPassword} />}
+            
             <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-gray-500">{staff.length} staff member{staff.length !== 1 ? 's' : ''}</p>
-                <button onClick={() => setShowInvite(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-200">
-                    <UserPlusIcon className="w-4 h-4" /> Invite Staff
+                <button onClick={() => setShowCreate(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-colors">
+                    <UserPlusIcon className="w-4 h-4" /> Create Staff Account
                 </button>
             </div>
 
@@ -421,7 +478,13 @@ function StaffTab({ toast }) {
                                                 className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${member.is_active ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}>
                                                 {member.is_active ? 'Deactivate' : 'Activate'}
                                             </button>
+                                            <button onClick={() => setResetMemberModal(member)}
+                                                title="Reset Password"
+                                                className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+                                                <KeyIcon className="w-4 h-4" />
+                                            </button>
                                             <button onClick={() => handleDelete(member)}
+                                                title="Remove Staff"
                                                 className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                                                 <TrashIcon className="w-4 h-4" />
                                             </button>

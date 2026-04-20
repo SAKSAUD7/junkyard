@@ -427,6 +427,10 @@ export const api = {
       const response = await axiosInstance.post('/rbac/staff/invite/', data);
       return response.data;
     },
+    resetStaffPassword: async (id, data) => {
+      const response = await axiosInstance.post(`/rbac/staff/${id}/reset_password/`, data);
+      return response.data;
+    },
     updateStaff: async (id, data) => {
       const response = await axiosInstance.patch(`/rbac/staff/${id}/`, data);
       return response.data;
