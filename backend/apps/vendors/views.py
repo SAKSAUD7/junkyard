@@ -201,7 +201,7 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
                     username=username,
                     email=vendor.email,
                     password=temp_password,
-                    is_vendor=True,
+                    user_type='vendor',
                     is_active=True
                 )
                 
@@ -359,7 +359,7 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
                     username=username,
                     email=vendor.email,
                     password=temp_password,
-                    is_vendor=True,
+                    user_type='vendor',
                     is_active=True
                 )
                 logger.info(f"Auto-generated User struct for imported vendor {vendor.name}")
