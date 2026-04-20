@@ -725,4 +725,38 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'global', 'section': 'announcements', 'key': 'banner_link',
      'label': 'Top Banner Link',
      'value': '', 'content_type': 'url'},
+
+    # ══════════════════════════════════════════════════════════════════
+    # ADD A YARD PAGE
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_title',
+     'label': 'Step 1 Title', 'value': 'Basic Info', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_subtitle',
+     'label': 'Step 1 Subtitle', 'value': 'Create your profile', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step2_title',
+     'label': 'Step 2 Title', 'value': 'Location', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step2_subtitle',
+     'label': 'Step 2 Subtitle', 'value': 'Where are you located?', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step3_title',
+     'label': 'Step 3 Title', 'value': 'Services', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step3_subtitle',
+     'label': 'Step 3 Subtitle', 'value': 'Business offerings', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step4_title',
+     'label': 'Step 4 Title', 'value': 'Review', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step4_subtitle',
+     'label': 'Step 4 Subtitle', 'value': 'Final check', 'content_type': 'text'},
+
+    # ══════════════════════════════════════════════════════════════════
+    # VENDOR PORTAL
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'ad_plans',
+     'label': 'Ad Plans Configuration (JSON format)',
+     'value': '[{"type": "standard", "name": "Standard Boost", "pricing": 99, "duration": 30, "placement": "featured"}, {"type": "premium", "name": "Premium Spotlight", "pricing": 199, "duration": 30, "placement": "homepage"}]',
+     'content_type': 'json'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'welcome_text',
+     'label': 'Dashboard Welcome Title',
+     'value': 'Welcome to Vendor Portal', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'help_text',
+     'label': 'Dashboard Help Subtext',
+     'value': 'Manage your parts inventory, track views, and publish ads directly.', 'content_type': 'textarea'},
 ]
