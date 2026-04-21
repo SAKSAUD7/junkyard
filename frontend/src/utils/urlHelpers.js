@@ -28,7 +28,7 @@ export function generateVendorUrl(vendor) {
 
     const slug = `${id}-${namePart}${cityPart ? '-' + cityPart : ''}${statePart ? '-' + statePart : ''}`
 
-    return `/junkyards/${statePart}/${slug}`
+    return `/vendors/${slug}`
 }
 
 /**
@@ -54,7 +54,7 @@ export function generateRatingUrl(vendor) {
 
     const slug = `${id}-${namePart}${cityPart ? '-' + cityPart : ''}${statePart ? '-' + statePart : ''}`
 
-    return `/rate-junkyard/${slug}`
+    return `/vendors/${slug}/rate`
 }
 
 /**
@@ -70,30 +70,30 @@ export function extractVendorIdFromSlug(slug) {
 }
 
 /**
- * Get main vendor listing URL (old format)
+ * Get main vendor listing URL
  */
 export function getVendorsListUrl(page = null) {
-    const baseUrl = '/junkyards'
+    const baseUrl = '/vendors'
     return page ? `${baseUrl}?p=${page}` : baseUrl
 }
 
 /**
- * Get browse by location URL (old format)
+ * Get browse by location URL
  */
 export function getBrowseLocationUrl() {
-    return '/junkyards-by-location'
+    return '/browse'
 }
 
 /**
- * Get about page URL (old format)
+ * Get about page URL
  */
 export function getAboutUrl() {
-    return '/about-us'
+    return '/about'
 }
 
 /**
- * Get terms page URL (old format)
+ * Get terms page URL
  */
 export function getTermsUrl() {
-    return '/terms-and-conditions'
+    return '/terms'
 }

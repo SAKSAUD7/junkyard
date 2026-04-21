@@ -9,6 +9,9 @@ class FlexibleImageField(serializers.ImageField):
     If a URL string is passed (e.g. the existing image URL), it's ignored
     (treated as no-change) rather than raising a validation error.
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def to_internal_value(self, data):
         # If data is a string (URL), skip validation and return None (no change)
         if isinstance(data, str):

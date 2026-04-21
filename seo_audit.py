@@ -147,7 +147,7 @@ for old_path, old_row in old_rows.items():
     })
 
 # Also flag new-site pages that have no old counterpart (new pages)
-old_mapped_new_paths = set()
+old_mapped_new_paths: set[str] = set([])
 for op in old_rows:
     np = map_old_to_new(op)
     if np:

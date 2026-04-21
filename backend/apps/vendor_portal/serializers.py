@@ -39,6 +39,29 @@ class VendorLeadForPortalSerializer(serializers.ModelSerializer):
         return ""
 
 
+class VendorLeadSerializer(serializers.ModelSerializer):
+    """Lead information for vendors"""
+    
+    customer_name = serializers.CharField(source='name', read_only=True)
+    customer_email = serializers.EmailField(source='email', read_only=True)
+    customer_phone = serializers.CharField(source='phone', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    class Meta:
+        model = Lead
+        fields = [
+            'id', 'make', 'model', 'year', 'part', 'options', 'hollander_number',
+            'customer_name', 'customer_email', 'customer_phone',
+            'state', 'zip', 'location', 'status', 'status_display',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = [
+            'id', 'make', 'model', 'year', 'part', 'options', 'hollander_number',
+            'customer_name', 'customer_email', 'customer_phone',
+            'state', 'zip', 'location', 'created_at', 'updated_at'
+        ]
+
+
 class VendorDashboardSerializer(serializers.Serializer):
     """Dashboard overview statistics"""
     
@@ -117,27 +140,6 @@ class VendorInventorySerializer(serializers.ModelSerializer):
         return data
 
 
-class VendorLeadSerializer(serializers.ModelSerializer):
-    """Lead information for vendors"""
-    
-    customer_name = serializers.CharField(source='name', read_only=True)
-    customer_email = serializers.EmailField(source='email', read_only=True)
-    customer_phone = serializers.CharField(source='phone', read_only=True)
-    status_display = serializers.CharField(source='get_status_display', read_only=True)
-    
-    class Meta:
-        model = Lead
-        fields = [
-            'id', 'make', 'model', 'year', 'part', 'options', 'hollander_number',
-            'customer_name', 'customer_email', 'customer_phone',
-            'state', 'zip', 'location', 'status', 'status_display',
-            'created_at', 'updated_at'
-        ]
-        read_only_fields = [
-            'id', 'make', 'model', 'year', 'part', 'options', 'hollander_number',
-            'customer_name', 'customer_email', 'customer_phone',
-            'state', 'zip', 'location', 'created_at', 'updated_at'
-        ]
 
 
 class LeadStatusUpdateSerializer(serializers.Serializer):

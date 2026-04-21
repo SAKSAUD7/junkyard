@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://nice-pebble-067605800.7.azurestaticapps.net/sitemap.xml
+Sitemap: https://junkyardsnearme.com/sitemap.xml
 
 # Block admin and vendor portal from crawling
 Disallow: /admin-portal/

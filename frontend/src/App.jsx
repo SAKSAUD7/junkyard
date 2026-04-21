@@ -101,9 +101,12 @@ function ScrollObserver() {
   return null
 }
 
+import SEOHead from './components/SEO/SEOHead'
+
 function App() {
   return (
     <>
+      <SEOHead />
       <ScrollObserver />
       <Routes>
         {/* Public Routes */}

@@ -88,7 +88,6 @@ const VendorLeads = () => {
     );
 
     return (
-    return (
         <div className="min-h-full pb-20 md:pb-8 w-full">
             {/* Enhanced Header */}
             <div className="relative bg-gradient-to-br from-indigo-600/20 via-slate-800/80 to-violet-900/30 backdrop-blur-xl border border-white/5 pt-4 md:pt-6 pb-6 md:pb-8 px-4 md:px-6 rounded-[2rem] shadow-2xl mb-4 md:mb-6 overflow-hidden">

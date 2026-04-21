@@ -111,12 +111,17 @@ with open(OUT_CSV, "w", newline="", encoding="utf-8") as f:
     w.writeheader()
     w.writerows(records)
 
+from typing import Any, cast
+
 # Write / merge staticwebapp.config.json
+config: dict[str, Any] = {}
 try:
     with open(CONFIG_FILE) as f:
-        config = json.load(f)
+        loaded = json.load(f)
+        if isinstance(loaded, dict):
+            config = cast(dict[str, Any], loaded)
 except (FileNotFoundError, json.JSONDecodeError):
-    config = {}
+    pass
 
 config["routes"] = azure_routes + config.get("routes", [])
 
