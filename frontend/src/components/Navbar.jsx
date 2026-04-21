@@ -53,7 +53,7 @@ export default function Navbar() {
 
     const navLinks = [
         { path: '/', label: 'Home' },
-        { path: '/vendors', label: 'Vendors' },
+        { path: '/vendors', label: 'Junkyards' },
         { path: '/browse', label: 'Browse' },
         { path: '/blog', label: 'Blog' },
         { path: '/about', label: 'About' },
@@ -88,9 +88,9 @@ export default function Navbar() {
                                             }}
                                         >
                                             <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none">
-                                                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                                <path d="M2 17l10 5 10-5" stroke="var(--neon-orange)" strokeWidth="1.5" strokeLinejoin="round"/>
-                                                <path d="M2 12l10 5 10-5" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round" opacity="0.6"/>
+                                                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round" />
+                                                <path d="M2 17l10 5 10-5" stroke="var(--neon-orange)" strokeWidth="1.5" strokeLinejoin="round" />
+                                                <path d="M2 12l10 5 10-5" stroke="var(--neon-blue)" strokeWidth="1.5" strokeLinejoin="round" opacity="0.6" />
                                             </svg>
                                         </div>
                                         {/* Glow dot */}
@@ -127,24 +127,21 @@ export default function Navbar() {
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    className={`relative px-4 py-2 text-sm font-bold rounded-lg transition-all duration-300 group overflow-hidden ${
-                                        isActive(link.path)
+                                    className={`relative px-4 py-2 text-sm font-bold rounded-lg transition-all duration-300 group overflow-hidden ${isActive(link.path)
                                             ? 'text-blue-600 bg-blue-50/50'
                                             : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
-                                    }`}
+                                        }`}
                                 >
                                     {/* Active/hover background */}
                                     <span
-                                        className={`absolute inset-0 rounded-lg transition-opacity duration-300 ${
-                                            isActive(link.path) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                                        }`}
+                                        className={`absolute inset-0 rounded-lg transition-opacity duration-300 ${isActive(link.path) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                            }`}
                                         style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.12)' }}
                                     />
                                     {/* Underline */}
                                     <span
-                                        className={`absolute bottom-1 left-4 right-4 h-[1px] transition-all duration-300 ${
-                                            isActive(link.path) ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'
-                                        }`}
+                                        className={`absolute bottom-1 left-4 right-4 h-[1px] transition-all duration-300 ${isActive(link.path) ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'
+                                            }`}
                                         style={{ background: 'linear-gradient(90deg, transparent, var(--neon-blue), transparent)' }}
                                     />
                                     <span className="relative z-10">{link.label}</span>
@@ -254,15 +251,15 @@ export default function Navbar() {
                                                     <div className="px-3 py-1.5 mt-1 text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">For Buyers</div>
                                                     <DropdownLink to="/signin" icon="👤" label="Sign In" onClick={() => setAccountDropdownOpen(false)} />
                                                     <DropdownLink to="/signup" icon="🚀" label="Create Free Account" onClick={() => setAccountDropdownOpen(false)} />
-                                                    
+
                                                     <div style={{ borderTop: '1px solid rgba(37,99,235,0.08)', margin: '6px 0' }} />
-                                                    
+
                                                     <div className="px-3 py-1.5 mt-1 text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">For Partners</div>
                                                     <DropdownLink to="/add-a-yard" icon="➕" label="Add Your Yard" onClick={() => setAccountDropdownOpen(false)} />
                                                     <DropdownLink to="/vendor/login" icon="🏪" label="Vendor Login" onClick={() => setAccountDropdownOpen(false)} />
-                                                    
+
                                                     <div style={{ borderTop: '1px solid rgba(37,99,235,0.08)', margin: '6px 0' }} />
-                                                    
+
                                                     <DropdownLink to="/admin/login" icon="⚙" label="Admin Login" onClick={() => setAccountDropdownOpen(false)} />
                                                 </>
                                             )}
@@ -306,9 +303,8 @@ export default function Navbar() {
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                                        isActive(link.path) ? 'text-[var(--neon-blue)]' : 'text-[var(--text-secondary)]'
-                                    }`}
+                                    className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-300 ${isActive(link.path) ? 'text-[var(--neon-blue)]' : 'text-[var(--text-secondary)]'
+                                        }`}
                                     style={isActive(link.path) ? {
                                         background: 'rgba(37,99,235,0.08)',
                                         border: '1px solid rgba(37,99,235,0.15)'
