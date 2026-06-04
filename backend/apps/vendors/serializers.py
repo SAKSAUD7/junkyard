@@ -34,20 +34,35 @@ class VendorSerializer(serializers.ModelSerializer):
             return None
 
     def get_logo(self, obj):
-        """Return correct image URL — combines MEDIA_URL from settings with stored relative path."""
+        """Return absolute image URL using the request context — works on localhost and VPS."""
         if not obj.logo:
             return None
-        # Read the raw stored name (e.g. 'vendors/logo-placeholder.png' or full https:// URL)
+
+        # Get the raw stored value
         raw = obj.logo.name if hasattr(obj.logo, 'name') and obj.logo.name else str(obj.logo)
         if not raw:
             return None
-        # If already an absolute URL, return directly (force https)
+
+        # Safety net: strip any leftover Azure blob URLs → extract just the relative path
+        azure_prefix = 'https://junkyardstoragedev.blob.core.windows.net/media/'
+        azure_prefix2 = 'http://junkyardstoragedev.blob.core.windows.net/media/'
+        if raw.startswith(azure_prefix):
+            raw = raw[len(azure_prefix):]
+        elif raw.startswith(azure_prefix2):
+            raw = raw[len(azure_prefix2):]
+
+        # If it's still a full external URL (non-Azure), return it as-is
         if raw.startswith('http://') or raw.startswith('https://'):
-            return raw.replace('http://', 'https://', 1)
-        # Relative path: combine with MEDIA_URL from settings (Azure Blob URL in production)
-        from django.conf import settings
-        media_url = settings.MEDIA_URL.rstrip('/')
-        return f"{media_url}/{raw.lstrip('/')}"
+            return raw
+
+        # Build absolute URL using the request so it works on any host/port
+        request = self.context.get('request')
+        relative = f"/media/{raw.lstrip('/')}"
+        if request:
+            return request.build_absolute_uri(relative)
+
+        # Fallback: return relative path if no request context
+        return relative
 
     def get_username(self, obj):
         # Get the first associated vendor profile and return its username

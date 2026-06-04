@@ -106,7 +106,6 @@ backend/data_for_migration.json
 backend/*.gz
 backend/*.dump
 backend/full_database_dump.json.gz.bak
-backend/full_database_dump.json
 backend/db.sqlite3
 backend/db.sqlite3-journal
 migration_report.txt
@@ -117,3 +116,19 @@ logs.zip
 fresh_logs.zip
 backend_deploy.zip
 backend_clean.zip
+
+# ── Media files (images) — transfer to VPS via scp, NOT via git ──────────────
+# 137MB / 2,700+ files — too large for git. Use deploy_media.ps1 to upload.
+backend/media/vendor_logos/*
+backend/media/vendors/*
+backend/media/ads/*
+backend/media/submissions/*
+backend/media/logo-placeholder.png
+# Keep folder structure in git via .gitkeep files
+!backend/media/vendor_logos/.gitkeep
+!backend/media/vendors/.gitkeep
+!backend/media/ads/.gitkeep
+!backend/media/submissions/.gitkeep
+
+# Frontend local .env has localhost URL — never commit it
+frontend/.env

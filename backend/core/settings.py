@@ -258,21 +258,10 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media files (User uploads) - Azure Blob Storage
-AZURE_ACCOUNT_NAME = os.environ.get('AZURE_ACCOUNT_NAME', 'junkyardstorage2026')
-AZURE_ACCOUNT_KEY = os.environ.get('AZURE_ACCOUNT_KEY')
-AZURE_CONTAINER = os.environ.get('AZURE_CONTAINER', 'media')
-AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-
-# Use Azure Blob Storage for media files
-if AZURE_ACCOUNT_KEY:
-    DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
-    MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{AZURE_CONTAINER}/'
-    MEDIA_ROOT = ''  # Not used with Azure Storage
-else:
-    # Fallback to local storage for development
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
+# Media files (User uploads) - Local VPS Disk Storage
+# All media served from the local filesystem via Nginx
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
