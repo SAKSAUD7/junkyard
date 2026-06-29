@@ -362,10 +362,10 @@ export default function Home() {
             {/* ============================================================
                 HERO SECTION — Video Background Layout (White Theme)
             ============================================================ */}
-            <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-20 pb-20 min-h-[90vh] flex flex-col justify-start">
+            <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-4 lg:pt-8 pb-20 min-h-[90vh] flex flex-col justify-start">
                 
-                {/* Full-bleed cinematic background video */}
-                <div className="absolute inset-0 z-0 bg-white">
+                {/* Full-bleed cinematic background video - DESKTOP ONLY */}
+                <div className="absolute inset-0 z-0 bg-white hidden lg:block">
                     <video
                         autoPlay
                         muted
@@ -377,33 +377,41 @@ export default function Home() {
                         <source src="/Video/hero-models-bg-v2.mp4" type="video/mp4" />
                     </video>
                     {/* Light Gradient Overlay for text readability (fades smoothly without hard lines) */}
-                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent lg:w-3/4" />
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent w-3/4" />
                 </div>
 
                 <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-2">
-                    <div className="w-full lg:max-w-[70%] text-left mb-10">
+                    <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 text-center lg:text-left">
                         {/* Trust Badge */}
-                        <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
+                        <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
                             <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                             </svg>
-                            The #1 Auto Parts Marketplace in the U.S.
+                            The #1 Junkyard & Auto Salvage Network in the U.S.
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             Find Verified Auto Parts <br />
                             From <span className="text-blue-600">6,500+</span> Junkyards <br />
                             In Under <span className="text-emerald-600">60</span> Seconds
                         </h1>
 
-                        <p className="text-[17px] text-slate-600 mb-8 max-w-[540px] font-medium leading-relaxed">
+                        <p className="text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0">
                             Compare prices from licensed salvage yards nationwide <br className="hidden sm:block" />
                             and save up to 80% compared to dealership pricing.
                         </p>
-
-
                     </div>
 
+                    {/* MOBILE VIDEO - rendered in flow so it takes space and fits perfectly */}
+                    <div className="w-[100vw] -ml-[calc(50vw-50%)] relative z-0 flex lg:hidden items-center justify-center mix-blend-multiply aspect-video mt-0 mb-2">
+                        <video
+                            autoPlay muted loop playsInline
+                            className="w-full h-full object-cover scale-[1.1] origin-[center_70%] opacity-100"
+                            style={{ filter: 'brightness(1.05) contrast(1.05)' }}
+                        >
+                            <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
+                        </video>
+                    </div>
 
                     {/* Bottom Row Forms Container */}
                     <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
