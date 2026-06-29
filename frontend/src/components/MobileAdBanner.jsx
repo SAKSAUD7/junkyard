@@ -1,16 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { api } from '../services/api'
 
+const AD_CLICK_URL = (id) => {
+    const base = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+    return `${base}/ads/${id}/click/`;
+};
+
 export default function MobileAdBanner({ page = 'all' }) {
     const [ads, setAds] = useState([])
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isDismissed, setIsDismissed] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
+    const [isAnimating, setIsAnimating] = useState(false)
     const touchStartX = useRef(0)
     const touchEndX = useRef(0)
+    const timerRef = useRef(null)
 
     useEffect(() => {
-        // Check if user has dismissed the banner
         const dismissed = localStorage.getItem(`mobile-ad-dismissed-${page}`)
         if (dismissed === 'true') {
             setIsDismissed(true)
@@ -19,69 +25,45 @@ export default function MobileAdBanner({ page = 'all' }) {
 
         const fetchAds = async () => {
             try {
-                // Fetch both left and right sidebar ads for mobile
                 const leftAds = await api.getAds({ slot: 'left_sidebar_ad', target_page: page })
                 const rightAds = await api.getAds({ slot: 'right_sidebar_ad', target_page: page })
-
-                // Combine and process ads
                 const allAds = [
                     ...(leftAds.results || leftAds || []),
                     ...(rightAds.results || rightAds || [])
                 ]
-
                 if (allAds.length > 0) {
-                    const processedAds = allAds.map(ad => {
-                        let imageUrl = ad.image
-                        if (imageUrl && !imageUrl.startsWith('http')) {
-                            const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
-                            imageUrl = `${baseUrl}${imageUrl}`
-                        }
-                        return { ...ad, image: imageUrl }
-                    })
-
-                    setAds(processedAds)
-                    // Delay showing banner for smooth animation
-                    setTimeout(() => setIsVisible(true), 500)
+                    setAds(allAds)
+                    setTimeout(() => setIsVisible(true), 800)
                 }
-            } catch (error) {
-                console.warn('[MobileAdBanner] Ads unavailable')
+            } catch {
+                // Ads unavailable — fail silently
             }
         }
-
         fetchAds()
     }, [page])
 
-    // Auto-rotate ads every 5 seconds
+    // Auto-rotate
     useEffect(() => {
-        if (ads.length <= 1) return
+        if (ads.length <= 1 || !isVisible) return
+        timerRef.current = setInterval(() => goTo('next'), 5000)
+        return () => clearInterval(timerRef.current)
+    }, [ads.length, isVisible])
 
-        const interval = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % ads.length)
-        }, 5000)
-
-        return () => clearInterval(interval)
-    }, [ads.length])
-
-    // Handle touch swipe gestures
-    const handleTouchStart = (e) => {
-        touchStartX.current = e.touches[0].clientX
+    const goTo = (dir) => {
+        if (isAnimating) return
+        setIsAnimating(true)
+        setCurrentIndex(prev => dir === 'next'
+            ? (prev + 1) % ads.length
+            : (prev - 1 + ads.length) % ads.length
+        )
+        setTimeout(() => setIsAnimating(false), 300)
     }
 
-    const handleTouchMove = (e) => {
-        touchEndX.current = e.touches[0].clientX
-    }
-
+    const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+    const handleTouchMove = (e) => { touchEndX.current = e.touches[0].clientX }
     const handleTouchEnd = () => {
-        const swipeDistance = touchStartX.current - touchEndX.current
-        const minSwipeDistance = 50
-
-        if (swipeDistance > minSwipeDistance) {
-            // Swipe left - next ad
-            setCurrentIndex(prev => (prev + 1) % ads.length)
-        } else if (swipeDistance < -minSwipeDistance) {
-            // Swipe right - previous ad
-            setCurrentIndex(prev => (prev - 1 + ads.length) % ads.length)
-        }
+        const dist = touchStartX.current - touchEndX.current
+        if (Math.abs(dist) > 50) goTo(dist > 0 ? 'next' : 'prev')
     }
 
     const handleDismiss = () => {
@@ -89,101 +71,97 @@ export default function MobileAdBanner({ page = 'all' }) {
         setTimeout(() => {
             setIsDismissed(true)
             localStorage.setItem(`mobile-ad-dismissed-${page}`, 'true')
-        }, 300)
+        }, 350)
     }
 
     if (ads.length === 0 || isDismissed) return null
 
-    const currentAd = ads[currentIndex]
+    const ad = ads[currentIndex]
 
     return (
         <div
-            className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'
-                }`}
+            className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-transform duration-350 ease-out ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}
         >
-            {/* Backdrop blur spacer */}
-            <div className="absolute inset-0 backdrop-blur-xl bg-white/90 border-t border-slate-200"></div>
+            {/* Background panel */}
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]" />
 
             <div
-                className="relative p-3 pb-safe"
+                className="relative px-4 pt-3 pb-4"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
             >
-                {/* Close button */}
-                <button
-                    onClick={handleDismiss}
-                    className="absolute top-1 right-1 z-10 bg-slate-100/90 text-slate-600 hover:text-slate-800 rounded-full p-1.5 transition-colors"
-                    aria-label="Close advertisement"
-                >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                {/* Header row */}
+                <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Sponsored</span>
+                    <button
+                        onClick={handleDismiss}
+                        className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors"
+                        aria-label="Close ad"
+                    >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
-                {/* Ad content */}
+                {/* Ad card */}
                 <a
-                    href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${currentAd.id}/click/`}
+                    href={AD_CLICK_URL(ad.id)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block"
+                    className="flex items-center gap-3 bg-white rounded-2xl border border-slate-100 p-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] active:scale-[0.98] transition-transform"
                 >
-                    <div className="flex items-center gap-3 bg-gradient-to-r from-dark-800 to-dark-700 rounded-xl overflow-hidden border border-slate-200 hover:border-orange-500/50 transition-all shadow-lg">
-                        {/* Ad image */}
-                        {currentAd.image && (
-                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-white">
-                                <img
-                                    src={currentAd.image}
-                                    alt={currentAd.title}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none'
-                                    }}
-                                />
-                            </div>
-                        )}
-
-                        {/* Ad text */}
-                        <div className="flex-1 py-2 pr-8">
-                            <div className="text-[10px] uppercase tracking-widest text-orange-400 font-bold mb-1">
-                                Sponsored
-                            </div>
-                            <h4 className="text-slate-800 font-bold text-sm sm:text-base mb-1 line-clamp-1">
-                                {currentAd.title}
-                            </h4>
-                            <span className="inline-block text-xs sm:text-sm text-orange-400 font-semibold">
-                                {currentAd.button_text || 'Learn More'} →
-                            </span>
+                    {/* Thumbnail */}
+                    {ad.image ? (
+                        <div className="w-[68px] h-[68px] rounded-xl overflow-hidden flex-shrink-0 bg-slate-50">
+                            <img
+                                src={ad.image}
+                                alt={ad.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => { e.target.closest('div').style.display = 'none'; }}
+                            />
                         </div>
+                    ) : (
+                        <div className="w-[68px] h-[68px] rounded-xl flex-shrink-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                            <svg className="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                    )}
+
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[14px] font-bold text-slate-900 line-clamp-2 leading-snug" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            {ad.title}
+                        </p>
+                        <span className="inline-flex items-center gap-1 mt-1.5 text-[12px] font-bold text-[#1a56ff]">
+                            {ad.button_text || 'Visit Website'}
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    {/* Arrow cue */}
+                    <div className="w-8 h-8 rounded-xl bg-[#1a56ff] flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        </svg>
                     </div>
                 </a>
 
-                {/* Navigation dots */}
+                {/* Dots */}
                 {ads.length > 1 && (
-                    <div className="flex justify-center gap-1.5 mt-2">
-                        {ads.map((_, index) => (
+                    <div className="flex justify-center gap-1.5 mt-2.5">
+                        {ads.map((_, i) => (
                             <button
-                                key={index}
-                                onClick={() => setCurrentIndex(index)}
-                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === currentIndex
-                                    ? 'bg-orange-500 w-6'
-                                    : 'bg-white/30 hover:bg-white/50'
-                                    }`}
-                                aria-label={`View ad ${index + 1}`}
+                                key={i}
+                                onClick={() => setCurrentIndex(i)}
+                                className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-5 bg-[#1a56ff]' : 'w-1.5 bg-slate-200'}`}
+                                aria-label={`Ad ${i + 1}`}
                             />
                         ))}
-                    </div>
-                )}
-
-                {/* Swipe indicator (shows on first load) */}
-                {ads.length > 1 && currentIndex === 0 && (
-                    <div className="absolute top-1/2 left-0 right-0 flex justify-between px-2 pointer-events-none opacity-50">
-                        <svg className="w-6 h-6 text-slate-800 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <svg className="w-6 h-6 text-slate-800 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
                     </div>
                 )}
             </div>

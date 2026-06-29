@@ -1,29 +1,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://junkyardsnearme.com/sitemap.xml
-
-# Block admin and vendor portal from crawling
-Disallow: /admin-portal/
-Disallow: /vendor/dashboard
-Disallow: /vendor/leads
-Disallow: /vendor/inventory
-Disallow: /vendor/notifications
-Disallow: /vendor/profile
-Disallow: /vendor/ads
-Disallow: /profile
-Disallow: /api/
-
-# Allow important public pages
-Allow: /
-Allow: /browse/
-Allow: /vendors/
-Allow: /search
-Allow: /blog/
-Allow: /about
-Allow: /contact
-Allow: /faq
-Allow: /how-it-works
-Allow: /quote
-Allow: /add-a-yard
+Sitemap: https://junkyardsnearme.com/api/common/sitemap.xml

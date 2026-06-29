@@ -1,24 +1,31 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
+import PageTransition from './components/PageTransition'
+
+// Eagerly loaded (critical path)
 import Home from './pages/Home'
-import Search from './pages/Search'
-import BrowseStates from './pages/BrowseStates'
-import BrowseState from './pages/BrowseState'
-import JunkyardDetail from './pages/JunkyardDetail'
-import AllVendors from './pages/AllVendors'
-import VendorDetail from './pages/VendorDetail'
-import QuoteRequest from './pages/QuoteRequest'
-import AddYardPage from './pages/AddYardPage'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Privacy from './pages/Privacy'
-import Terms from './pages/Terms'
-import HowItWorks from './pages/HowItWorks'
-import FAQ from './pages/FAQ'
-import SignIn from './pages/SignIn'
-import SignUp from './pages/SignUp'
-import ForgotPassword from './pages/ForgotPassword'
-import Profile from './pages/Profile'
+
+// Lazily loaded pages — split into separate chunks
+const Search       = lazy(() => import('./pages/Search'))
+const BrowseStates = lazy(() => import('./pages/BrowseStates'))
+const BrowseState  = lazy(() => import('./pages/BrowseState'))
+const JunkyardDetail = lazy(() => import('./pages/JunkyardDetail'))
+const AllVendors   = lazy(() => import('./pages/AllVendors'))
+const VendorDetail = lazy(() => import('./pages/VendorDetail'))
+const QuoteRequest = lazy(() => import('./pages/QuoteRequest'))
+const AddYardPage  = lazy(() => import('./pages/AddYardPage'))
+const About        = lazy(() => import('./pages/About'))
+const Contact      = lazy(() => import('./pages/Contact'))
+const Privacy      = lazy(() => import('./pages/Privacy'))
+const Terms        = lazy(() => import('./pages/Terms'))
+const HowItWorks   = lazy(() => import('./pages/HowItWorks'))
+const FAQ          = lazy(() => import('./pages/FAQ'))
+const SignIn       = lazy(() => import('./pages/SignIn'))
+const SignUp       = lazy(() => import('./pages/SignUp'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const Profile      = lazy(() => import('./pages/Profile'))
 
 // Auth Components
 import ProtectedRoute from './components/ProtectedRoute'
@@ -27,52 +34,71 @@ import ProtectedRoute from './components/ProtectedRoute'
 import { VendorAuthProvider } from './contexts/VendorAuthContext'
 import ProtectedVendorRoute from './components/vendor/ProtectedRoute'
 import VendorLayout from './layouts/VendorLayout'
-import VendorLogin from './pages/vendor/Login'
-import VendorForgotPassword from './pages/vendor/ForgotPassword'
-import VendorDashboard from './pages/vendor/Dashboard'
-import VendorProfile from './pages/vendor/Profile'
-import VendorInventory from './pages/vendor/Inventory'
-import VendorLeads from './pages/vendor/Leads'
-import VendorLeadDetail from './pages/vendor/LeadDetail'
-import VendorNotifications from './pages/vendor/Notifications'
-import VendorAds from './pages/vendor/Ads'
+const VendorLogin = lazy(() => import('./pages/vendor/Login'))
+const VendorForgotPassword = lazy(() => import('./pages/vendor/ForgotPassword'))
+const VendorDashboard = lazy(() => import('./pages/vendor/Dashboard'))
+const VendorProfile = lazy(() => import('./pages/vendor/Profile'))
+const VendorInventory = lazy(() => import('./pages/vendor/Inventory'))
+const VendorLeads = lazy(() => import('./pages/vendor/Leads'))
+const VendorLeadDetail = lazy(() => import('./pages/vendor/LeadDetail'))
+const VendorNotifications = lazy(() => import('./pages/vendor/Notifications'))
+const VendorAds = lazy(() => import('./pages/vendor/Ads'))
 
 // Admin Portal Imports
 import AdminProtectedRoute from './components/admin/ProtectedRoute'
 import AdminLayout from './layouts/AdminLayout'
-import AdminDashboard from './pages/admin/Dashboard'
-import AdminMessages from './pages/admin/Messages'
-import AdminLeads from './pages/admin/Leads'
-import AdminVendorLeads from './pages/admin/VendorLeads'
-import AdminYardSubmissions from './pages/admin/YardSubmissions'
-import AdminVendors from './pages/admin/Vendors'
-import AdminAds from './pages/admin/Ads'
-import AdminSettings from './pages/admin/Settings'
-
-// CMS + RBAC
-import AdminCMS from './pages/admin/CMS'
-import AdminRoles from './pages/admin/Roles'
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
+const AdminMessages = lazy(() => import('./pages/admin/Messages'))
+const AdminLeads = lazy(() => import('./pages/admin/Leads'))
+const AdminVendorLeads = lazy(() => import('./pages/admin/VendorLeads'))
+const AdminYardSubmissions = lazy(() => import('./pages/admin/YardSubmissions'))
+const AdminVendors = lazy(() => import('./pages/admin/Vendors'))
+const AdminAds = lazy(() => import('./pages/admin/Ads'))
+const AdminSettings = lazy(() => import('./pages/admin/Settings'))
+const AdminCMS = lazy(() => import('./pages/admin/CMS'))
+const AdminRoles = lazy(() => import('./pages/admin/Roles'))
 
 // Blog imports
-import BlogList from './pages/blog/BlogList'
-import BlogDetail from './pages/blog/BlogDetail'
-import AdminBlogList from './pages/admin/blog/BlogList'
-import AdminBlogEditor from './pages/admin/blog/BlogEditor'
+const BlogList = lazy(() => import('./pages/blog/BlogList'))
+const BlogDetail = lazy(() => import('./pages/blog/BlogDetail'))
+const AdminBlogList = lazy(() => import('./pages/admin/blog/BlogList'))
+const AdminBlogEditor = lazy(() => import('./pages/admin/blog/BlogEditor'))
+
+// Page load spinner (minimal, no deps)
+function PageSpinner() {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-base, #0a0f18)',
+      }}
+    >
+      <div
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          border: '3px solid rgba(37,99,235,0.15)',
+          borderTopColor: '#2563eb',
+          animation: 'spin 0.75s linear infinite',
+        }}
+      />
+    </div>
+  )
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SEO: Pattern-based redirect for ALL legacy /junkyards/* URLs (5200+ routes)
-// Replaces the old staticwebapp.config.json routes that exceeded Azure's 100KB limit
-// Pattern 1: /junkyards/:state           → /browse/:state
-// Pattern 2: /junkyards/:state/:slug     → /vendors/:slug
+// Legacy redirect for /junkyards/* URLs (5200+ SEO-preserved routes)
 // ─────────────────────────────────────────────────────────────────────────────
 function JunkyardRedirect() {
   const location = useLocation()
   const parts = location.pathname.replace(/^\/junkyards\//, '').split('/')
-  // If there's a vendor slug (2 parts: state + slug) → /vendors/:slug
   if (parts.length >= 2 && parts[1]) {
     return <Navigate to={`/vendors/${parts[1]}`} replace />
   }
-  // Otherwise state-level → /browse/:state
   return <Navigate to={`/browse/${parts[0]}`} replace />
 }
 
@@ -82,9 +108,7 @@ function ScrollObserver() {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible')
-        }
+        if (e.isIntersecting) e.target.classList.add('visible')
       })
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
 
@@ -92,10 +116,7 @@ function ScrollObserver() {
       document.querySelectorAll('.scroll-fade-in').forEach(el => observer.observe(el))
     }, 100)
 
-    return () => {
-      clearTimeout(timeout)
-      observer.disconnect()
-    }
+    return () => { clearTimeout(timeout); observer.disconnect() }
   }, [location.pathname])
 
   return null
@@ -103,115 +124,113 @@ function ScrollObserver() {
 
 function App() {
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <ScrollObserver />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/quote" element={<QuoteRequest />} />
+      <Suspense fallback={<PageSpinner />}>
+        <PageTransition>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/quote" element={<QuoteRequest />} />
 
-        {/* Auth Routes */}
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin/login" element={<SignIn />} />
+            {/* Auth Routes */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/admin/login" element={<SignIn />} />
 
-        {/* Protected Routes */}
-        <Route path="/add-a-yard" element={
-          <ProtectedRoute>
-            <AddYardPage />
-          </ProtectedRoute>
-        } />
+            {/* Protected Routes */}
+            <Route path="/add-a-yard" element={
+              <ProtectedRoute>
+                <AddYardPage />
+              </ProtectedRoute>
+            } />
 
-        <Route path="/vendors" element={<AllVendors />} />
-        <Route path="/junkyards" element={<Navigate to="/vendors" replace />} /> {/* Legacy SEO Redirect */}
-        <Route path="/vendors/:id" element={<VendorDetail />} />
-        <Route path="/browse" element={<BrowseStates />} />
-        <Route path="/browse/:state" element={<BrowseState />} />
-        <Route path="/junkyard/:id" element={<JunkyardDetail />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/about-us" element={<Navigate to="/about" replace />} /> {/* Legacy SEO Redirect */}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/faq" element={<FAQ />} />
+            <Route path="/vendors" element={<AllVendors />} />
+            <Route path="/junkyards" element={<Navigate to="/vendors" replace />} />
+            <Route path="/vendors/:id" element={<VendorDetail />} />
+            <Route path="/browse" element={<BrowseStates />} />
+            <Route path="/browse/:state" element={<BrowseState />} />
+            <Route path="/junkyard/:id" element={<JunkyardDetail />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/about-us" element={<Navigate to="/about" replace />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/faq" element={<FAQ />} />
 
-        {/* ── Legacy SEO Redirects (covers all 5200+ /junkyards/* URLs) ── */}
-        <Route path="/junkyards-by-location" element={<Navigate to="/browse" replace />} />
-        <Route path="/junkyards/:state" element={<JunkyardRedirect />} />
-        <Route path="/junkyards/:state/:vendorSlug" element={<JunkyardRedirect />} />
-        {/* Other legacy static redirects */}
-        <Route path="/terms-and-conditions" element={<Navigate to="/terms" replace />} />
-        <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
+            {/* Legacy SEO Redirects */}
+            <Route path="/junkyards-by-location" element={<Navigate to="/browse" replace />} />
+            <Route path="/junkyards/:state" element={<JunkyardRedirect />} />
+            <Route path="/junkyards/:state/:vendorSlug" element={<JunkyardRedirect />} />
+            <Route path="/terms-and-conditions" element={<Navigate to="/terms" replace />} />
+            <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
 
-        {/* Blog Routes */}
-        <Route path="/blog" element={<BlogList />} />
-        <Route path="/blog/:slug" element={<BlogDetail />} />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } />
+            {/* Blog Routes */}
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
 
-        {/* Vendor Portal Routes */}
-        <Route path="/vendor/login" element={
-          <VendorAuthProvider>
-            <VendorLogin />
-          </VendorAuthProvider>
-        } />
-        <Route path="/vendor/forgot-password" element={
-          <VendorAuthProvider>
-            <VendorForgotPassword />
-          </VendorAuthProvider>
-        } />
+            {/* Vendor Portal Routes */}
+            <Route path="/vendor/login" element={
+              <VendorAuthProvider>
+                <VendorLogin />
+              </VendorAuthProvider>
+            } />
+            <Route path="/vendor/forgot-password" element={
+              <VendorAuthProvider>
+                <VendorForgotPassword />
+              </VendorAuthProvider>
+            } />
 
-        {/* Protected Vendor Routes */}
-        <Route path="/vendor/*" element={
-          <VendorAuthProvider>
-            <ProtectedVendorRoute>
-              <VendorLayout />
-            </ProtectedVendorRoute>
-          </VendorAuthProvider>
-        }>
-          <Route path="dashboard" element={<VendorDashboard />} />
-          <Route path="profile" element={<VendorProfile />} />
-          <Route path="inventory" element={<VendorInventory />} />
-          <Route path="leads" element={<VendorLeads />} />
-          <Route path="leads/:id" element={<VendorLeadDetail />} />
-          <Route path="notifications" element={<VendorNotifications />} />
-          <Route path="ads" element={<VendorAds />} />
-        </Route>
+            <Route path="/vendor/*" element={
+              <VendorAuthProvider>
+                <ProtectedVendorRoute>
+                  <VendorLayout />
+                </ProtectedVendorRoute>
+              </VendorAuthProvider>
+            }>
+              <Route path="dashboard" element={<VendorDashboard />} />
+              <Route path="profile" element={<VendorProfile />} />
+              <Route path="inventory" element={<VendorInventory />} />
+              <Route path="leads" element={<VendorLeads />} />
+              <Route path="leads/:id" element={<VendorLeadDetail />} />
+              <Route path="notifications" element={<VendorNotifications />} />
+              <Route path="ads" element={<VendorAds />} />
+            </Route>
 
-        {/* Admin Portal Routes */}
-        <Route path="/admin-portal/*" element={
-          <AdminProtectedRoute>
-            <AdminLayout />
-          </AdminProtectedRoute>
-        }>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="messages" element={<AdminMessages />} />
-          <Route path="leads" element={<AdminLeads />} />
-          <Route path="vendor-leads" element={<AdminVendorLeads />} />
-          <Route path="yard-submissions" element={<AdminYardSubmissions />} />
-          <Route path="vendors" element={<AdminVendors />} />
-          <Route path="ads" element={<AdminAds />} />
-          <Route path="settings" element={<AdminSettings />} />
-          {/* Blog Management */}
-          <Route path="blog" element={<AdminBlogList />} />
-          <Route path="blog/new" element={<AdminBlogEditor />} />
-          <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
-          {/* CMS */}
-          <Route path="cms" element={<AdminCMS />} />
-          <Route path="cms/:page" element={<AdminCMS />} />
-          {/* RBAC */}
-          <Route path="roles" element={<AdminRoles />} />
-          {/* Default redirect to dashboard */}
-          <Route index element={<Navigate to="dashboard" replace />} />
-        </Route>
-      </Routes>
-    </>
+            {/* Admin Portal Routes */}
+            <Route path="/admin-portal/*" element={
+              <AdminProtectedRoute>
+                <AdminLayout />
+              </AdminProtectedRoute>
+            }>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="messages" element={<AdminMessages />} />
+              <Route path="leads" element={<AdminLeads />} />
+              <Route path="vendor-leads" element={<AdminVendorLeads />} />
+              <Route path="yard-submissions" element={<AdminYardSubmissions />} />
+              <Route path="vendors" element={<AdminVendors />} />
+              <Route path="ads" element={<AdminAds />} />
+              <Route path="settings" element={<AdminSettings />} />
+              <Route path="blog" element={<AdminBlogList />} />
+              <Route path="blog/new" element={<AdminBlogEditor />} />
+              <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
+              <Route path="cms" element={<AdminCMS />} />
+              <Route path="cms/:page" element={<AdminCMS />} />
+              <Route path="roles" element={<AdminRoles />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+            </Route>
+          </Routes>
+        </PageTransition>
+      </Suspense>
+    </MotionConfig>
   )
 }
 

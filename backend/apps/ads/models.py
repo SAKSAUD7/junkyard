@@ -3,15 +3,29 @@ from django.utils import timezone
 
 class Advertisement(models.Model):
     SLOT_CHOICES = (
-        ('left_sidebar_ad', 'Left Sidebar Ad'),
+        ('left_sidebar_ad',  'Left Sidebar Ad'),
         ('right_sidebar_ad', 'Right Sidebar Ad'),
+        # Horizontal strip slots
+        ('strip_top',       'Strip — Top (below hero)'),
+        ('strip_bottom',    'Strip — Bottom (before footer)'),
+        ('strip_home_mid',  'Strip — Home Middle'),
+        # Carousel slots
+        ('carousel_1',      'Carousel Slider 1 (Top)'),
+        ('carousel_2',      'Carousel Slider 2'),
+        ('carousel_3',      'Carousel Slider 3 (Middle)'),
+        ('carousel_4',      'Carousel Slider 4'),
+        ('carousel_5',      'Carousel Slider 5 (Bottom)'),
     )
 
     PAGE_CHOICES = (
-        ('all', 'All Pages'),
-        ('home', 'Home Page'),
+        ('all',     'All Pages'),
+        ('home',    'Home Page'),
         ('vendors', 'Vendors Page'),
-        ('browse', 'Browse Page'),
+        ('browse',  'Browse Page'),
+        ('about',   'About Page'),
+        ('contact', 'Contact Page'),
+        ('blog',    'Blog Page'),
+        ('faq',     'FAQ Page'),
     )
 
     title = models.CharField(max_length=255)

@@ -7,9 +7,22 @@ import PincodeSearch from '../components/PincodeSearch'
 import TrustedVendors from '../components/TrustedVendors'
 import DynamicAd from '../components/DynamicAd'
 import MobileAdBanner from '../components/MobileAdBanner'
+import FloatingActionButtons from '../components/FloatingActionButtons'
 import SEO from '../components/SEO'
+import ExitIntentPopup from '../components/ExitIntentPopup'
+import MobileStickyBar from '../components/MobileStickyBar'
+import LiveActivityFeed from '../components/LiveActivityFeed'
+import { MotionStagger, MotionItem } from '../components/MotionSection'
+import PopularParts from '../components/PopularParts'
+import RealSavingsTable from '../components/RealSavingsTable'
+import AutoPartsInsights from '../components/AutoPartsInsights'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 import { useCMS } from '../hooks/useCMS'
+import { api } from '../services/api'
+import AdCarousel from '../components/AdCarousel'
+import VendorCTASection from '../components/VendorCTASection'
+import WhyChooseJynmSection from '../components/WhyChooseJynmSection'
+import MakesBackgroundCarousel from '../components/MakesBackgroundCarousel'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -35,7 +48,7 @@ function useSiteStats() {
                 const { data, ts } = JSON.parse(cached)
                 if (Date.now() - ts < CACHE_TTL) return data
             }
-        } catch (_) {}
+        } catch (_) { }
         return DEFAULTS
     })
 
@@ -47,7 +60,7 @@ function useSiteStats() {
                     const { data, ts } = JSON.parse(cached)
                     if (Date.now() - ts < CACHE_TTL) { setStats(data); return }
                 }
-            } catch (_) {}
+            } catch (_) { }
 
             try {
                 const res = await fetch(`${API_BASE}/api/common/site-stats/`)
@@ -56,7 +69,7 @@ function useSiteStats() {
                 const merged = { ...DEFAULTS, ...data }
                 setStats(merged)
                 try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: merged, ts: Date.now() })) }
-                catch (_) {}
+                catch (_) { }
             } catch (_) {
                 // keep defaults — no visual error needed
             }
@@ -136,6 +149,200 @@ export default function Home() {
     const navigate = useNavigate()
     const siteStats = useSiteStats()
     const { get } = useCMS('home')
+    const leadFormRef = useRef(null)
+
+    const scrollToLeadForm = () => {
+        leadFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
+    // ── Hero 2-Step Inline Lead Form State ─────────────────────────────────
+    // Vehicle data
+    const [makes, setMakes] = useState([])
+    const [models, setModels] = useState([])
+    const [years, setYears] = useState([])
+    const [parts, setParts] = useState([])
+    const [vehicleCache, setVehicleCache] = useState(null)
+    const [heroMake, setHeroMake] = useState('')
+    const [heroModel, setHeroModel] = useState('')
+    const [heroYear, setHeroYear] = useState('')
+    const [heroPartId, setHeroPartId] = useState('')
+    const [loadingMakes, setLoadingMakes] = useState(false)
+    const [loadingVehicle, setLoadingVehicle] = useState(false)
+    const [loadingParts, setLoadingParts] = useState(false)
+    // Contact info (step 2)
+    const [heroName, setHeroName] = useState('')
+    const [heroEmail, setHeroEmail] = useState('')
+    const [heroPhone, setHeroPhone] = useState('')
+    const [heroState, setHeroState] = useState('')
+    const [heroZip, setHeroZip] = useState('')
+    // Flow control
+    const [heroStep, setHeroStep] = useState(1)   // 1 or 2
+    const [heroError, setHeroError] = useState('')
+    const [heroSubmitting, setHeroSubmitting] = useState(false)
+    const [heroSuccess, setHeroSuccess] = useState(false)
+    // CAPTCHA
+    const [captchaCode, setCaptchaCode] = useState('')
+    const [captchaInput, setCaptchaInput] = useState('')
+    const generateCaptcha = () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
+        const nums = '23456789'
+        const code = [
+            nums[Math.floor(Math.random() * nums.length)],
+            chars[Math.floor(Math.random() * chars.length)],
+            (chars + nums)[Math.floor(Math.random() * (chars.length + nums.length))],
+            (chars + nums)[Math.floor(Math.random() * (chars.length + nums.length))]
+        ]
+        return code.sort(() => Math.random() - 0.5).join('')
+    }
+
+    const formatPhone = (val) => {
+        const raw = val.replace(/\D/g, '').substring(0, 10)
+        if (raw.length === 0) return ''
+        if (raw.length <= 3) return raw
+        if (raw.length <= 6) return `(${raw.slice(0, 3)}) ${raw.slice(3)}`
+        return `(${raw.slice(0, 3)}) ${raw.slice(3, 6)}-${raw.slice(6)}`
+    }
+
+    const US_STATES = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
+
+    // Zip Code Dropdown State
+    const [zipcodes, setZipcodes] = useState([])
+    const [showZipSuggestions, setShowZipSuggestions] = useState(false)
+    const [loadingZipcodes, setLoadingZipcodes] = useState(false)
+
+    /* Load zipcodes when state changes */
+    useEffect(() => {
+        const fetchZipcodes = async () => {
+            if (!heroState) {
+                setZipcodes([]); setShowZipSuggestions(false); return
+            }
+            setLoadingZipcodes(true)
+            try {
+                const data = await api.getZipcodesByState(heroState)
+                if (data && data.zipcodes) {
+                    setZipcodes(data.zipcodes)
+                } else {
+                    setZipcodes([])
+                }
+            } catch (err) {
+                setZipcodes([])
+            } finally {
+                setLoadingZipcodes(false)
+            }
+        }
+        fetchZipcodes()
+    }, [heroState])
+
+    useEffect(() => {
+        setLoadingMakes(true)
+        api.getMakes().then(d => setMakes(d || [])).catch(() => { }).finally(() => setLoadingMakes(false))
+    }, [])
+
+    /* Bulk-fetch models+years when make changes */
+    useEffect(() => {
+        if (!heroMake) { setModels([]); setYears([]); setParts([]); setVehicleCache(null); setHeroModel(''); setHeroYear(''); setHeroPartId(''); return }
+        setLoadingVehicle(true)
+        api.getVehicleDataBulk(heroMake)
+            .then(d => {
+                setVehicleCache(d)
+                setModels((d.models || []).map(m => ({ modelID: m.model_id, modelName: m.model_name, years: m.years || [], parts: m.parts || {} })))
+            })
+            .catch(() => setModels([]))
+            .finally(() => setLoadingVehicle(false))
+        setHeroModel(''); setHeroYear(''); setHeroPartId('')
+    }, [heroMake])
+
+    /* Filter years from cache when model changes */
+    useEffect(() => {
+        if (!heroModel) { setYears([]); setParts([]); setHeroYear(''); setHeroPartId(''); return }
+        const mod = models.find(m => String(m.modelID) === String(heroModel))
+        setYears(mod ? mod.years : [])
+        setHeroYear(''); setHeroPartId('')
+    }, [heroModel, models])
+
+    /* Load parts when year changes */
+    useEffect(() => {
+        if (!heroYear || !heroModel) { setParts([]); setHeroPartId(''); return }
+        // Try cache first
+        const mod = models.find(m => String(m.modelID) === String(heroModel))
+        if (mod?.parts?.[heroYear]?.length > 0) {
+            setParts(mod.parts[heroYear].map(p => ({ partID: p.part_id, partName: p.part_name })))
+            setHeroPartId('')
+            return
+        }
+        // Fallback to API
+        setLoadingParts(true)
+        api.getParts({ make_id: heroMake, model_id: heroModel, year: heroYear })
+            .then(d => setParts((d || []).map(p => ({ partID: p.partID || p.part_id, partName: p.partName || p.part_name }))))
+            .catch(() => setParts([]))
+            .finally(() => setLoadingParts(false))
+        setHeroPartId('')
+    }, [heroYear, heroModel, models])
+
+    const handleHeroNext = () => {
+        if (!heroMake || !heroModel || !heroYear || !heroPartId) {
+            setHeroError('Please select Make, Model, Year and Part to continue.')
+            return
+        }
+        setHeroError('')
+        setCaptchaCode(generateCaptcha())
+        setCaptchaInput('')
+        setHeroStep(2)
+    }
+
+    const handleHeroBack = () => { setHeroStep(1); setHeroError(''); setCaptchaInput('') }
+
+    const handleHeroSubmit = async (e) => {
+        e.preventDefault()
+        if (!heroName || !heroEmail || !heroPhone || !heroState || !heroZip) {
+            setHeroError('Please fill in all contact fields.')
+            return
+        }
+        if (!captchaInput.trim()) {
+            setHeroError('Please enter the CAPTCHA value.')
+            return
+        }
+        if (captchaInput.trim().toUpperCase() !== captchaCode) {
+            setHeroError('Please re-enter the CAPTCHA value properly.')
+            setCaptchaCode(generateCaptcha())
+            setCaptchaInput('')
+            return
+        }
+        setHeroError('')
+        setHeroSubmitting(true)
+        const makeObj = makes.find(m => String(m.makeID) === String(heroMake))
+        const partObj = parts.find(p => String(p.partID) === String(heroPartId))
+        try {
+            await api.createLead({
+                make: makeObj?.makeName || heroMake,
+                model: heroModel,
+                year: parseInt(heroYear),
+                part: partObj?.partName || heroPartId,
+                name: heroName, email: heroEmail, phone: heroPhone,
+                state: heroState, zip: heroZip,
+                lead_type: 'quality_auto_parts',
+            })
+            setHeroSuccess(true)
+        } catch { setHeroError('Submission failed. Please try again.') }
+        finally { setHeroSubmitting(false) }
+    }
+
+    const handleHeroReset = () => { setHeroSuccess(false); setHeroStep(1); setHeroMake(''); setHeroModel(''); setHeroYear(''); setHeroPartId(''); setHeroName(''); setHeroEmail(''); setHeroPhone(''); setHeroState(''); setHeroZip(''); setHeroError(''); setCaptchaCode(''); setCaptchaInput('') }
+
+    // Auto-reset to step 1 after 25s of showing the success message
+    const [successCountdown, setSuccessCountdown] = useState(25)
+    useEffect(() => {
+        if (!heroSuccess) { setSuccessCountdown(25); return }
+        setSuccessCountdown(25)
+        const interval = setInterval(() => {
+            setSuccessCountdown(prev => {
+                if (prev <= 1) { clearInterval(interval); handleHeroReset(); return 0 }
+                return prev - 1
+            })
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [heroSuccess])
+
 
     const combinedSchema = {
         '@context': 'https://schema.org',
@@ -153,535 +360,396 @@ export default function Home() {
             <Navbar />
 
             {/* ============================================================
-                HERO SECTION — Cinematic depth with real car imagery
+                HERO SECTION — Video Background Layout (White Theme)
             ============================================================ */}
-            <section
-                className="hero-depth"
-                style={{
-                    background: 'var(--bg-base)',
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-            >
-                {/* PRIMARY — stacked crushed cars at night, Ken Burns zoom */}
-                <div
-                    className="hero-bg-primary"
-                    style={{ backgroundImage: 'url(/heroes/stacked-cars.png)', opacity: 0.55 }}
-                />
-                {/* DEPTH — aerial junkyard, blurred offset layer */}
-                <div
-                    className="hero-bg-depth"
-                    style={{ backgroundImage: 'url(/heroes/aerial-night.png)' }}
-                />
-                {/* Dark gradient overlay */}
-                <div className="hero-overlay-base" />
-                {/* Vignette */}
-                <div className="hero-vignette" />
-                {/* Ambient glows */}
-                <div className="hero-glow-teal" />
-                <div className="hero-glow-orange" />
-                {/* Grid texture */}
-                <div className="hero-grid" />
-                {/* Moving scanline */}
-                <div className="hero-scanline" />
-                {/* Fade to page at bottom */}
-                <div className="hero-fade-bottom" />
-                {/* Particles still active */}
-                <ParticleField />
+            <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-20 pb-20 min-h-[90vh] flex flex-col justify-start">
+                
+                {/* Full-bleed cinematic background video */}
+                <div className="absolute inset-0 z-0 bg-white">
+                    <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover mix-blend-multiply opacity-90"
+                        style={{ filter: 'brightness(1.05) contrast(1.1)' }}
+                    >
+                        <source src="/Video/hero-models-bg-v2.mp4" type="video/mp4" />
+                    </video>
+                    {/* Light Gradient Overlay for text readability (fades smoothly without hard lines) */}
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent lg:w-3/4" />
+                </div>
 
-                {/* THREE COLUMN LAYOUT: Left Ad | Content | Right Ad */}
-                <div className="hero-content flex flex-1 w-full max-w-[1400px] mx-auto" style={{ paddingTop: '2rem', paddingBottom: '2rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
-
-                    {/* LEFT SIDEBAR AD — desktop only */}
-                    <div className="hidden xl:flex flex-col items-start pt-12 pr-6 w-[220px] flex-shrink-0">
-                        <DynamicAd slot="left_sidebar_ad" page="home" />
-                    </div>
-
-                    {/* CENTER HERO CONTENT */}
-                    <div className="flex-1 flex flex-col items-center justify-center text-center py-12 px-2 sm:px-6">
-
-                        {/* Brand lockup */}
-                        <div className="mb-6 animate-fade-in">
-                            <div
-                                className="inline-flex flex-col items-center px-8 py-4 rounded-2xl"
-                                style={{
-                                    background: 'rgba(255,255,255,0.08)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    backdropFilter: 'blur(16px)'
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-                                        fontWeight: 900,
-                                        color: '#ffffff',
-                                        fontFamily: "'Outfit', sans-serif",
-                                        letterSpacing: '-0.04em',
-                                        lineHeight: 1,
-                                        textShadow: '0 2px 20px rgba(0,0,0,0.5)'
-                                    }}
-                                >
-                                    JYNM
-                                </span>
-                                <span
-                                    style={{
-                                        fontSize: '0.7rem',
-                                        letterSpacing: '0.25em',
-                                        color: 'rgba(147,197,253,0.9)',
-                                        fontFamily: "'JetBrains Mono', monospace",
-                                        textTransform: 'uppercase',
-                                        marginTop: '4px'
-                                    }}
-                                >
-                                    JUNKYARDSNEARME.COM
-                                </span>
-                            </div>
+                <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-2">
+                    <div className="w-full lg:max-w-[70%] text-left mb-10">
+                        {/* Trust Badge */}
+                        <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                            </svg>
+                            The #1 Auto Parts Marketplace in the U.S.
                         </div>
 
-                        {/* Main Headline */}
-                        <h1
-                            className="animate-fade-in-up"
-                            style={{
-                                fontSize: 'clamp(1.8rem, 5vw, 3.4rem)',
-                                fontWeight: 900,
-                                fontFamily: "'Outfit', sans-serif",
-                                letterSpacing: '-0.02em',
-                                lineHeight: 1.12,
-                                marginBottom: '1rem',
-                                color: '#ffffff',
-                                textShadow: '0 2px 20px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.4)'
-                            }}
-                        >
-                            {get('hero', 'heading', 'FIND THE JUNKYARD\\nAUTO PARTS YOU NEED —\\nSEARCH IN SECONDS.').split('\\n').map((line, i) => (
-                                <span key={i}>
-                                    {line}
-                                    <br />
-                                </span>
-                            ))}
+                        <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            Find Verified Auto Parts <br />
+                            From <span className="text-blue-600">6,500+</span> Junkyards <br />
+                            In Under <span className="text-emerald-600">60</span> Seconds
                         </h1>
 
-                        {/* Subheadline */}
-                        <p
-                            className="animate-fade-in-up delay-100"
-                            style={{
-                                fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
-                                color: 'rgba(255,255,255,0.85)',
-                                marginBottom: '2.5rem',
-                                fontFamily: "'Inter', sans-serif",
-                                fontWeight: 500,
-                                textShadow: '0 1px 6px rgba(0,0,0,0.5)'
-                            }}
-                            dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Locate quality used auto parts from <span style="color: #fb923c; font-weight: 800">verified junkyards</span> near you!') }}
-                        />
-
-                        {/* ZIP Code Search Box */}
-                        <div
-                            className="w-full max-w-2xl animate-fade-in-up delay-200 mb-6"
-                            style={{
-                                background: 'rgba(255,255,255,0.12)',
-                                backdropFilter: 'blur(20px)',
-                                border: '1px solid rgba(255,255,255,0.25)',
-                                borderRadius: '1rem',
-                                padding: '1.5rem',
-                                boxShadow: '0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)'
-                            }}
-                        >
-                            <p style={{
-                                color: 'rgba(255,255,255,0.6)',
-                                fontSize: '0.75rem',
-                                letterSpacing: '0.12em',
-                                textTransform: 'uppercase',
-                                marginBottom: '0.75rem',
-                                fontFamily: "'JetBrains Mono', monospace"
-                            }}>
-                                Search by ZIP Code · Find junkyards near you instantly
-                            </p>
-                            <PincodeSearch />
-                        </div>
-
-                        {/* Vehicle Search / Lead Form */}
-                        <div className="w-full max-w-lg mb-8 animate-fade-in-up delay-300">
-                            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1rem', fontFamily: "'JetBrains Mono', monospace", textAlign: 'center', fontWeight: '600' }}>
-                                Or search by vehicle details
-                            </p>
-                            <LeadForm layout="horizontal" mode="quality_auto_parts" enableSteps={true} />
-                        </div>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 mt-8 animate-fade-in-up delay-500">
-                            <Link to={get('hero', 'cta_primary_link', '/vendors')} id="hero-browse-vendors-btn" className="btn-primary">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {get('hero', 'cta_primary_text', 'Browse All Vendors')}
-                            </Link>
-                            <Link to={get('hero', 'cta_secondary_link', '/how-it-works')} id="hero-how-it-works-btn" className="btn-neon">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {get('hero', 'cta_secondary_text', 'How It Works')}
-                            </Link>
-                        </div>
-
-                        {/* Inline trust strip — below CTAs */}
-                        <div className="flex flex-wrap items-center justify-center gap-5 mt-8 animate-fade-in-up delay-700">
-                            {[
-                                { icon: '✓', text: `${siteStats.vendors_count.toLocaleString()}+ Verified Yards` },
-                                { icon: '🛡', text: get('hero', 'trust_badge_1', 'No Spam Guarantee') },
-                                { icon: '⚡', text: get('hero', 'trust_badge_2', 'Instant Quotes') },
-                                { icon: '💰', text: `Up to ${siteStats.savings_percent}% Savings` },
-                            ].map((item, i) => (
-                                <span key={i} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.03em' }}>
-                                    <span>{item.icon}</span> {item.text}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* RIGHT SIDEBAR AD — desktop only */}
-                    <div className="hidden xl:flex flex-col items-end pt-12 pl-6 w-[220px] flex-shrink-0">
-                        <DynamicAd slot="right_sidebar_ad" page="home" />
-                    </div>
-                </div>
-
-            </section>
-
-            {/* ============================================================
-                STATS STRIP
-            ============================================================ */}
-            <section style={{ background: 'var(--bg-surface)', borderTop: '1px solid rgba(37,99,235,0.08)', borderBottom: '1px solid rgba(37,99,235,0.08)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                        {[
-                            { value: siteStats.vendors_count, suffix: '+', label: 'Verified Junkyards', color: 'var(--neon-blue)' },
-                            { value: siteStats.parts_listed, suffix: '+', label: 'Parts Listed', color: 'var(--neon-orange)' },
-                            { value: siteStats.states_covered, suffix: ' States', label: 'Coverage', color: 'var(--neon-blue)' },
-                            { value: siteStats.savings_percent, suffix: '%', prefix: 'Up to ', label: 'Savings vs. Dealer', color: 'var(--neon-orange)' }
-                        ].map((s, i) => (
-                            <div key={i} className="scroll-fade-in text-center" style={{ animationDelay: `${i * 80}ms` }}>
-                                <div
-                                    className="py-6 px-3 rounded-xl"
-                                    style={{
-                                        background: '#ffffff',
-                                        border: `1px solid rgba(${s.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.15)`,
-                                        boxShadow: '0 2px 12px rgba(0,0,0,0.05)'
-                                    }}
-                                >
-                                    <div
-                                        className="text-3xl md:text-4xl font-black mb-1"
-                                        style={{ color: s.color, fontFamily: "'Outfit', sans-serif" }}
-                                    >
-                                        <AnimatedCounter target={s.value} suffix={s.suffix} prefix={s.prefix} />
-                                    </div>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>{s.label}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ============================================================
-                ADD YOUR YARD CTA — Vendor Network Hub
-            ============================================================ */}
-
-            <section className="relative py-24 md:py-32 overflow-hidden shadow-2xl" style={{ margin: '4rem 1rem', borderRadius: '2rem', background: '#0a0f18', border: '1px solid rgba(234,88,12,0.2)' }}>
-                {/* Visual Depth / Ambience */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none mix-blend-overlay" />
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-                        <div className="text-left scroll-fade-in pr-0 lg:pr-12">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.1)', border: '1px solid rgba(234,88,12,0.25)', boxShadow: '0 0 20px rgba(234,88,12,0.15)' }}>
-                                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_#ea580c]" />
-                                <span style={{ color: '#fed7aa', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Vendor Network Hub</span>
-                            </div>
-
-                            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#ffffff', fontWeight: 900, fontFamily: "'Outfit', sans-serif", lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-                                Transform Your Salvage{' '}
-                                <span style={{ display: 'block', background: 'linear-gradient(135deg, #ea580c, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                    Business Today
-                                </span>
-                            </h2>
-
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: 1.8, maxWidth: '500px', marginBottom: '2.5rem' }}>
-                                Millions of buyers are searching for auto parts immediately. Partner with <strong>JYNM</strong> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
-                            </p>
-
-                            <div className="flex flex-wrap gap-4">
-                                <Link
-                                    to="/add-a-yard"
-                                    id="yard-cta-add-btn"
-                                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:-translate-y-1"
-                                    style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 10px 25px rgba(234,88,12,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
-                                >
-                                    Add Your Junkyard
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                </Link>
-                                <Link
-                                    to="/vendor/login"
-                                    id="yard-cta-login-btn"
-                                    className="inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10"
-                                    style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.15)' }}
-                                >
-                                    Vendor Login
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* 3D Visual Asset */}
-                        <div className="hidden lg:flex items-center justify-center relative">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] border border-blue-500/20 rounded-full animate-spin-slow pointer-events-none" />
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-orange-500/10 rounded-full animate-spin-slow-reverse pointer-events-none" />
-                            <img
-                                src="/3d/gear-core.png"
-                                alt="Advanced Vendor Tech"
-                                className="relative z-10 w-full max-w-[480px] h-auto pointer-events-none"
-                                style={{
-                                    mixBlendMode: 'screen',
-                                    animation: 'float 6s ease-in-out infinite',
-                                    filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.9)) contrast(1.1) brightness(1.2)'
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ============================================================
-                TRUSTED VENDORS — self-contained section (heading inside component)
-            ============================================================ */}
-            <TrustedVendors />
-
-            {/* ============================================================
-                HOW IT WORKS
-            ============================================================ */}
-
-            {/* ── TRUST PILLARS ── */}
-            <section className="py-16 md:py-20" style={{ background: '#f8fafc' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12 scroll-fade-in">
-                        <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{get('trust_pillars', 'badge_label', 'Why Trust JYNM')}</p>
-                        <h2 className="text-2xl md:text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: get('trust_pillars', 'heading', 'Built on <span class="text-blue-600">Reliability</span> & Transparency') }} />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        {[
-                            {
-                                icon: '🔒',
-                                title: 'Verified Network',
-                                desc: 'Every junkyard is manually vetted. We only list licensed, legitimate salvage yards you can trust.',
-                                accent: '#2563eb',
-                            },
-                            {
-                                icon: '⚡',
-                                title: 'Instant Quotes',
-                                desc: 'One request reaches multiple vendors simultaneously. Get competitive quotes without the phone tag.',
-                                accent: '#f97316',
-                            },
-                            {
-                                icon: '🛡',
-                                title: 'Zero Spam Promise',
-                                desc: 'We never sell your data. Your contact info goes directly and only to the junkyard you choose.',
-                                accent: '#2563eb',
-                            },
-                            {
-                                icon: '💰',
-                                title: 'Best Prices Guaranteed',
-                                desc: 'Compare hundreds of vendors in seconds. Save up to 80% vs. dealer pricing with real-time availability.',
-                                accent: '#f97316',
-                            },
-                        ].map((item, i) => (
-                            <div
-                                key={i}
-                                className="scroll-fade-in bg-white rounded-2xl p-6 border border-slate-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-100"
-                                style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)', animationDelay: `${i * 80}ms` }}
-                            >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: `${item.accent}0f`, border: `1px solid ${item.accent}22` }}>
-                                    {item.icon}
-                                </div>
-                                <h3 className="font-black text-slate-900 mb-2 text-base" style={{ fontFamily: "'Outfit', sans-serif" }}>{item.title}</h3>
-                                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ============================================================
-                HOW IT WORKS (original section continues below)
-            ============================================================ */}
-
-            <section className="py-20 md:py-28" style={{ background: 'var(--bg-base)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-14 scroll-fade-in">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4" style={{ background: 'rgba(234,88,12,0.08)', border: '1px solid rgba(234,88,12,0.2)' }}>
-                            <span style={{ color: 'var(--neon-orange)', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>Process</span>
-                        </div>
-                        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.75rem' }} dangerouslySetInnerHTML={{ __html: get('how_it_works', 'heading', 'How It <span style="color: #2563eb">Works</span>') }} />
-                        <p style={{ color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontSize: '0.9rem' }}>
-                            {get('how_it_works', 'subheading', 'Three simple steps to find the exact used auto parts you need at the best price.')}
+                        <p className="text-[17px] text-slate-600 mb-8 max-w-[540px] font-medium leading-relaxed">
+                            Compare prices from licensed salvage yards nationwide <br className="hidden sm:block" />
+                            and save up to 80% compared to dealership pricing.
                         </p>
+
+
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                step: '01', color: 'var(--neon-blue)',
-                                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
-                                title: get('how_it_works', 'step1_title', 'Search & Locate'),
-                                desc: get('how_it_works', 'step1_desc', 'Enter your ZIP code or vehicle details. Our system instantly finds verified junkyards near you with the parts you need.')
-                            },
-                            {
-                                step: '02', color: 'var(--neon-orange)',
-                                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
-                                title: get('how_it_works', 'step2_title', 'Get Free Quotes'),
-                                desc: get('how_it_works', 'step2_desc', 'Submit a single request to multiple vendors simultaneously. Compare prices, availability, and shipping options in real time.')
-                            },
-                            {
-                                step: '03', color: 'var(--neon-blue)',
-                                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>,
-                                title: get('how_it_works', 'step3_title', 'Order & Save'),
-                                desc: get('how_it_works', 'step3_desc', 'Choose the best deal, order your parts, and save up to 80% compared to dealer prices. Fast shipping nationwide.')
-                            }
-                        ].map((item, i) => (
-                            <div
-                                key={i}
-                                className="scroll-fade-in p-8 rounded-xl bg-white border border-slate-100 shadow-sm transition-all duration-300"
-                                style={{ animationDelay: `${i * 120}ms` }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.transform = 'translateY(-4px)'
-                                    e.currentTarget.style.boxShadow = `0 16px 48px rgba(0,0,0,0.08), 0 0 0 1px rgba(${item.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.15)`
-                                    e.currentTarget.style.borderColor = `rgba(${item.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.2)`
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.transform = 'none'
-                                    e.currentTarget.style.boxShadow = '0 1px 8px rgba(0,0,0,0.04)'
-                                    e.currentTarget.style.borderColor = '#f1f5f9'
-                                }}
-                            >
-                                <div className="flex items-start gap-4 mb-5">
-                                    <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}12`, border: `1px solid ${item.color}28`, color: item.color }}>
-                                        {item.icon}
+
+                    {/* Bottom Row Forms Container */}
+                    <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
+                        <div ref={leadFormRef} className="w-full mb-8 relative z-20">
+                            <div className={`bg-white/80 backdrop-blur-2xl shadow-[0_8px_40px_rgba(37,99,235,0.18),0_2px_12px_rgba(0,0,0,0.08)] border border-blue-200/60 relative z-20 overflow-visible
+                                before:absolute before:inset-0 before:rounded-[inherit] before:bg-gradient-to-b before:from-white/60 before:to-white/10 before:pointer-events-none
+                                ${heroStep === 2 && !heroSuccess ? 'rounded-3xl' : 'rounded-2xl lg:rounded-full'}`}>
+
+                                {/* SUCCESS STATE */}
+                                {heroSuccess && (
+                                    <div className="flex items-center gap-4 px-6 py-4">
+                                        <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-black text-slate-900 text-[15px]">The lead has been submitted 🎉</p>
+                                            <p className="text-[12px] text-slate-400 mt-0.5">Resetting in <span className="font-bold text-emerald-600">{successCountdown}s</span></p>
+                                        </div>
+                                        <button onClick={handleHeroReset} className="text-blue-600 text-[13px] font-bold hover:underline whitespace-nowrap flex-shrink-0">New Search</button>
                                     </div>
-                                    <div className="text-5xl font-black" style={{ color: `${item.color}12`, fontFamily: "'Outfit', sans-serif" }}>{item.step}</div>
-                                </div>
-                                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", marginBottom: '0.6rem' }}>{item.title}</h3>
-                                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '0.875rem' }}>{item.desc}</p>
+                                )}
+
+                                {/* STEP 1 — Vehicle + Part */}
+                                {!heroSuccess && heroStep === 1 && (
+                                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center p-1.5 lg:p-1.5 gap-3 lg:gap-0 w-full">
+                                        {/* Step badge */}
+                                        <div className="hidden lg:flex items-center gap-2 px-5 border-r border-slate-100 shrink-0">
+                                            <span className="w-6 h-6 bg-blue-600 text-white rounded-full text-[11px] font-black flex items-center justify-center">1</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Vehicle</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 lg:flex lg:flex-1 lg:flex-row gap-2 lg:gap-0">
+                                            {/* Make */}
+                                            <select value={heroMake} onChange={e => setHeroMake(e.target.value)}
+                                                className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer rounded-xl lg:rounded-none">
+                                                <option value="">{loadingMakes ? 'Loading...' : '🚗 Make'}</option>
+                                                {makes.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
+                                            </select>
+                                            {/* Model */}
+                                            <select value={heroModel} onChange={e => setHeroModel(e.target.value)} disabled={!heroMake}
+                                                className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none">
+                                                <option value="">{loadingVehicle ? 'Loading...' : 'Model'}</option>
+                                                {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
+                                            </select>
+                                            {/* Year */}
+                                            <select value={heroYear} onChange={e => setHeroYear(e.target.value)} disabled={!heroModel}
+                                                className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none">
+                                                <option value="">Year</option>
+                                                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                                            </select>
+                                            {/* Part */}
+                                            <select value={heroPartId} onChange={e => setHeroPartId(e.target.value)} disabled={!heroYear || loadingParts}
+                                                className="col-span-1 lg:flex-[1.5] lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-none text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none">
+                                                <option value="">{loadingParts ? 'Loading...' : '🔩 Part'}</option>
+                                                {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
+                                            </select>
+                                        </div>
+                                        {/* Next */}
+                                        <button type="button" onClick={handleHeroNext}
+                                            className="w-full lg:min-w-0 lg:w-auto bg-blue-600 text-white text-[13px] font-bold rounded-xl lg:rounded-full px-7 py-2.5 hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] flex items-center justify-center gap-2 group shrink-0 mt-1 lg:mt-0">
+                                            Next Step
+                                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* STEP 2 — Contact Info */}
+                                {!heroSuccess && heroStep === 2 && (
+                                    <form onSubmit={handleHeroSubmit}
+                                        className="flex flex-col p-5 gap-4">
+                                        <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+                                            <button type="button" onClick={handleHeroBack} className="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full text-[13px] font-black flex items-center justify-center transition">
+                                                ←
+                                            </button>
+                                            <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Contact Details</span>
+                                        </div>
+                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                                            <input type="text" placeholder="Your Name" value={heroName} onChange={e => setHeroName(e.target.value)} required
+                                                className="bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 placeholder-slate-400 focus:bg-white focus:border-blue-500 transition-colors" />
+                                            <input type="email" placeholder="Email Address" value={heroEmail} onChange={e => setHeroEmail(e.target.value)} required
+                                                className="bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 placeholder-slate-400 focus:bg-white focus:border-blue-500 transition-colors" />
+                                            <input type="tel" placeholder="Phone Number" value={heroPhone} onChange={e => setHeroPhone(formatPhone(e.target.value))} required
+                                                className="bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 placeholder-slate-400 focus:bg-white focus:border-blue-500 transition-colors" />
+                                        </div>
+                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                            <select value={heroState} onChange={e => { setHeroState(e.target.value); setHeroZip(''); }} required
+                                                className="bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 appearance-none cursor-pointer focus:bg-white focus:border-blue-500 transition-colors">
+                                                <option value="">State</option>
+                                                {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                                            </select>
+
+                                            <div className="relative">
+                                                <input type="text" placeholder="ZIP Code" value={heroZip}
+                                                    onChange={e => {
+                                                        const val = e.target.value.replace(/\D/g, '').slice(0, 5)
+                                                        setHeroZip(val)
+                                                        if (zipcodes.length > 0) setShowZipSuggestions(true)
+                                                    }}
+                                                    onFocus={() => { if (zipcodes.length > 0) setShowZipSuggestions(true) }}
+                                                    onBlur={() => setTimeout(() => setShowZipSuggestions(false), 200)}
+                                                    maxLength={5} required
+                                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 placeholder-slate-400 focus:bg-white focus:border-blue-500 transition-colors" />
+
+                                                {/* AUTO-SUGGEST DROPDOWN */}
+                                                {showZipSuggestions && zipcodes.length > 0 && (
+                                                    <div className="absolute top-14 left-0 z-[100] w-full bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                                        {zipcodes.filter(z => z.postal_code.startsWith(heroZip)).map(z => (
+                                                            <div key={z.postal_code}
+                                                                className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-[13px] text-slate-700 border-b last:border-0 border-slate-100 transition-colors"
+                                                                onClick={() => {
+                                                                    setHeroZip(z.postal_code)
+                                                                    setShowZipSuggestions(false)
+                                                                }}>
+                                                                <span className="font-bold text-slate-900">{z.postal_code}</span> - <span className="text-slate-500">{z.city_name}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                {loadingZipcodes && <div className="absolute right-4 top-1/2 -translate-y-1/2"><div className="w-3 h-3 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div></div>}
+                                            </div>
+
+                                            {/* CAPTCHA Row */}
+                                            <div className="col-span-2 flex flex-wrap sm:flex-nowrap items-center gap-3">
+                                                {/* Code Display */}
+                                                <div className="flex items-center gap-2 flex-shrink-0">
+                                                    <div
+                                                        className="px-4 py-3.5 rounded-xl font-black text-[18px] tracking-[0.3em] select-none bg-slate-900 text-slate-100 border border-slate-700 h-full flex items-center justify-center"
+                                                        style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.35em', textDecoration: 'line-through 1px rgba(255,255,255,0.15)' }}
+                                                    >
+                                                        {captchaCode}
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setCaptchaCode(generateCaptcha()); setCaptchaInput('') }}
+                                                        className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
+                                                        title="Refresh CAPTCHA"
+                                                    >
+                                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                {/* Input */}
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter code"
+                                                    value={captchaInput}
+                                                    onChange={e => setCaptchaInput(e.target.value.toUpperCase().slice(0, 4))}
+                                                    maxLength={4}
+                                                    autoComplete="off"
+                                                    required
+                                                    className="flex-1 min-w-[80px] bg-slate-50 border border-slate-200 rounded-xl text-[14px] font-bold text-slate-700 outline-none px-4 py-3.5 placeholder-slate-400 focus:bg-white focus:border-blue-500 transition-colors tracking-widest uppercase text-center"
+                                                />
+                                                {/* Status indicator */}
+                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${captchaInput.length === 4
+                                                        ? captchaInput.toUpperCase() === captchaCode
+                                                            ? 'bg-emerald-100 text-emerald-600'
+                                                            : 'bg-red-100 text-red-500'
+                                                        : 'bg-slate-100 text-slate-300'
+                                                    }`}>
+                                                    {captchaInput.length === 4 ? (
+                                                        captchaInput.toUpperCase() === captchaCode
+                                                            ? <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                            : <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                    ) : (
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Submit Button */}
+                                        <button type="submit" disabled={heroSubmitting || !heroZip || heroZip.length < 5}
+                                            className="w-full mt-1 py-3 bg-emerald-500 text-white text-[15px] md:text-[16px] font-extrabold rounded-xl hover:bg-emerald-600 transition shadow-[0_8px_20px_rgb(16,185,129,0.25)] flex items-center justify-center disabled:opacity-60 disabled:shadow-none disabled:cursor-not-allowed">
+                                            {heroSubmitting ? 'Sending...' : '✓ Find My Part Now'}
+                                        </button>
+                                    </form>
+                                )}
+
+                                {/* Error message */}
+                                {heroError && (
+                                    <div className="px-6 pb-3 text-red-500 text-[12px] font-semibold">{heroError}</div>
+                                )}
                             </div>
-                        ))}
+
+                            {/* Step indicator dots */}
+                            {!heroSuccess && (
+                                <div className="flex items-center justify-center gap-2 mt-3 pb-4">
+                                    <div className={`h-1.5 rounded-full transition-all ${heroStep === 1 ? 'w-8 bg-blue-600' : 'w-4 bg-slate-200'}`} />
+                                    <div className={`h-1.5 rounded-full transition-all ${heroStep === 2 ? 'w-8 bg-emerald-500' : 'w-4 bg-slate-200'}`} />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Pincode Search Strip beneath Lead Form */}
+                        <div className="w-full max-w-3xl mt-4 animate-fade-in-up relative" style={{ animationDelay: '0.4s', zIndex: 50 }}>
+                            <div className="bg-white/80 backdrop-blur-2xl rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-blue-100/60 relative">
+                                <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/50 to-white/10 pointer-events-none"></div>
+                                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4 relative z-10 pl-2">Or Search Locally By Zip Code</h3>
+                                <div className="relative" style={{ zIndex: 9999 }}>
+                                    <PincodeSearch />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {/* Badges Line */}
+                        <div className="flex flex-wrap items-center justify-start gap-5 text-[13px] font-bold text-slate-600 mb-16 md:mb-0 mt-6 lg:mt-8">
+                            <div className="flex items-center gap-2"><svg className="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> 6,500+ Verified Vendors</div>
+                            <div className="flex items-center gap-2"><svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" /><path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" /></svg> 50 States Covered</div>
+                            <div className="flex items-center gap-2"><svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A120.153 120.153 0 0121 8c0 7.143-5.26 13.91-11 16-5.74-2.09-11-8.857-11-16a120.153 120.153 0 019.7-6.954 1.5 1.5 0 011.6 0zM10 16.5c3.844-1.636 7-6.5 7-9.711A118.068 118.068 0 0010 3.32a118.068 118.068 0 00-7 3.47c0 3.211 3.156 8.075 7 9.711zM10.75 9h-1.5v3.25H6v1.5h3.25V17h1.5v-3.25H14v-1.5h-3.25V9z" clipRule="evenodd" /></svg> No Spam Guarantee</div>
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-slate-100"><svg className="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> Secure & Reliable</div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* ============================================================
-                3D ENGINE SHOWCASE + WHY CHOOSE US (side by side on desktop)
-            ============================================================ */}
-            <section className="py-20 md:py-28" style={{ background: 'var(--bg-base)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid lg:grid-cols-2 gap-20 items-center">
-                        {/* 3D Engine Visual */}
-                        <div className="scroll-fade-in flex items-center justify-center order-2 lg:order-1">
-                            <div className="relative">
-                                <div
-                                    className="absolute -inset-8 rounded-full pointer-events-none"
-                                    style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)' }}
-                                />
-                                <img
-                                    src="/engine-3d.png"
-                                    alt="Premium auto parts"
-                                    className="relative w-full max-w-md mx-auto"
-                                    style={{
-                                        mixBlendMode: 'screen',
-                                        filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.8)) contrast(1.1) brightness(1.2)',
-                                        animation: 'float 5s ease-in-out infinite'
-                                    }}
-                                />
-                            </div>
-                        </div>
+            {/* AD SLIDER 1 */}
+            <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />
 
-                        {/* Why Choose Us */}
-                        <div className="order-1 lg:order-2">
-                            <div className="scroll-fade-in mb-8">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4" style={{ background: 'rgba(234,88,12,0.08)', border: '1px solid rgba(234,88,12,0.2)' }}>
-                                    <span style={{ color: 'var(--neon-orange)', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>Advantages</span>
-                                </div>
-                                <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>
-                                    Why Choose{' '}
-                                    <span style={{ color: '#2563eb' }}>
-                                        JYNM
-                                    </span>
-                                </h2>
-                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7 }}>
-                                    The smartest way to source quality used auto parts from trusted salvage yards nationwide.
-                                </p>
-                            </div>
-
-                            <div className="space-y-4">
-                                {[
-                                    { icon: '✔', title: 'Verified Vendors', desc: 'Every junkyard is manually verified. You deal with legitimate, licensed salvage yards only.', color: 'var(--neon-blue)' },
-                                    { icon: '⚡', title: 'Instant Quotes', desc: 'Get real-time quotes from multiple vendors simultaneously. No phone tag, no delays.', color: 'var(--neon-orange)' },
-                                    { icon: '🛡', title: 'Quality Guaranteed', desc: 'Parts come with grading info, warranty details, and clear condition descriptions.', color: 'var(--neon-blue)' },
-                                    { icon: '💰', title: 'Best Prices', desc: 'Compare prices across hundreds of vendors to always get the most value for your money.', color: 'var(--neon-orange)' },
-                                ].map((f, i) => (
-                                    <div
-                                        key={i}
-                                        className="scroll-fade-in flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-100 shadow-sm transition-all duration-300"
-                                        style={{ animationDelay: `${i * 100}ms` }}
-                                        onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${f.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.2)`; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.06)' }}
-                                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#f1f5f9'; e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.03)' }}
-                                    >
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0" style={{ background: `rgba(${f.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.08)`, border: `1px solid rgba(${f.color === 'var(--neon-blue)' ? '37,99,235' : '234,88,12'},0.18)` }}>
-                                            {f.icon}
-                                        </div>
-                                        <div>
-                                            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif", marginBottom: '0.2rem' }}>{f.title}</h3>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem', lineHeight: 1.6 }}>{f.desc}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+            {/* 5-Card Stats Block (No Overlap) */}
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-30 mt-12 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
+                        <h3 className="text-3xl font-black text-blue-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>6,500+</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">Verified Vendors</p>
                     </div>
-                </div>
-            </section>
-
-            {/* ============================================================
-                INLINE AD STRIP (horizontal banner between sections)
-            ============================================================ */}
-            <div className="w-full py-6 px-4" style={{ background: 'var(--bg-surface)' }}>
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex items-center justify-center gap-6 overflow-x-auto">
-                        <DynamicAd slot="home_inline_ad" page="home" templateOverride="compact" />
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
+                        <h3 className="text-3xl font-black text-purple-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>347,000+</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">Quality Parts</p>
+                    </div>
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
+                        <h3 className="text-3xl font-black text-pink-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>1M+</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">Searches Completed</p>
+                    </div>
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
+                        <h3 className="text-3xl font-black text-orange-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>50</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">States Covered</p>
+                    </div>
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
+                        <h3 className="text-3xl font-black text-green-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>4.9/5</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">Customer Rating</p>
                     </div>
                 </div>
             </div>
 
-            {/* CTA BANNER */}
-            <section
-                className="relative py-20 md:py-24 overflow-hidden"
-                style={{
-                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e40af 100%)',
-                    borderTop: '1px solid rgba(37,99,235,0.3)',
-                    borderBottom: '1px solid rgba(37,99,235,0.3)'
-                }}
-            >
-                <div className="absolute top-0 left-1/3 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
-                <div className="absolute bottom-0 right-1/3 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%)', transform: 'translate(50%,50%)' }} />
-                <div className="relative max-w-4xl mx-auto px-4 text-center" style={{ zIndex: 1 }}>
-                    <h2
-                        className="scroll-fade-in"
-                        style={{ fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 900, color: '#ffffff', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '1rem' }}
-                        dangerouslySetInnerHTML={{ __html: get('cta_banner', 'heading', 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>') }}
-                    />
-                    <p className="scroll-fade-in" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.95rem', lineHeight: 1.7, maxWidth: '480px', margin: '0 auto 2.5rem' }}>
-                        {get('cta_banner', 'subheading', 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.')}
-                    </p>
-                    <div className="flex flex-wrap items-center justify-center gap-4 scroll-fade-in">
-                        <Link to="/quote" id="cta-get-quote-btn" className="btn-orange">{get('cta_banner', 'button_text', 'Get Free Quote Now')}</Link>
-                        <Link to="/vendors" id="cta-browse-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.9rem', color: 'white', background: 'rgba(255,255,255,0.15)', border: '1.5px solid rgba(255,255,255,0.4)', borderRadius: '0.625rem', textDecoration: 'none', transition: 'all 0.3s ease', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Browse All Vendors</Link>
+            {/* ============================================================
+                3-COLUMN FEATURE PANELS (How It Works, Vendor CTA, Why JYNM)
+            ============================================================ */}
+            <section className="py-16 bg-white border-t border-b border-slate-100">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid xl:grid-cols-3 gap-6">
+
+                        {/* 1. How It Works */}
+                        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_25px_rgb(0,0,0,0.03)] text-center h-full flex flex-col">
+                            <h2 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>How It <span className="text-blue-600">Works</span></h2>
+                            <p className="text-[13px] text-slate-500 font-medium mb-8">Simple steps to get the parts you need</p>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+                                {[
+                                    { title: 'Search', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>, desc: 'Tell us what you need' },
+                                    { title: 'Compare', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>, desc: 'Get quotes from verified junkyards' },
+                                    { title: 'Choose', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>, desc: 'Pick the best price and quality' },
+                                    { title: 'Save', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>, desc: 'Save up to 80% instantly' }
+                                ].map(st => (
+                                    <div key={st.title} className="bg-white rounded-2xl border border-slate-100 p-4 flex flex-col items-center justify-center text-center shadow-sm">
+                                        <div className="mb-3 text-blue-600">{st.icon}</div>
+                                        <p className="text-[14px] font-bold text-slate-900 mb-1">{st.title}</p>
+                                        <p className="text-[11px] text-slate-500 leading-tight">{st.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 2. Vendor CTA — compact card */}
+                        <VendorCTASection />
+
+                        {/* 3. Why Choose JYNM — compact card */}
+                        <WhyChooseJynmSection />
+
+                    </div>
+                </div>
+            </section>
+
+            {/* AD SLIDER 2 */}
+            <AdCarousel slotGroup="carousel_2" page="home" title="Recommended Yards" />
+
+            {/* ============================================================
+                AD STRIP — Backend-connected ads (slot: home_hero_below)
+            ============================================================ */}
+            <div className="w-full py-6 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-100">
+                <div className="max-w-[1400px] mx-auto">
+                    <DynamicAd slot="home_hero_below" page="home" />
+                </div>
+            </div>
+
+            {/* ============================================================
+                TRUSTED VENDORS — self-contained section
+            ============================================================ */}
+            <TrustedVendors />
+
+            {/* AD SLIDER 3 */}
+            <AdCarousel slotGroup="carousel_3" page="home" title="Featured Sellers" />
+
+            {/* AD SLIDER 4 */}
+            <AdCarousel slotGroup="carousel_4" page="home" title="Premium Inventory" />
+
+            {/* CTA BANNER — with image panel */}
+            <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e40af 100%)' }}>
+                <div className="max-w-[1400px] mx-auto grid lg:grid-cols-2 items-stretch">
+                    {/* Left — text content */}
+                    <div className="relative py-20 md:py-24 px-8 md:px-16 flex flex-col justify-center" style={{ zIndex: 1 }}>
+                        <div className="absolute top-0 left-1/3 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
+                        <h2
+                            style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: '#ffffff', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '1rem' }}
+                            dangerouslySetInnerHTML={{ __html: get('cta_banner', 'heading', 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>') }}
+                        />
+                        <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', lineHeight: 1.7, maxWidth: '460px', marginBottom: '2rem' }}>
+                            {get('cta_banner', 'subheading', 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.')}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-4">
+                            <button onClick={scrollToLeadForm} id="cta-get-quote-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold bg-white text-blue-600 transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/10">
+                                {get('cta_banner', 'button_text', 'Get Free Quote Now')}
+                            </button>
+                            <Link to="/vendors" id="cta-browse-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10 border border-white/20">
+                                Browse All Vendors
+                            </Link>
+                        </div>
+                        {/* Trust row */}
+                        <div className="flex flex-wrap gap-6 mt-10 text-white/60 text-sm font-semibold">
+                            <span>✓ 6,500+ Trusted Yards</span>
+                            <span>✓ 50 States</span>
+                            <span>✓ Free to Use</span>
+                        </div>
+                    </div>
+                    {/* Right — image */}
+                    <div className="hidden lg:block relative min-h-[380px]">
+                        <img
+                            src="/heroes/junkyard-aerial.png"
+                            alt="Aerial view of a large auto salvage junkyard"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
+                            loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-transparent" />
+                        <div className="absolute bottom-8 left-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                            <p className="text-white font-black text-2xl">1M+</p>
+                            <p className="text-white/80 text-sm font-medium">Searches completed on JYNM</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -690,6 +758,18 @@ export default function Home() {
 
             {/* Mobile Ad Banner — renders all ads as swipe carousel (MobileAdBanner logic unchanged) */}
             <MobileAdBanner page="home" />
+
+            {/* Floating Action Buttons — WhatsApp, Call, AI Chat */}
+            <FloatingActionButtons />
+
+            {/* Conversion Engine Components */}
+            <MobileStickyBar />
+            <LiveActivityFeed />
+
+            {/* AD SLIDER 5 */}
+            <div className="bg-white pt-8">
+                <AdCarousel slotGroup="carousel_5" page="home" title="Promoted Partners" />
+            </div>
 
             <Footer />
         </div>

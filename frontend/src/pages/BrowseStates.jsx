@@ -9,41 +9,7 @@ import MobileAdBanner from '../components/MobileAdBanner';
 import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
-
-// Lightweight floating particles canvas
-function ParticleField() {
-    const canvasRef = useRef(null);
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let animId;
-        const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
-        resize();
-        window.addEventListener('resize', resize);
-        const particles = Array.from({ length: 45 }, () => ({
-            x: Math.random() * 1600, y: Math.random() * 900,
-            vx: (Math.random() - 0.5) * 0.25, vy: -Math.random() * 0.3 - 0.05,
-            r: Math.random() * 1.2 + 0.3,
-            color: Math.random() > 0.5 ? '#2563eb' : '#06b6d4',
-            alpha: Math.random() * 0.4 + 0.1
-        }));
-        const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if (p.y < -5) { p.y = canvas.height + 5; p.x = Math.random() * canvas.width; }
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2, '0');
-                ctx.fill();
-            });
-            animId = requestAnimationFrame(draw);
-        };
-        draw();
-        return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(animId); };
-    }, []);
-    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
-}
+import AdCarousel from '../components/AdCarousel';
 
 export default function BrowseStates() {
     const { get } = useCMS('browse');
@@ -56,6 +22,7 @@ export default function BrowseStates() {
     const [totalVendors, setTotalVendors] = useState(0);
     const [introVisible, setIntroVisible] = useState(false);
     const navigate = useNavigate();
+    const mapRef = useRef(null);
 
     useEffect(() => {
         if (stateParam) setSearchTerm(stateParam);
@@ -96,9 +63,7 @@ export default function BrowseStates() {
     });
 
     const handleStateSelect = (stateData) => {
-        if (stateData && stateData.stateCode) {
-            navigate(`/browse/${stateData.stateCode.toLowerCase()}`);
-        }
+        if (stateData && stateData.stateCode) navigate(`/browse/${stateData.stateCode.toLowerCase()}`);
     };
 
     const schema = {
@@ -115,7 +80,7 @@ export default function BrowseStates() {
     };
 
     return (
-        <div style={{ background: '#060c18', minHeight: '100vh', color: '#e2e8f0', overflowX: 'hidden' }}>
+        <div className="bg-[#f8fafc] min-h-screen flex flex-col pt-16">
             <SEO
                 title="Browse Junkyards by State – Interactive USA Map | JunkyardsNearMe"
                 description={`Explore ${statesData.length} states on our interactive map. Find ${totalVendors}+ verified junkyards nationwide. Click any state to see local listings.`}
@@ -124,198 +89,130 @@ export default function BrowseStates() {
 
             <Navbar />
 
-            {/* ── HERO ── */}
-            <section
-                className="relative overflow-hidden"
-                style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-            >
-                {/* Background */}
-                <div className="absolute inset-0" style={{ zIndex: 0 }}>
-                    <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(14,30,64,0.95) 0%, #060c18 100%)' }} />
-                    {/* Ambient blue ring */}
-                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] rounded-full"
-                        style={{ background: 'radial-gradient(ellipse, rgba(37,99,235,0.09) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-                    {/* Grid lines */}
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: 'linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px)',
-                        backgroundSize: '60px 60px'
-                    }} />
-                    <ParticleField />
-                </div>
-
-                {/* Content */}
-                <div className="relative flex-1 flex flex-col" style={{ zIndex: 1 }}>
-                    {/* Top metadata strip */}
-                    <div
-                        className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 pb-6"
-                        style={{
-                            opacity: introVisible ? 1 : 0,
-                            transform: introVisible ? 'translateY(0)' : 'translateY(20px)',
-                            transition: 'opacity 0.7s ease, transform 0.7s ease'
-                        }}
-                    >
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                            {/* Left — headline */}
-                            <div>
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3"
-                                    style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.25)', backdropFilter: 'blur(8px)' }}>
-                                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#22d3ee', boxShadow: '0 0 6px #22d3ee' }} />
-                                    <span style={{ color: '#67e8f9', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>
-                                        {statesData.length} States Active · {totalVendors.toLocaleString()}+ Yards
-                                    </span>
-                                </div>
-                                <h1
-                                    className="font-black mb-2"
-                                    style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', color: '#f1f5f9', lineHeight: 1.1 }}
-                                >
-                                    {get('hero', 'heading', 'Explore Junkyards')}{' '}
-                                    <span style={{ background: 'linear-gradient(135deg, #60a5fa, #22d3ee)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                                        by State
-                                    </span>
-                                </h1>
-                                <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '520px' }}>
-                                    {get('browse', 'subheading', get('map', 'heading', 'Click any state on the map to browse verified junkyards. Hover for a quick preview.'))}
-                                </p>
+            <div className="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row-reverse gap-6 lg:h-[calc(100vh-100px)] min-h-[600px] overflow-hidden">
+                
+                {/* LEFT PANEL - STATES LIST & SEARCH */}
+                <div className="w-full lg:w-[35%] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex-shrink-0 h-[600px] lg:h-full">
+                    {/* Header */}
+                    <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3 bg-blue-50 border border-blue-100">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-blue-600 text-[10px] font-black uppercase tracking-wider">
+                                {statesData.length} States · {totalVendors.toLocaleString()}+ Yards
+                            </span>
+                        </div>
+                        <h1 className="text-3xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                            Browse <span className="block mt-2" style={{ color: '#60a5fa' }}>by State</span>
+                        </h1>
+                        
+                        {/* Search Input */}
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
-
-                            {/* Right — search */}
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                    <svg className="w-4 h-4" style={{ color: '#60a5fa' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder={get('map', 'search_placeholder', 'Find a state...')}
-                                    className="w-full md:w-64 pl-10 pr-10 py-2.5 rounded-xl text-sm outline-none transition-all duration-300"
-                                    style={{
-                                        background: 'rgba(15,23,42,0.8)',
-                                        border: '1px solid rgba(37,99,235,0.25)',
-                                        color: '#e2e8f0',
-                                        backdropFilter: 'blur(12px)',
-                                        fontFamily: "'Outfit', sans-serif",
-                                    }}
-                                    onFocus={e => e.target.style.borderColor = 'rgba(37,99,235,0.6)'}
-                                    onBlur={e => e.target.style.borderColor = 'rgba(37,99,235,0.25)'}
-                                />
-                                {searchTerm && (
-                                    <button
-                                        onClick={() => setSearchTerm('')}
-                                        className="absolute inset-y-0 right-3 flex items-center"
-                                        style={{ color: '#475569' }}
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                )}
-                            </div>
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search for a state..."
+                                className="w-full pl-12 pr-10 py-3.5 bg-white border border-slate-200 rounded-xl text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                            />
+                            {searchTerm && (
+                                <button onClick={() => setSearchTerm('')} className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            )}
                         </div>
                     </div>
 
-                    {/* ── 70/30 SPLIT LAYOUT ── */}
-                    <div
-                        className="flex-1 w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-8 pb-8 flex flex-col lg:flex-row gap-6 h-full min-h-[500px]"
-                        style={{
-                            opacity: introVisible && !loading ? 1 : 0,
-                            transform: introVisible && !loading ? 'translateY(0)' : 'translateY(30px)',
-                            transition: 'opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s',
-                        }}
-                    >
+                    {/* States List */}
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50">
                         {loading ? (
-                            <div className="flex flex-col flex-1 items-center justify-center py-32">
-                                <div className="w-16 h-16 rounded-full mb-6 animate-spin" style={{ border: '3px solid rgba(37,99,235,0.15)', borderTopColor: '#2563eb' }} />
-                                <p style={{ color: '#475569', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.85rem', letterSpacing: '0.08em' }}>
-                                    Loading map data...
-                                </p>
+                            <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                                <svg className="animate-spin h-8 w-8 text-blue-600 mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                                <span className="font-bold text-sm">Loading States...</span>
+                            </div>
+                        ) : filteredStates.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                                {filteredStates.map(state => (
+                                    <button
+                                        key={state.stateCode}
+                                        onClick={() => handleStateSelect(state)}
+                                        className="group flex flex-col md:flex-row items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 hover:shadow-[0_4px_12px_rgb(37,99,235,0.08)] transition-all text-left"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[11px] uppercase tracking-wider group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                                {state.stateCode}
+                                            </div>
+                                            <div>
+                                                <span className="block font-bold text-slate-900 group-hover:text-blue-600 transition-colors text-[15px]">{state.stateName}</span>
+                                                <span className="block text-[13px] font-medium text-slate-500">{state.junkyardCount} active yards</span>
+                                            </div>
+                                        </div>
+                                        <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors mt-2 md:mt-0">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                        </div>
+                                    </button>
+                                ))}
                             </div>
                         ) : (
-                            <>
-                                {/* MAP CONTAINER (70% width on Desktop) */}
-                                <div 
-                                    className="w-full lg:w-[70%] h-[50vh] lg:h-[calc(100vh-280px)] min-h-[400px] relative overflow-hidden rounded-2xl flex items-center justify-center"
-                                    style={{
-                                        background: 'rgba(7,13,26,0.7)',
-                                        border: '1px solid rgba(37,99,235,0.15)',
-                                        boxShadow: '0 20px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)',
-                                        backdropFilter: 'blur(10px)'
-                                    }}
-                                >
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(37,99,235,0.6), transparent)' }} />
-                                    
-                                    {searchTerm && (
-                                        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl"
-                                            style={{ background: 'rgba(10,18,35,0.9)', border: '1px solid rgba(37,99,235,0.4)', backdropFilter: 'blur(10px)' }}>
-                                            <span style={{ color: '#93c5fd', fontSize: '0.8rem' }}>
-                                                Showing: <strong style={{ color: '#f1f5f9' }}>{filteredStates.length} state{filteredStates.length !== 1 ? 's' : ''}</strong> matching "{searchTerm}"
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Map Component tightly bound to parent div */}
-                                    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                                        <USAMap
-                                            statesData={filteredStates.length > 0 ? filteredStates : statesData}
-                                            onStateSelect={handleStateSelect}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* LISTINGS PANEL (30% width on Desktop) */}
-                                <div className="w-full lg:w-[30%] h-auto lg:h-[calc(100vh-280px)] overflow-y-auto pr-2 flex flex-col gap-4 custom-scrollbar">
-                                    <h2 className="text-xl font-bold mb-2 sticky top-0 bg-[#060c18]/90 backdrop-blur pb-2 pt-1 z-10" style={{ color: '#f1f5f9', fontFamily: "'Outfit', sans-serif" }}>
-                                        {searchTerm ? `Results for "${searchTerm}"` : 'Active States'}
-                                    </h2>
-                                    
-                                    <div className="flex flex-col gap-3">
-                                        {(searchTerm ? filteredStates : statesData).slice(0, 50).map(state => (
-                                            <button
-                                                key={state.stateCode}
-                                                onClick={() => handleStateSelect(state)}
-                                                className="text-left rounded-xl p-4 transition-all duration-200 w-full hover:scale-[1.02] flex items-center justify-between"
-                                                style={{
-                                                    background: 'rgba(15,23,42,0.7)',
-                                                    border: '1px solid rgba(37,99,235,0.15)',
-                                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                                }}
-                                                onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(37,99,235,0.5)'}
-                                                onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(37,99,235,0.15)'}
-                                            >
-                                                <div>
-                                                    <div style={{ color: '#e2e8f0', fontWeight: 'bold', fontSize: '1rem', fontFamily: "'Outfit', sans-serif" }}>
-                                                        {state.stateName}
-                                                    </div>
-                                                    <div style={{ color: '#94a3b8', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', monospace", marginTop: '0.2rem' }}>
-                                                        {state.stateCode}
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className="flex flex-col justify-end items-end">
-                                                    <div style={{ color: '#22d3ee', fontSize: '1.2rem', fontWeight: 800, fontFamily: "'Inter', sans-serif" }}>
-                                                        {state.junkyardCount}
-                                                    </div>
-                                                    <div style={{ color: '#64748b', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                                        Yards
-                                                    </div>
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </>
+                            <div className="text-center py-20 text-slate-500 font-medium">
+                                No states found matching "{searchTerm}"
+                            </div>
                         )}
                     </div>
                 </div>
-            </section>
+
+                {/* RIGHT PANEL - INTERACTIVE MAP */}
+                <div className="flex-1 bg-white rounded-3xl overflow-hidden relative border border-slate-200 shadow-[0_8px_40px_rgb(0,0,0,0.06)] min-h-[400px]">
+                    {/* Label badge */}
+                    <div className="absolute top-4 left-4 z-10 hidden sm:block">
+                        <div className="px-4 py-2 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl text-slate-700 text-sm font-semibold shadow-sm">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 inline-block mr-2 animate-pulse" />
+                            Click a State to Browse
+                        </div>
+                    </div>
+
+                    {/* Zoom buttons — rendered here so they are not clipped by overflow-hidden inside the map child */}
+                    <div className="absolute bottom-4 left-4 z-20 flex flex-col rounded-xl shadow-lg overflow-hidden border border-slate-200 bg-white">
+                        <button
+                            onClick={() => mapRef.current?.zoomIn()}
+                            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            title="Zoom In"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v12M6 12h12" />
+                            </svg>
+                        </button>
+                        <div className="w-full h-[1px] bg-slate-200" />
+                        <button
+                            onClick={() => mapRef.current?.zoomOut()}
+                            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            title="Zoom Out"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* USA Map */}
+                    <div className="w-[110%] h-[110%] -ml-[5%] -mt-[5%] absolute inset-0">
+                        <USAMap 
+                            ref={mapRef}
+                            onStateSelect={handleStateSelect}
+                            statesData={statesData}
+                        />
+                    </div>
+                    
+                    <div className="absolute inset-0 pointer-events-none rounded-3xl ring-1 ring-inset ring-slate-900/5" />
+                </div>
+            </div>
 
             <MobileAdBanner page="browse" />
+            <div className="bg-white">
+                <AdCarousel slotGroup="carousel_5" page="browse" title="Sponsored Vendors" />
+            </div>
             <Footer />
         </div>
     );

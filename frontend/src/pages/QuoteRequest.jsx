@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '../services/api'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -46,6 +47,20 @@ export default function QuoteRequest() {
         zip: '',
         securityCodeInput: ''
     })
+
+    const [currentStep, setCurrentStep] = useState(1)
+
+    const handleNext = () => {
+        if (!formData.name || !formData.phone || !formData.email) {
+            alert('Please fill in Name, Phone, and Email')
+            return
+        }
+        setCurrentStep(2)
+    }
+
+    const handleBack = () => {
+        setCurrentStep(1)
+    }
 
     const handleChange = (e) => {
         setFormData({
@@ -161,130 +176,183 @@ export default function QuoteRequest() {
                                 </div>
                             </div>
 
+                            {/* Progress Bar */}
+                            <div className="bg-gray-100 h-2 w-full">
+                                <motion.div 
+                                    initial={{ width: '50%' }}
+                                    animate={{ width: currentStep === 1 ? '50%' : '100%' }}
+                                    transition={{ duration: 0.4 }}
+                                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
+                                />
+                            </div>
+
                             {/* Form */}
-                            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                                {/* Name */}
-                                <div>
-                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
-                                        <svg className="w-5 h-5 text-primary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                        </svg>
-                                        Name <span className="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none text-slate-800 font-medium bg-white transition-all"
-                                        placeholder="Enter your name"
-                                    />
-                                </div>
-
-                                {/* Phone */}
-                                <div>
-                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
-                                        <svg className="w-5 h-5 text-secondary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                                        </svg>
-                                        Phone <span className="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 outline-none text-slate-800 font-medium bg-white transition-all"
-                                        placeholder="Enter your phone number"
-                                    />
-                                </div>
-
-                                {/* Email */}
-                                <div>
-                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
-                                        <svg className="w-5 h-5 text-purple-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                        </svg>
-                                        Email <span className="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none text-slate-800 font-medium bg-white transition-all"
-                                        placeholder="Enter your email"
-                                    />
-                                </div>
-
-                                {/* ZIP */}
-                                <div>
-                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
-                                        <svg className="w-5 h-5 text-primary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                        </svg>
-                                        ZIP Code <span className="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="zip"
-                                        value={formData.zip}
-                                        onChange={handleChange}
-                                        required
-                                        pattern="[0-9]{5}"
-                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none text-slate-800 font-medium bg-white transition-all"
-                                        placeholder="Enter your ZIP code"
-                                    />
-                                </div>
-
-                                {/* Security Code */}
-                                <div>
-                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
-                                        <svg className="w-5 h-5 text-secondary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                                        </svg>
-                                        {cmsData.security_code_label || 'Security Code'} <span className="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <div className="flex items-center gap-4 mb-3">
-                                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 px-8 py-4 rounded-xl border-2 border-gray-300 shadow-inner">
-                                            <span className="text-3xl font-black text-slate-800 tracking-widest select-none" style={{ fontFamily: 'monospace' }}>
-                                                {securityCode}
-                                            </span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={refreshSecurityCode}
-                                            className="text-cyan-500 hover:text-cyan-600 font-semibold text-sm underline"
+                            <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-hidden relative" style={{ minHeight: '380px' }}>
+                                <AnimatePresence mode="wait">
+                                    {currentStep === 1 && (
+                                        <motion.div
+                                            key="step1"
+                                            initial={{ opacity: 0, x: -50 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: 50 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="space-y-6"
                                         >
-                                            {cmsData.security_code_change_text || 'Change?'}
-                                        </button>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        name="securityCodeInput"
-                                        value={formData.securityCodeInput}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 outline-none text-slate-800 font-medium bg-white transition-all uppercase"
-                                        placeholder="Enter the security code above"
-                                        maxLength={6}
-                                    />
-                                </div>
+                                            <h3 className="text-lg font-bold text-gray-700 border-b pb-2 mb-4">Step 1: Contact Details</h3>
+                                            {/* Name */}
+                                            <div>
+                                                <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
+                                                    <svg className="w-5 h-5 text-primary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                                    </svg>
+                                                    Name <span className="text-red-500 ml-1">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    value={formData.name}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none text-slate-800 font-medium bg-white transition-all"
+                                                    placeholder="Enter your name"
+                                                />
+                                            </div>
 
-                                {/* Submit Button */}
-                                <button
-                                    type="submit"
-                                    className="relative w-full group overflow-hidden mt-8"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 animate-gradient"></div>
-                                    <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:from-blue-600 group-hover:to-cyan-600 text-slate-800 font-black py-5 px-6 rounded-xl text-xl transition-all duration-300 shadow-glow group-hover:shadow-glow-lg transform group-hover:scale-[1.02]">
-                                        {cmsData.form_submit_button || 'FIND MY PART NOW →'}
-                                    </div>
-                                </button>
+                                            {/* Phone */}
+                                            <div>
+                                                <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
+                                                    <svg className="w-5 h-5 text-secondary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                                    </svg>
+                                                    Phone <span className="text-red-500 ml-1">*</span>
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 outline-none text-slate-800 font-medium bg-white transition-all"
+                                                    placeholder="Enter your phone number"
+                                                />
+                                            </div>
+
+                                            {/* Email */}
+                                            <div>
+                                                <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
+                                                    <svg className="w-5 h-5 text-purple-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                                    </svg>
+                                                    Email <span className="text-red-500 ml-1">*</span>
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none text-slate-800 font-medium bg-white transition-all"
+                                                    placeholder="Enter your email"
+                                                />
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleNext}
+                                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-transform hover:scale-[1.02] shadow-lg mt-4 flex justify-between items-center"
+                                            >
+                                                Next Step
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                            </button>
+                                        </motion.div>
+                                    )}
+
+                                    {currentStep === 2 && (
+                                        <motion.div
+                                            key="step2"
+                                            initial={{ opacity: 0, x: 50 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -50 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="space-y-6 flex flex-col h-full justify-between"
+                                        >
+                                            <div>
+                                                <div className="flex items-center justify-between border-b pb-2 mb-4">
+                                                    <h3 className="text-lg font-bold text-gray-700">Step 2: Verification</h3>
+                                                    <button type="button" onClick={handleBack} className="text-blue-500 text-sm font-semibold hover:underline">
+                                                        Edit Details
+                                                    </button>
+                                                </div>
+
+                                                {/* ZIP */}
+                                                <div className="mb-6">
+                                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
+                                                        <svg className="w-5 h-5 text-primary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                                        </svg>
+                                                        ZIP Code <span className="text-red-500 ml-1">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="zip"
+                                                        value={formData.zip}
+                                                        onChange={handleChange}
+                                                        required
+                                                        pattern="[0-9]{5}"
+                                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none text-slate-800 font-medium bg-white transition-all"
+                                                        placeholder="Enter your ZIP code"
+                                                    />
+                                                </div>
+
+                                                {/* Security Code */}
+                                                <div>
+                                                    <label className="text-slate-800 font-bold mb-2 flex items-center text-sm">
+                                                        <svg className="w-5 h-5 text-secondary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                                        </svg>
+                                                        {cmsData.security_code_label || 'Security Code'} <span className="text-red-500 ml-1">*</span>
+                                                    </label>
+                                                    <div className="flex items-center gap-4 mb-3">
+                                                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 px-8 py-4 rounded-xl border-2 border-gray-300 shadow-inner">
+                                                            <span className="text-3xl font-black text-slate-800 tracking-widest select-none" style={{ fontFamily: 'monospace' }}>
+                                                                {securityCode}
+                                                            </span>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={refreshSecurityCode}
+                                                            className="text-cyan-500 hover:text-cyan-600 font-semibold text-sm underline"
+                                                        >
+                                                            {cmsData.security_code_change_text || 'Change?'}
+                                                        </button>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        name="securityCodeInput"
+                                                        value={formData.securityCodeInput}
+                                                        onChange={handleChange}
+                                                        required
+                                                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 outline-none text-slate-800 font-medium bg-white transition-all uppercase"
+                                                        placeholder="Enter the security code above"
+                                                        maxLength={6}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Submit Button */}
+                                            <button
+                                                type="submit"
+                                                className="relative w-full group overflow-hidden mt-8"
+                                            >
+                                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 animate-gradient"></div>
+                                                <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:from-blue-600 group-hover:to-cyan-600 text-slate-800 font-black py-5 px-6 rounded-xl text-xl transition-all duration-300 shadow-glow group-hover:shadow-glow-lg transform group-hover:scale-[1.02]">
+                                                    {cmsData.form_submit_button || 'FIND MY PART NOW →'}
+                                                </div>
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </form>
                         </div>
                     </div>

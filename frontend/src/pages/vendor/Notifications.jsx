@@ -100,23 +100,19 @@ const VendorNotifications = () => {
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+        <div className="min-h-screen bg-[#f8fafc] pb-20 md:pb-8">
             {/* Header Section */}
-            <div className="relative bg-gradient-to-br from-blue-600 to-teal-600 pt-6 pb-8 px-6 rounded-b-[2rem] shadow-lg mb-6 overflow-hidden">
-                {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12"></div>
-                <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -ml-10 -mb-10"></div>
-
-                <div className="max-w-7xl mx-auto text-slate-800 relative z-10">
+            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-b-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border-b border-slate-100">
+                <div className="max-w-7xl mx-auto text-slate-900 relative z-10">
                     <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-slate-300">
-                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
+                            <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-black font-display tracking-tight">Notifications</h1>
+                        <h1 className="text-3xl font-extrabold font-display tracking-tight ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Notifications</h1>
                     </div>
-                    <p className="text-blue-100/90 text-sm font-medium ml-[2.875rem] flex items-center gap-2">
+                    <p className="text-slate-500 font-medium ml-[4rem] mt-0.5 flex items-center gap-2">
                         Stay updated with your activity
                         {unreadCount > 0 && (
                             <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
@@ -171,8 +167,8 @@ const VendorNotifications = () => {
                                     key={notification.id}
                                     onClick={() => !notification.is_read && handleMarkAsRead(notification.id)}
                                     className={`relative group bg-white rounded-3xl p-5 border transition-all cursor-pointer ${notification.is_read
-                                        ? 'border-gray-100 shadow-sm opacity-90'
-                                        : 'border-blue-100 shadow-md ring-1 ring-blue-50'
+                                        ? 'border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] opacity-90'
+                                        : 'border-blue-200 shadow-[0_8px_30px_rgb(59,130,246,0.1)] ring-1 ring-blue-50'
                                         } hover:scale-[1.01]`}
                                 >
                                     <div className="flex gap-4">

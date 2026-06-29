@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import * as topojson from 'topojson-client';
@@ -20,19 +20,34 @@ const FIPS_TO_CODE = {
   '56': 'WY'
 };
 
-// Color scale function
-function getStateColor(count, maxCount) {
-  // Deep, premium blue palette to match target design
-  const ratio = Math.max(0, Math.min(count / (maxCount || 1), 1));
-  
-  // Transition from a deep muted blue to a vibrant premium blue
-  // Target: rgb(15, 23, 42) -> rgb(37, 99, 235)
-  const r = Math.round(15 + ratio * (37 - 15));
-  const g = Math.round(23 + ratio * (99 - 23));
-  const b = Math.round(42 + ratio * (235 - 42));
-  
+// Color scale function based on geographical position (rainbow gradient)
+function getGradientColor(x, count) {
+  if (count === 0) return 'rgb(30, 41, 59)'; // slate-800 for empty states so they blend into the background
+
+  const t = Math.max(0, Math.min((x + 230) / 480, 1));
+  const stops = [
+    { t: 0.0, r: 6, g: 182, b: 212 },   // Cyan (West)
+    { t: 0.25, r: 59, g: 130, b: 246 }, // Blue (Mid-West)
+    { t: 0.5, r: 217, g: 70, b: 239 },  // Fuchsia/Pink (Central)
+    { t: 0.75, r: 249, g: 115, b: 22 }, // Orange (South/Appalachians)
+    { t: 1.0, r: 34, g: 197, b: 94 }    // Green (East)
+  ];
+
+  let lower = stops[0], upper = stops[stops.length - 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (t >= stops[i].t && t <= stops[i+1].t) {
+      lower = stops[i]; upper = stops[i+1]; break;
+    }
+  }
+
+  const range = upper.t - lower.t;
+  const local_t = range === 0 ? 0 : (t - lower.t) / range;
+  const r = Math.round(lower.r + (upper.r - lower.r) * local_t);
+  const g = Math.round(lower.g + (upper.g - lower.g) * local_t);
+  const b = Math.round(lower.b + (upper.b - lower.b) * local_t);
   return `rgb(${r},${g},${b})`;
 }
+
 
 function StateMesh({ geom, objCode, objName, count, maxCount, onStateSelect, centroid }) {
   const meshRef = useRef();
@@ -40,8 +55,8 @@ function StateMesh({ geom, objCode, objName, count, maxCount, onStateSelect, cen
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(false);
 
-  const baseColor = useMemo(() => new THREE.Color(getStateColor(count, maxCount)), [count, maxCount]);
-  const highlightColor = useMemo(() => new THREE.Color(getStateColor(count, maxCount)).offsetHSL(0, 0, 0.15), [count, maxCount]);
+  const baseColor = useMemo(() => new THREE.Color(getGradientColor(centroid[0], count)), [centroid, count]);
+  const highlightColor = useMemo(() => new THREE.Color(getGradientColor(centroid[0], count)).offsetHSL(0, 0, 0.15), [centroid, count]);
   const activeColor = useMemo(() => new THREE.Color('#f59e0b'), []);
 
   const targetZ = active ? 0.6 : (hovered ? 0.3 : 0);
@@ -238,18 +253,18 @@ function MapGeometry({ onStateSelect }) {
               opacity: 0.85
             }}>
               <span style={{ 
-                color: '#e2e8f0', 
+                color: '#1e293b', 
                 fontSize: '10px', 
-                fontWeight: '700', 
-                textShadow: '0 1px 4px rgba(0,0,0,0.8)' 
+                fontWeight: '800', 
+                textShadow: '0 1px 3px rgba(255,255,255,0.9)' 
               }}>
                 {lbl.code}
               </span>
               <span style={{ 
-                color: count > 0 ? '#38bdf8' : '#64748b', 
+                color: count > 0 ? '#2563eb' : '#94a3b8', 
                 fontSize: '9px', 
-                fontWeight: '600', 
-                textShadow: '0 1px 4px rgba(0,0,0,0.8)' 
+                fontWeight: '700', 
+                textShadow: '0 1px 3px rgba(255,255,255,0.9)' 
               }}>
                 {count > 0 ? count : ''}
               </span>
@@ -261,7 +276,7 @@ function MapGeometry({ onStateSelect }) {
   );
 }
 
-export default function USAMap({ onStateSelect }) {
+const USAMap = forwardRef(function USAMap({ onStateSelect }, ref) {
   const [controlsRef, setControlsRef] = useState(null);
 
   const handleZoomIn = () => {
@@ -280,10 +295,15 @@ export default function USAMap({ onStateSelect }) {
     }
   };
 
+  useImperativeHandle(ref, () => ({ zoomIn: handleZoomIn, zoomOut: handleZoomOut }));
+
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-      {/* 4. Canvas setup: Native Camera Scaling directly adapting to parent container */}
-      <Canvas camera={{ position: [0, 0, 1100], fov: 45, far: 5000 }}>
+      {/* Canvas with white background */}
+      <Canvas camera={{ position: [0, 0, 1100], fov: 45, far: 5000 }} style={{ background: '#ffffff' }}
+        gl={{ clearColor: '#ffffff' }}
+        onCreated={({ gl }) => gl.setClearColor('#ffffff', 1)}
+      >
         <ambientLight intensity={1.5} />
         <MapControls 
           ref={setControlsRef} 
@@ -303,28 +323,9 @@ export default function USAMap({ onStateSelect }) {
         </Bounds>
       </Canvas>
 
-      {/* Floating Map Zoom Controls Overlay */}
-      <div className="absolute bottom-6 right-6 flex flex-col rounded-xl shadow-2xl overflow-hidden border border-slate-700/60 bg-slate-900/95 backdrop-blur z-20">
-        <button 
-          onClick={handleZoomIn} 
-          className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" 
-          title="Zoom In"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v12M6 12h12"/>
-          </svg>
-        </button>
-        <div className="w-full h-[1px] bg-slate-700/60" />
-        <button 
-          onClick={handleZoomOut} 
-          className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" 
-          title="Zoom Out"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4"/>
-          </svg>
-        </button>
-      </div>
+      {/* Zoom Controls removed — rendered by parent (BrowseStates) to avoid overflow clipping */}
     </div>
   );
-}
+});
+
+export default USAMap;

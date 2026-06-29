@@ -26,7 +26,7 @@ export const api = {
   },
 
   getTrustedVendors: async (limit = 10) => {
-    const response = await axiosInstance.get('/vendors/?trusted=true');
+    const response = await axiosInstance.get('/vendors/');
     const data = response.data;
     const vendors = data.results || (Array.isArray(data) ? data : []);
     return vendors.slice(0, limit);

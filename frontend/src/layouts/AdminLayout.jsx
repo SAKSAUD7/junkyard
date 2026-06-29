@@ -28,7 +28,7 @@ export default function AdminLayout() {
     useEffect(() => {
         const fetchBrand = async () => {
             try {
-                const response = await api.cms.getContent('global');
+                const response = await api.cms.getPageContent('global');
                 if (response?.data) {
                     const logoItem = response.data.find(i => i.key === 'portal_logo');
                     if (logoItem?.value) setLogo(logoItem.value);

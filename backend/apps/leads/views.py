@@ -1,5 +1,5 @@
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse  # type: ignore
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
@@ -18,7 +18,7 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
     - POST (create): Public access (anyone can submit a vendor lead)
     - GET, PUT, PATCH, DELETE: Admin only access
     """
-    queryset = VendorLead.objects.all().order_by('-created_at')
+    queryset = VendorLead.objects.all().order_by('-created_at')  # type: ignore
     serializer_class = VendorLeadSerializer
     authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
     
@@ -111,7 +111,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     - POST (create): Public access (anyone can submit a lead)
     - GET, PUT, PATCH, DELETE: Admin only access
     """
-    queryset = Lead.objects.all().order_by('-created_at')
+    queryset = Lead.objects.all().order_by('-created_at')  # type: ignore
     serializer_class = LeadSerializer
     authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth
     
@@ -122,6 +122,60 @@ class LeadViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+
+    def perform_create(self, serializer):
+        # 1. Save the initial lead (includes the frontend-supplied hollander_number)
+        lead = serializer.save()
+        logger.info(f"Saved Lead ID {lead.id} with Hollander {lead.hollander_number}")
+
+        # 2. Send out SendGrid Email Notifications
+        try:
+            from django.core.mail import send_mail  # type: ignore
+            from django.conf import settings  # type: ignore
+            
+            sender_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.net')
+            admin_email = getattr(settings, 'LEAD_NOTIFICATION_EMAIL', 'leads@junkyardsnearme.net')
+            
+            # --- EMAIL 1: Notify the JYNM Client/Admin ---
+            admin_subject = f"NEW LEAD: {lead.year} {lead.make} {lead.model} - {lead.part}"
+            admin_msg = f"New Lead # {lead.id} received!\n\n" \
+                        f"Customer: {lead.name} ({lead.email})\n" \
+                        f"Phone: {lead.phone}\nLocation: {lead.state} {lead.zip}\n\n" \
+                        f"Vehicle: {lead.year} {lead.make} {lead.model}\nPart: {lead.part}\n" \
+                        f"Hollander Assigned: {lead.hollander_number or 'None'}\n\n" \
+                        f"Please login to the admin to action this lead."
+            
+            send_mail(
+                subject=admin_subject,
+                message=admin_msg,
+                from_email=sender_email,
+                recipient_list=[admin_email],
+                fail_silently=True
+            )
+
+            # --- EMAIL 2: Confirmation Auto-Reply to the End-User ---
+            user_subject = f"We've Received Your Part Request - {lead.year} {lead.make} {lead.model}!"
+            user_msg = f"Hi {lead.name},\n\n" \
+                       f"Thanks for using JYNM!\n" \
+                       f"We have successfully received your request for a {lead.part} for your {lead.year} {lead.make} {lead.model}.\n\n" \
+                       f"Our network of trusted salvage yards is currently reviewing your request. We will reach back out to you shortly with pricing and availability if a match is found.\n\n" \
+                       f"Best Regards,\nThe JYNM Auto Parts Team"
+            
+            if lead.email:
+                send_mail(
+                    subject=user_subject,
+                    message=user_msg,
+                    from_email=sender_email,
+                    recipient_list=[lead.email],
+                    fail_silently=True
+                )
+            
+            lead.notification_sent = True
+            lead.save(update_fields=['notification_sent'])
+            logger.info(f"Emails sent successfully for Lead ID {lead.id}")
+            
+        except Exception as e:
+            logger.error(f"SendGrid email failure for lead {lead.id}: {str(e)}")
 
     def list(self, request, *args, **kwargs):
         try:
@@ -201,9 +255,9 @@ class LeadViewSet(viewsets.ModelViewSet):
         return response
 
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse  # type: ignore
+from django.views.decorators.http import require_http_methods  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from apps.hollander.models import HollanderInterchange
 
 @csrf_exempt
@@ -236,7 +290,7 @@ def hollander_lookup(request):
         year_int = int(year) if year else 0
         
         # Build query - match year range, make, model, and part type
-        queryset = HollanderInterchange.objects.filter(
+        queryset = HollanderInterchange.objects.filter(  # type: ignore
             year_start__lte=year_int,
             year_end__gte=year_int,
             make__iexact=make,

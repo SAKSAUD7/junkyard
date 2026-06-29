@@ -22,6 +22,11 @@ class AdvertisementListView(generics.ListAPIView):
         slot = self.request.query_params.get('slot')
         if slot:
             queryset = queryset.filter(slot=slot)
+
+        # slot_group allows prefix matching e.g. slot_group=strip matches strip_top, strip_bottom etc.
+        slot_group = self.request.query_params.get('slot_group')
+        if slot_group and not slot:
+            queryset = queryset.filter(slot__startswith=slot_group)
             
         target_page = self.request.query_params.get('target_page')
         if target_page:

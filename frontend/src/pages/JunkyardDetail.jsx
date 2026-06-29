@@ -12,35 +12,35 @@ const JunkyardDetail = () => {
     const navigate = useNavigate();
     const { data: junkyards } = useData('data_junkyards.json');
 
-    // Find the vendor by ID - Note: JunkyardDetail logically is same as VendorDetail
-    // We update lookup to use 'id' as 'accountID' was missing in JSON
     const vendor = junkyards?.find(j => j.id === parseInt(id));
 
     if (!junkyards) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 flex items-center justify-center">
-                <div className="text-slate-800 text-xl">Loading...</div>
+            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 text-blue-600">
+                    <svg fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                </div>
             </div>
         );
     }
 
     if (!vendor) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+            <div className="min-h-screen bg-[#f8fafc] flex flex-col">
                 <Navbar />
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white/5 backdrop-blur-sm border border-slate-200 rounded-full mb-6">
-                        <svg className="w-10 h-10 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-white border border-slate-100 rounded-full mb-6 shadow-sm">
+                        <svg className="w-10 h-10 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h1 className="text-4xl font-bold text-slate-800 mb-4">Junkyard Not Found</h1>
-                    <p className="text-slate-600 mb-8">The junkyard you're looking for doesn't exist.</p>
+                    <h1 className="text-4xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Junkyard Not Found</h1>
+                    <p className="text-slate-500 font-medium mb-8">The junkyard you're looking for doesn't exist.</p>
                     <button
                         onClick={() => navigate('/browse')}
-                        className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-[0_4px_14px_rgb(37,99,235,0.3)] inline-flex items-center gap-2"
                     >
-                        ← Browse Junkyards
+                        ← Browse All Yards
                     </button>
                 </div>
                 <Footer />
@@ -67,7 +67,7 @@ const JunkyardDetail = () => {
     ]) : null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800">
+        <div className="min-h-screen bg-[#f8fafc]">
             <SEO
                 title={vendor ? `${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}` : 'Junkyard Details'}
                 description={vendor?.description || `Find used auto parts at ${vendor?.name}.`}
@@ -77,140 +77,92 @@ const JunkyardDetail = () => {
             <Navbar />
 
             {/* Breadcrumb */}
-            <div className="bg-white/5 backdrop-blur-sm border-b border-slate-200">
+            <div className="bg-white border-b border-slate-100 pt-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <Link to="/browse" className="hover:text-cyan-400 transition-colors">Browse</Link>
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-slate-800 font-medium">{vendor.name}</span>
+                    <div className="flex items-center gap-2 text-[13px] font-bold text-slate-500">
+                        <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                        <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                        <Link to="/browse" className="hover:text-blue-600 transition-colors">Browse</Link>
+                        <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                        <span className="text-slate-900">{vendor.name}</span>
                     </div>
                 </div>
             </div>
 
-            {/* Hero Section */}
-            <div className="relative py-16 overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Left - Vendor Info */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Logo & Name Card */}
-                            <div className="bg-white/5 backdrop-blur-xl border border-slate-200 rounded-3xl p-8">
-                                <div className="flex items-start gap-6">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0 w-32 h-32 bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-4 flex items-center justify-center">
-                                        {vendor.logo ? (
-                                            <img
-                                                src={vendor.logo}
-                                                alt={vendor.name}
-                                                className="max-w-full max-h-full object-contain"
-                                                onError={(e) => {
-                                                    e.target.src = '/images/logo-placeholder.png';
-                                                }}
-                                            />
-                                        ) : (
-                                            <svg className="w-16 h-16 text-slate-800/10" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
-                                            </svg>
-                                        )}
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left - Vendor Info */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Header Profile Card */}
+                        <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)] p-8">
+                            <div className="flex flex-col sm:flex-row items-start gap-6">
+                                {/* Vendor Logo Avatar */}
+                                <div className="flex-shrink-0 w-24 h-24 rounded-2xl bg-slate-50 border border-slate-100 p-3 flex items-center justify-center">
+                                    {vendor.logo ? (
+                                        <img
+                                            src={vendor.logo} alt={vendor.name}
+                                            className="max-w-full max-h-full object-contain"
+                                            onError={(e) => { e.target.src = '/images/logo-placeholder.png'; }}
+                                        />
+                                    ) : (
+                                        <span className="text-3xl font-black text-slate-300">{vendor.name.charAt(0)}</span>
+                                    )}
+                                </div>
+                                <div className="flex-1">
+                                    <div className="inline-flex items-center gap-1 bg-green-50 text-green-600 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-2 border border-green-100">
+                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                        Verified Yard
                                     </div>
-
-                                    {/* Name & Rating */}
-                                    <div className="flex-1">
-                                        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300 mb-4">
-                                            {vendor.name}
-                                        </h1>
-
-                                        {/* Rating */}
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="flex items-center gap-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <svg
-                                                        key={i}
-                                                        className="w-6 h-6 text-yellow-400"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 20 20"
-                                                    >
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                    </svg>
-                                                ))}
-                                            </div>
-                                            <span className="text-2xl font-bold text-slate-800">{vendor.rating}</span>
-                                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
-                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                                Verified
-                                            </span>
+                                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        {vendor.name}
+                                    </h1>
+                                    <div className="flex flex-wrap items-center gap-4 text-[13px] font-bold text-slate-500">
+                                        <div className="flex items-center gap-1 text-slate-900 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+                                            <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            {vendor.rating}
                                         </div>
-
-                                        {/* Location */}
-                                        <div className="flex items-center gap-2 text-slate-600 text-lg">
-                                            <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                            </svg>
-                                            <span>{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</span>
+                                        <div className="flex items-center gap-1.5">
+                                            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                            {vendor.city}, {vendor.state}
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Description */}
-                            {vendor.description && (
-                                <div className="bg-white/5 backdrop-blur-xl border border-slate-200 rounded-3xl p-8">
-                                    <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                        <svg className="w-6 h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                                        </svg>
-                                        About This Vendor
-                                    </h2>
-                                    <p className="text-slate-600 text-lg leading-relaxed">
-                                        {vendor.description}
-                                    </p>
+                        {/* Description */}
+                        {vendor.description && (
+                            <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_12px_rgb(0,0,0,0.02)] p-8">
+                                <h2 className="text-[15px] font-black uppercase text-slate-800 tracking-wider mb-4 border-b border-slate-100 pb-2">About This Vendor</h2>
+                                <p className="text-slate-600 text-[15px] leading-relaxed font-medium">
+                                    {vendor.description}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Location Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white rounded-2xl border border-slate-100 p-6 flex items-start gap-4 shadow-[0_2px_12px_rgb(0,0,0,0.02)]">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 </div>
-                            )}
-
-                            {/* Quick Info Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Location Card */}
-                                <div className="bg-white/5 backdrop-blur-xl border border-slate-200 rounded-2xl p-6">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-bold text-slate-800">Location</h3>
-                                    </div>
-                                    <p className="text-slate-600 text-sm">
-                                        {vendor.city}, {vendor.state}
-                                    </p>
-                                    <p className="text-slate-800/50 text-xs mt-1">ZIP: {vendor.zipcode}</p>
-                                </div>
-
-                                {/* State Card */}
-                                <div className="bg-white/5 backdrop-blur-xl border border-slate-200 rounded-2xl p-6">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-bold text-slate-800">State</h3>
-                                    </div>
-                                    <p className="text-slate-600 text-sm font-semibold">{vendor.state}</p>
+                                <div>
+                                    <h3 className="font-black text-[13px] uppercase tracking-wider text-slate-800 mb-1">Full Address</h3>
+                                    <p className="text-slate-600 text-sm font-medium">{vendor.address}<br/>{vendor.city}, {vendor.state} {vendor.zipcode}</p>
                                 </div>
                             </div>
+                            <div className="bg-white rounded-2xl border border-slate-100 p-6 flex flex-col shadow-[0_2px_12px_rgb(0,0,0,0.02)] relative overflow-hidden h-[120px]">
+                                {/* Mini map preview visual */}
+                                <div className="absolute inset-0 bg-slate-50 opacity-50 z-0" style={{ backgroundImage: 'linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                                <div className="relative z-10 flex items-center justify-center w-full h-full">
+                                    <span className="bg-white border border-slate-200 shadow-sm rounded-full px-4 py-1.5 text-[11px] font-black text-slate-800 tracking-wider">MAP VIEW</span>
+                                </div>
+                            </div>
+                        </div>
 
-                            {/* Location Map */}
+                        {/* Location Map Interactive */}
+                        <div className="rounded-3xl overflow-hidden border border-slate-100 shadow-[0_4px_24px_rgb(0,0,0,0.04)] bg-white h-[400px]">
                             <LocationMap
                                 address={vendor.address}
                                 city={vendor.city}
@@ -219,33 +171,27 @@ const JunkyardDetail = () => {
                                 name={vendor.name}
                             />
                         </div>
+                    </div>
 
-                        {/* Right - Contact Form */}
-                        <div className="lg:col-span-1">
-                            <div className="sticky top-24">
-                                <div className="relative">
-                                    {/* Glow Effect */}
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-30 animate-pulse-slow"></div>
-
-                                    {/* Form Container */}
-                                    <div className="relative bg-slate-100/90 backdrop-blur-xl border border-slate-200 rounded-3xl p-6">
-                                        <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                            <svg className="w-6 h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                            </svg>
-                                            Get a Quote
-                                        </h2>
-                                        <p className="text-slate-600 mb-6">Fill out the form below to request a quote from {vendor.name}</p>
-                                        <LeadForm vendorName={vendor.name} />
-                                    </div>
+                    {/* Right - Contact LeadForm */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-28 bg-white rounded-3xl border border-slate-200 shadow-[0_8px_40px_rgb(0,0,0,0.08)] p-1">
+                            <div className="bg-slate-50 rounded-[22px] p-6 h-full">
+                                <div className="mb-6">
+                                    <h2 className="text-xl font-black text-slate-900 flex items-center gap-2 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
+                                        Get a Quote
+                                    </h2>
+                                    <p className="text-[13px] font-medium text-slate-500">Contact <span className="font-bold text-slate-700">{vendor.name}</span> directly.</p>
+                                </div>
+                                <div className="bg-white rounded-xl border border-slate-200 p-1">
+                                    <LeadForm vendorName={vendor.name} />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <Footer />
         </div>
     );

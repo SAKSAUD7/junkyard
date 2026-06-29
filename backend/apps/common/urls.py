@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     MakeViewSet, ModelViewSet, PartViewSet,
     StateViewSet, ContactMessageViewSet, AdminStatsView,
-    SiteStatsView, UploadAndMigrateLeadDataView
+    SiteStatsView, UploadAndMigrateLeadDataView, SitemapView
 )
 
 router = DefaultRouter()
@@ -18,4 +18,5 @@ urlpatterns = [
     path('admin-stats/', AdminStatsView.as_view(), name='admin-stats'),
     path('site-stats/', SiteStatsView.as_view(), name='site-stats'),
     path('migrate-lead-data/', UploadAndMigrateLeadDataView.as_view(), name='migrate-lead-data'),
+    path('sitemap.xml', SitemapView.as_view(), name='sitemap-xml'),
 ]

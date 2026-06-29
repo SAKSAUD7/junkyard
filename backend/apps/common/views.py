@@ -384,3 +384,62 @@ class UploadAndMigrateLeadDataView(APIView):
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
             return Response({'error': str(e)}, status=500)
+
+# ==========================================
+# SEO & SITEMAP UTILITY VIEW
+# ==========================================
+
+from django.http import HttpResponse
+
+class SitemapView(APIView):
+    """
+    Dynamically generates the sitemap.xml for SEO indexing.
+    Returns valid XML containing static routes and dynamic Vendor profiles.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        from apps.hollander.models import Vendor
+        import xml.etree.ElementTree as ET
+        
+        urlset = ET.Element('urlset', xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+        
+        base_url = 'https://junkyardsnearme.com'
+        
+        # Static Pages
+        static_pages = [
+            '/', '/about', '/search', '/faq', '/browse', 
+            '/contact', '/terms', '/privacy', '/auth/login', 
+            '/auth/register', '/add-yard'
+        ]
+        
+        for path in static_pages:
+            url_node = ET.SubElement(urlset, 'url')
+            loc_node = ET.SubElement(url_node, 'loc')
+            loc_node.text = f"{base_url}{path}"
+            changefreq = ET.SubElement(url_node, 'changefreq')
+            changefreq.text = 'weekly'
+            priority = ET.SubElement(url_node, 'priority')
+            priority.text = '1.0' if path == '/' else '0.8'
+            
+        # Dynamic Vendor Pages
+        try:
+            active_vendors = Vendor.objects.filter(is_active=True).values('id')
+            for vendor in active_vendors:
+                url_node = ET.SubElement(urlset, 'url')
+                loc_node = ET.SubElement(url_node, 'loc')
+                loc_node.text = f"{base_url}/vendors/{vendor['id']}"
+                
+                changefreq = ET.SubElement(url_node, 'changefreq')
+                changefreq.text = 'weekly'
+                priority = ET.SubElement(url_node, 'priority')
+                priority.text = '0.7'
+        except Exception as e:
+            print(f"Sitemap vendor resolution error: {e}")
+
+        # Generate XML
+        xml_str = ET.tostring(urlset, encoding='utf-8', method='xml')
+        xml_declaration = b'<?xml version="1.0" encoding="UTF-8"?>\n'
+        
+        return HttpResponse(xml_declaration + xml_str, content_type='application/xml')
+

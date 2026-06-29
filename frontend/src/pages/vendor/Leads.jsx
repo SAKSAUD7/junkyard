@@ -88,36 +88,34 @@ const VendorLeads = () => {
     );
 
     return (
-        <div className="min-h-full pb-20 md:pb-8 w-full">
+        <div className="min-h-full pb-20 md:pb-8 w-full bg-[#f8fafc]">
             {/* Enhanced Header */}
-            <div className="relative bg-gradient-to-br from-indigo-600/20 via-slate-800/80 to-violet-900/30 backdrop-blur-xl border border-white/5 pt-4 md:pt-6 pb-6 md:pb-8 px-4 md:px-6 rounded-[2rem] shadow-2xl mb-4 md:mb-6 overflow-hidden">
-                {/* Animated Background */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full -mr-16 -mt-16 blur-2xl animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-500/20 rounded-full -ml-12 -mb-12 blur-xl animate-pulse delay-75"></div>
-
-                <div className="max-w-7xl mx-auto text-white relative z-10">
-                    <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-9 h-9 bg-white/5 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
-                            <svg className="w-5 h-5 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
+            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 md:mb-8 overflow-hidden border border-slate-100 mt-2 mx-1">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center text-slate-900 relative z-10 gap-4 md:gap-0 w-full">
+                    <div>
+                        <div className="flex items-center gap-3 mb-1.5">
+                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Customer Inquiries</h1>
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-black font-display tracking-tight text-white drop-shadow-md">Customer Inquiries</h1>
+                        <p className="text-slate-500 font-medium ml-[3.75rem]">Connect with customers looking for parts</p>
                     </div>
-                    <p className="text-slate-300 text-sm font-medium ml-0 md:ml-[2.875rem]">Connect with customers looking for parts</p>
                 </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Enhanced Search & Filter Card */}
-                <div className="bg-slate-800/40 rounded-2xl md:rounded-3xl shadow-lg p-2 mb-4 md:mb-6 flex flex-col md:flex-row gap-2 border border-slate-700/50">
+                <div className="bg-white rounded-2xl md:rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-2 mb-4 md:mb-6 flex flex-col md:flex-row gap-2 border border-slate-100 mx-1">
                     <div className="flex-1 relative">
-                        <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input
                             type="text"
-                            className="w-full pl-12 pr-4 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-900/40 focus:bg-slate-900/60 focus:border-indigo-500/50 outline-none transition-colors text-white placeholder-slate-500 text-sm md:text-base border border-transparent"
+                            className="w-full pl-12 pr-4 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 outline-none transition-all text-slate-900 placeholder-slate-400 text-sm md:text-base border border-transparent focus:shadow-[0_4px_20px_rgb(0,0,0,0.03)]"
                             placeholder="Search by name, make, model, or part..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -125,9 +123,9 @@ const VendorLeads = () => {
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center transition-colors"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center transition-colors"
                             >
-                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
@@ -135,7 +133,7 @@ const VendorLeads = () => {
                     </div>
                     <div className="md:w-52 relative">
                         <select
-                            className="w-full pl-4 pr-10 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-900/40 outline-none appearance-none cursor-pointer text-slate-300 font-medium text-sm md:text-base hover:bg-slate-900/60 transition-colors border border-transparent"
+                            className="w-full pl-4 pr-10 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-50 outline-none appearance-none cursor-pointer text-slate-700 font-medium text-sm md:text-base hover:bg-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 transition-all border border-transparent focus:shadow-[0_4px_20px_rgb(0,0,0,0.03)]"
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
                         >
@@ -145,7 +143,7 @@ const VendorLeads = () => {
                             <option value="converted">✅ Won</option>
                             <option value="closed">❌ Lost</option>
                         </select>
-                        <svg className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
@@ -201,44 +199,44 @@ const VendorLeads = () => {
                             <Link
                                 to={`/vendor/leads/${lead.id}`}
                                 key={lead.id}
-                                className="block bg-slate-800/40 rounded-2xl md:rounded-3xl shadow-sm border border-slate-700/50 p-4 md:p-5 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:border-slate-500 hover:-translate-y-0.5 transition-all duration-300 group active:scale-[0.98]"
+                                className="block bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 p-4 md:p-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-blue-100 hover:-translate-y-0.5 transition-all duration-300 group active:scale-[0.98] mx-1"
                             >
                                 <div className="flex justify-between items-start mb-3 gap-3">
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 shadow-inner">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 border border-blue-100">
                                             {lead.customer_name.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-white leading-tight group-hover:text-indigo-400 transition-colors truncate text-sm md:text-base">
+                                            <h3 className="font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors truncate text-sm md:text-base">
                                                 {lead.year} {lead.make} {lead.model}
                                             </h3>
-                                            <p className="text-xs md:text-sm text-slate-400 font-medium truncate">{lead.customer_name}</p>
+                                            <p className="text-xs md:text-sm text-slate-500 font-medium truncate">{lead.customer_name}</p>
                                         </div>
                                     </div>
-                                    <span className={`px-2.5 md:px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${getStatusColor(lead.status)}`}>
+                                    <span className={`px-2.5 md:px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 uppercase tracking-wide ${getStatusColor(lead.status)}`}>
                                         {getStatusIcon(lead.status)}
-                                        <span className="hidden sm:inline text-slate-100">{lead.status_display}</span>
+                                        <span className="hidden sm:inline">{lead.status_display}</span>
                                     </span>
                                 </div>
 
-                                <div className="ml-0 md:ml-[3.25rem] border-t border-slate-700/50 pt-3 mt-3">
-                                    <div className="flex flex-wrap gap-y-2 gap-x-4 md:gap-x-6 text-xs md:text-sm text-slate-400">
+                                <div className="ml-0 md:ml-[3.75rem] border-t border-slate-100 pt-3 mt-3">
+                                    <div className="flex flex-wrap gap-y-2 gap-x-4 md:gap-x-6 text-xs md:text-sm text-slate-500 font-medium">
                                         <div className="flex items-center gap-1.5">
-                                            <svg className="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <span className="truncate">{lead.part}</span>
+                                            <span className="truncate text-slate-700">{lead.part}</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5 text-slate-500">
-                                            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div className="flex items-center gap-1.5">
+                                            <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                             {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </div>
                                         {(lead.state || lead.location) && (
-                                            <div className="flex items-center gap-1.5 text-slate-500">
-                                                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <div className="flex items-center gap-1.5">
+                                                <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>

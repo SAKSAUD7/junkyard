@@ -167,13 +167,17 @@ export default function AdminAds() {
 
     const getPositionBadge = (page, slot) => {
         const positions = {
-            'home-left_sidebar_ad': { label: 'Home Left', color: 'bg-[#eef2ff] text-[#6366f1]' },
-            'home-right_sidebar_ad': { label: 'Home Right', color: 'bg-[#ede9fe] text-[#8b5cf6]' },
-            'vendors-left_sidebar_ad': { label: 'Vendors Left', color: 'bg-[#d1fae5] text-[#10b981]' },
-            'vendors-right_sidebar_ad': { label: 'Vendors Right', color: 'bg-[#fef3c7] text-[#f59e0b]' },
-            'browse-left_sidebar_ad': { label: 'Browse Left', color: 'bg-[#dbeafe] text-[#1e40af]' },
-            'browse-right_sidebar_ad': { label: 'Browse Right', color: 'bg-[#fce7f3] text-[#be185d]' },
+            'home-left_sidebar_ad':    { label: 'Home Left',          color: 'bg-[#eef2ff] text-[#6366f1]' },
+            'home-right_sidebar_ad':   { label: 'Home Right',         color: 'bg-[#ede9fe] text-[#8b5cf6]' },
+            'vendors-left_sidebar_ad': { label: 'Vendors Left',       color: 'bg-[#d1fae5] text-[#10b981]' },
+            'vendors-right_sidebar_ad':{ label: 'Vendors Right',      color: 'bg-[#fef3c7] text-[#f59e0b]' },
+            'browse-left_sidebar_ad':  { label: 'Browse Left',        color: 'bg-[#dbeafe] text-[#1e40af]' },
+            'browse-right_sidebar_ad': { label: 'Browse Right',       color: 'bg-[#fce7f3] text-[#be185d]' },
         };
+        // Strip slot labels
+        if (slot === 'strip_top')      return { label: `${page} Strip Top`,    color: 'bg-orange-50 text-orange-600' };
+        if (slot === 'strip_bottom')   return { label: `${page} Strip Bottom`, color: 'bg-teal-50 text-teal-600' };
+        if (slot === 'strip_home_mid') return { label: 'Home Strip Mid',        color: 'bg-sky-50 text-sky-600' };
         const key = `${page}-${slot}`;
         return positions[key] || { label: `${page} - ${slot}`, color: 'bg-[#f3f4f6] text-[#374151]' };
     };
@@ -401,6 +405,10 @@ export default function AdminAds() {
                                         <option value="home">Home Page</option>
                                         <option value="vendors">Vendors Page</option>
                                         <option value="browse">Browse Page</option>
+                                        <option value="about">About Page</option>
+                                        <option value="contact">Contact Page</option>
+                                        <option value="blog">Blog Page</option>
+                                        <option value="faq">FAQ Page</option>
                                     </select>
                                 </div>
                                 <div>
@@ -410,8 +418,25 @@ export default function AdminAds() {
                                         value={formData.slot}
                                         onChange={e => setFormData({ ...formData, slot: e.target.value })}
                                     >
-                                        <option value="left_sidebar_ad">Left Sidebar</option>
-                                        <option value="right_sidebar_ad">Right Sidebar</option>
+                                        {/* Sidebar Slots */}
+                                        <optgroup label="Sidebar Slots">
+                                            <option value="left_sidebar_ad">Left Sidebar</option>
+                                            <option value="right_sidebar_ad">Right Sidebar</option>
+                                        </optgroup>
+                                        {/* Strip Slots (horizontal banner) */}
+                                        <optgroup label="Strip Slots (Horizontal Banner)">
+                                            <option value="strip_top">Strip — Top (below hero)</option>
+                                            <option value="strip_bottom">Strip — Bottom (before footer)</option>
+                                            <option value="strip_home_mid">Strip — Home Middle</option>
+                                        </optgroup>
+                                        {/* Carousel Slots */}
+                                        <optgroup label="Carousel Sliders (Multiple Ads)">
+                                            <option value="carousel_1">Carousel Slider 1 (Top)</option>
+                                            <option value="carousel_2">Carousel Slider 2</option>
+                                            <option value="carousel_3">Carousel Slider 3 (Middle)</option>
+                                            <option value="carousel_4">Carousel Slider 4</option>
+                                            <option value="carousel_5">Carousel Slider 5 (Bottom)</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                             </div>

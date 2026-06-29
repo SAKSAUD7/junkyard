@@ -23,12 +23,10 @@ export default function BrowseState() {
     const [totalCount, setTotalCount] = useState(0);
     const vendorsPerPage = 24;
 
-    // Fetch vendors from API with server-side filtering
     useEffect(() => {
         const fetchVendors = async () => {
             try {
                 setLoading(true);
-                // Construct API params for server-side filtering
                 const params = {
                     state: state,
                     page: currentPage,
@@ -38,13 +36,11 @@ export default function BrowseState() {
 
                 const data = await api.getVendors(params);
 
-                // Handle paginated response
                 if (data.results) {
                     setJunkyards(data.results);
                     setTotalCount(data.count);
                     setTotalPages(Math.ceil(data.count / vendorsPerPage));
                 } else if (Array.isArray(data)) {
-                    // Fallback if API returns array (shouldn't happen with pagination)
                     setJunkyards(data);
                     setTotalCount(data.length);
                     setTotalPages(1);
@@ -61,7 +57,6 @@ export default function BrowseState() {
             }
         };
 
-        // Debounce search to prevent too many API calls
         const timeoutId = setTimeout(() => {
             fetchVendors();
         }, 300);
@@ -69,13 +64,11 @@ export default function BrowseState() {
         return () => clearTimeout(timeoutId);
     }, [state, currentPage, searchTerm]);
 
-    // Scroll to top when page loads or state changes
     useEffect(() => {
         window.scrollTo(0, 0);
-        setCurrentPage(1); // Reset to page 1 on state change
+        setCurrentPage(1);
     }, [state]);
 
-    // Sync search term with URL
     useEffect(() => {
         const query = searchParams.get('search') || '';
         if (query !== searchTerm) {
@@ -84,17 +77,14 @@ export default function BrowseState() {
         }
     }, [searchParams]);
 
-    // Get state full name
     const stateInfo = states?.find(s => s.stateCode?.toLowerCase() === state.toLowerCase());
     const stateName = stateInfo?.stateName || state.toUpperCase();
 
-    // Pagination handler
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // SEO structured data
     const schema = {
         '@context': 'https://schema.org',
         '@graph': [
@@ -113,7 +103,7 @@ export default function BrowseState() {
     };
 
     return (
-        <div style={{ background: 'var(--bg-base, var(--bg-base))', minHeight: '100vh', color: 'var(--text-primary)' }}>
+        <div className="bg-[#f8fafc] min-h-screen flex flex-col">
             <SEO
                 title={`Junkyards in ${stateName} - ${totalCount} Auto Salvage Yards`}
                 description={`Find ${totalCount} verified junkyards in ${stateName}. Search used auto parts from trusted salvage yards. Free quotes, nationwide shipping available.`}
@@ -122,253 +112,189 @@ export default function BrowseState() {
 
             <Navbar />
 
-            {/* Dark Hero with Animation */}
-            <div className="hero-depth relative pt-24 pb-12 overflow-hidden flex items-center" style={{ minHeight: '40vh', background: 'var(--bg-base)' }}>
-
-                {/* Animation background */}
-                <div className="hero-bg-primary" style={{ backgroundImage: "url('/heroes/salvage-sunset.png')", opacity: 0.58 }} />
-                <div className="hero-bg-depth" style={{ backgroundImage: "url('/heroes/stacked-cars.png')" }} />
-                <div className="hero-overlay-base" />
-                <div className="hero-vignette" />
-                <div className="hero-glow-teal" />
-                <div className="hero-glow-orange" />
-                <div className="hero-grid" />
-                <div className="hero-scanline" />
-                <div className="hero-fade-bottom" />
-
-                <div className="hero-content relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
-                    <div className="space-y-4">
-                        {/* Breadcrumb */}
-                        <div className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)', fontFamily: "'JetBrains Mono', monospace" }}>
-                            <Link to="/browse" className="transition-colors" style={{ color: 'rgba(255,255,255,0.7)' }}
-                                onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
-                                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>
-                                Browse States
-                            </Link>
-                            <span style={{ color: 'rgba(255,255,255,0.5)' }}>›</span>
-                            <span style={{ color: '#ffffff' }}>{stateName}</span>
+            {/* Light Hero Section */}
+            <section className="relative pt-32 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-50/80 rounded-full blur-[100px] pointer-events-none transform -translate-x-1/2 -translate-y-1/2" />
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <div className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-6">
+                            <Link to="/browse" className="hover:text-blue-600 transition-colors">Browse States</Link>
+                            <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                            <span className="text-slate-900">{stateName}</span>
                         </div>
-
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)' }}>
-                            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }}></div>
-                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#ffffff' }}>
-                                {totalCount} Verified Junkyards
-                            </span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-blue-50 border border-blue-100">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-blue-600 text-[10px] font-black uppercase tracking-wider">{totalCount} Verified Yards</span>
                         </div>
-
-                        <h1 className="font-black leading-tight px-0" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: "'Outfit', sans-serif" }}>
-                            Junkyards in
-                            <span className="block" style={{ color: '#60a5fa' }}>{stateName}</span>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                            Junkyards in <span className="text-blue-600">{stateName}</span>
                         </h1>
-
-                        <p className="text-lg font-light" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                            Explore <strong style={{ color: '#ffffff' }}>{totalCount} auto salvage yards</strong> in {stateName}.
+                        <p className="text-slate-500 text-lg font-medium max-w-xl">
+                            Search our extensive network of certified auto salvage yards across {stateName} to find the exact parts you need.
                         </p>
                     </div>
-                </div>
-            </div>
 
-
-            {/* Sticky Search & Filter Bar */}
-            <div className="sticky top-0 z-40" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(37,99,235,0.1)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className="w-5 h-5" style={{ color: 'var(--neon-blue)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                    {/* Search / Filter Widget right side */}
+                    <div className="w-full md:w-[400px]">
+                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.06)] relative z-20">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Find a yard</h3>
+                            <div className="relative mb-3">
+                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                    placeholder="City, Name, or ZIP..."
+                                    className="w-full pl-12 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                />
+                                {searchTerm && (
+                                    <button onClick={() => setSearchTerm('')} className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                )}
+                            </div>
+                            <div className="flex items-center justify-between px-1">
+                                <span className="text-[12px] font-bold text-slate-500">
+                                    Showing {Math.min(((currentPage - 1) * vendorsPerPage) + 1, totalCount || 0)}–{Math.min(currentPage * vendorsPerPage, totalCount || 0)} of {totalCount}
+                                </span>
+                            </div>
                         </div>
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                            placeholder="Search by junkyard name or city..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder-gray-600"
-                            style={{ background: 'rgba(240,245,250,0.8)', border: '1px solid rgba(37,99,235,0.15)', color: 'var(--text-primary)' }}
-                            onFocus={e => e.target.style.borderColor = 'var(--neon-blue)'}
-                            onBlur={e => e.target.style.borderColor = 'rgba(37,99,235,0.15)'}
-                        />
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between">
-                        <span className="text-sm" style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
-                            Showing {Math.min(((currentPage - 1) * vendorsPerPage) + 1, totalCount)}–{Math.min(currentPage * vendorsPerPage, totalCount)} of <strong style={{ color: 'var(--neon-blue)' }}>{totalCount}</strong> junkyards
-                        </span>
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className="text-xs font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
-                                style={{ color: 'var(--neon-orange)' }}
-                                onMouseEnter={e => e.currentTarget.style.color = '#ff9500'}
-                                onMouseLeave={e => e.currentTarget.style.color = 'var(--neon-orange)'}
-                            >
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Clear
-                            </button>
-                        )}
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Vendors Grid */}
-            <div className="relative py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {loading ? (
-                        <div className="text-center py-24">
-                            <div className="spinner-glow mx-auto mb-4" />
-                            <p style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.9rem' }}>Scanning junkyard database...</p>
-                        </div>
-                    ) : junkyards.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            {/* Grid Section */}
+            <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                        <svg className="animate-spin h-10 w-10 text-blue-600 mb-6" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span className="font-bold">Loading yards...</span>
+                    </div>
+                ) : junkyards.length > 0 ? (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {junkyards.map((vendor) => (
                                 <Link
                                     key={vendor.id}
-                                    to={`/vendors/${vendor.id}`}
-                                    className="group relative block"
+                                    to={`/junkyard/${vendor.id}`}
+                                    className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_40px_rgb(37,99,235,0.08)] hover:border-blue-100 transition-all duration-300 transform hover:-translate-y-1"
                                 >
-                                    <div
-                                        className="relative rounded-2xl overflow-hidden h-full transition-all duration-300 transform group-hover:-translate-y-2"
-                                        style={{
-                                            background: '#ffffff',
-                                            border: '1px solid rgba(15,23,42,0.08)',
-                                            boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
-                                        }}
-                                        onMouseEnter={e => {
-                                            e.currentTarget.style.borderColor = 'rgba(37,99,235,0.25)';
-                                            e.currentTarget.style.boxShadow = '0 12px 32px rgba(37,99,235,0.1)';
-                                        }}
-                                        onMouseLeave={e => {
-                                            e.currentTarget.style.borderColor = 'rgba(15,23,42,0.08)';
-                                            e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)';
-                                        }}
-                                    >
-                                        {/* Logo Area */}
-                                        <div className="aspect-video flex items-center justify-center p-4" style={{ background: 'rgba(37,99,235,0.03)' }}>
-                                            {vendor.logo ? (
-                                                <img
-                                                    src={vendor.logo}
-                                                    alt={vendor.name}
-                                                    className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
-                                                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M20 75 L50 30 L80 75 Z' fill='%23cbd5e1'/%3E%3Ccircle cx='70' cy='28' r='10' fill='%23cbd5e1'/%3E%3C/svg%3E"; }}
-                                                />
-                                            ) : (
-                                                <div className="flex items-center justify-center">
-                                                    <svg className="w-12 h-12" style={{ color: 'rgba(37,99,235,0.2)' }} fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Content */}
-                                        <div className="p-4 flex flex-col">
-                                            <h3 className="font-bold text-sm sm:text-base mb-1 line-clamp-2 transition-colors duration-300 group-hover:text-[var(--neon-blue)]" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>
+                                    {/* Logo Header */}
+                                    <div className="h-32 bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100 relative">
+                                        {/* Status indicator */}
+                                        <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-green-500"></div>
+                                        {vendor.logo ? (
+                                            <img
+                                                src={vendor.logo}
+                                                alt={vendor.name}
+                                                className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300"
+                                                onError={(e) => { e.target.src = '/images/logo-placeholder.png'; }}
+                                            />
+                                        ) : (
+                                            <span className="text-4xl font-black text-slate-200">{vendor.name.charAt(0)}</span>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Body */}
+                                    <div className="p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
+                                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                                        
+                                        <div>
+                                            <div className="flex items-center gap-1.5 mb-2">
+                                                <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                                <span className="text-sm font-bold text-slate-700">{vendor.rating}</span>
+                                            </div>
+                                            <h3 className="font-black text-lg text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-1" title={vendor.name}>
                                                 {vendor.name}
                                             </h3>
-
-                                            <div className="flex items-center gap-1.5 mb-3 mt-1">
-                                                <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--neon-orange)' }} fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                                </svg>
-                                                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{vendor.city}, {vendor.state}</span>
+                                            <div className="flex items-start gap-2 text-slate-500 mb-4">
+                                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                <p className="text-sm font-medium line-clamp-2 leading-relaxed tracking-tight">{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</p>
                                             </div>
-
-                                            <div className="flex items-center gap-1 mb-3">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <svg key={i} className="w-3 h-3" fill={i < Math.round(vendor.rating || 0) ? '#fbbf24' : 'rgba(255,255,255,0.1)'} viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                    </svg>
-                                                ))}
-                                                <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>{vendor.rating}</span>
-                                            </div>
-
-                                            <div className="mt-auto font-bold py-2 px-3 rounded-lg text-xs uppercase tracking-wider text-center transition-all"
-                                                style={{ background: 'rgba(37,99,235,0.1)', color: 'var(--neon-blue)', border: '1px solid rgba(37,99,235,0.2)' }}
-                                            >
-                                                View Details →
-                                            </div>
+                                        </div>
+                                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-bold">
+                                            <span className="text-slate-500">View Yard</span>
+                                            <svg className="w-5 h-5 text-blue-600 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
-                    ) : (
-                        <div className="text-center py-24">
-                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-6" style={{ background: 'rgba(234,88,12,0.05)', border: '1px solid rgba(234,88,12,0.2)' }}>
-                                <svg className="w-10 h-10" style={{ color: 'var(--neon-orange)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)', fontFamily: "'Outfit', sans-serif" }}>No junkyards found</h3>
-                            <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>Try adjusting your search</p>
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className="font-bold px-8 py-3 rounded-xl transition-all transform hover:-translate-y-1"
-                                style={{ background: 'var(--neon-blue)', color: 'var(--bg-base)' }}
-                            >
-                                Clear Search
-                            </button>
-                        </div>
-                    )}
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className="mt-12 flex justify-center">
-                            <div className="inline-flex items-center gap-2 rounded-2xl p-2" style={{ background: 'rgba(240,245,250,0.8)', border: '1px solid rgba(37,99,235,0.1)' }}>
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-center mt-12 gap-2">
                                 <button
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                                    style={{ color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', background: 'transparent' }}
+                                    className="p-3 bg-white text-slate-700 rounded-xl border border-slate-200 hover:bg-slate-50 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
-                                    ← Prev
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                 </button>
-
-                                <div className="flex items-center gap-1">
-                                    {[...Array(totalPages)].map((_, index) => {
-                                        const pageNumber = index + 1;
-                                        if (pageNumber === 1 || pageNumber === totalPages || (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)) {
-                                            return (
-                                                <button
-                                                    key={pageNumber}
-                                                    onClick={() => paginate(pageNumber)}
-                                                    className="min-w-[36px] px-3 py-2 rounded-xl text-sm font-bold transition-all"
-                                                    style={{
-                                                        background: currentPage === pageNumber ? 'var(--neon-blue)' : 'transparent',
-                                                        color: currentPage === pageNumber ? 'var(--bg-base)' : 'var(--text-secondary)',
-                                                        boxShadow: currentPage === pageNumber ? '0 0 12px rgba(37,99,235,0.4)' : 'none'
-                                                    }}
-                                                >
-                                                    {pageNumber}
-                                                </button>
-                                            );
-                                        } else if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
-                                            return <span key={pageNumber} style={{ color: 'var(--text-muted)', padding: '0 4px' }}>…</span>;
-                                        }
-                                        return null;
-                                    })}
-                                </div>
-
+                                
+                                {/* Truncated pagination dots logic skipped for simplicity, showing sequence */}
+                                {[...Array(totalPages)].map((_, i) => {
+                                    // simple logic for 5 pages around current
+                                    if(Math.abs(currentPage - (i + 1)) <= 2 || i === 0 || i === totalPages - 1) {
+                                        const isCurrent = currentPage === i + 1;
+                                        return (
+                                            <button
+                                                key={i + 1}
+                                                onClick={() => paginate(i + 1)}
+                                                className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold transition-all shadow-sm ${
+                                                    isCurrent
+                                                        ? 'bg-blue-600 border-blue-600 text-white shadow-[0_4px_12px_rgb(37,99,235,0.3)]'
+                                                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 border'
+                                                }`}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        );
+                                    } else if (Math.abs(currentPage - (i + 1)) === 3) {
+                                        return <span key={i + 1} className="w-8 h-12 flex items-center justify-center text-slate-400 font-black">...</span>;
+                                    }
+                                    return null;
+                                })}
+                                
                                 <button
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                                    style={{ color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', background: 'transparent' }}
+                                    className="p-3 bg-white text-slate-700 rounded-xl border border-slate-200 hover:bg-slate-50 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
-                                    Next →
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                 </button>
                             </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="text-center py-24 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                        <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
-                    )}
-                </div>
+                        <h3 className="text-xl font-bold text-slate-800 mb-2">No Junkyards Found</h3>
+                        <p className="text-slate-500 font-medium">Try adjusting your search criteria.</p>
+                        {searchTerm && (
+                            <button
+                                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                                className="mt-6 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-sm transition-colors"
+                            >
+                                Clear Search
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
-            {/* Mobile Ad Banner */}
-            <MobileAdBanner page="browse" />
-
+            <MobileAdBanner page="state_browse" />
             <Footer />
         </div>
     );

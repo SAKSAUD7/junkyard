@@ -74,34 +74,30 @@ const VendorLeadDetail = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+        <div className="min-h-screen bg-[#f8fafc] pb-20 md:pb-8">
             {/* Header Section */}
-            <div className="relative bg-gradient-to-br from-blue-600 to-teal-600 pt-6 pb-8 px-6 rounded-b-[2rem] shadow-lg mb-6 overflow-hidden">
-                {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12"></div>
-                <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -ml-10 -mb-10"></div>
-
-                <div className="max-w-7xl mx-auto text-slate-800">
-                    <Link to="/vendor/leads" className="inline-flex items-center gap-2 text-blue-100 hover:text-slate-800 transition-colors mb-4 text-sm font-semibold backdrop-blur-sm bg-white/10 px-3 py-1.5 rounded-lg">
+            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-b-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border-b border-slate-100">
+                <div className="max-w-7xl mx-auto text-slate-900">
+                    <Link to="/vendor/leads" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors mb-6 text-sm font-bold bg-slate-50 hover:bg-blue-50 px-3 py-1.5 rounded-xl border border-slate-100 hover:border-blue-100">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                         Back to Leads
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-black mb-1.5 font-display tracking-tight">Lead #{lead.id}</h1>
-                            <p className="text-blue-100/90 font-medium flex items-center gap-2 opacity-90">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <h1 className="text-3xl md:text-4xl font-extrabold mb-1.5 tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Lead #{lead.id}</h1>
+                            <p className="text-slate-500 font-medium flex items-center gap-2">
+                                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 {new Date(lead.created_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
-                        <span className={`px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-black/10 backdrop-blur-md border border-slate-300 capitalize ${lead.status === 'new' ? 'bg-blue-500/90 text-slate-800' :
-                            lead.status === 'contacted' ? 'bg-amber-500/90 text-slate-800' :
-                                lead.status === 'converted' ? 'bg-green-500/90 text-slate-800' :
-                                    'bg-gray-500/90 text-slate-800'
+                        <span className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm uppercase tracking-wide border ${lead.status === 'new' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                            lead.status === 'contacted' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                                lead.status === 'converted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                                    'bg-slate-100 text-slate-600 border-slate-200'
                             }`}>
                             {lead.status_display}
                         </span>
@@ -133,7 +129,7 @@ const VendorLeadDetail = () => {
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* Vehicle Card */}
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 overflow-hidden relative">
+                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 md:p-8 overflow-hidden relative">
                             <div className="flex items-center gap-3 mb-6 relative z-10">
                                 <span className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,7 +165,7 @@ const VendorLeadDetail = () => {
                         </div>
 
                         {/* Customer Card */}
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 md:p-8">
                             <div className="flex items-center gap-3 mb-6">
                                 <span className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -224,7 +220,7 @@ const VendorLeadDetail = () => {
                     {/* Sidebar Actions */}
                     <div className="space-y-6">
                         {/* Status Card */}
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6">
                             <h3 className="text-lg font-bold text-gray-900 mb-4">Pipeline Status</h3>
                             <div className="space-y-2">
                                 {[
@@ -257,7 +253,7 @@ const VendorLeadDetail = () => {
                         </div>
 
                         {/* Quick Actions Card */}
-                        <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-lg shadow-slate-200/50 p-6 text-slate-800">
+                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 text-slate-800">
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                                 <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />

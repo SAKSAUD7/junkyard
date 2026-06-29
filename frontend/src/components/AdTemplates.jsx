@@ -1,245 +1,275 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// Standard Template - Modern Glassmorphism Design
-export const StandardTemplate = ({ ad }) => (
-    <div className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] animate-fade-in group">
-        <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-75 transition-all duration-500"></div>
+const AD_CLICK_URL = (id) => {
+    const base = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+    return `${base}/ads/${id}/click/`;
+};
 
-            {/* Main Card */}
-            <div className="relative bg-gradient-to-br from-dark-800/90 via-dark-900/95 to-black/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl overflow-hidden">
-                {ad.show_badge && (
-                    <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 py-1 sm:py-1.5 px-2 sm:px-3 text-center overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                        <span className="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-800 font-black relative z-10 drop-shadow-lg">
-                            ✨ Featured Partner
-                        </span>
-                    </div>
-                )}
+// ─── Shared Badge ──────────────────────────────────────────────────────────────
+const FeaturedBadge = ({ color = 'blue' }) => {
+    const colors = {
+        blue: 'bg-blue-50 text-blue-600 border-blue-100',
+        gold: 'bg-amber-50 text-amber-600 border-amber-100',
+        purple: 'bg-purple-50 text-purple-600 border-purple-100',
+        green: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    };
+    return (
+        <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${colors[color] || colors.blue}`}>
+            <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            Sponsored
+        </span>
+    );
+};
 
-                <div className="p-3 sm:p-4">
-                    <h3 className="text-slate-800 font-black text-sm sm:text-base text-center mb-2 sm:mb-3 leading-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                        {ad.title}
-                    </h3>
-                </div>
+// ─── Standard Template ─────────────────────────────────────────────────────────
+// Full-width horizontal card — great for strip/banner slot between sections
+export const StandardTemplate = ({ ad }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <a
+            href={AD_CLICK_URL(ad.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="group block w-full outline-none"
+            aria-label={`Sponsored: ${ad.title}`}
+        >
+            <div
+                className="relative flex flex-col sm:flex-row items-stretch bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300"
+                style={{
+                    boxShadow: hovered
+                        ? '0 16px 48px rgba(26,86,255,0.10), 0 2px 8px rgba(0,0,0,0.04)'
+                        : '0 4px 20px rgba(0,0,0,0.04)',
+                    transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+                }}
+            >
+                {/* Accent top bar */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#1a56ff] via-[#8b5cf6] to-[#ec4899]" />
 
+                {/* Image Panel */}
                 {ad.image && (
-                    <div className="aspect-[4/3] bg-gradient-to-br from-dark-800 to-dark-900 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                    <div className="sm:w-[200px] md:w-[240px] flex-shrink-0 overflow-hidden bg-slate-50">
                         <img
                             src={ad.image}
                             alt={ad.title}
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                            }}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            style={{ minHeight: '120px', maxHeight: '180px' }}
+                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
                         />
                     </div>
                 )}
 
-                <div className="p-3 sm:p-4">
-                    <a
-                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-slate-800 text-[10px] sm:text-xs font-black py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/50"
-                    >
-                        {ad.button_text || 'Explore Now'} →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
-// Minimal Template - Ultra Clean Modern Design
-export const MinimalTemplate = ({ ad }) => (
-    <div className="w-full max-w-[160px] sm:max-w-[180px] md:max-w-[200px] animate-fade-in group">
-        <div className="relative">
-            {/* Subtle Glow */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-300 to-gray-400 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
-
-            {/* Main Card */}
-            <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
-                {ad.show_badge && (
-                    <div className="bg-gradient-to-r from-gray-800 to-gray-900 py-1 px-3 text-center">
-                        <span className="text-[8px] uppercase tracking-widest text-slate-800 font-bold">
-                            ⚡ Verified
+                {/* Content */}
+                <div className="flex flex-1 flex-col justify-between p-5 gap-3">
+                    <div>
+                        {ad.show_badge && <FeaturedBadge color="blue" />}
+                        <h3 className="mt-2 text-[16px] font-black text-slate-900 leading-snug line-clamp-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            {ad.title}
+                        </h3>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1a56ff] text-white text-[13px] font-bold transition-all duration-200 group-hover:bg-[#0e48db] group-hover:shadow-[0_8px_20px_rgba(26,86,255,0.3)]">
+                            {ad.button_text || 'Learn More'}
+                            <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
                         </span>
                     </div>
-                )}
-
-                <div className="p-2 sm:p-3">
-                    <h3 className="text-gray-900 font-black text-xs sm:text-sm text-center mb-1.5 sm:mb-2 leading-tight">
-                        {ad.title}
-                    </h3>
                 </div>
+            </div>
+        </a>
+    );
+};
+
+// ─── Minimal Template ──────────────────────────────────────────────────────────
+// Clean sidebar card — narrow, vertically stacked
+export const MinimalTemplate = ({ ad }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <a
+            href={AD_CLICK_URL(ad.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="group block w-full outline-none"
+            aria-label={`Sponsored: ${ad.title}`}
+        >
+            <div
+                className="relative bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300"
+                style={{
+                    boxShadow: hovered
+                        ? '0 12px 36px rgba(0,0,0,0.08)'
+                        : '0 2px 12px rgba(0,0,0,0.03)',
+                    transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+                }}
+            >
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-slate-400 to-slate-600" />
 
                 {ad.image && (
-                    <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
+                    <div className="w-full overflow-hidden bg-slate-50" style={{ height: '140px' }}>
                         <img
                             src={ad.image}
                             alt={ad.title}
-                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                            }}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
                         />
                     </div>
                 )}
 
-                <div className="p-2 sm:p-3">
-                    <a
-                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-slate-800 text-[10px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-center transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                    >
-                        {ad.button_text || 'Learn More'} →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
-// Premium Template - Luxury Gold Design with Epic Animations
-export const PremiumTemplate = ({ ad }) => (
-    <div className="w-full max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] animate-fade-in group">
-        <div className="relative">
-            {/* Subtle Glow Effect */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700"></div>
-
-            {/* Main Card */}
-            <div className="relative bg-gradient-to-br from-yellow-900/30 via-amber-900/40 to-orange-900/30 backdrop-blur-2xl border-2 border-yellow-500/50 rounded-3xl overflow-hidden shadow-2xl">
-                {ad.show_badge && (
-                    <div className="relative bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 py-2 px-4 text-center overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.3),transparent_50%)]"></div>
-                        <span className="text-[10px] uppercase tracking-widest text-gray-900 font-black relative z-10 drop-shadow-lg">
-                            ⭐ Premium Elite Partner ⭐
-                        </span>
-                    </div>
-                )}
-
-                <div className="p-3 sm:p-4 md:p-5">
-                    <h3 className="text-slate-800 font-black text-base sm:text-lg text-center mb-2 sm:mb-3 leading-tight drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
+                <div className="p-4 space-y-3">
+                    {ad.show_badge && <FeaturedBadge color="blue" />}
+                    <h3 className="text-[14px] font-bold text-slate-800 leading-snug line-clamp-2">
                         {ad.title}
                     </h3>
+                    <span className="inline-flex w-full items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 text-white text-[12px] font-bold transition-all group-hover:bg-slate-700">
+                        {ad.button_text || 'Visit Site'} →
+                    </span>
                 </div>
+            </div>
+        </a>
+    );
+};
 
+// ─── Premium Template ──────────────────────────────────────────────────────────
+// Full-width vibrant hero card with gradient accent — flagship ads
+export const PremiumTemplate = ({ ad }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <a
+            href={AD_CLICK_URL(ad.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="group block w-full outline-none"
+            aria-label={`Sponsored: ${ad.title}`}
+        >
+            <div
+                className="relative flex flex-col sm:flex-row items-stretch bg-gradient-to-br from-[#0f172a] to-[#1e293b] rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                    boxShadow: hovered
+                        ? '0 20px 60px rgba(139,92,246,0.25), 0 4px 16px rgba(0,0,0,0.2)'
+                        : '0 8px 32px rgba(0,0,0,0.15)',
+                    transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
+                }}
+            >
+                {/* Gradient glow overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#8b5cf6]/10 via-transparent to-[#1a56ff]/10 pointer-events-none" />
+
+                {/* Image */}
                 {ad.image && (
-                    <div className="aspect-[4/3] bg-gradient-to-br from-yellow-900/50 to-orange-900/50 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10"></div>
-                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-transparent z-10"></div>
+                    <div className="sm:w-[220px] md:w-[260px] flex-shrink-0 overflow-hidden relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0f172a]/60 z-10 sm:block hidden" />
                         <img
                             src={ad.image}
                             alt={ad.title}
-                            className="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-700"
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                            }}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            style={{ minHeight: '140px', maxHeight: '200px' }}
+                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
                         />
                     </div>
                 )}
 
-                <div className="p-5">
-                    <a
-                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="relative block w-full bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 hover:from-yellow-400 hover:via-amber-300 hover:to-yellow-400 text-gray-900 text-xs sm:text-sm font-black py-2.5 sm:py-3 md:py-3.5 px-3 sm:px-4 md:px-5 rounded-2xl transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-110 hover:-translate-y-2 shadow-2xl hover:shadow-yellow-500/80 overflow-hidden group/btn"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
-                        <span className="relative z-10">{ad.button_text || 'Get Premium Access'} ✨</span>
-                    </a>
+                {/* Content */}
+                <div className="flex flex-1 flex-col justify-between p-5 md:p-6 gap-4 relative z-10">
+                    <div>
+                        {ad.show_badge && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                                ⭐ Premium Partner
+                            </span>
+                        )}
+                        <h3 className="mt-2 text-[18px] md:text-[20px] font-black text-white leading-snug line-clamp-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            {ad.title}
+                        </h3>
+                    </div>
+                    <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#1a56ff] text-white text-[13px] font-bold w-fit transition-all duration-200 group-hover:shadow-[0_8px_24px_rgba(139,92,246,0.4)]">
+                        {ad.button_text || 'Get Access'}
+                        <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </span>
                 </div>
             </div>
-        </div>
-    </div>
-);
+        </a>
+    );
+};
 
-// Compact Template - Sleek Micro Design
-export const CompactTemplate = ({ ad }) => (
-    <div className="w-full max-w-[140px] sm:max-w-[160px] md:max-w-[180px] animate-fade-in group">
-        <div className="relative">
-            {/* Compact Glow */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-all duration-300"></div>
-
-            {/* Main Card */}
-            <div className="relative bg-gradient-to-br from-dark-800/95 to-dark-900/95 backdrop-blur-lg border border-cyan-500/20 rounded-xl overflow-hidden">
-                {ad.show_badge && (
-                    <div className="bg-gradient-to-r from-cyan-500 to-blue-500 py-0.5 px-2 text-center">
-                        <span className="text-[7px] uppercase tracking-wider text-slate-800 font-bold">
-                            ⚡ Top Pick
-                        </span>
-                    </div>
-                )}
-
-                <div className="p-2">
-                    <h3 className="text-slate-800 font-bold text-xs text-center mb-1.5 leading-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                        {ad.title}
-                    </h3>
-                </div>
-
-                {ad.image && (
-                    <div className="aspect-square bg-gradient-to-br from-dark-800 to-dark-900 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                        <img
-                            src={ad.image}
-                            alt={ad.title}
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                            }}
-                        />
-                    </div>
-                )}
-
-                <div className="p-2">
-                    <a
-                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all duration-300 uppercase tracking-wide text-center transform hover:scale-105 shadow-md hover:shadow-cyan-500/50"
-                    >
-                        {ad.button_text || 'View'} →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
-// Micro Template - Ultra Compact for Mobile Hero
-export const MicroTemplate = ({ ad }) => (
-    <div className="max-w-[85px] animate-scale-in group">
-        <div className="relative">
-            {/* Main Card */}
-            <div className="relative bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg overflow-hidden shadow-lg">
-                <div className="aspect-square relative">
+// ─── Compact Template ──────────────────────────────────────────────────────────
+// Side-by-side mini card — ideal for tight sidebar slots
+export const CompactTemplate = ({ ad }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <a
+            href={AD_CLICK_URL(ad.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="group flex items-center gap-3 bg-white rounded-xl border border-slate-100 p-3 outline-none transition-all duration-200"
+            aria-label={`Sponsored: ${ad.title}`}
+            style={{
+                boxShadow: hovered ? '0 8px 24px rgba(0,0,0,0.07)' : '0 2px 8px rgba(0,0,0,0.03)',
+                transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
+            }}
+        >
+            {/* Thumbnail */}
+            {ad.image ? (
+                <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-slate-50">
                     <img
                         src={ad.image}
                         alt={ad.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = 'none'; }}
+                        className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
+                        onError={(e) => { e.target.closest('div').style.display = 'none'; }}
                     />
-                    {/* Tiny Badge */}
-                    <div className="absolute top-0 right-0 bg-primary-600 text-[6px] font-black text-slate-800 px-1 py-0.5 rounded-bl">AD</div>
                 </div>
+            ) : (
+                <div className="w-14 h-14 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+            )}
 
-                <div className="p-1 text-center">
-                    <a
-                        href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/ads/${ad.id}/click/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-white/10 hover:bg-white/20 text-[8px] font-bold text-slate-800 py-1 rounded transition-colors uppercase"
-                    >
-                        OPEN
-                    </a>
-                </div>
+            {/* Text */}
+            <div className="flex-1 min-w-0">
+                {ad.show_badge && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-blue-500">Sponsored</span>
+                )}
+                <p className="text-[12px] font-bold text-slate-800 leading-snug line-clamp-2 mt-0.5">{ad.title}</p>
+                <span className="text-[11px] font-semibold text-blue-600 group-hover:underline">{ad.button_text || 'View'} →</span>
             </div>
+        </a>
+    );
+};
+
+// ─── Micro Template ────────────────────────────────────────────────────────────
+// Tiny square card — used in mobile hero or tight grids
+export const MicroTemplate = ({ ad }) => (
+    <a
+        href={AD_CLICK_URL(ad.id)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group block w-20 rounded-xl overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow"
+        aria-label={`Sponsored: ${ad.title}`}
+    >
+        <div className="relative aspect-square bg-slate-50">
+            {ad.image && (
+                <img
+                    src={ad.image}
+                    alt={ad.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                />
+            )}
+            <span className="absolute top-0 right-0 bg-blue-600 text-white text-[7px] font-black px-1 py-0.5 rounded-bl">AD</span>
         </div>
-    </div>
+        <div className="p-1.5 text-center">
+            <span className="block text-[9px] font-bold text-slate-700 line-clamp-1">{ad.title}</span>
+            <span className="block text-[8px] text-blue-600 font-semibold mt-0.5">Open →</span>
+        </div>
+    </a>
 );
