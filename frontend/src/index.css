@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -906,3 +906,32 @@
 }
 
 
+. c 
+
+/* ===== REACT QUILL (CMS Visual Editor) ===== */
+.custom-quill .ql-editor {
+  min-height: 150px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1e293b;
+}
+.custom-quill .ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  padding: 8px;
+}
+.custom-quill .ql-container {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-color: #e2e8f0;
+}
+.custom-quill .ql-toolbar .ql-picker-label:hover,
+.custom-quill .ql-toolbar button:hover {
+  color: #4f46e5;
+}
+.custom-quill .ql-toolbar button.ql-active {
+  color: #4f46e5;
+}

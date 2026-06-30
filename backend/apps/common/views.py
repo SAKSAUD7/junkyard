@@ -194,27 +194,48 @@ class AdminStatsView(APIView):
         
         # Recent leads (last 7 days) - optimized with indexed created_at
         seven_days_ago = datetime.now() - timedelta(days=7)
-        recent_leads = Lead.objects.filter(
+        recent_leads_qs = Lead.objects.filter(
             created_at__gte=seven_days_ago
         ).values('created_at__date').annotate(
             count=Count('id')
         ).order_by('created_at__date')
         
-        # Format recent leads for chart
+        # Format recent leads for chart — real daily counts
         leads_trend = []
         for i in range(7):
             date = (datetime.now() - timedelta(days=6-i)).date()
-            count = next((item['count'] for item in recent_leads if item['created_at__date'] == date), 0)
+            count = next((item['count'] for item in recent_leads_qs if item['created_at__date'] == date), 0)
             leads_trend.append({
                 'date': date.strftime('%Y-%m-%d'),
-                'name': date.strftime('%a'),  # Mon, Tue, etc.
+                'name': date.strftime('%b %d'),  # Jun 24, Jun 25, etc.
                 'leads': count
             })
         
-        # Recent activity (last 5 leads) - limit fields for performance
-        recent_activity = Lead.objects.order_by('-created_at')[:5].values(
-            'id', 'name', 'make', 'model', 'part', 'created_at', 'status'
+        # Recent activity — last 5 leads with full contact fields
+        recent_activity = list(Lead.objects.order_by('-created_at')[:5].values(
+            'id', 'name', 'email', 'make', 'model', 'year', 'part', 'lead_type', 'created_at', 'status'
+        ))
+
+        # Top vendors by number of leads assigned to them
+        top_vendors_by_leads = list(
+            Vendor.objects
+            .filter(is_active=True, leads__isnull=False)
+            .annotate(lead_count=Count('leads'))
+            .order_by('-lead_count')
+            .values('id', 'name', 'city', 'state', 'lead_count')[:5]
         )
+
+        # Lead type distribution — real breakdown for donut chart
+        lead_type_dist = (
+            Lead.objects
+            .values('lead_type')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+        lead_type_distribution = [
+            {'name': item['lead_type'].replace('_', ' ').title(), 'value': item['count']}
+            for item in lead_type_dist
+        ]
         
         return Response({
             "total_leads": total_leads,
@@ -226,7 +247,9 @@ class AdminStatsView(APIView):
             "unread_messages": unread_messages,
             "vendor_distribution": list(vendor_distribution),
             "leads_trend": leads_trend,
-            "recent_activity": list(recent_activity)
+            "recent_activity": recent_activity,
+            "top_vendors_by_leads": top_vendors_by_leads,
+            "lead_type_distribution": lead_type_distribution,
         })
 
 

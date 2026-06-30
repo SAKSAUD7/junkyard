@@ -167,8 +167,8 @@ export default function AdminAds() {
 
     const getPositionBadge = (page, slot) => {
         const positions = {
-            'home-left_sidebar_ad':    { label: 'Home Left',          color: 'bg-[#eef2ff] text-[#6366f1]' },
-            'home-right_sidebar_ad':   { label: 'Home Right',         color: 'bg-[#ede9fe] text-[#8b5cf6]' },
+            'home-left_sidebar_ad':    { label: 'Home Left',          color: 'bg-blue-50 text-blue-600' },
+            'home-right_sidebar_ad':   { label: 'Home Right',         color: 'bg-orange-50 text-orange-500' },
             'vendors-left_sidebar_ad': { label: 'Vendors Left',       color: 'bg-[#d1fae5] text-[#10b981]' },
             'vendors-right_sidebar_ad':{ label: 'Vendors Right',      color: 'bg-[#fef3c7] text-[#f59e0b]' },
             'browse-left_sidebar_ad':  { label: 'Browse Left',        color: 'bg-[#dbeafe] text-[#1e40af]' },
@@ -186,7 +186,7 @@ export default function AdminAds() {
         return (
             <div className="flex justify-center items-center h-96">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-[#6b7280] font-medium">Loading ads...</p>
                 </div>
             </div>
@@ -195,20 +195,20 @@ export default function AdminAds() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
+            {/* ── Header ────────────────────────────────────────────────────── */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-semibold text-[#1f2937]">Ad Management</h1>
-                    <p className="text-base text-[#6b7280] mt-2">
+                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Ad Management</h1>
+                    <p className="text-sm text-slate-500 mt-1">
                         {ads.length} active campaigns
                     </p>
                 </div>
 
                 <button
                     onClick={() => { setEditingAd(null); setSelectedFile(null); setFilePreview(null); setShowModal(true); }}
-                    className="flex items-center px-6 py-3 bg-[#6366f1] text-slate-800 rounded-xl hover:bg-[#4f46e5] shadow-md transition-all font-medium text-base"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                 >
-                    <PlusIcon className="h-5 w-5 mr-2" />
+                    <PlusIcon className="h-4 w-4" />
                     Create Ad
                 </button>
             </div>
@@ -216,7 +216,7 @@ export default function AdminAds() {
             {/* Ads Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {ads.length === 0 ? (
-                    <div className="col-span-full bg-white rounded-2xl shadow-md p-12 text-center border border-[#e5e7eb]">
+                    <div className="col-span-full bg-white rounded-xl shadow-sm p-12 text-center border border-slate-100">
                         <MegaphoneIcon className="h-16 w-16 mx-auto mb-4 text-[#d1d5db]" />
                         <p className="text-[#6b7280] text-lg">No ads created yet</p>
                         <p className="text-[#9ca3af] text-base mt-2">Create your first ad campaign to get started</p>
@@ -227,15 +227,15 @@ export default function AdminAds() {
                         return (
                             <div
                                 key={ad.id}
-                                className="bg-white rounded-2xl shadow-md overflow-hidden border border-[#e5e7eb] hover:shadow-lg transition-all group"
+                                className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-sm transition-all group"
                             >
                                 {/* Ad Preview */}
                                 <div className="relative h-48 bg-gradient-to-br from-[#f9fafb] to-[#f3f4f6] flex items-center justify-center overflow-hidden">
                                     {ad.image ? (
                                         ad.image.endsWith('.mp4') ? (
                                             <div className="absolute inset-0 flex items-center justify-center bg-[#1f2937]">
-                                                <VideoCameraIcon className="h-16 w-16 text-slate-800/50" />
-                                                <span className="absolute bottom-3 right-3 bg-black/70 text-slate-800 text-xs px-2 py-1 rounded">Video</span>
+                                                <VideoCameraIcon className="h-16 w-16 text-slate-900/50" />
+                                                <span className="absolute bottom-3 right-3 bg-black/70 text-slate-900 text-xs px-2 py-1 rounded">Video</span>
                                             </div>
                                         ) : (
                                             <img src={ad.image} alt={ad.title} className="w-full h-full object-cover" />
@@ -268,14 +268,14 @@ export default function AdminAds() {
 
                                     {/* Stats */}
                                     <div className="grid grid-cols-2 gap-3 mb-4">
-                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb]">
+                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-slate-100">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <CursorArrowRaysIcon className="h-4 w-4 text-[#6366f1]" />
+                                                <CursorArrowRaysIcon className="h-4 w-4 text-blue-600" />
                                                 <span className="text-xs text-[#6b7280]">Clicks</span>
                                             </div>
                                             <p className="text-lg font-bold text-[#1f2937]">{ad.clicks || 0}</p>
                                         </div>
-                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb]">
+                                        <div className="bg-[#f9fafb] rounded-xl p-3 border border-slate-100">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <ChartBarIcon className="h-4 w-4 text-[#10b981]" />
                                                 <span className="text-xs text-[#6b7280]">Priority</span>
@@ -285,7 +285,7 @@ export default function AdminAds() {
                                     </div>
 
                                     {/* Duration */}
-                                    <div className="bg-[#f9fafb] rounded-xl p-3 border border-[#e5e7eb] mb-4">
+                                    <div className="bg-[#f9fafb] rounded-xl p-3 border border-slate-100 mb-4">
                                         <div className="flex items-center gap-2 mb-1">
                                             <CalendarIcon className="h-4 w-4 text-[#f59e0b]" />
                                             <span className="text-xs text-[#6b7280]">Duration</span>
@@ -299,16 +299,16 @@ export default function AdminAds() {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => handleEdit(ad)}
-                                            className="flex-1 px-3 py-2 bg-[#eef2ff] text-[#6366f1] rounded-xl hover:bg-[#e0e7ff] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                            className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all"
                                         >
-                                            <PencilIcon className="h-4 w-4" />
+                                            <PencilIcon className="h-3 w-3" />
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => handleDelete(ad.id)}
-                                            className="flex-1 px-3 py-2 bg-[#fee2e2] text-[#dc2626] rounded-xl hover:bg-[#fecaca] text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                            className="flex-1 px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all"
                                         >
-                                            <TrashIcon className="h-4 w-4" />
+                                            <TrashIcon className="h-3 w-3" />
                                             Delete
                                         </button>
                                     </div>
@@ -322,9 +322,9 @@ export default function AdminAds() {
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-white border-b border-[#e5e7eb] px-6 py-4 flex justify-between items-center rounded-t-2xl">
+                        <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center rounded-t-2xl">
                             <div>
                                 <h2 className="text-xl font-semibold text-[#1f2937]">{editingAd ? 'Edit Ad' : 'Create New Ad'}</h2>
                                 <p className="text-sm text-[#6b7280]">Configure your ad campaign</p>
@@ -344,7 +344,7 @@ export default function AdminAds() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                    className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Enter ad title"
@@ -354,7 +354,7 @@ export default function AdminAds() {
                             {/* File Upload */}
                             <div>
                                 <label className="block text-sm font-medium text-[#374151] mb-2">Ad Media</label>
-                                <div className="border-2 border-dashed border-[#e5e7eb] rounded-xl p-6 text-center hover:border-[#6366f1] transition-colors">
+                                <div className="border-2 border-dashed border-slate-100 rounded-xl p-6 text-center hover:border-blue-600 transition-colors">
                                     {filePreview ? (
                                         <div className="relative">
                                             {selectedFile?.type.startsWith('video/') || filePreview.endsWith('.mp4') ? (
@@ -365,7 +365,7 @@ export default function AdminAds() {
                                             <button
                                                 type="button"
                                                 onClick={handleRemoveFile}
-                                                className="absolute top-2 right-2 bg-[#dc2626] text-slate-800 rounded-full p-2 hover:bg-[#b91c1c] shadow-lg"
+                                                className="absolute top-2 right-2 bg-[#dc2626] text-slate-900 rounded-full p-2 hover:bg-[#b91c1c] shadow-sm"
                                             >
                                                 <XMarkIcon className="w-4 h-4" />
                                             </button>
@@ -382,7 +382,7 @@ export default function AdminAds() {
                                             />
                                             <label
                                                 htmlFor="file-upload"
-                                                className="cursor-pointer inline-flex items-center px-4 py-2 bg-[#eef2ff] text-[#6366f1] rounded-xl hover:bg-[#e0e7ff] text-sm font-medium"
+                                                className="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 text-sm font-medium"
                                             >
                                                 Choose File
                                             </label>
@@ -397,7 +397,7 @@ export default function AdminAds() {
                                 <div>
                                     <label className="block text-sm font-medium text-[#374151] mb-2">Page</label>
                                     <select
-                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                         value={formData.page}
                                         onChange={e => setFormData({ ...formData, page: e.target.value })}
                                     >
@@ -414,7 +414,7 @@ export default function AdminAds() {
                                 <div>
                                     <label className="block text-sm font-medium text-[#374151] mb-2">Slot</label>
                                     <select
-                                        className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                        className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                         value={formData.slot}
                                         onChange={e => setFormData({ ...formData, slot: e.target.value })}
                                     >
@@ -447,7 +447,7 @@ export default function AdminAds() {
                                 <input
                                     type="url"
                                     required
-                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                    className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                     value={formData.redirect_url}
                                     onChange={e => setFormData({ ...formData, redirect_url: e.target.value })}
                                     placeholder="https://example.com"
@@ -465,7 +465,7 @@ export default function AdminAds() {
                                                 <input
                                                     type="date"
                                                     min={today}
-                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                                     value={formData.start_date}
                                                     onChange={e => {
                                                         const newStart = e.target.value;
@@ -482,7 +482,7 @@ export default function AdminAds() {
                                                 <input
                                                     type="date"
                                                     min={formData.start_date || today}
-                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                                     value={formData.end_date}
                                                     onChange={e => setFormData({ ...formData, end_date: e.target.value })}
                                                 />
@@ -491,7 +491,7 @@ export default function AdminAds() {
                                                 <label className="block text-sm font-medium text-[#374151] mb-2">Priority</label>
                                                 <input
                                                     type="number"
-                                                    className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                                    className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                                     value={formData.priority}
                                                     onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
                                                     placeholder="0"
@@ -503,13 +503,13 @@ export default function AdminAds() {
                             </div>
 
                             {/* Template Options */}
-                            <div className="bg-[#f9fafb] rounded-xl p-5 border border-[#e5e7eb]">
+                            <div className="bg-[#f9fafb] rounded-xl p-5 border border-slate-100">
                                 <h3 className="text-sm font-semibold text-[#1f2937] mb-4">Template Options</h3>
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-[#374151] mb-2">Template Style</label>
                                         <select
-                                            className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                            className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                             value={formData.template_type}
                                             onChange={e => setFormData({ ...formData, template_type: e.target.value })}
                                         >
@@ -523,7 +523,7 @@ export default function AdminAds() {
                                         <label className="block text-sm font-medium text-[#374151] mb-2">Button Text</label>
                                         <input
                                             type="text"
-                                            className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm"
+                                            className="w-full px-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm"
                                             value={formData.button_text}
                                             onChange={e => setFormData({ ...formData, button_text: e.target.value })}
                                             placeholder="Visit Website"
@@ -533,7 +533,7 @@ export default function AdminAds() {
                                         <label className="flex items-center">
                                             <input
                                                 type="checkbox"
-                                                className="h-4 w-4 text-[#6366f1] focus:ring-[#6366f1] border-[#e5e7eb] rounded"
+                                                className="h-4 w-4 text-blue-600 focus:ring-blue-600 border-slate-100 rounded"
                                                 checked={formData.show_badge}
                                                 onChange={e => setFormData({ ...formData, show_badge: e.target.checked })}
                                             />
@@ -542,7 +542,7 @@ export default function AdminAds() {
                                         <label className="flex items-center">
                                             <input
                                                 type="checkbox"
-                                                className="h-4 w-4 text-[#6366f1] focus:ring-[#6366f1] border-[#e5e7eb] rounded"
+                                                className="h-4 w-4 text-blue-600 focus:ring-blue-600 border-slate-100 rounded"
                                                 checked={formData.is_active}
                                                 onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                                             />
@@ -553,17 +553,17 @@ export default function AdminAds() {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex justify-end gap-3 pt-4 border-t border-[#e5e7eb]">
+                            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                                 <button
                                     type="button"
                                     onClick={() => { setShowModal(false); setSelectedFile(null); setFilePreview(null); }}
-                                    className="px-5 py-2.5 border border-[#e5e7eb] rounded-xl text-[#374151] hover:bg-[#f9fafb] text-sm font-medium transition-all"
+                                    className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 text-sm font-semibold shadow-sm transition-all"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-5 py-2.5 bg-[#6366f1] text-slate-800 rounded-xl hover:bg-[#4f46e5] text-sm font-medium shadow-md transition-all"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all"
                                 >
                                     {editingAd ? 'Update Ad' : 'Create Ad'}
                                 </button>

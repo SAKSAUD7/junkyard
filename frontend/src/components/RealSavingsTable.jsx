@@ -1,3 +1,5 @@
+import { useCMS } from '../hooks/useCMS';
+
 const savingsData = [
     { part: 'Complete Engine Assy', vehicle: '2018 Ford F-150 5.0L', msrp: '$4,200', jynm: '$1,850', savings: '$2,350', time: '12 Mins' },
     { part: 'Automatic Transmission', vehicle: '2020 Honda Civic CVT', msrp: '$3,100', jynm: '$950', savings: '$2,150', time: '8 Mins' },
@@ -7,15 +9,16 @@ const savingsData = [
 ];
 
 export default function RealSavingsTable() {
+    const { get } = useCMS('home');
     return (
         <section className="py-16 md:py-24 bg-slate-50 border-b border-slate-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-10">
                     <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 font-[Outfit] tracking-tight">
-                        Real Savings. <span className="text-blue-600">Real Results.</span>
+                        {get('real_savings', 'heading', 'Real Savings. Real Results.')}
                     </h2>
                     <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto">
-                        See recent matches from our network. Stop overpaying at dealerships and let salvage yards compete for your business.
+                        {get('real_savings', 'subheading', 'See recent matches from our network. Stop overpaying at dealerships and let salvage yards compete for your business.')}
                     </p>
                 </div>
 

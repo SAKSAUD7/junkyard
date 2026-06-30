@@ -87,17 +87,17 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
 
     return (
         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl overflow-hidden transform transition-all scale-100 flex flex-col max-h-[85vh]">
+            <div className="bg-white rounded-xl shadow-sm w-full max-w-4xl overflow-hidden transform transition-all scale-100 flex flex-col max-h-[85vh]">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                            <ClockIcon className="h-5 w-5 text-gray-500" />
+                        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                            <ClockIcon className="h-5 w-5 text-slate-400" />
                             Import History
                         </h3>
-                        <p className="text-xs text-gray-500 mt-0.5">Manage previous imports and rollbacks</p>
+                        <p className="text-xs text-slate-400 mt-0.5">Manage previous imports and rollbacks</p>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+                    <button onClick={onClose} className="text-gray-400 hover:text-slate-400">
                         <XCircleIcon className="h-6 w-6" />
                     </button>
                 </div>
@@ -109,7 +109,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                             <ArrowPathIcon className="h-8 w-8 text-blue-500 animate-spin" />
                         </div>
                     ) : batches.length === 0 ? (
-                        <div className="text-center py-16 text-gray-500">
+                        <div className="text-center py-16 text-slate-400">
                             <DocumentTextIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                             No import history found.
                         </div>
@@ -117,18 +117,18 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50 sticky top-0 z-10">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & File</th>
-                                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stats</th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Date & File</th>
+                                    <th className="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">Stats</th>
+                                    <th className="px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {batches.map((batch) => (
                                     <tr key={batch.batch_id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{batch.filename}</div>
-                                            <div className="text-xs text-gray-500">
+                                            <div className="text-sm font-medium text-slate-900">{batch.filename}</div>
+                                            <div className="text-xs text-slate-400">
                                                 {new Date(batch.created_at).toLocaleString()}
                                             </div>
                                             <div className="text-xs text-gray-400 mt-0.5">
@@ -137,7 +137,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${batch.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    batch.status === 'rolled_back' ? 'bg-gray-100 text-gray-800' :
+                                                    batch.status === 'rolled_back' ? 'bg-gray-100 text-slate-800' :
                                                         batch.status === 'failed' ? 'bg-red-100 text-red-800' :
                                                             'bg-yellow-100 text-yellow-800'
                                                 }`}>
@@ -145,8 +145,8 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            <div className="text-xs text-gray-500 flex flex-col gap-1">
-                                                <span className="text-gray-900 font-medium">{batch.total_rows} Total</span>
+                                            <div className="text-xs text-slate-400 flex flex-col gap-1">
+                                                <span className="text-slate-900 font-medium">{batch.total_rows} Total</span>
                                                 <span className="text-green-600">{batch.valid_rows} Valid</span>
                                                 {batch.invalid_rows > 0 && <span className="text-red-600">{batch.invalid_rows} Invalid</span>}
                                             </div>
@@ -170,7 +170,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                                                         disabled={rollingBack === batch.batch_id}
                                                         className={`flex items-center gap-1 px-2 py-1 rounded border ${rollingBack === batch.batch_id
                                                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                                : 'text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 border-transparent'
+                                                                : 'text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200 border-transparent'
                                                             }`}
                                                         title="Rollback this import"
                                                     >
@@ -193,7 +193,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+                    <div className="bg-gray-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
                         <button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1}
@@ -201,7 +201,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                         >
                             Previous
                         </button>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-slate-500">
                             Page {page} of {totalPages}
                         </span>
                         <button

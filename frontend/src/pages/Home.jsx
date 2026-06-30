@@ -390,16 +390,13 @@ export default function Home() {
                             The #1 Junkyard & Auto Salvage Network in the U.S.
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Find Verified Auto Parts <br />
-                            From <span className="text-blue-600">6,500+</span> Junkyards <br />
-                            In Under <span className="text-emerald-600">60</span> Seconds
-                        </h1>
+                        <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}
+                            dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds') }}
+                        />
 
-                        <p className="text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0">
-                            Compare prices from licensed salvage yards nationwide <br className="hidden sm:block" />
-                            and save up to 80% compared to dealership pricing.
-                        </p>
+                        <p className="text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0"
+                           dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.') }}
+                        />
                     </div>
 
                     {/* MOBILE VIDEO - rendered in flow so it takes space and fits perfectly */}
@@ -609,7 +606,7 @@ export default function Home() {
                         <div className="w-full max-w-3xl mt-4 animate-fade-in-up relative" style={{ animationDelay: '0.4s', zIndex: 50 }}>
                             <div className="bg-white/80 backdrop-blur-2xl rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-blue-100/60 relative">
                                 <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/50 to-white/10 pointer-events-none"></div>
-                                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4 relative z-10 pl-2">Or Search Locally By Zip Code</h3>
+                                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4 relative z-10 pl-2">{get('pincode_search', 'heading', 'Or Search Locally By Zip Code')}</h3>
                                 <div className="relative" style={{ zIndex: 9999 }}>
                                     <PincodeSearch />
                                 </div>
@@ -635,24 +632,24 @@ export default function Home() {
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-30 mt-12 mb-8">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
-                        <h3 className="text-3xl font-black text-blue-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>6,500+</h3>
-                        <p className="text-[13px] font-bold text-[#1e293b]">Verified Vendors</p>
+                        <h3 className="text-3xl font-black text-blue-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('stats', 'value_1', '6,500+')}</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">{get('stats', 'label_1', 'Verified Vendors')}</p>
                     </div>
                     <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
-                        <h3 className="text-3xl font-black text-purple-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>347,000+</h3>
-                        <p className="text-[13px] font-bold text-[#1e293b]">Quality Parts</p>
+                        <h3 className="text-3xl font-black text-purple-600 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('stats', 'value_2', '347,000+')}</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">{get('stats', 'label_2', 'Quality Parts')}</p>
                     </div>
                     <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
-                        <h3 className="text-3xl font-black text-pink-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>1M+</h3>
-                        <p className="text-[13px] font-bold text-[#1e293b]">Searches Completed</p>
+                        <h3 className="text-3xl font-black text-pink-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('stats', 'value_3', '1M+')}</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">{get('stats', 'label_3', 'Searches Completed')}</p>
                     </div>
                     <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
-                        <h3 className="text-3xl font-black text-orange-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>50</h3>
-                        <p className="text-[13px] font-bold text-[#1e293b]">States Covered</p>
+                        <h3 className="text-3xl font-black text-orange-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('stats', 'value_4', '50')}</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">{get('stats', 'label_4', 'States Covered')}</p>
                     </div>
-                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1">
-                        <h3 className="text-3xl font-black text-green-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>4.9/5</h3>
-                        <p className="text-[13px] font-bold text-[#1e293b]">Customer Rating</p>
+                    <div className="bg-white rounded-[20px] shadow-[0_15px_40px_rgb(0,0,0,0.06)] p-6 text-center border border-slate-50 transition-transform hover:-translate-y-1 md:col-span-1 col-span-2">
+                        <h3 className="text-3xl font-black text-green-500 mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('stats', 'value_5', '4.9/5')}</h3>
+                        <p className="text-[13px] font-bold text-[#1e293b]">{get('stats', 'label_5', 'Customer Rating')}</p>
                     </div>
                 </div>
             </div>
@@ -666,19 +663,19 @@ export default function Home() {
 
                         {/* 1. How It Works */}
                         <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_25px_rgb(0,0,0,0.03)] text-center h-full flex flex-col">
-                            <h2 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>How It <span className="text-blue-600">Works</span></h2>
-                            <p className="text-[13px] text-slate-500 font-medium mb-8">Simple steps to get the parts you need</p>
+                            <h2 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }} dangerouslySetInnerHTML={{ __html: get('how_it_works', 'heading', 'How It <span class="text-blue-600">Works</span>') }}></h2>
+                            <p className="text-[13px] text-slate-500 font-medium mb-8" dangerouslySetInnerHTML={{ __html: get('how_it_works', 'subheading', 'Simple steps to get the parts you need') }}></p>
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
                                 {[
-                                    { title: 'Search', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>, desc: 'Tell us what you need' },
-                                    { title: 'Compare', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>, desc: 'Get quotes from verified junkyards' },
-                                    { title: 'Choose', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>, desc: 'Pick the best price and quality' },
-                                    { title: 'Save', icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>, desc: 'Save up to 80% instantly' }
-                                ].map(st => (
-                                    <div key={st.title} className="bg-white rounded-2xl border border-slate-100 p-4 flex flex-col items-center justify-center text-center shadow-sm">
+                                    { title: get('how_it_works', 'step1_title', 'Search'), icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>, desc: get('how_it_works', 'step1_desc', 'Tell us what you need') },
+                                    { title: get('how_it_works', 'step2_title', 'Compare'), icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>, desc: get('how_it_works', 'step2_desc', 'Get quotes from verified junkyards') },
+                                    { title: get('how_it_works', 'step3_title', 'Choose'), icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>, desc: get('how_it_works', 'step3_desc', 'Pick the best price and quality') },
+                                    { title: get('how_it_works', 'step4_title', 'Save'), icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>, desc: get('how_it_works', 'step4_desc', 'Save up to 80% instantly') }
+                                ].map((st, i) => (
+                                    <div key={i} className="bg-white rounded-2xl border border-slate-100 p-4 flex flex-col items-center justify-center text-center shadow-sm">
                                         <div className="mb-3 text-blue-600">{st.icon}</div>
-                                        <p className="text-[14px] font-bold text-slate-900 mb-1">{st.title}</p>
-                                        <p className="text-[11px] text-slate-500 leading-tight">{st.desc}</p>
+                                        <p className="text-[14px] font-bold text-slate-900 mb-1" dangerouslySetInnerHTML={{ __html: st.title }}></p>
+                                        <p className="text-[11px] text-slate-500 leading-tight" dangerouslySetInnerHTML={{ __html: st.desc }}></p>
                                     </div>
                                 ))}
                             </div>
@@ -740,9 +737,9 @@ export default function Home() {
                         </div>
                         {/* Trust row */}
                         <div className="flex flex-wrap gap-6 mt-10 text-white/60 text-sm font-semibold">
-                            <span>✓ 6,500+ Trusted Yards</span>
-                            <span>✓ 50 States</span>
-                            <span>✓ Free to Use</span>
+                            <span>{get('cta_banner', 'trust_1', '✓ 6,500+ Trusted Yards')}</span>
+                            <span>{get('cta_banner', 'trust_2', '✓ 50 States')}</span>
+                            <span>{get('cta_banner', 'trust_3', '✓ Free to Use')}</span>
                         </div>
                     </div>
                     {/* Right — image */}

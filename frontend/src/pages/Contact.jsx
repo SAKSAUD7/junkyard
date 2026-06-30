@@ -67,10 +67,10 @@ export default function Contact() {
                 {/* Left Side - Text & Icons */}
                 <div className="flex-1 w-full lg:max-w-md">
                     <h1 className="text-[44px] font-black text-slate-900 leading-tight mb-4 tracking-tight">
-                        Get in Touch
+                        {get('hero', 'heading', 'Get in Touch')}
                     </h1>
                     <p className="text-[16px] text-slate-500 font-medium mb-12 max-w-md leading-relaxed">
-                        We're here to help you find the right part or answer any questions.
+                        {get('hero', 'subheading', "We're here to help you find the right part or answer any questions.")}
                     </p>
 
                     <div className="space-y-8">
@@ -81,8 +81,8 @@ export default function Contact() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Call Us</h3>
-                                <p className="text-[#64748b] font-medium text-[14px]">+1 (800) 555-1234</p>
-                                <p className="text-[#94a3b8] text-[13px]">Mon - Sun, 8AM - 8PM</p>
+                                <p className="text-[#64748b] font-medium text-[14px]">{get('info', 'phone', '+1 (800) 555-1234')}</p>
+                                <p className="text-[#94a3b8] text-[13px]">{get('info', 'phone_subtext', 'Mon - Sun, 8AM - 8PM')}</p>
                             </div>
                         </div>
 
@@ -93,8 +93,8 @@ export default function Contact() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Email Us</h3>
-                                <p className="text-[#64748b] font-medium text-[14px]">support@jynm.com</p>
-                                <p className="text-[#94a3b8] text-[13px]">We reply within 30 mins</p>
+                                <p className="text-[#64748b] font-medium text-[14px]">{get('info', 'email', 'support@jynm.com')}</p>
+                                <p className="text-[#94a3b8] text-[13px]">{get('info', 'email_subtext', 'We reply within 30 mins')}</p>
                             </div>
                         </div>
 
@@ -117,7 +117,7 @@ export default function Contact() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Head Office</h3>
-                                <p className="text-[#64748b] font-medium text-[14px] max-w-[200px]">123 Auto Drive, Dallas, TX 75201</p>
+                                <p className="text-[#64748b] font-medium text-[14px] max-w-[200px]">{get('info', 'address', '123 Auto Drive, Dallas, TX 75201')}</p>
                             </div>
                         </div>
                     </div>

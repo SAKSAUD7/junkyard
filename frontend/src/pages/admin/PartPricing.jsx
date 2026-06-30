@@ -90,12 +90,12 @@ export default function AdminPartPricing() {
     const DetailModal = ({ item, onClose }) => (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
+                <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-5 flex justify-between items-center rounded-t-2xl">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-800">Part Pricing Details</h2>
-                        <p className="text-sm text-indigo-100">Hollander #{item.hollander_number}</p>
+                        <h2 className="text-xl font-bold text-slate-900">Part Pricing Details</h2>
+                        <p className="text-sm text-slate-500 mt-1">Hollander #{item.hollander_number}</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-600 hover:text-slate-800 transition-colors p-2 hover:bg-white/10 rounded-lg">
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-lg">
                         <XMarkIcon className="h-6 w-6" />
                     </button>
                 </div>
@@ -216,49 +216,36 @@ export default function AdminPartPricing() {
 
     return (
         <div className="space-y-6 pb-8">
-            {/* Gradient Hero Header */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-2xl shadow-xl p-8">
-                <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+            {/* ── Header ────────────────────────────────────────────────────── */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Part Pricing Management</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage part pricing data and Hollander numbers.</p>
+                </div>
+            </div>
 
-                <div className="relative">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <CurrencyDollarIcon className="h-8 w-8 text-slate-800" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-slate-800">Part Pricing Management</h1>
-                            <p className="text-indigo-100 mt-1">
-                                Manage part pricing data and Hollander numbers
-                            </p>
-                        </div>
+            {/* Stats Row */}
+            <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                        <DocumentTextIcon className="h-4 w-4 text-slate-400" />
+                        <p className="text-xs text-slate-500">Total Records</p>
                     </div>
-
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-4 mt-6">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
-                            <div className="flex items-center gap-2 mb-1">
-                                <DocumentTextIcon className="h-5 w-5 text-slate-800" />
-                                <p className="text-xs text-indigo-100 font-medium">Total Records</p>
-                            </div>
-                            <p className="text-3xl font-bold text-slate-800">{totalRecords.toLocaleString()}</p>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
-                            <div className="flex items-center gap-2 mb-1">
-                                <SparklesIcon className="h-5 w-5 text-blue-200" />
-                                <p className="text-xs text-indigo-100 font-medium">Current Page</p>
-                            </div>
-                            <p className="text-3xl font-bold text-slate-800">{page} / {totalPages}</p>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4">
-                            <div className="flex items-center gap-2 mb-1">
-                                <TagIcon className="h-5 w-5 text-green-200" />
-                                <p className="text-xs text-indigo-100 font-medium">Per Page</p>
-                            </div>
-                            <p className="text-3xl font-bold text-slate-800">50</p>
-                        </div>
+                    <p className="text-2xl font-bold text-slate-900">{totalRecords.toLocaleString()}</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                        <SparklesIcon className="h-4 w-4 text-blue-500" />
+                        <p className="text-xs text-slate-500">Current Page</p>
                     </div>
+                    <p className="text-2xl font-bold text-slate-900">{page} / {totalPages}</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                        <TagIcon className="h-4 w-4 text-emerald-500" />
+                        <p className="text-xs text-slate-500">Per Page</p>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">50</p>
                 </div>
             </div>
 
@@ -278,11 +265,11 @@ export default function AdminPartPricing() {
                     <button
                         onClick={handleExport}
                         disabled={exporting}
-                        className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium shadow-lg shadow-emerald-200 transition-all whitespace-nowrap"
+                        className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 disabled:opacity-50 flex items-center gap-2 text-sm font-semibold shadow-sm transition-all whitespace-nowrap"
                     >
                         {exporting ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400"></div>
                                 Exporting...
                             </>
                         ) : (
@@ -326,13 +313,13 @@ export default function AdminPartPricing() {
                                 </thead>
                                 <tbody className="divide-y divide-[#f3f4f6]">
                                     {pricing.map((item) => (
-                                        <tr key={item.id} className="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all">
+                                        <tr key={item.id} className="group hover:bg-slate-50 transition-all">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-bold shadow-md">
+                                                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm">
                                                         #
                                                     </div>
-                                                    <span className="text-sm font-bold text-[#1f2937]">{item.hollander_number}</span>
+                                                    <span className="text-sm font-bold text-slate-900">{item.hollander_number}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -352,12 +339,12 @@ export default function AdminPartPricing() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 {item.new_price ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-br from-emerald-50 to-green-50 text-emerald-700 border-2 border-emerald-200 shadow-sm">
-                                                        <CurrencyDollarIcon className="h-4 w-4" />
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-sm font-semibold bg-emerald-50 text-emerald-700">
+                                                        <CurrencyDollarIcon className="h-3.5 w-3.5" />
                                                         ${parseFloat(item.new_price).toFixed(2)}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-sm text-[#9ca3af]">-</span>
+                                                    <span className="text-sm text-slate-400">-</span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4">
@@ -368,10 +355,10 @@ export default function AdminPartPricing() {
                                             <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => setSelectedItem(item)}
-                                                    className="p-2 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-lg hover:from-[#4f46e5] hover:to-[#7c3aed] transition-all shadow-md shadow-indigo-200 flex items-center gap-1.5"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-md text-xs font-semibold hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 shadow-sm transition-all"
                                                 >
-                                                    <EyeIcon className="h-4 w-4" />
-                                                    <span className="text-sm font-medium">View</span>
+                                                    <EyeIcon className="h-3.5 w-3.5" />
+                                                    View
                                                 </button>
                                             </td>
                                         </tr>
@@ -381,25 +368,25 @@ export default function AdminPartPricing() {
                         </div>
 
                         {/* Pagination */}
-                        <div className="px-6 py-4 border-t-2 border-[#e5e7eb] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-[#f9fafb] to-white">
-                            <div className="text-sm text-[#6b7280]">
-                                Showing <span className="font-bold text-[#1f2937]">{(page - 1) * 50 + 1}</span> to <span className="font-bold text-[#1f2937]">{Math.min(page * 50, totalRecords)}</span> of <span className="font-bold text-[#1f2937]">{totalRecords}</span> results
+                        <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50">
+                            <div className="text-sm text-slate-500">
+                                Showing <span className="font-semibold text-slate-900">{(page - 1) * 50 + 1}</span> to <span className="font-semibold text-slate-900">{Math.min(page * 50, totalRecords)}</span> of <span className="font-semibold text-slate-900">{totalRecords}</span> results
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
+                                    className="px-3 py-1.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     Previous
                                 </button>
-                                <span className="px-4 py-2 text-sm font-bold text-[#1f2937] bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 rounded-xl shadow-lg shadow-indigo-200">
-                                    Page {page} of {totalPages}
+                                <span className="px-3 py-1.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg">
+                                    {page} / {totalPages}
                                 </span>
                                 <button
                                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                     disabled={page === totalPages}
-                                    className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-[#e5e7eb] text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
+                                    className="px-3 py-1.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     Next
                                 </button>

@@ -6,6 +6,8 @@ from .views import (
     AdminBlogViewSet,
     AdminBlogCategoryViewSet,
     AdminBlogCommentViewSet,
+    AdminAuthorViewSet,
+    AdminBlogTagViewSet,
 )
 
 # Public router
@@ -18,6 +20,8 @@ admin_router = DefaultRouter()
 admin_router.register(r'posts', AdminBlogViewSet, basename='admin-blog-post')
 admin_router.register(r'categories', AdminBlogCategoryViewSet, basename='admin-blog-category')
 admin_router.register(r'comments', AdminBlogCommentViewSet, basename='admin-blog-comment')
+admin_router.register(r'authors', AdminAuthorViewSet, basename='admin-author')
+admin_router.register(r'tags', AdminBlogTagViewSet, basename='admin-blog-tag')
 
 urlpatterns = [
     path('', include(public_router.urls)),

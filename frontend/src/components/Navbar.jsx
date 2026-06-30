@@ -75,19 +75,23 @@ export default function Navbar() {
 
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="JYNM Home">
-                            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg flex items-center justify-center bg-blue-600">
-                                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                    <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                    <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                </svg>
-                            </div>
+                            {get('brand', 'logo') ? (
+                                <img src={get('brand', 'logo')} alt="JYNM Logo" className="h-8 md:h-10 w-auto object-contain" />
+                            ) : (
+                                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg flex items-center justify-center bg-blue-600">
+                                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                                        <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                                        <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                            )}
                             <div className="flex flex-col leading-none">
                                 <span className="text-xl md:text-2xl font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    JYNM
+                                    {get('brand', 'name_short', 'JYNM')}
                                 </span>
                                 <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-slate-500 font-bold mt-0.5">
-                                    Junkyards Near Me
+                                    {get('brand', 'name_long', 'Junkyards Near Me')}
                                 </span>
                             </div>
                         </Link>

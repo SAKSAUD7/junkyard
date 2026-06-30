@@ -25,7 +25,7 @@ const Toast = ({ message, type, onClose }) => {
     const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
 
     return (
-        <div className={`fixed bottom-8 right-8 ${bgColor} text-slate-800 px-6 py-4 rounded-xl shadow-lg z-50 animate-fade-in`}>
+        <div className={`fixed bottom-8 right-8 ${bgColor} text-slate-900 px-6 py-4 rounded-xl shadow-sm z-50 animate-fade-in`}>
             <p className="font-medium">{message}</p>
         </div>
     );
@@ -171,25 +171,25 @@ export default function YardSubmissions() {
     const getStatusBadge = (status) => {
         const configs = {
             pending: {
-                bg: 'bg-gradient-to-r from-amber-400 to-orange-500',
-                text: 'text-slate-800',
+                bg: 'bg-amber-50',
+                text: 'text-amber-600',
                 label: 'Pending Review',
                 icon: ClockIcon,
-                glow: 'shadow-lg shadow-amber-200'
+                glow: ''
             },
             approved: {
-                bg: 'bg-gradient-to-r from-emerald-400 to-green-500',
-                text: 'text-slate-800',
+                bg: 'bg-emerald-50',
+                text: 'text-emerald-600',
                 label: 'Approved',
                 icon: CheckCircleIcon,
-                glow: 'shadow-lg shadow-emerald-200'
+                glow: ''
             },
             rejected: {
-                bg: 'bg-gradient-to-r from-red-400 to-rose-500',
-                text: 'text-slate-800',
+                bg: 'bg-rose-50',
+                text: 'text-rose-600',
                 label: 'Rejected',
                 icon: XCircleIcon,
-                glow: 'shadow-lg shadow-red-200'
+                glow: ''
             }
         };
         return configs[status] || configs.pending;
@@ -199,7 +199,7 @@ export default function YardSubmissions() {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-[#6b7280] font-medium">Loading submissions...</p>
                 </div>
             </div>
@@ -208,40 +208,32 @@ export default function YardSubmissions() {
 
     return (
         <div className="space-y-6">
-            {/* Header with Gradient */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-2xl shadow-xl p-8">
-                <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-                <div className="relative">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <DocumentTextIcon className="h-8 w-8 text-slate-800" />
-                        </div>
+            {/* ── Header ────────────────────────────────────────────────────── */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Yard Submissions</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage and review new yard applications.</p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-2 shadow-sm">
+                        <SparklesIcon className="h-5 w-5 text-slate-400" />
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-800">Yard Submissions</h1>
-                            <p className="text-indigo-100 mt-1">
-                                Manage and review new yard applications
-                            </p>
+                            <p className="text-sm font-bold text-slate-900">{filteredSubmissions.length}</p>
+                            <p className="text-xs text-slate-500">Total</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-6 mt-4">
-                        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                            <SparklesIcon className="h-5 w-5 text-slate-800" />
-                            <span className="text-slate-800 font-semibold">{filteredSubmissions.length}</span>
-                            <span className="text-indigo-100 text-sm">Total</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                            <ClockIcon className="h-5 w-5 text-amber-200" />
-                            <span className="text-slate-800 font-semibold">
-                                {filteredSubmissions.filter(s => s.status === 'pending').length}
-                            </span>
-                            <span className="text-indigo-100 text-sm">Pending</span>
+                    <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-2 shadow-sm">
+                        <ClockIcon className="h-5 w-5 text-amber-500" />
+                        <div>
+                            <p className="text-sm font-bold text-slate-900">{filteredSubmissions.filter(s => s.status === 'pending').length}</p>
+                            <p className="text-xs text-slate-500">Pending</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Filters Card */}
-            <div className="bg-white rounded-2xl shadow-md p-6 border border-[#e5e7eb]">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
                 {/* Status Tabs */}
                 <div className="flex items-center gap-3 mb-4 flex-wrap">
                     <FunnelIcon className="h-5 w-5 text-[#6b7280]" />
@@ -250,9 +242,9 @@ export default function YardSubmissions() {
                         <button
                             key={status}
                             onClick={() => setStatusFilter(status)}
-                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${statusFilter === status
-                                ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-slate-800 shadow-lg shadow-indigo-200'
-                                : 'bg-[#f9fafb] text-[#6b7280] hover:bg-[#e5e7eb]'
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${statusFilter === status
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                                 }`}
                         >
                             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -265,7 +257,7 @@ export default function YardSubmissions() {
                     <input
                         type="text"
                         placeholder="Search by business name, contact, city, state, or email..."
-                        className="w-full pl-11 pr-4 py-3 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#6366f1] focus:border-transparent bg-white text-sm transition-all"
+                        className="w-full pl-11 pr-4 py-3 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -274,24 +266,24 @@ export default function YardSubmissions() {
             </div>
 
             {/* Modern Table Card */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-[#e5e7eb]">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
                 {/* Action Bar */}
-                <div className="bg-gradient-to-r from-[#f9fafb] to-[#f3f4f6] px-6 py-4 border-b border-[#e5e7eb] flex items-center justify-between">
+                <div className="bg-gradient-to-r from-[#f9fafb] to-[#f3f4f6] px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <span className="text-sm font-medium text-[#6b7280]">Bulk Actions:</span>
-                        <select className="bg-white border border-[#e5e7eb] rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366f1] transition-all">
+                        <select className="bg-white border border-slate-100 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all">
                             <option>Select action...</option>
                             <option>Approve selected</option>
                             <option>Reject selected</option>
                         </select>
-                        <button className="bg-[#6366f1] hover:bg-[#4f46e5] text-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md shadow-indigo-200">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm">
                             Apply
                         </button>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="px-3 py-1.5 bg-white rounded-lg border border-[#e5e7eb]">
+                        <div className="px-3 py-1.5 bg-white rounded-lg border border-slate-100">
                             <span className="text-sm">
-                                <span className="font-semibold text-[#6366f1]">{selectedIds.length}</span>
+                                <span className="font-semibold text-blue-600">{selectedIds.length}</span>
                                 <span className="text-[#6b7280]"> of </span>
                                 <span className="font-semibold text-[#1f2937]">{filteredSubmissions.length}</span>
                                 <span className="text-[#6b7280]"> selected</span>
@@ -304,13 +296,13 @@ export default function YardSubmissions() {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-[#e5e7eb]">
+                            <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-slate-100">
                                 <th className="px-6 py-4 text-left w-12">
                                     <input
                                         type="checkbox"
                                         checked={selectedIds.length === filteredSubmissions.length && filteredSubmissions.length > 0}
                                         onChange={toggleSelectAll}
-                                        className="w-4 h-4 rounded border-[#d1d5db] text-[#6366f1] focus:ring-[#6366f1] focus:ring-offset-0 cursor-pointer"
+                                        className="w-4 h-4 rounded border-[#d1d5db] text-blue-600 focus:ring-blue-600 focus:ring-offset-0 cursor-pointer"
                                     />
                                 </th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Business Name</th>
@@ -339,7 +331,7 @@ export default function YardSubmissions() {
                                     return (
                                         <tr
                                             key={submission.id}
-                                            className={`group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all cursor-pointer ${isSelected ? 'bg-indigo-50/30' : ''
+                                            className={`group hover:bg-slate-50 transition-all cursor-pointer ${isSelected ? 'bg-blue-50/50' : ''
                                                 }`}
                                             onClick={(e) => {
                                                 if (e.target.type !== 'checkbox') {
@@ -353,12 +345,12 @@ export default function YardSubmissions() {
                                                     checked={isSelected}
                                                     onChange={() => toggleSelection(submission.id)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="w-4 h-4 rounded border-[#d1d5db] text-[#6366f1] focus:ring-[#6366f1] focus:ring-offset-0 cursor-pointer"
+                                                    className="w-4 h-4 rounded border-[#d1d5db] text-blue-600 focus:ring-blue-600 focus:ring-offset-0 cursor-pointer"
                                                 />
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-slate-800 font-bold shadow-md">
+                                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-bold shadow-sm">
                                                         {submission.business_name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
@@ -414,7 +406,7 @@ export default function YardSubmissions() {
                 </div>
 
                 {/* Footer */}
-                <div className="bg-gradient-to-r from-[#f9fafb] to-[#f3f4f6] px-6 py-4 border-t border-[#e5e7eb]">
+                <div className="bg-gradient-to-r from-[#f9fafb] to-[#f3f4f6] px-6 py-4 border-t border-slate-100">
                     <p className="text-sm text-[#6b7280]">
                         Showing <span className="font-semibold text-[#1f2937]">{filteredSubmissions.length}</span> submission{filteredSubmissions.length !== 1 ? 's' : ''}
                     </p>
@@ -424,16 +416,16 @@ export default function YardSubmissions() {
             {/* Detail Modal */}
             {selectedSubmission && !showRejectModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-5 flex justify-between items-center rounded-t-2xl">
+                        <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-5 flex justify-between items-center rounded-t-2xl">
                             <div>
-                                <h2 className="text-xl font-bold text-slate-800">Submission Details</h2>
-                                <p className="text-sm text-indigo-100">ID: #{selectedSubmission.id}</p>
+                                <h2 className="text-xl font-bold text-slate-900">Submission Details</h2>
+                                <p className="text-sm text-slate-500 mt-1">ID: #{selectedSubmission.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedSubmission(null)}
-                                className="text-slate-600 hover:text-slate-800 transition-colors p-2 hover:bg-white/10 rounded-lg"
+                                className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-white/10 rounded-lg"
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -456,34 +448,34 @@ export default function YardSubmissions() {
                             {/* Business Information */}
                             <div>
                                 <h3 className="text-lg font-bold text-[#1f2937] mb-4 flex items-center gap-2">
-                                    <BuildingOfficeIcon className="h-5 w-5 text-[#6366f1]" />
+                                    <BuildingOfficeIcon className="h-5 w-5 text-blue-600" />
                                     Business Information
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Business Name</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.business_name}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Contact Name</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.contact_name}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Email</label>
-                                        <a href={`mailto:${selectedSubmission.email}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                        <a href={`mailto:${selectedSubmission.email}`} className="text-sm font-semibold text-blue-600 hover:underline">
                                             {selectedSubmission.email}
                                         </a>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Phone</label>
-                                        <a href={`tel:${selectedSubmission.phone}`} className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                        <a href={`tel:${selectedSubmission.phone}`} className="text-sm font-semibold text-blue-600 hover:underline">
                                             {selectedSubmission.phone}
                                         </a>
                                     </div>
                                     {selectedSubmission.website && (
-                                        <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb] col-span-2">
+                                        <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100 col-span-2">
                                             <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Website</label>
-                                            <a href={selectedSubmission.website} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[#6366f1] hover:underline">
+                                            <a href={selectedSubmission.website} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-blue-600 hover:underline">
                                                 {selectedSubmission.website}
                                             </a>
                                         </div>
@@ -498,19 +490,19 @@ export default function YardSubmissions() {
                                     Location
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb] col-span-2">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100 col-span-2">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Address</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.address}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">City</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.city}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">State</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.state}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">ZIP Code</label>
                                         <p className="text-sm font-semibold text-[#1f2937]">{selectedSubmission.zip_code}</p>
                                     </div>
@@ -521,15 +513,15 @@ export default function YardSubmissions() {
                             <div>
                                 <h3 className="text-lg font-bold text-[#1f2937] mb-4">Services & Description</h3>
                                 <div className="space-y-4">
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Services</label>
                                         <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.services}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Brands</label>
                                         <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.brands}</p>
                                     </div>
-                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-[#e5e7eb]">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Description</label>
                                         <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.description}</p>
                                     </div>
@@ -543,8 +535,8 @@ export default function YardSubmissions() {
                                     Timeline
                                 </h3>
                                 <div className="space-y-3">
-                                    <div className="flex items-center gap-3 text-sm bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100">
-                                        <div className="w-2 h-2 bg-[#6366f1] rounded-full animate-pulse"></div>
+                                    <div className="flex items-center gap-3 text-sm bg-gradient-to-r from-blue-50 to-slate-50 rounded-xl p-4 border border-blue-100">
+                                        <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
                                         <span className="text-[#6b7280] font-medium">Submitted:</span>
                                         <span className="text-[#1f2937] font-semibold">
                                             {new Date(selectedSubmission.created_at).toLocaleString()}
@@ -567,20 +559,22 @@ export default function YardSubmissions() {
 
                             {/* Admin Actions */}
                             {selectedSubmission.status === 'pending' && (
-                                <div className="flex gap-3 pt-4 border-t border-[#e5e7eb]">
+                                <div className="flex gap-3 pt-4 border-t border-slate-100">
                                     <button
                                         onClick={() => handleApprove(selectedSubmission.id)}
                                         disabled={actionLoading}
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-slate-800 rounded-xl hover:from-emerald-600 hover:to-green-600 text-base font-bold shadow-lg shadow-emerald-200 transition-all disabled:opacity-50"
+                                        className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
-                                        {actionLoading ? 'Processing...' : '✓ Approve & Create Vendor'}
+                                        <CheckIcon className="w-4 h-4" />
+                                        {actionLoading ? 'Processing...' : 'Approve & Create Vendor'}
                                     </button>
                                     <button
                                         onClick={() => setShowRejectModal(true)}
                                         disabled={actionLoading}
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-slate-800 rounded-xl hover:from-red-600 hover:to-rose-600 text-base font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
+                                        className="flex-1 px-4 py-2 bg-white border border-rose-200 text-rose-600 rounded-lg hover:bg-rose-50 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
-                                        ✕ Reject Submission
+                                        <XMarkIcon className="w-4 h-4" />
+                                        Reject Submission
                                     </button>
                                 </div>
                             )}
@@ -592,9 +586,9 @@ export default function YardSubmissions() {
             {/* Reject Modal */}
             {showRejectModal && selectedSubmission && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+                    <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
                         <div className="px-6 py-4 bg-gradient-to-r from-red-500 to-rose-500 rounded-t-2xl">
-                            <h3 className="text-xl font-bold text-slate-800">Reject Submission</h3>
+                            <h3 className="text-xl font-bold text-slate-900">Reject Submission</h3>
                         </div>
                         <div className="p-6 space-y-4">
                             <p className="text-[#6b7280]">
@@ -607,7 +601,7 @@ export default function YardSubmissions() {
                                 <textarea
                                     value={rejectNotes}
                                     onChange={(e) => setRejectNotes(e.target.value)}
-                                    className="w-full px-4 py-3 border border-[#e5e7eb] rounded-xl focus:ring-2 focus:ring-[#ef4444] focus:border-transparent resize-none"
+                                    className="w-full px-4 py-3 border border-slate-100 rounded-xl focus:ring-2 focus:ring-[#ef4444] focus:border-transparent resize-none"
                                     rows="4"
                                     placeholder="Provide a reason for rejection..."
                                 />
@@ -625,7 +619,7 @@ export default function YardSubmissions() {
                                 <button
                                     onClick={() => handleReject(selectedSubmission.id)}
                                     disabled={actionLoading}
-                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-slate-800 rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-lg shadow-red-200 transition-all disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-slate-900 rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-sm shadow-red-200 transition-all disabled:opacity-50"
                                 >
                                     {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
                                 </button>

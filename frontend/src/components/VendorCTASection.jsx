@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCMS } from '../hooks/useCMS';
 
 export default function VendorCTASection() {
+    const { get } = useCMS('home');
     return (
         <div className="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] h-full flex flex-col justify-between overflow-hidden relative">
             {/* Background glow */}
@@ -17,13 +19,12 @@ export default function VendorCTASection() {
 
                 {/* Heading */}
                 <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    Grow Your Salvage <br />
-                    <span className="text-blue-600">Business Today</span>
+                    {get('vendor_cta', 'heading', 'Grow Your Salvage Business Today')}
                 </h2>
 
                 {/* Body */}
                 <p className="text-slate-500 text-[13px] font-medium leading-relaxed mb-5">
-                    Partner with <span className="text-slate-800 font-bold">JYNM</span> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
+                    {get('vendor_cta', 'subheading', 'Partner with JYNM to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.')}
                 </p>
 
                 {/* Feature pills */}

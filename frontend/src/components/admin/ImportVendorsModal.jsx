@@ -144,11 +144,11 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
 
     return (
         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden transform transition-all scale-100">
+            <div className="bg-white rounded-xl shadow-sm w-full max-w-3xl overflow-hidden transform transition-all scale-100">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-green-50 to-blue-50">
-                    <h3 className="text-lg font-semibold text-gray-900">Import Vendors</h3>
-                    <button onClick={handleClose} className="text-gray-400 hover:text-gray-500">
+                    <h3 className="text-lg font-semibold text-slate-900">Import Vendors</h3>
+                    <button onClick={handleClose} className="text-gray-400 hover:text-slate-400">
                         <XCircleIcon className="h-6 w-6" />
                     </button>
                 </div>
@@ -161,7 +161,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                             <div
                                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${dragging
                                     ? 'border-blue-500 bg-blue-50'
-                                    : 'border-gray-300 hover:border-gray-400'
+                                    : 'border-slate-200 hover:border-gray-400'
                                     }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
@@ -170,7 +170,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                 <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
                                 <div className="mt-4">
                                     <label className="cursor-pointer">
-                                        <span className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 inline-block">
+                                        <span className="bg-blue-600 text-slate-900 px-4 py-2 rounded-lg hover:bg-blue-700 inline-block">
                                             Select File
                                         </span>
                                         <input
@@ -180,7 +180,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                             onChange={handleFileSelect}
                                         />
                                     </label>
-                                    <p className="mt-2 text-sm text-gray-500">or drag and drop</p>
+                                    <p className="mt-2 text-sm text-slate-400">or drag and drop</p>
                                 </div>
                                 <p className="mt-2 text-xs text-gray-400">CSV or XLSX files only (max 10MB)</p>
                             </div>
@@ -190,8 +190,8 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                     <div className="flex items-center gap-3">
                                         <DocumentArrowDownIcon className="h-8 w-8 text-blue-600" />
                                         <div>
-                                            <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                                            <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
+                                            <p className="text-sm font-medium text-slate-900">{file.name}</p>
+                                            <p className="text-xs text-slate-400">{(file.size / 1024).toFixed(2)} KB</p>
                                         </div>
                                     </div>
                                     <button
@@ -213,7 +213,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                             <button
                                 onClick={handleUpload}
                                 disabled={!file || uploading}
-                                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                                className="w-full bg-blue-600 text-slate-900 px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                             >
                                 {uploading ? 'Validating...' : 'Validate and Preview'}
                             </button>
@@ -226,8 +226,8 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                             {/* Stats */}
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="bg-gray-50 p-4 rounded-lg text-center">
-                                    <p className="text-sm text-gray-500">Total Rows</p>
-                                    <p className="text-2xl font-bold text-gray-900">{preview.total_rows}</p>
+                                    <p className="text-sm text-slate-400">Total Rows</p>
+                                    <p className="text-2xl font-bold text-slate-900">{preview.total_rows}</p>
                                 </div>
                                 <div className="bg-green-50 p-4 rounded-lg text-center">
                                     <p className="text-sm text-green-700">Valid Rows</p>
@@ -241,7 +241,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
 
                             {/* Error Details */}
                             {preview.invalid_rows > 0 && (
-                                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                                <div className="border border-slate-100 rounded-lg overflow-hidden">
                                     <div className="bg-red-50 px-4 py-2 border-b border-red-200 flex justify-between items-center">
                                         <h4 className="text-sm font-semibold text-red-900">Validation Errors</h4>
                                         <button
@@ -256,14 +256,14 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                         <table className="min-w-full divide-y divide-gray-200">
                                             <thead className="bg-gray-50 sticky top-0">
                                                 <tr>
-                                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Row</th>
-                                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Errors</th>
+                                                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase">Row</th>
+                                                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase">Errors</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {preview.error_details.slice(0, 10).map((err, idx) => (
                                                     <tr key={idx} className="hover:bg-gray-50">
-                                                        <td className="px-4 py-2 text-sm text-gray-900">{err.row}</td>
+                                                        <td className="px-4 py-2 text-sm text-slate-900">{err.row}</td>
                                                         <td className="px-4 py-2 text-sm text-red-600">
                                                             {err.errors.join(', ')}
                                                         </td>
@@ -272,7 +272,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                             </tbody>
                                         </table>
                                         {preview.error_details.length > 10 && (
-                                            <div className="px-4 py-2 bg-gray-50 text-xs text-gray-500 text-center">
+                                            <div className="px-4 py-2 bg-gray-50 text-xs text-slate-400 text-center">
                                                 ... and {preview.error_details.length - 10} more errors
                                             </div>
                                         )}
@@ -291,7 +291,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setStep(1)}
-                                    className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-medium"
+                                    className="flex-1 bg-gray-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-medium"
                                 >
                                     Cancel
                                 </button>
@@ -299,7 +299,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                                     <button
                                         onClick={handleConfirm}
                                         disabled={importing}
-                                        className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
+                                        className="flex-1 bg-green-600 text-slate-900 px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
                                     >
                                         {importing ? 'Importing...' : `Import ${preview.valid_rows} Valid Rows`}
                                     </button>
@@ -312,8 +312,8 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                     {step === 3 && (
                         <div className="text-center py-8">
                             <CheckCircleIcon className="mx-auto h-16 w-16 text-green-500" />
-                            <h3 className="mt-4 text-lg font-semibold text-gray-900">Import Successful!</h3>
-                            <p className="mt-2 text-sm text-gray-500">
+                            <h3 className="mt-4 text-lg font-semibold text-slate-900">Import Successful!</h3>
+                            <p className="mt-2 text-sm text-slate-400">
                                 Vendors have been imported successfully. Refreshing list...
                             </p>
                         </div>

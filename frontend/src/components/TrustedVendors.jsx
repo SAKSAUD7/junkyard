@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
+import { useCMS } from '../hooks/useCMS';
 
 const PLACEHOLDER =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M20 75 L50 30 L80 75 Z' fill='%23cbd5e1'/%3E%3Ccircle cx='70' cy='28' r='10' fill='%23cbd5e1'/%3E%3C/svg%3E";
@@ -32,6 +33,7 @@ const CARD_WIDTH = 272; // px including gap
 const AUTOPLAY_INTERVAL = 3500;
 
 export default function TrustedVendors() {
+    const { get } = useCMS('home');
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -74,10 +76,10 @@ export default function TrustedVendors() {
                 <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
                     <div>
                         <h2 className="text-3xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Top Rated Junkyards &amp; <span className="text-[#1a56ff]">Vendors</span>
+                            {get('trusted_vendors', 'heading', 'Our Network Of Trusted Vendors')}
                         </h2>
                         <p className="text-slate-500 font-medium text-[15px]">
-                            Trusted by thousands for quality parts and great prices.
+                            {get('trusted_vendors', 'subheading', 'Trusted by thousands for quality parts and great prices.')}
                         </p>
                     </div>
                 </div>

@@ -1,63 +1,36 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SEO from '../../components/SEO';
 import BlogCard from '../../components/BlogCard';
 import { blogApi } from '../../services/blogApi';
+import { 
+    ClockIcon, 
+    EyeIcon, 
+    CalendarIcon, 
+    ShareIcon, 
+    HeartIcon as HeartIconOutline 
+} from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid, CheckCircleIcon } from '@heroicons/react/24/solid';
 
 const SAMPLE_POST = {
   id: 1,
   slug: 'how-to-find-cheap-engine-replacements',
   title: 'How to Find Cheap Engine Replacements at Your Local Junkyard',
   excerpt: 'Discover pro tips for sourcing a quality used engine from salvage yards near you — saving thousands over dealer prices.',
-  content: `
-    <h2>Why Buy a Used Engine?</h2>
-    <p>Replacing a car engine can cost anywhere from $3,000 to $10,000 at a dealership. Used engines from salvage yards typically run between $200 and $2,000 — <strong>saving you 60–90%</strong>. When sourced correctly, used engines are completely reliable for tens of thousands of miles.</p>
-    
-    <h2>Step 1: Know What Engine You Need</h2>
-    <p>Before visiting a junkyard, you must know your car's:</p>
-    <ul>
-      <li><strong>Year, Make, Model, and Trim</strong> (e.g., 2015 Honda Accord EX-L)</li>
-      <li><strong>Engine code</strong> (found on the door jamb sticker or VIN decoder)</li>
-      <li><strong>Mileage requirements</strong> — aim for under 100,000 miles for best reliability</li>
-    </ul>
-    
-    <h2>Step 2: Search Our Nationwide Network</h2>
-    <p>Use the <a href="/browse">JYNM Browse Tool</a> to search junkyards in your state. Filter by location using your zip code and call ahead to confirm availability — inventory moves fast.</p>
-    
-    <h2>Step 3: Inspect the Engine Before Buying</h2>
-    <p>Never buy a used engine without a proper inspection. Key things to check:</p>
-    <ul>
-      <li>Check for cracks in the engine block</li>
-      <li>Pull the dipstick — milky oil means head gasket failure</li>
-      <li>Look for rust or heavy corrosion</li>
-      <li>Ask about the vehicle's history (accident damage?)</li>
-      <li>Request a compression test if possible</li>
-    </ul>
-    
-    <h2>Step 4: Negotiate the Price</h2>
-    <p>Most junkyard prices are negotiable, especially if you're buying multiple parts. Research the going rate online first, then make a reasonable offer — most yards will meet you halfway.</p>
-    
-    <h2>Step 5: Arrange Transport Safely</h2>
-    <p>Engines are heavy (300–600 lbs). Rent an engine hoist or hire a professional to load and transport it. Many junkyards offer delivery for a small fee — always worth asking.</p>
-    
-    <blockquote>
-      <p>"The best engine we ever sourced came from a low-mileage accident car at a local junkyard — ran perfectly for another 80,000 miles." — JYNM Customer</p>
-    </blockquote>
-    
-    <h2>Final Checklist</h2>
-    <ul>
-      <li>✅ Verify compatibility via VIN or engine code</li>
-      <li>✅ Inspect physically before payment</li>
-      <li>✅ Get a receipt with warranty terms (most offer 30–90 days)</li>
-      <li>✅ Have a qualified mechanic install it</li>
-    </ul>
-  `,
-  image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
+  blocks: [
+      { id: '1', type: 'heading', level: 'h2', text: 'Why Buy a Used Engine?' },
+      { id: '2', type: 'paragraph', text: 'Replacing a car engine can cost anywhere from $3,000 to $10,000 at a dealership. Used engines from salvage yards typically run between $200 and $2,000 — saving you 60–90%. When sourced correctly, used engines are completely reliable for tens of thousands of miles.' },
+      { id: '3', type: 'heading', level: 'h2', text: 'Step 1: Know What Engine You Need' },
+      { id: '4', type: 'paragraph', text: 'Before visiting a junkyard, you must know your car\'s requirements.' },
+      { id: '5', type: 'list', style: 'bullet', items: ['Year, Make, Model, and Trim (e.g., 2015 Honda Accord EX-L)', 'Engine code (found on the door jamb sticker or VIN decoder)', 'Mileage requirements — aim for under 100,000 miles for best reliability'] },
+      { id: '6', type: 'cta', title: 'Search Our Nationwide Network', description: 'Use the JYNM Browse Tool to search junkyards in your state.', buttonText: 'Browse Now', buttonLink: '/browse' },
+  ],
+  cover_image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
   category: { name: 'Buying Guide', slug: 'buying-guide' },
-  author: 'JYNM Editorial',
-  tags: ['engine', 'junkyard', 'tips', 'buying guide'],
+  author_info: { name: 'JYNM Editorial', designation: 'Automotive Experts' },
+  tags_info: [{ id: 1, name: 'engine', slug: 'engine' }, { id: 2, name: 'tips', slug: 'tips' }],
   is_featured: true,
   status: 'published',
   views_count: 2847,
@@ -74,15 +47,15 @@ const SAMPLE_RELATED = [
     id: 2, slug: 'top-10-auto-parts-you-should-buy-used',
     title: 'Top 10 Auto Parts You Should Always Buy Used',
     excerpt: 'Not all used auto parts are created equal. We break down exactly what to buy used.',
-    image_url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&q=80',
-    category_name: 'Maintenance', author: 'Jake Morris', published_at: '2026-04-08T00:00:00Z', reading_time: 8,
+    thumbnail_url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&q=80',
+    category_name: 'Maintenance', author_info: { name: 'Jake Morris' }, published_at: '2026-04-08T00:00:00Z', reading_time: 8,
   },
   {
     id: 3, slug: 'diy-transmission-swap-guide',
     title: 'DIY Transmission Swap: A Step-by-Step Guide for Beginners',
     excerpt: 'Swapping a transmission doesn\'t have to be intimidating.',
-    image_url: 'https://images.unsplash.com/photo-1617813374374-ea4aa0d37ead?w=800&q=80',
-    category_name: 'DIY', author: 'Sarah Chen', published_at: '2026-04-05T00:00:00Z', reading_time: 12,
+    thumbnail_url: 'https://images.unsplash.com/photo-1617813374374-ea4aa0d37ead?w=800&q=80',
+    category_name: 'DIY', author_info: { name: 'Sarah Chen' }, published_at: '2026-04-05T00:00:00Z', reading_time: 12,
   },
 ];
 
@@ -110,25 +83,23 @@ export default function BlogDetail() {
         const data = await blogApi.getPost(slug);
         setPost(data);
         setLikesCount(data.likes_count || 0);
-        // Related posts
-        try {
-          const rel = await blogApi.getRelatedPosts({ exclude: slug, category: data.category?.slug });
-          setRelated(Array.isArray(rel) ? rel.slice(0, 3) : []);
-        } catch {
-          setRelated(SAMPLE_RELATED);
+        
+        // Use the prefetched related_posts if available, otherwise fetch
+        if (data.related_posts_info && data.related_posts_info.length > 0) {
+            setRelated(data.related_posts_info);
+        } else {
+            try {
+                const rel = await blogApi.getRelatedPosts({ exclude: slug, category: data.category?.slug });
+                setRelated(Array.isArray(rel) ? rel.slice(0, 3) : []);
+            } catch {
+                setRelated(SAMPLE_RELATED);
+            }
         }
       } catch {
-        // Use sample data
-        if (slug === SAMPLE_POST.slug) {
-          setPost(SAMPLE_POST);
-          setLikesCount(SAMPLE_POST.likes_count);
-          setRelated(SAMPLE_RELATED);
-        } else {
-          // Show the sample post anyway for demo
-          setPost({ ...SAMPLE_POST, slug });
-          setLikesCount(SAMPLE_POST.likes_count);
-          setRelated(SAMPLE_RELATED);
-        }
+        // Use sample data on error (for demo purposes)
+        setPost(slug === SAMPLE_POST.slug ? SAMPLE_POST : { ...SAMPLE_POST, slug, title: \`Article: \${slug}\` });
+        setLikesCount(SAMPLE_POST.likes_count);
+        setRelated(SAMPLE_RELATED);
       } finally {
         setLoading(false);
       }
@@ -159,239 +130,248 @@ export default function BlogDetail() {
 
   if (loading) {
     return (
-      <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
+      <div className="bg-slate-50 min-h-screen">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-24 animate-pulse">
-          <div className="h-4 w-32 bg-slate-200 rounded mb-8" />
-          <div className="h-10 bg-slate-200 rounded mb-4 w-3/4" />
-          <div className="h-6 bg-slate-200 rounded mb-8 w-1/2" />
-          <div className="h-80 bg-slate-200 rounded-2xl mb-10" />
-          {Array.from({ length: 8 }).map((_, i) => <div key={i} className={`h-4 bg-slate-100 rounded mb-3 ${i % 3 === 2 ? 'w-4/5' : 'w-full'}`} />)}
+        <div className="max-w-4xl mx-auto px-4 py-32 animate-pulse">
+          <div className="h-4 w-32 bg-slate-200 rounded-full mb-8" />
+          <div className="h-12 bg-slate-200 rounded-2xl mb-4 w-3/4" />
+          <div className="h-6 bg-slate-200 rounded-xl mb-8 w-1/2" />
+          <div className="h-96 bg-slate-200 rounded-3xl mb-12" />
+          {Array.from({ length: 8 }).map((_, i) => <div key={i} className={`h-4 bg-slate-100 rounded-full mb-4 ${i % 3 === 2 ? 'w-4/5' : 'w-full'}`} />)}
         </div>
       </div>
     );
   }
 
-  if (!post) {
-    return (
-      <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
-        <Navbar />
-        <div className="text-center py-32">
-          <p className="text-6xl mb-4">📄</p>
-          <h2 className="text-2xl font-bold text-slate-700 mb-4">Article Not Found</h2>
-          <Link to="/blog" className="text-blue-600 font-semibold hover:underline">← Back to Blog</Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  if (!post) return null;
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
+    <div className="bg-white min-h-screen font-inter">
       <SEO
-        title={post.meta_title || post.title}
-        description={post.meta_description || post.excerpt}
-        canonicalUrl={`/blog/${post.slug}`}
-        ogImage={post.image_url}
+        title={post.seo_title || post.meta_title || post.title}
+        description={post.seo_description || post.meta_description || post.excerpt}
+        canonicalUrl={post.canonical_url || `/blog/${post.slug}`}
+        ogImage={post.og_image_url || post.cover_image_url}
       />
       <Navbar />
 
-      {/* ── HERO BANNER ── */}
-      <div className="relative w-full overflow-hidden" style={{ height: '420px', background: '#0f172a' }}>
-        {post.image_url && (
-          <img src={post.image_url} alt={post.title} className="absolute inset-0 w-full h-full object-cover opacity-50" />
-        )}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0.9) 100%)' }} />
-        <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 max-w-4xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-slate-400 mb-4 font-medium">
-            <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <span>›</span>
-            <Link to="/blog" className="hover:text-white transition-colors">Blog</Link>
-            <span>›</span>
+      {/* ── CLEAN WHITE HERO ── */}
+      <div className="pt-32 pb-16 max-w-5xl mx-auto px-6 text-center border-b border-slate-100">
+          <div className="inline-flex items-center gap-2 mb-6 text-sm font-bold">
+            <Link to="/blog" className="text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Knowledge Center</Link>
             {post.category && (
-              <>
-                <Link to={`/blog?category=${post.category.slug}`} className="hover:text-white transition-colors">{post.category.name}</Link>
-                <span>›</span>
-              </>
+                <>
+                    <span className="text-slate-300">/</span>
+                    <Link to={`/blog?category=${post.category.slug}`} className="text-blue-600 hover:text-blue-700 uppercase tracking-widest">{post.category.name}</Link>
+                </>
             )}
-            <span className="text-slate-300 truncate max-w-xs">{post.title}</span>
-          </nav>
-
-          {post.category && (
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-4" style={{ background: '#2563eb' }}>
-              {post.category.name}
-            </span>
-          )}
-
-          <h1 className="text-3xl md:text-4xl font-black text-white mb-3 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6 leading-[1.1] tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
             {post.title}
           </h1>
-          <div className="flex items-center flex-wrap gap-4 text-sm text-slate-300">
-            <span className="flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                {post.author?.[0]?.toUpperCase() || 'J'}
-              </div>
-              {post.author}
+
+          <p className="text-xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed mb-10">
+            {post.excerpt}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-slate-500">
+            <span className="flex items-center gap-2">
+              <img src="https://ui-avatars.com/api/?name=JYNM+Team&background=e0e7ff&color=4f46e5" alt="Author" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
+              <span className="text-slate-900">{post.author_info?.name || 'JYNM Editorial'}</span>
             </span>
-            <span>•</span>
-            <span>{formatDate(post.published_at || post.created_at)}</span>
-            <span>•</span>
-            <span>📖 {post.reading_time} min read</span>
-            <span>•</span>
-            <span>👁 {post.views_count?.toLocaleString()} views</span>
+            <span className="flex items-center gap-1.5"><CalendarIcon className="w-5 h-5 text-slate-400" /> {formatDate(post.published_at || post.created_at)}</span>
+            <span className="flex items-center gap-1.5"><ClockIcon className="w-5 h-5 text-slate-400" /> {post.reading_time} min read</span>
           </div>
-        </div>
       </div>
 
-      {/* ── CONTENT + SIDEBAR ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-[1fr_320px] gap-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+        {/* Cover Image */}
+        {post.cover_image_url && (
+            <div className="mb-16 -mx-4 sm:mx-0">
+                <img src={post.cover_image_url} alt={post.title} className="w-full h-auto sm:rounded-3xl shadow-2xl shadow-slate-200/50 object-cover max-h-[600px]" />
+            </div>
+        )}
+
+        <div className="grid lg:grid-cols-[1fr_240px] gap-12 lg:gap-16">
           {/* Main content */}
           <div>
-            {/* Article body */}
-            <article
-              className="prose prose-slate max-w-none bg-white rounded-2xl p-8 md:p-12 shadow-sm border border-slate-100"
-              style={{ lineHeight: 1.8 }}
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            {/* Block Renderer */}
+            <article className="prose prose-lg prose-slate max-w-none prose-headings:font-black prose-headings:font-['Outfit'] prose-p:leading-loose prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl">
+                {post.blocks && post.blocks.length > 0 ? (
+                    post.blocks.map(b => (
+                        <div key={b.id} className="mb-8 group">
+                            {b.type === 'heading' && React.createElement(b.level, { className: 'mt-12 mb-6 text-slate-900 tracking-tight' }, b.text)}
+                            {b.type === 'paragraph' && <p className="text-slate-700">{b.text}</p>}
+                            {b.type === 'image' && (
+                                <figure className="my-10">
+                                    <img src={b.url} alt={b.alt} className="w-full shadow-lg shadow-slate-100 border border-slate-100" />
+                                    {b.caption && <figcaption className="text-center text-sm font-medium text-slate-400 mt-3">{b.caption}</figcaption>}
+                                </figure>
+                            )}
+                            {b.type === 'list' && (
+                                b.style === 'number' 
+                                    ? <ol className="pl-6 space-y-3 marker:text-blue-600 marker:font-bold">{b.items.map((i, idx) => <li key={idx} className="text-slate-700 pl-2">{i}</li>)}</ol>
+                                    : <ul className="pl-6 space-y-3 marker:text-blue-400">{b.items.map((i, idx) => <li key={idx} className="text-slate-700 pl-2">{i}</li>)}</ul>
+                            )}
+                            {b.type === 'cta' && (
+                                <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl p-10 text-center text-white my-12 shadow-2xl shadow-blue-900/20 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-[80px] pointer-events-none"></div>
+                                    <h3 className="text-3xl font-black mb-4 text-white font-['Outfit'] relative z-10">{b.title}</h3>
+                                    <p className="text-blue-100/80 mb-8 text-lg font-medium relative z-10">{b.description}</p>
+                                    {b.buttonText && b.buttonLink && (
+                                        <Link to={b.buttonLink} className="inline-block bg-white text-slate-900 font-bold px-8 py-3.5 rounded-xl hover:scale-105 transition-transform relative z-10 shadow-lg shadow-black/10">
+                                            {b.buttonText}
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div dangerouslySetInnerHTML={{ __html: post.content || '<p>No content available.</p>' }} />
+                )}
+            </article>
 
             {/* Tags */}
-            {post.tags?.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-8">
-                {post.tags.map(tag => (
+            {post.tags_info?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-12 pt-8 border-t border-slate-100">
+                <span className="text-sm font-bold text-slate-400 mr-2 py-1">Tags:</span>
+                {post.tags_info.map(tag => (
                   <Link
-                    key={tag}
-                    to={`/blog?search=${tag}`}
-                    className="px-3 py-1 rounded-full text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    key={tag.id}
+                    to={`/blog?tag=${tag.slug}`}
+                    className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors border border-slate-200"
                   >
-                    #{tag}
+                    #{tag.name}
                   </Link>
                 ))}
               </div>
             )}
 
-            {/* Like + Share bar */}
-            <div className="flex items-center justify-between mt-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+            {/* Engagement Bar */}
+            <div className="flex items-center justify-between mt-12 p-2 bg-slate-50 rounded-2xl border border-slate-100">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${liked ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200'}`}
+                className={`flex items-center gap-2 px-6 py-4 rounded-xl font-bold text-sm transition-all flex-1 justify-center ${liked ? 'text-rose-600 bg-rose-50' : 'text-slate-600 hover:bg-white hover:shadow-sm'}`}
               >
-                ❤️ {liked ? 'Liked!' : 'Like'} · {likesCount}
+                {liked ? <HeartIconSolid className="w-5 h-5 text-rose-500" /> : <HeartIconOutline className="w-5 h-5" />}
+                {liked ? 'Liked!' : 'Helpful?'} <span className="opacity-50">({likesCount})</span>
               </button>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-500">Share:</span>
+              
+              <div className="w-[1px] h-10 bg-slate-200 mx-2"></div>
+              
+              <div className="flex items-center justify-center flex-1 gap-4">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Share</span>
                 <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#1da1f2] hover:text-white transition-all text-xs font-bold">𝕏</a>
-                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#1877f2] hover:text-white transition-all text-xs font-bold">f</a>
+                  className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-[#1da1f2] hover:text-white hover:border-transparent transition-all shadow-sm">
+                  <span className="font-bold text-sm">𝕏</span>
+                </a>
                 <button onClick={() => navigator.clipboard?.writeText(shareUrl)}
-                  className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-all">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-4 10h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                  className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-900 hover:text-white hover:border-transparent transition-all shadow-sm">
+                  <ShareIcon className="w-4 h-4" />
                 </button>
               </div>
+            </div>
+
+            {/* Author Block Bottom */}
+            <div className="mt-12 p-8 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+                <img src="https://ui-avatars.com/api/?name=JYNM+Team&background=e0e7ff&color=4f46e5&size=128" alt="Author" className="w-20 h-20 rounded-2xl shadow-sm bg-white" />
+                <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Written By</span>
+                    <h4 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        {post.author_info?.name || 'JYNM Editorial Team'}
+                    </h4>
+                    <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                        {post.author_info?.designation || 'Automotive knowledge experts dedicated to helping you save money on auto parts, repairs, and salvage yard navigation.'}
+                    </p>
+                </div>
             </div>
 
             {/* Comments Section */}
-            <div className="mt-12">
-              <h3 className="text-xl font-black text-slate-900 mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                💬 Comments {post.comments?.length > 0 ? `(${post.comments.length})` : ''}
-              </h3>
-              {post.comments?.length > 0 && (
-                <div className="space-y-4 mb-8">
-                  {post.comments.map(c => (
-                    <div key={c.id} className="p-5 bg-white rounded-xl border border-slate-100">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                          {c.name?.[0]?.toUpperCase()}
-                        </div>
-                        <span className="font-semibold text-slate-800 text-sm">{c.name}</span>
-                        <span className="text-slate-400 text-xs">• {formatDate(c.created_at)}</span>
-                      </div>
-                      <p className="text-slate-600 text-sm">{c.content}</p>
+            {post.allow_comments !== false && (
+                <div className="mt-16 pt-16 border-t border-slate-100">
+                <h3 className="text-2xl font-black text-slate-900 mb-8" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    Discussion {post.comments?.length > 0 ? `(${post.comments.length})` : ''}
+                </h3>
+                
+                <form onSubmit={handleCommentSubmit} className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5 mb-12">
+                    <h4 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-2">Leave a Reply</h4>
+                    <div className="grid md:grid-cols-2 gap-5">
+                    <input required value={commentForm.name} onChange={e => setCommentForm({...commentForm, name: e.target.value})} placeholder="Your Name" className="w-full px-5 py-3.5 rounded-xl border-none shadow-sm text-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+                    <input required type="email" value={commentForm.email} onChange={e => setCommentForm({...commentForm, email: e.target.value})} placeholder="Email Address" className="w-full px-5 py-3.5 rounded-xl border-none shadow-sm text-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
                     </div>
-                  ))}
+                    <textarea required value={commentForm.content} onChange={e => setCommentForm({...commentForm, content: e.target.value})} rows={4} placeholder="What are your thoughts?" className="w-full px-5 py-4 rounded-xl border-none shadow-sm text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none font-medium" />
+                    
+                    <button type="submit" disabled={commentStatus === 'submitting'} className="px-8 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-60 transition-colors shadow-lg shadow-slate-900/10">
+                    {commentStatus === 'submitting' ? 'Posting...' : 'Post Reply'}
+                    </button>
+                    
+                    {commentStatus === 'success' && <div className="flex items-center gap-2 text-emerald-600 text-sm font-bold bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100"><CheckCircleIcon className="w-5 h-5"/> Reply submitted and awaiting moderation.</div>}
+                    {commentStatus === 'error' && <p className="text-red-600 text-sm font-bold">⚠️ Failed to submit. Please try again.</p>}
+                </form>
+
+                {post.comments?.length > 0 && (
+                    <div className="space-y-6">
+                    {post.comments.map(c => (
+                        <div key={c.id} className="flex gap-4">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold flex-shrink-0">
+                                {c.name?.[0]?.toUpperCase()}
+                            </div>
+                            <div className="flex-1 bg-white p-6 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="font-bold text-slate-900 text-sm">{c.name}</span>
+                                    <span className="text-slate-400 text-xs font-medium">{formatDate(c.created_at)}</span>
+                                </div>
+                                <p className="text-slate-600 text-sm leading-relaxed">{c.content}</p>
+                            </div>
+                        </div>
+                    ))}
+                    </div>
+                )}
                 </div>
-              )}
-              <form onSubmit={handleCommentSubmit} className="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
-                <h4 className="font-bold text-slate-900">Leave a Comment</h4>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <input required value={commentForm.name} onChange={e => setCommentForm({...commentForm, name: e.target.value})} placeholder="Your Name *" className="px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                  <input required type="email" value={commentForm.email} onChange={e => setCommentForm({...commentForm, email: e.target.value})} placeholder="Email address *" className="px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <textarea required value={commentForm.content} onChange={e => setCommentForm({...commentForm, content: e.target.value})} rows={4} placeholder="Write your comment..." className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-                <button type="submit" disabled={commentStatus === 'submitting'} className="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60 transition-colors">
-                  {commentStatus === 'submitting' ? 'Submitting...' : 'Post Comment'}
-                </button>
-                {commentStatus === 'success' && <p className="text-green-600 text-sm font-semibold">✅ Comment submitted! Awaiting approval.</p>}
-                {commentStatus === 'error' && <p className="text-red-600 text-sm">⚠️ Failed to submit. Please try again.</p>}
-              </form>
-            </div>
+            )}
           </div>
 
-          {/* Sidebar */}
-          <aside className="space-y-6">
-            {/* Author Card */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-lg font-black">
-                  {post.author?.[0]?.toUpperCase() || 'J'}
+          {/* Sticky Sidebar */}
+          <aside className="hidden lg:block relative">
+            <div className="sticky top-32 space-y-8">
+                {/* TOC / Quick Links simulated */}
+                <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+                    <h4 className="font-black text-slate-900 text-sm uppercase tracking-wider mb-4">In this article</h4>
+                    <ul className="space-y-3 text-sm font-medium text-slate-500">
+                        {post.blocks?.filter(b => b.type === 'heading').map((h, i) => (
+                            <li key={i} className="hover:text-blue-600 cursor-pointer transition-colors line-clamp-1">{h.text}</li>
+                        )) || <li>No sections</li>}
+                    </ul>
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900 text-sm">{post.author}</p>
-                  <p className="text-xs text-slate-500">JYNM Editorial Team</p>
+                
+                {/* Stats */}
+                <div className="flex items-center justify-between px-2 text-sm font-bold text-slate-400 uppercase tracking-widest">
+                    <span className="flex items-center gap-1.5"><EyeIcon className="w-4 h-4"/> {post.views_count?.toLocaleString()}</span>
+                    <span className="flex items-center gap-1.5"><HeartIconSolid className="w-4 h-4"/> {likesCount}</span>
                 </div>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed">Expert advice on used auto parts, salvage yards, and DIY car repair from the JYNM editorial team.</p>
-            </div>
-
-            {/* Quick Action */}
-            <div className="rounded-2xl p-6 text-white text-center" style={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)' }}>
-              <p className="text-2xl mb-2">🔍</p>
-              <h4 className="font-black mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Find Parts Near You</h4>
-              <p className="text-blue-200 text-xs mb-4">Browse 1,000+ verified salvage yards nationwide.</p>
-              <Link to="/browse" className="block w-full py-2.5 rounded-xl font-bold text-sm bg-white text-blue-600 hover:bg-blue-50 transition-colors text-center">
-                Browse Junkyards →
-              </Link>
-            </div>
-
-            {/* Article Stats */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <h4 className="font-bold text-slate-900 text-sm mb-4">Article Stats</h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 flex items-center gap-1.5">👁 Views</span>
-                  <span className="font-bold text-slate-800">{post.views_count?.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 flex items-center gap-1.5">❤️ Likes</span>
-                  <span className="font-bold text-slate-800">{likesCount}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 flex items-center gap-1.5">📖 Read time</span>
-                  <span className="font-bold text-slate-800">{post.reading_time} min</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 flex items-center gap-1.5">📅 Published</span>
-                  <span className="font-bold text-slate-800 text-xs">{formatDate(post.published_at)}</span>
-                </div>
-              </div>
             </div>
           </aside>
         </div>
-
-        {/* ── RELATED POSTS ── */}
-        {related.length > 0 && (
-          <section className="mt-16">
-            <h2 className="text-2xl font-black text-slate-900 mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              You May Also Like
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {related.map(p => <BlogCard key={p.id} post={p} />)}
-            </div>
-          </section>
-        )}
       </div>
+
+      {/* ── RELATED POSTS ── */}
+      {related.length > 0 && (
+        <section className="bg-slate-50 py-24 border-t border-slate-100 mt-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        Keep Reading
+                    </h2>
+                    <p className="text-slate-500 font-medium">More expert guides and tips you might like.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {related.map(p => <BlogCard key={p.id} post={p} />)}
+                </div>
+            </div>
+        </section>
+      )}
 
       <Footer />
     </div>

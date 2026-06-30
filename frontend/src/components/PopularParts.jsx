@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useCMS } from '../hooks/useCMS';
 
 const parts = [
     { name: 'Complete Engines', savings: '$1,200+', searches: '15k+ this week', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
@@ -10,15 +11,16 @@ const parts = [
 ];
 
 export default function PopularParts() {
+    const { get } = useCMS('home');
     return (
         <section className="py-16 md:py-24 bg-white border-b border-slate-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div>
                         <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 font-[Outfit] tracking-tight">
-                            Popular Used Parts in Demand
+                            {get('popular_parts', 'heading', 'Popular Used Parts in Demand')}
                         </h2>
-                        <p className="text-slate-500 font-medium text-lg">Top searches nationwide right now.</p>
+                        <p className="text-slate-500 font-medium text-lg">{get('popular_parts', 'subheading', 'Top searches nationwide right now.')}</p>
                     </div>
                     <Link to="/browse" className="text-blue-600 font-bold hover:text-blue-700 flex items-center gap-1 transition-colors">
                         Browse all categories

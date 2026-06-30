@@ -76,8 +76,8 @@ export default function ModernAdminPortal() {
             {/* Slim Icon Sidebar */}
             <aside className="w-20 bg-white/40 backdrop-blur-xl border-r border-white/60 flex flex-col items-center py-6 gap-2">
                 {/* Logo */}
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-lg shadow-slate-900/20 flex items-center justify-center mb-6">
-                    <HomeIcon className="w-6 h-6 text-slate-800" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-sm shadow-slate-900/20 flex items-center justify-center mb-6">
+                    <HomeIcon className="w-6 h-6 text-slate-900" />
                 </div>
 
                 {/* Navigation Icons */}
@@ -90,14 +90,14 @@ export default function ModernAdminPortal() {
                                 key={item.id}
                                 onClick={() => setSelectedView(item.id)}
                                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group relative ${isActive
-                                        ? 'bg-white shadow-lg shadow-slate-200/60 text-slate-700'
+                                        ? 'bg-white shadow-sm shadow-slate-200/60 text-slate-700'
                                         : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
                                     }`}
                                 title={item.label}
                             >
                                 <Icon className="w-5 h-5" />
                                 {/* Tooltip */}
-                                <span className="absolute left-16 bg-slate-800 text-slate-800 text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                <span className="absolute left-16 bg-slate-800 text-slate-900 text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                     {item.label}
                                 </span>
                             </button>
@@ -127,7 +127,7 @@ export default function ModernAdminPortal() {
                     </div>
 
                     {/* Planner Card */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg shadow-slate-200/40">
+                    <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-sm shadow-slate-200/40">
                         <h2 className="text-lg font-medium text-slate-700 mb-4">Planner</h2>
 
                         {/* Filter Tabs */}
@@ -159,7 +159,7 @@ export default function ModernAdminPortal() {
                         </div>
 
                         {/* Time Card */}
-                        <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-2xl p-6 shadow-md shadow-slate-200/30 mb-6">
+                        <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-xl p-6 shadow-sm shadow-slate-200/30 mb-6">
                             <div className="flex items-center justify-center mb-4">
                                 {/* Analog Clock */}
                                 <div className="relative w-32 h-32">
@@ -187,7 +187,7 @@ export default function ModernAdminPortal() {
                         </div>
 
                         {/* Calendar */}
-                        <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-2xl p-5 shadow-md shadow-slate-200/30">
+                        <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-xl p-5 shadow-sm shadow-slate-200/30">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-sm font-medium text-slate-600">{currentMonth}</h3>
                                 <div className="flex gap-2">
@@ -207,7 +207,7 @@ export default function ModernAdminPortal() {
                                     <button
                                         key={idx}
                                         className={`aspect-square rounded-lg text-sm flex items-center justify-center transition-all ${day.isToday
-                                                ? 'bg-slate-700 text-slate-800 shadow-md'
+                                                ? 'bg-slate-700 text-slate-900 shadow-sm'
                                                 : day.isCurrentMonth
                                                     ? 'text-slate-600 hover:bg-slate-100'
                                                     : 'text-slate-300'
@@ -227,7 +227,7 @@ export default function ModernAdminPortal() {
                 <h2 className="text-xl font-semibold text-slate-700 mb-6">Todo's</h2>
 
                 {/* Add Task Input */}
-                <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 shadow-md shadow-slate-200/30 mb-6">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-sm shadow-slate-200/30 mb-6">
                     <div className="flex items-center gap-2 text-slate-500">
                         <ListBulletIcon className="w-5 h-5" />
                         <span className="text-sm font-medium">ToDo Unplanned</span>
@@ -258,7 +258,7 @@ export default function ModernAdminPortal() {
                     {expandedGroups.unplanned && (
                         <div className="space-y-2">
                             {tasks.unplanned.map(task => (
-                                <div key={task.id} className="bg-white/60 backdrop-blur-sm rounded-xl p-3 shadow-sm hover:shadow-md transition-all group">
+                                <div key={task.id} className="bg-white/60 backdrop-blur-sm rounded-xl p-3 shadow-sm hover:shadow-sm transition-all group">
                                     <div className="flex items-center gap-3">
                                         <button className="w-5 h-5 rounded-full border-2 border-slate-300 hover:border-slate-400 transition-colors flex-shrink-0" />
                                         <div className="flex-1 flex items-center gap-2">

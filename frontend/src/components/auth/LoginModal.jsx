@@ -2,8 +2,10 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import PasswordInput from '../PasswordInput';
 import LogoImage from '../../assets/jynm_logo.png';
+import { useCMS } from '../../hooks/useCMS';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPassword }) => {
+    const { get } = useCMS('navbar');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
@@ -111,6 +113,8 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
 
     if (!isOpen) return null;
 
+    const logoUrl = get('brand', 'logo', LogoImage);
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
@@ -136,7 +140,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                     <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
                         <div className="text-center">
                             <div className="mb-6">
-                                <img src={LogoImage} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
+                                <img src={logoUrl} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
                             </div>
                             <p className="text-lg font-medium mb-2">Welcome Back!</p>
                             <p className="text-blue-100 text-sm">Sign in to access your account</p>

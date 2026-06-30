@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCMS } from '../hooks/useCMS';
 
 const features = [
     {
@@ -29,13 +30,14 @@ const features = [
 ];
 
 export default function WhyChooseJynmSection() {
+    const { get } = useCMS('home');
     return (
         <div className="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_25px_rgb(0,0,0,0.03)] h-full flex flex-col justify-between">
             <div>
                 <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    Why Choose <span className="text-blue-600">JYNM</span>
+                    {get('why_choose', 'heading', 'Why Choose JYNM')}
                 </h2>
-                <p className="text-[12px] md:text-[13px] text-slate-500 font-medium mb-3">The smartest way to source parts</p>
+                <p className="text-[12px] md:text-[13px] text-slate-500 font-medium mb-3">{get('why_choose', 'subheading', 'The smartest way to source parts')}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
                     {features.map((f, i) => (

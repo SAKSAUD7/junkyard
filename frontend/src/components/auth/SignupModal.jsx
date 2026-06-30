@@ -2,8 +2,10 @@ import { useState } from 'react';
 import SignupStep1 from './SignupStep1';
 import SignupStep2 from './SignupStep2';
 import LogoImage from '../../assets/jynm_logo.png';
+import { useCMS } from '../../hooks/useCMS';
 
 const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
+    const { get } = useCMS('navbar');
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         name: '',
@@ -45,6 +47,8 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
     if (!isOpen) return null;
 
+    const logoUrl = get('brand', 'logo', LogoImage);
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
@@ -70,7 +74,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
                         <div className="text-center">
                             <div className="mb-6">
-                                <img src={LogoImage} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
+                                <img src={logoUrl} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
                             </div>
                             <p className="text-lg font-medium mb-2">Find Auto Parts</p>
                             <p className="text-blue-100 text-sm">Connect with trusted junkyards nationwide</p>

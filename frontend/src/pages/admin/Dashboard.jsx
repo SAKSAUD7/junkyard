@@ -3,460 +3,362 @@ import { api } from '../../services/api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar, AreaChart, Area
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
 import {
-    ChartBarIcon,
     UserGroupIcon,
-    EnvelopeIcon,
-    MegaphoneIcon,
-    ArrowTrendingUpIcon,
-    ClockIcon,
-    SparklesIcon,
-    BoltIcon,
     FireIcon,
-    TrophyIcon,
-    RocketLaunchIcon
+    CalendarIcon,
+    MegaphoneIcon,
+    CubeIcon,
+    ArrowUpIcon,
+    EnvelopeIcon,
+    ArrowPathIcon,
+    ChartBarIcon,
 } from '@heroicons/react/24/outline';
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+function timeAgo(dateStr) {
+    if (!dateStr) return '—';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} min${mins > 1 ? 's' : ''} ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hr${hrs > 1 ? 's' : ''} ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
+const LEAD_TYPE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+
+// ─── BuildingStorefrontIcon (inline SVG, not in heroicons/outline) ────────
+function BuildingStorefrontIcon(props) {
+    return (
+        <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+        </svg>
+    );
+}
+
 export default function AdminDashboard() {
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext);
     const navigate = useNavigate();
-    const [stats, setStats] = useState({
-        total_leads: 0,
-        new_leads: 0,
-        active_vendors: 0,
-        total_vendors: 0,
-        total_ads: 0,
-        unread_messages: 0,
-        vendor_distribution: [],
-        leads_trend: [],
-        recent_activity: []
-    });
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchStats = async () => {
+            setLoading(true);
+            setError(null);
             try {
-                // Add timeout to prevent infinite hanging
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Request timeout')), 10000)
-                );
-
-                const dataPromise = api.getAdminStats(token);
-
-                const data = await Promise.race([dataPromise, timeoutPromise]);
+                const data = await api.getAdminStats(token);
                 setStats(data);
-            } catch (error) {
-                console.error('Failed to fetch admin stats:', error);
-                // Set loading to false even on error to prevent UI lock
-                setLoading(false);
+            } catch (err) {
+                console.error('Failed to fetch admin stats:', err);
+                setError('Could not load dashboard data. Please refresh.');
             } finally {
                 setLoading(false);
             }
         };
-
-        if (token) {
-            fetchStats();
-        } else {
-            // If no token, don't stay in loading state
-            setLoading(false);
-        }
+        if (token) fetchStats();
+        else setLoading(false);
     }, [token]);
 
-    const statCards = [
-        {
-            label: 'Total Leads',
-            value: stats.total_leads,
-            icon: ChartBarIcon,
-            gradient: 'from-[#6366f1] via-[#8b5cf6] to-[#a855f7]',
-            bgLight: 'from-indigo-50 to-purple-50',
-            textColor: 'text-[#6366f1]',
-            iconBg: 'bg-gradient-to-br from-[#6366f1] to-[#8b5cf6]',
-            shadowColor: 'shadow-indigo-200',
-            trend: '+12%',
-            trendIcon: ArrowTrendingUpIcon,
-            onClick: () => navigate('/admin-portal/leads')
-        },
-        {
-            label: 'New Leads',
-            value: stats.new_leads,
-            icon: FireIcon,
-            gradient: 'from-[#10b981] via-[#059669] to-[#047857]',
-            bgLight: 'from-emerald-50 to-green-50',
-            textColor: 'text-[#10b981]',
-            iconBg: 'bg-gradient-to-br from-[#10b981] to-[#059669]',
-            shadowColor: 'shadow-emerald-200',
-            trend: '+24%',
-            trendIcon: BoltIcon,
-            onClick: () => navigate('/admin-portal/leads')
-        },
-        {
-            label: 'Active Vendors',
-            value: stats.active_vendors,
-            icon: UserGroupIcon,
-            gradient: 'from-[#f59e0b] via-[#d97706] to-[#b45309]',
-            bgLight: 'from-amber-50 to-orange-50',
-            textColor: 'text-[#f59e0b]',
-            iconBg: 'bg-gradient-to-br from-[#f59e0b] to-[#d97706]',
-            shadowColor: 'shadow-amber-200',
-            trend: '+8%',
-            trendIcon: TrophyIcon,
-            onClick: () => navigate('/admin-portal/vendors')
-        },
-        {
-            label: 'Unread Messages',
-            value: stats.unread_messages,
-            icon: EnvelopeIcon,
-            gradient: 'from-[#ec4899] via-[#db2777] to-[#be185d]',
-            bgLight: 'from-pink-50 to-rose-50',
-            textColor: 'text-[#ec4899]',
-            iconBg: 'bg-gradient-to-br from-[#ec4899] to-[#db2777]',
-            shadowColor: 'shadow-pink-200',
-            trend: '3 new',
-            trendIcon: SparklesIcon,
-            onClick: () => navigate('/admin-portal/messages')
-        },
-    ];
-
-    const quickActions = [
-        {
-            title: 'Create New Ad',
-            description: 'Launch a marketing campaign',
-            icon: MegaphoneIcon,
-            gradient: 'from-[#6366f1] to-[#8b5cf6]',
-            onClick: () => navigate('/admin-portal/ads')
-        },
-        {
-            title: 'View New Leads',
-            description: 'Check recent requests',
-            icon: RocketLaunchIcon,
-            gradient: 'from-[#10b981] to-[#059669]',
-            onClick: () => navigate('/admin-portal/leads')
-        },
-        {
-            title: 'Manage Vendors',
-            description: 'Review vendor listings',
-            icon: UserGroupIcon,
-            gradient: 'from-[#f59e0b] to-[#d97706]',
-            onClick: () => navigate('/admin-portal/vendors')
-        },
-        {
-            title: 'Messages',
-            description: 'Reply to inquiries',
-            icon: EnvelopeIcon,
-            gradient: 'from-[#ec4899] to-[#db2777]',
-            onClick: () => navigate('/admin-portal/messages')
-        }
-    ];
-
     if (loading) return (
-        <div className="flex justify-center items-center h-96">
-            <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#6366f1] mx-auto mb-4"></div>
-                <p className="text-[#6b7280] font-medium">Loading dashboard...</p>
-            </div>
+        <div className="flex flex-col justify-center items-center h-96 gap-4">
+            <div className="w-8 h-8 border-2 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+            <p className="text-sm text-slate-400">Loading dashboard…</p>
         </div>
     );
 
-    return (
-        <div className="space-y-6 pb-8">
-            {/* Hero Header with Gradient */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-2xl shadow-xl p-8">
-                <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+    if (error) return (
+        <div className="flex flex-col justify-center items-center h-96 gap-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center">
+                <ChartBarIcon className="w-6 h-6 text-rose-500" />
+            </div>
+            <p className="text-slate-600 font-semibold">{error}</p>
+            <button
+                onClick={() => window.location.reload()}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+            >
+                <ArrowPathIcon className="w-4 h-4" /> Retry
+            </button>
+        </div>
+    );
 
-                <div className="relative">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                                    <SparklesIcon className="h-8 w-8 text-slate-800" />
-                                </div>
-                                <div>
-                                    <h1 className="text-3xl font-bold text-slate-800">Dashboard Overview</h1>
-                                    <p className="text-indigo-100 mt-1 flex items-center gap-2">
-                                        <ClockIcon className="h-4 w-4" />
-                                        Last updated: {new Date().toLocaleTimeString()}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="hidden md:flex items-center gap-3">
-                            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
-                                <p className="text-xs text-indigo-100">Total Vendors</p>
-                                <p className="text-2xl font-bold text-slate-800">{stats.total_vendors}</p>
-                            </div>
-                            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
-                                <p className="text-xs text-indigo-100">Total Ads</p>
-                                <p className="text-2xl font-bold text-slate-800">{stats.total_ads}</p>
-                            </div>
-                        </div>
-                    </div>
+    // ── Derived values from real API data
+    const totalLeads = stats?.total_leads ?? 0;
+    const newLeads = stats?.new_leads ?? 0;
+    const activeVendors = stats?.active_vendors ?? 0;
+    const totalVendors = stats?.total_vendors ?? 0;
+    const totalAds = stats?.total_ads ?? 0;
+    const unreadMessages = stats?.unread_messages ?? 0;
+    const leadsChart = stats?.leads_trend ?? [];
+    const recentActivity = stats?.recent_activity ?? [];
+    const topVendors = stats?.top_vendors_by_leads ?? [];
+    const leadTypeDist = (stats?.lead_type_distribution ?? []).map((d, i) => ({
+        ...d,
+        color: LEAD_TYPE_COLORS[i % LEAD_TYPE_COLORS.length],
+    }));
+
+    const statCards = [
+        { label: 'Total Leads', value: totalLeads.toLocaleString(), icon: UserGroupIcon, bg: 'bg-indigo-500' },
+        { label: 'New Leads', value: newLeads.toLocaleString(), icon: FireIcon, bg: 'bg-emerald-500' },
+        { label: 'Active Vendors', value: activeVendors.toLocaleString(), icon: BuildingStorefrontIcon, bg: 'bg-orange-500' },
+        { label: 'Total Vendors', value: totalVendors.toLocaleString(), icon: CubeIcon, bg: 'bg-blue-500' },
+        { label: 'Unread Messages', value: unreadMessages.toLocaleString(), icon: EnvelopeIcon, bg: 'bg-purple-500' },
+        { label: 'Total Ads', value: totalAds.toLocaleString(), icon: MegaphoneIcon, bg: 'bg-pink-500' },
+    ];
+
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    const dateRange = `${sevenDaysAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+    return (
+        <div className="max-w-[1600px] mx-auto space-y-6">
+            {/* ── Header ────────────────────────────────────────────────────── */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        Welcome back, {user?.username || 'Admin'}! <span className="text-2xl">👋</span>
+                    </h1>
+                    <p className="text-sm text-slate-500 mt-1">Here's what's happening with your marketplace today.</p>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm">
+                    <CalendarIcon className="w-4 h-4 text-slate-400" />
+                    {dateRange}
                 </div>
             </div>
 
-            {/* Enhanced Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {statCards.map((stat, index) => {
-                    const Icon = stat.icon;
-                    const TrendIcon = stat.trendIcon;
-                    return (
-                        <button
-                            key={index}
-                            onClick={stat.onClick}
-                            className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl p-6 transition-all duration-300 hover:-translate-y-2 border border-[#e5e7eb] overflow-hidden"
-                        >
-                            {/* Gradient Background on Hover */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgLight} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-
-                            <div className="relative">
-                                {/* Icon and Trend */}
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className={`${stat.iconBg} p-3 rounded-xl shadow-lg ${stat.shadowColor} group-hover:scale-110 transition-transform duration-300`}>
-                                        <Icon className="h-6 w-6 text-slate-800" />
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-white/80 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm">
-                                        <TrendIcon className={`h-3.5 w-3.5 ${stat.textColor}`} />
-                                        <span className={`text-xs font-bold ${stat.textColor}`}>{stat.trend}</span>
-                                    </div>
-                                </div>
-
-                                {/* Stats */}
-                                <p className="text-sm font-medium text-[#6b7280] mb-1">{stat.label}</p>
-                                <p className="text-4xl font-bold text-[#1f2937] mb-2">{stat.value.toLocaleString()}</p>
-
-                                {/* Progress Bar */}
-                                <div className="w-full bg-[#f3f4f6] rounded-full h-1.5 overflow-hidden">
-                                    <div className={`h-full bg-gradient-to-r ${stat.gradient} rounded-full transition-all duration-1000 group-hover:w-full`} style={{ width: '70%' }}></div>
-                                </div>
+            {/* ── Stat Cards ────────────────────────────────────────────────── */}
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
+                {statCards.map((stat, i) => (
+                    <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${stat.bg}`}>
+                                <stat.icon className="w-6 h-6 text-white" />
                             </div>
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Leads Trend - Enhanced */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#e5e7eb] hover:shadow-xl transition-shadow">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-xl font-bold text-[#1f2937]">Leads Trend</h3>
-                            <p className="text-sm text-[#6b7280] mt-1">Last 7 days performance</p>
+                            <div>
+                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{stat.label}</p>
+                                <p className="text-xl font-bold text-slate-900 mt-0.5" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                    {stat.value}
+                                </p>
+                            </div>
                         </div>
-                        <div className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] p-3 rounded-xl shadow-lg shadow-indigo-200">
-                            <ChartBarIcon className="h-6 w-6 text-slate-800" />
+                        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-600 bg-blue-50 w-fit px-2 py-1 rounded-md">
+                            Live data
                         </div>
                     </div>
-                    {stats.leads_trend && stats.leads_trend.length > 0 ? (
-                        <div className="h-[280px] w-full">
+                ))}
+            </div>
+
+            {/* ── Charts Row ────────────────────────────────────────────────── */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {/* Leads Overview — real 7-day trend */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 className="text-base font-bold text-slate-900">Leads Trend</h2>
+                            <p className="text-xs text-slate-400 mt-0.5">Daily lead submissions — last 7 days</p>
+                        </div>
+                    </div>
+                    {leadsChart.length > 0 ? (
+                        <div className="h-[250px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={stats.leads_trend}>
+                                <AreaChart data={leadsChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.05} />
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                                    <XAxis
-                                        dataKey="name"
-                                        stroke="#9ca3af"
-                                        style={{ fontSize: '12px', fontWeight: '500' }}
-                                    />
-                                    <YAxis
-                                        stroke="#9ca3af"
-                                        style={{ fontSize: '12px', fontWeight: '500' }}
-                                    />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} allowDecimals={false} />
                                     <Tooltip
-                                        contentStyle={{
-                                            borderRadius: '12px',
-                                            border: 'none',
-                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                                            padding: '12px',
-                                            background: 'white'
-                                        }}
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                        formatter={(v) => [v, 'Leads']}
                                     />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="leads"
-                                        stroke="#6366f1"
-                                        strokeWidth={3}
-                                        fill="url(#colorLeads)"
-                                        dot={{ fill: '#6366f1', r: 4, strokeWidth: 2, stroke: '#fff' }}
-                                        activeDot={{ r: 6, fill: '#4f46e5', strokeWidth: 2, stroke: '#fff' }}
+                                    <CartesianGrid vertical={false} stroke="#f1f5f9" strokeDasharray="3 3" />
+                                    <Area type="monotone" dataKey="leads" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorLeads)"
+                                        dot={{ r: 4, strokeWidth: 2, fill: '#fff', stroke: '#3b82f6' }}
+                                        activeDot={{ r: 6, fill: '#2563eb', stroke: '#fff', strokeWidth: 2 }}
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
                     ) : (
-                        <div className="flex items-center justify-center h-[280px] text-[#9ca3af]">
-                            <div className="text-center">
-                                <ChartBarIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                <p className="text-sm">Loading chart data...</p>
-                            </div>
+                        <div className="h-[250px] flex flex-col items-center justify-center gap-2 text-slate-400">
+                            <ChartBarIcon className="w-10 h-10" />
+                            <p className="text-sm">No leads in the last 7 days</p>
                         </div>
                     )}
                 </div>
 
-                {/* Vendor Distribution - Enhanced */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#e5e7eb] hover:shadow-xl transition-shadow">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-xl font-bold text-[#1f2937]">Top Vendors by State</h3>
-                            <p className="text-sm text-[#6b7280] mt-1">Active vendor distribution</p>
-                        </div>
-                        <div className="bg-gradient-to-br from-[#f59e0b] to-[#d97706] p-3 rounded-xl shadow-lg shadow-amber-200">
-                            <UserGroupIcon className="h-6 w-6 text-slate-800" />
-                        </div>
+                {/* Top Vendors by Leads — real data */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-base font-bold text-slate-900">Top Vendors by Leads</h2>
+                        <button onClick={() => navigate('/admin-portal/vendors')} className="text-xs font-semibold text-blue-600 hover:text-blue-700">View All</button>
                     </div>
-                    {stats.vendor_distribution && stats.vendor_distribution.length > 0 ? (
-                        <div className="h-[280px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={stats.vendor_distribution}>
-                                    <defs>
-                                        <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#f59e0b" />
-                                            <stop offset="100%" stopColor="#d97706" />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                                    <XAxis
-                                        dataKey="state"
-                                        stroke="#9ca3af"
-                                        style={{ fontSize: '12px', fontWeight: '500' }}
-                                    />
-                                    <YAxis
-                                        stroke="#9ca3af"
-                                        style={{ fontSize: '12px', fontWeight: '500' }}
-                                    />
-                                    <Tooltip
-                                        contentStyle={{
-                                            borderRadius: '12px',
-                                            border: 'none',
-                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                                            padding: '12px',
-                                            background: 'white'
-                                        }}
-                                    />
-                                    <Bar
-                                        dataKey="count"
-                                        fill="url(#colorBar)"
-                                        radius={[12, 12, 0, 0]}
-                                    />
-                                </BarChart>
-                            </ResponsiveContainer>
+                    {topVendors.length > 0 ? (
+                        <div className="space-y-4">
+                            {topVendors.map((v, i) => (
+                                <div key={v.id} className="flex items-center gap-3">
+                                    <span className="text-xs font-bold text-slate-400 w-4">{i + 1}</span>
+                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex flex-shrink-0 items-center justify-center">
+                                        <BuildingStorefrontIcon className="w-4 h-4 text-slate-500" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-slate-900 truncate">{v.name}</p>
+                                        <p className="text-[10px] text-slate-500 truncate">{[v.city, v.state].filter(Boolean).join(', ')}</p>
+                                    </div>
+                                    <span className="text-sm font-bold text-blue-600">{v.lead_count.toLocaleString()}</span>
+                                </div>
+                            ))}
                         </div>
                     ) : (
-                        <div className="flex items-center justify-center h-[280px] text-[#9ca3af]">
-                            <div className="text-center">
-                                <UserGroupIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                <p className="text-sm">No vendor data available</p>
+                        <div className="flex flex-col items-center justify-center h-40 gap-2 text-slate-300">
+                            <BuildingStorefrontIcon className="w-10 h-10" />
+                            <p className="text-xs text-slate-400">No vendor-lead assignments yet</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Lead Type Distribution — real donut */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h2 className="text-base font-bold text-slate-900 mb-2">Leads by Type</h2>
+                    <p className="text-xs text-slate-400 mb-4">Breakdown by submission category</p>
+                    {leadTypeDist.length > 0 ? (
+                        <>
+                            <div className="h-[160px] relative">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie data={leadTypeDist} cx="50%" cy="50%" innerRadius={45} outerRadius={72} paddingAngle={2} dataKey="value" stroke="none">
+                                            {leadTypeDist.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip formatter={(v, n) => [v.toLocaleString(), n]} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span className="text-xl font-bold text-slate-900">{totalLeads.toLocaleString()}</span>
+                                    <span className="text-[10px] text-slate-500 font-semibold uppercase">Total</span>
+                                </div>
                             </div>
+                            <div className="mt-4 space-y-2">
+                                {leadTypeDist.map((d, i) => (
+                                    <div key={i} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
+                                            <span className="text-[10px] text-slate-600 font-medium truncate">{d.name}</span>
+                                        </div>
+                                        <span className="text-[10px] text-slate-400 font-medium">{d.value.toLocaleString()}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-40 gap-2 text-slate-300">
+                            <ChartBarIcon className="w-10 h-10" />
+                            <p className="text-xs text-slate-400">No lead data yet</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Recent Activity & Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Activity - Enhanced */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#e5e7eb]">
+            {/* ── Bottom Row ────────────────────────────────────────────────── */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                {/* Recent Leads Table — real from API */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
                     <div className="flex justify-between items-center mb-6">
-                        <div>
-                            <h3 className="text-xl font-bold text-[#1f2937]">Recent Leads</h3>
-                            <p className="text-sm text-[#6b7280] mt-1">Latest customer requests</p>
+                        <h2 className="text-base font-bold text-slate-900">Recent Leads</h2>
+                        <button onClick={() => navigate('/admin-portal/leads')} className="text-xs font-semibold text-blue-600 hover:text-blue-700">View All</button>
+                    </div>
+                    {recentActivity.length > 0 ? (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-slate-100">
+                                        <th className="pb-3 text-xs font-bold text-slate-500">Name</th>
+                                        <th className="pb-3 text-xs font-bold text-slate-500">Email</th>
+                                        <th className="pb-3 text-xs font-bold text-slate-500">Vehicle / Part</th>
+                                        <th className="pb-3 text-xs font-bold text-slate-500">Type</th>
+                                        <th className="pb-3 text-xs font-bold text-slate-500 text-right">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {recentActivity.map((row) => (
+                                        <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
+                                            <td className="py-3 text-sm font-bold text-slate-900">{row.name || '—'}</td>
+                                            <td className="py-3 text-xs font-medium text-slate-500 truncate max-w-[140px]">{row.email || '—'}</td>
+                                            <td className="py-3 text-xs font-medium text-slate-600">
+                                                {[row.year, row.make, row.model].filter(Boolean).join(' ')}
+                                                {row.part ? ` · ${row.part}` : ''}
+                                            </td>
+                                            <td className="py-3">
+                                                <span className={`px-2.5 py-1 text-[10px] font-bold rounded-md ${
+                                                    row.lead_type === 'vendor'
+                                                        ? 'bg-orange-50 text-orange-600'
+                                                        : 'bg-blue-50 text-blue-600'
+                                                }`}>
+                                                    {row.lead_type === 'vendor' ? 'Vendor' : 'Parts'}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 text-[10px] font-medium text-slate-400 text-right">{timeAgo(row.created_at)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                        <button
-                            onClick={() => navigate('/admin-portal/leads')}
-                            className="text-sm text-[#6366f1] hover:text-[#4f46e5] font-semibold hover:underline flex items-center gap-1"
-                        >
-                            View All →
-                        </button>
-                    </div>
-                    <div className="space-y-3">
-                        {stats.recent_activity && stats.recent_activity.length > 0 ? (
-                            stats.recent_activity.map((lead) => (
-                                <div
-                                    key={lead.id}
-                                    className="group flex items-start gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all cursor-pointer border border-transparent hover:border-indigo-100"
-                                    onClick={() => navigate('/admin-portal/leads')}
-                                >
-                                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-xl flex items-center justify-center text-slate-800 font-bold text-lg shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
-                                        {lead.name.charAt(0)}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-[#1f2937] truncate">{lead.name}</p>
-                                        <p className="text-xs text-[#6b7280] mt-0.5">
-                                            {lead.make} {lead.model} • {lead.part}
-                                        </p>
-                                        <p className="text-xs text-[#9ca3af] mt-1">
-                                            {new Date(lead.created_at).toLocaleDateString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
-                                        </p>
-                                    </div>
-                                    <span className={`px-3 py-1 text-xs font-bold rounded-lg ${lead.status === 'new' ? 'bg-blue-100 text-blue-700' :
-                                        lead.status === 'contacted' ? 'bg-amber-100 text-amber-700' :
-                                            lead.status === 'converted' ? 'bg-green-100 text-green-700' :
-                                                'bg-gray-100 text-gray-700'
-                                        }`}>
-                                        {(lead.status || 'new').toUpperCase()}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-12">
-                                <ChartBarIcon className="h-12 w-12 mx-auto mb-3 text-[#d1d5db]" />
-                                <p className="text-sm text-[#6b7280]">No recent activity</p>
-                            </div>
-                        )}
-                    </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
+                            <FireIcon className="w-8 h-8" />
+                            <p className="text-sm text-slate-400">No leads yet</p>
+                        </div>
+                    )}
                 </div>
 
-                {/* Quick Actions - Enhanced */}
-                <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl shadow-lg border border-[#e5e7eb]">
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold text-[#1f2937] flex items-center gap-2">
-                            <BoltIcon className="h-6 w-6 text-[#6366f1]" />
-                            Quick Actions
-                        </h3>
-                        <p className="text-sm text-[#6b7280] mt-1">Common tasks and shortcuts</p>
+                {/* Vendor State Distribution — real from API */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-base font-bold text-slate-900">Vendors by State</h2>
+                        <button onClick={() => navigate('/admin-portal/vendors')} className="text-xs font-semibold text-blue-600 hover:text-blue-700">View All</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {quickActions.map((action, index) => {
-                            const Icon = action.icon;
-                            return (
-                                <button
-                                    key={index}
-                                    onClick={action.onClick}
-                                    className="group relative p-5 rounded-xl bg-white border border-[#e5e7eb] hover:border-transparent hover:shadow-xl text-left transition-all overflow-hidden"
-                                >
-                                    {/* Gradient overlay on hover */}
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-
-                                    <div className="relative">
-                                        <div className={`inline-flex p-2.5 rounded-lg bg-gradient-to-br ${action.gradient} shadow-lg mb-3 group-hover:scale-110 transition-transform`}>
-                                            <Icon className="h-5 w-5 text-slate-800" />
+                    {stats?.vendor_distribution?.length > 0 ? (
+                        <div className="space-y-3">
+                            {stats.vendor_distribution.slice(0, 8).map((item, i) => {
+                                const max = stats.vendor_distribution[0]?.count || 1;
+                                const pct = Math.round((item.count / max) * 100);
+                                return (
+                                    <div key={i}>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs font-semibold text-slate-700">{item.state || 'Unknown'}</span>
+                                            <span className="text-xs font-bold text-slate-900">{item.count.toLocaleString()}</span>
                                         </div>
-                                        <span className="block font-bold text-sm mb-1 text-[#1f2937] group-hover:text-slate-800 transition-colors">
-                                            {action.title}
-                                        </span>
-                                        <span className="text-xs text-[#6b7280] group-hover:text-slate-600 transition-colors">
-                                            {action.description}
-                                        </span>
+                                        <div className="h-1.5 bg-slate-100 rounded-full">
+                                            <div
+                                                className="h-1.5 bg-blue-500 rounded-full transition-all"
+                                                style={{ width: `${pct}%` }}
+                                            />
+                                        </div>
                                     </div>
-                                </button>
-                            );
-                        })}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
+                            <BuildingStorefrontIcon className="w-8 h-8" />
+                            <p className="text-sm text-slate-400">No vendor data yet</p>
+                        </div>
+                    )}
                 </div>
+
             </div>
         </div>
     );

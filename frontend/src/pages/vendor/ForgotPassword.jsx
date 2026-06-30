@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { vendorAuth } from '../../services/vendorApi';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorForgotPassword = () => {
+    const { get } = useCMS('navbar');
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
@@ -26,12 +28,14 @@ const VendorForgotPassword = () => {
         }
     };
 
+    const logoUrl = get('brand', 'logo', '/logo.svg');
+
     return (
         <div className="flex min-h-screen w-full bg-white relative overflow-hidden font-sans">
             {/* LEFT SIDE: Solid Blue Panel */}
             <div className="hidden lg:flex w-1/2 bg-[#3b82f6] flex-col items-center justify-center p-12 text-center text-white">
                 <div className="w-80 h-40 bg-white rounded-lg shadow-[0_20px_40px_rgb(0,0,0,0.15)] mb-16 flex items-center justify-center p-6">
-                    <img src="/logo.svg" alt="JYNM Logo" className="h-12 w-auto opacity-80" />
+                    <img src={logoUrl} alt="JYNM Logo" className="h-12 w-auto opacity-80" />
                 </div>
                 <h2 className="text-[32px] font-bold mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Recover Access</h2>
                 <p className="text-blue-100 text-lg font-medium">Reset your vendor account password</p>

@@ -118,11 +118,13 @@ const FAQ = () => {
                             <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Help Center</span>
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Frequently Asked <span className="text-blue-600">Questions</span>
-                        </h1>
+                        <h1 
+                            className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" 
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
+                            dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Frequently Asked <span class="text-blue-600">Questions</span>') }}
+                        />
                         <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
-                            Everything you need to know about finding and buying used auto parts through our platform.
+                            {get('hero', 'subheading', 'Everything you need to know about finding and buying used auto parts through our platform.')}
                         </p>
                     </div>
                 </div>
