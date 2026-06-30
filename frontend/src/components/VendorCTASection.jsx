@@ -3,50 +3,48 @@ import { Link } from 'react-router-dom';
 
 export default function VendorCTASection() {
     return (
-        <div className="bg-[#0c1424] rounded-3xl p-5 md:p-6 border border-slate-800 shadow-[0_4px_25px_rgb(0,0,0,0.12)] h-full flex flex-col justify-between overflow-hidden relative">
+        <div className="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] h-full flex flex-col justify-between overflow-hidden relative">
             {/* Background glow */}
-            <div className="absolute -top-10 -right-10 w-48 h-48 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none translate-x-1/4 -translate-y-1/4"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
 
-            <div>
+            <div className="relative z-10">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-500/30 bg-orange-500/5 self-start mb-3 relative z-10 w-max">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.9)]"></span>
-                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Vendor Network Hub</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-100 bg-blue-50 mb-4 w-max">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Vendor Network Hub</span>
                 </div>
 
                 {/* Heading */}
-                <h2 className="text-xl md:text-2xl font-black text-white leading-tight mb-2 relative z-10 font-['Outfit'] tracking-tight">
-                    Transform Your Salvage <br />
-                    <span className="text-orange-500">Business Today</span>
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    Grow Your Salvage <br />
+                    <span className="text-blue-600">Business Today</span>
                 </h2>
 
                 {/* Body */}
-                <p className="text-slate-400 text-[12px] md:text-[13px] font-medium leading-relaxed relative z-10">
-                    Partner with <span className="text-white font-bold">JYNM</span> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
+                <p className="text-slate-500 text-[13px] font-medium leading-relaxed mb-5">
+                    Partner with <span className="text-slate-800 font-bold">JYNM</span> to dominate your local market, digitize your inventory, and receive high-converting leads on autopilot.
                 </p>
-            </div>
 
-            {/* Engine Image - Smaller for tight layout */}
-            <div className="relative z-10 flex-1 flex items-center justify-center my-1 md:my-2 min-h-[80px]">
-                <img 
-                    src="/heroes/engine-glow-dark.png" 
-                    alt="High performance engine" 
-                    className="w-full h-[90px] md:h-[110px] object-contain mix-blend-screen filter drop-shadow-[0_0_20px_rgba(249,115,22,0.15)]"
-                />
+                {/* Feature pills */}
+                <div className="flex flex-col gap-2 mb-5">
+                    {['✓ Get qualified leads daily', '✓ Free listing setup', '✓ Trusted by 1,000+ yards'].map((item) => (
+                        <span key={item} className="text-[12px] font-semibold text-slate-600">{item}</span>
+                    ))}
+                </div>
             </div>
 
             {/* Buttons */}
             <div className="flex flex-col xl:flex-row gap-2 relative z-10">
-                <Link 
+                <Link
                     to="/add-a-yard"
-                    className="inline-flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white font-bold px-4 py-2 rounded-xl transition-all text-[12px] shadow-[0_4px_16px_rgba(234,88,12,0.3)] hover:-translate-y-0.5 flex-1 text-center"
+                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all text-[13px] shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:-translate-y-0.5 flex-1 text-center"
                 >
                     Add Junkyard
                 </Link>
-                <Link 
+                <Link
                     to="/vendor/login"
-                    className="inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold px-4 py-2 rounded-xl transition-all text-[12px] hover:-translate-y-0.5 flex-1 text-center"
+                    className="inline-flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold px-4 py-2.5 rounded-xl transition-all text-[13px] hover:-translate-y-0.5 flex-1 text-center"
                 >
                     Login
                 </Link>

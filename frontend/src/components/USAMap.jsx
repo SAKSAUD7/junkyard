@@ -101,7 +101,7 @@ function StateMesh({ geom, objCode, objName, count, maxCount, onStateSelect, cen
       {/* Hover Tooltip Overlay */}
       {/* Polished Hover Tooltip matching target image */}
       {hovered && (
-        <Html center position={[centroid[0], centroid[1], 1.2]} style={{ pointerEvents: 'none', zIndex: 100 }}>
+        <Html center position={[centroid[0], centroid[1], 1.2]} zIndexRange={[50, 0]} style={{ pointerEvents: 'none' }}>
           <div style={{
             background: 'rgba(15, 23, 42, 0.95)',
             border: '1px solid rgba(59, 130, 246, 0.5)',
@@ -241,6 +241,7 @@ function MapGeometry({ onStateSelect }) {
             key={`perm-lbl-${idx}`}
             position={[lbl.position[0], lbl.position[1], 0.35]}
             center
+            zIndexRange={[10, 0]}
             style={{ pointerEvents: 'none' }}
           >
             <div style={{
@@ -253,18 +254,16 @@ function MapGeometry({ onStateSelect }) {
               opacity: 0.85
             }}>
               <span style={{ 
-                color: '#1e293b', 
+                color: '#ffffff', 
                 fontSize: '10px', 
                 fontWeight: '800', 
-                textShadow: '0 1px 3px rgba(255,255,255,0.9)' 
               }}>
                 {lbl.code}
               </span>
               <span style={{ 
-                color: count > 0 ? '#2563eb' : '#94a3b8', 
+                color: '#ffffff', 
                 fontSize: '9px', 
                 fontWeight: '700', 
-                textShadow: '0 1px 3px rgba(255,255,255,0.9)' 
               }}>
                 {count > 0 ? count : ''}
               </span>

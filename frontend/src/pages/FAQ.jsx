@@ -108,28 +108,25 @@ const FAQ = () => {
             <Navbar />
 
             {/* Clean Light Hero */}
-            <div className="pt-32 pb-20 overflow-hidden relative border-b border-slate-100 bg-white">
-                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-50/70 rounded-full blur-[80px] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-50/70 rounded-full blur-[80px] transform translate-x-1/3 -translate-y-1/4 pointer-events-none" />
+            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="text-left text-slate-900">
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-slate-50 border border-slate-200">
-                                <span className="text-blue-600 text-xs font-bold uppercase tracking-wider">Help Center</span>
-                            </div>
-
-                            <h1 className="font-black mb-6 text-5xl md:text-6xl" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                                Frequently Asked <br />
-                                <span className="text-blue-600">Questions</span>
-                            </h1>
-                            <p className="leading-relaxed text-lg max-w-xl text-slate-600 font-medium">
-                                Everything you need to know about finding and buying used auto parts through our platform.
-                            </p>
+                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                    <div className="text-center">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Help Center</span>
                         </div>
+
+                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            Frequently Asked <span className="text-blue-600">Questions</span>
+                        </h1>
+                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
+                            Everything you need to know about finding and buying used auto parts through our platform.
+                        </p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <div className="bg-white">
                 <AdCarousel slotGroup="carousel_1" page="faq" title="Promoted Partners" />

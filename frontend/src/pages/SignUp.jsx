@@ -4,6 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import PasswordInput from '../components/PasswordInput';
 
 export default function SignUp() {
     const [searchParams] = useSearchParams();
@@ -74,57 +75,45 @@ export default function SignUp() {
     };
 
     return (
-        <div className="bg-[#f8faff] min-h-screen font-inter relative overflow-hidden flex flex-col">
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col font-inter">
             <SEO title="Sign Up - Create Your JYNM Account" description="Create a free account to list your junkyard, manage leads, and connect with customers." noindex={true} />
             <Navbar />
 
-            {/* Background Decorations */}
-            <div className="absolute top-20 right-[10%] w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-10 left-[5%] w-[400px] h-[400px] bg-indigo-100/30 rounded-full blur-[80px] pointer-events-none" />
-
-            {/* Main Content Area */}
-            <div className="flex-grow max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-24 items-center justify-center w-full">
-                
-                {/* Left Side - Text & Value Props */}
-                <div className="flex-1 w-full lg:max-w-md self-start lg:mt-10">
-                    <h1 className="text-[36px] font-black text-slate-900 leading-tight mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                        Create Your Account
-                    </h1>
-                    <p className="text-[15px] text-slate-500 font-medium mb-12 max-w-sm leading-relaxed">
-                        Join thousands of buyers and sellers on JYNM today.
-                    </p>
-
-                    <div className="space-y-6">
-                        {[
-                            { text: 'Find Quality Parts', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> },
-                            { text: 'Connect with Trusted Vendors', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /> },
-                            { text: 'Get the Best Deals', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> },
-                            { text: 'Grow Your Business', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /> }
-                        ].map((item, i) => (
-                            <div key={i} className="flex gap-4 items-center">
-                                <div className="w-10 h-10 bg-blue-100/60 rounded flex items-center justify-center text-blue-600 flex-shrink-0">
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">{item.icon}</svg>
-                                </div>
-                                <h3 className="font-bold text-slate-800 text-[15px]">{item.text}</h3>
-                            </div>
-                        ))}
+            <div className="flex-1 flex items-center justify-center p-4 py-12">
+                <div className="w-full max-w-[1000px] flex rounded-3xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 bg-white min-h-[600px]">
+                    
+                    {/* Left Panel (Blue) */}
+                    <div className="hidden lg:flex flex-col justify-center w-[400px] bg-[#2563eb] shrink-0 p-12 text-center relative overflow-hidden">
+                        <div className="absolute -top-32 -left-32 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-70"></div>
+                        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+                        
+                        <div className="relative z-10 w-48 h-20 bg-white mx-auto mb-10 flex items-center justify-center rounded-sm shadow-xl">
+                             <h2 className="text-3xl font-black text-blue-600 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</h2>
+                        </div>
+                        <h2 className="relative z-10 text-[26px] font-black text-white mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>Join JYNM Today!</h2>
+                        <p className="relative z-10 text-white/90 font-medium text-sm leading-relaxed">
+                            Create your free account to access nationwide parts, manage leads, and connect directly with trusted vendors.
+                        </p>
                     </div>
 
-                    {/* Temporary space for the truck illustration */}
-                    <div className="mt-12 opacity-80 h-32 relative">
-                        {/* Could place an img src="/images/tow-truck.png" here if it existed */}
-                    </div>
-                </div>
+                    {/* Right Panel (Form) */}
+                    <div className="flex-1 p-6 md:p-10 lg:p-12 xl:px-16 flex flex-col justify-center">
+                        <div className="lg:hidden text-center mb-6">
+                            <h2 className="text-[28px] font-black tracking-tight text-slate-800 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Join <span className="text-blue-600">JYNM</span>
+                            </h2>
+                            <p className="text-slate-500 text-[13px] font-medium">Create your free account</p>
+                        </div>
 
-                {/* Right Side - Signup Form Card */}
-                <div className="flex-1 w-full max-w-[480px]">
-                    <div className="bg-white rounded-[24px] p-8 md:p-10 shadow-[0_15px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100 relative z-10 w-full ml-auto">
-                        <h2 className="text-[22px] font-black text-slate-900 mb-6 tracking-tight text-center">
-                            Sign Up
-                        </h2>
+                        <div className="hidden lg:block mb-8 text-center">
+                            <h2 className="text-[28px] font-black tracking-tight text-slate-800" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Create <span className="text-blue-600">Account</span>
+                            </h2>
+                            <p className="text-slate-500 text-[13px] font-medium mt-1">Fill in the details below to get started</p>
+                        </div>
 
                         {/* Role Tabs */}
-                        <div className="flex w-full mb-8 border-b border-slate-200">
+                        <div className="flex w-full mb-6 border-b border-slate-200">
                             <button 
                                 onClick={() => setRole('buyer')}
                                 className={`flex-1 pb-3 text-[14px] font-bold text-center transition-colors relative ${role === 'buyer' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
@@ -142,41 +131,48 @@ export default function SignUp() {
                         </div>
 
                         {error && (
-                            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm flex items-center gap-2">
-                                <span className="font-bold">Error:</span> {error}
+                            <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-[13px] flex items-center gap-2">
+                                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                <span className="font-semibold">{error}</span>
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Full Name</label>
-                                <input
-                                    type="text" name="name" value={formData.name} onChange={handleChange} required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
-                                />
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Full Name</label>
+                                    <input
+                                        type="text" name="name" value={formData.name} onChange={handleChange} required
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
+                                        placeholder="John Doe"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Phone Number</label>
+                                    <input
+                                        type="tel" name="phone" value={formData.phone} onChange={handleChange} required
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
+                                        placeholder="(555) 000-0000"
+                                    />
+                                </div>
                             </div>
 
                             <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Email Address</label>
+                                <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Email Address</label>
                                 <input
                                     type="email" name="email" value={formData.email} onChange={handleChange} required
                                     className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
+                                    placeholder="your.email@example.com"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Phone Number</label>
-                                <input
-                                    type="tel" name="phone" value={formData.phone} onChange={handleChange} required
+                                <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Password</label>
+                                <PasswordInput
+                                    name="password" required
+                                    value={formData.password} onChange={handleChange}
                                     className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Password</label>
-                                <input
-                                    type="password" name="password" value={formData.password} onChange={handleChange} required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
+                                    placeholder="••••••••"
                                 />
                             </div>
 
@@ -197,13 +193,18 @@ export default function SignUp() {
                             <button 
                                 type="submit" 
                                 disabled={loading}
-                                className="w-full bg-[#f97316] text-white font-bold rounded-lg px-4 py-3.5 hover:bg-[#ea580c] transition-colors disabled:opacity-50 mt-4 shadow-sm text-[15px]"
+                                className="w-full bg-[#cbd5e1] hover:bg-[#94a3b8] text-slate-800 font-bold rounded-xl px-4 py-4 transition-colors disabled:opacity-50 mt-4 shadow-sm text-[15px] flex items-center justify-center gap-2"
                             >
-                                {loading ? 'Creating...' : 'Create Account'}
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                                        Creating...
+                                    </>
+                                ) : 'Create Account'}
                             </button>
                         </form>
 
-                        <div className="mt-6 text-center text-[13px] font-medium text-slate-500">
+                        <div className="mt-8 text-center text-[13px] font-medium text-slate-500">
                             Already have an account? <Link to="/signin" className="text-blue-600 font-bold hover:underline">Sign In</Link>
                         </div>
                     </div>

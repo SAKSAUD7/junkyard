@@ -103,22 +103,22 @@ export default function About() {
             <Navbar />
 
             {/* Clean Hero Section */}
-            <div className="pt-32 pb-20 overflow-hidden relative border-b border-slate-100 bg-slate-50">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-100/50 rounded-full blur-[100px] transform translate-x-1/3 -translate-y-1/4 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-50/50 rounded-full blur-[80px] transform -translate-x-1/3 translate-y-1/4 pointer-events-none" />
+            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
                     <div className="text-center max-w-4xl mx-auto">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-white border border-slate-200 shadow-sm animate-fade-in-up">
-                            <span className="text-blue-600 text-xs font-bold uppercase tracking-wider">Our Story</span>
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100 animate-fade-in-up">
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Our Story</span>
                         </div>
-                        <h1 className="font-black mb-6 text-5xl md:text-6xl lg:text-7xl animate-fade-in-up text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.05 }}>
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-6 tracking-tight animate-fade-in-up" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.05 }}>
                             {get('hero', 'heading', 'The Future of')} <br />
                             <span className="text-blue-600">
                                 {get('hero', 'heading_accent', 'Auto Salvage')}
                             </span>
                         </h1>
-                        <p className="leading-relaxed mb-12 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto font-medium animate-fade-in-up delay-100">
+                        <p className="text-[17px] md:text-[20px] text-slate-500 font-medium max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-100">
                             {get('hero', 'subheading', "We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's most extensive inventory.")}
                         </p>
                     </div>
@@ -135,7 +135,7 @@ export default function About() {
                         ))}
                     </div>
                 </div>
-            </div>
+            </section>
 
             <div className="bg-white">
                 <AdCarousel slotGroup="carousel_1" page="about" title="Promoted Partners" />
@@ -199,40 +199,6 @@ export default function About() {
                 </div>
             </div>
 
-            {/* USA Map Integration */}
-            <div className="py-24 bg-slate-50 overflow-hidden border-t border-b border-slate-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-orange-50 border border-orange-100">
-                            <span className="text-orange-600 text-xs font-bold uppercase tracking-wider">Nationwide</span>
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            A Nationwide <span className="text-blue-600">Network</span>
-                        </h2>
-                        <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium">
-                            We've established strong partnerships with over 1,000 trusted salvage yards across all 50 states, ensuring fast fulfillment everywhere.
-                        </p>
-                    </div>
-                    
-                    <div className="relative max-w-5xl mx-auto hidden md:block">
-                        <img src="/images/usa-gradient-map.png" alt="USA Network Map" className="w-full h-auto drop-shadow-2xl mix-blend-multiply opacity-90" />
-                        
-                        {/* Overlay stats badges */}
-                        <div className="absolute top-[30%] left-[15%] bg-white p-4 rounded-xl shadow-xl border border-slate-200 animate-float" style={{ animationDelay: '0s' }}>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Western Hubs</p>
-                            <p className="text-2xl font-black text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>320+ Yards</p>
-                        </div>
-                        <div className="absolute top-[40%] right-[10%] bg-white p-4 rounded-xl shadow-xl border border-slate-200 animate-float" style={{ animationDelay: '1.5s' }}>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Eastern Hubs</p>
-                            <p className="text-2xl font-black text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>450+ Yards</p>
-                        </div>
-                        <div className="absolute bottom-[10%] left-[40%] bg-white p-4 rounded-xl shadow-xl border border-slate-200 animate-float" style={{ animationDelay: '3s' }}>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Central Hubs</p>
-                            <p className="text-2xl font-black text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>280+ Yards</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Our Journey Timeline */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">

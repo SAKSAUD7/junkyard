@@ -11,7 +11,7 @@ import FloatingActionButtons from '../components/FloatingActionButtons'
 import SEO from '../components/SEO'
 import ExitIntentPopup from '../components/ExitIntentPopup'
 import MobileStickyBar from '../components/MobileStickyBar'
-import LiveActivityFeed from '../components/LiveActivityFeed'
+
 import { MotionStagger, MotionItem } from '../components/MotionSection'
 import PopularParts from '../components/PopularParts'
 import RealSavingsTable from '../components/RealSavingsTable'
@@ -329,11 +329,11 @@ export default function Home() {
 
     const handleHeroReset = () => { setHeroSuccess(false); setHeroStep(1); setHeroMake(''); setHeroModel(''); setHeroYear(''); setHeroPartId(''); setHeroName(''); setHeroEmail(''); setHeroPhone(''); setHeroState(''); setHeroZip(''); setHeroError(''); setCaptchaCode(''); setCaptchaInput('') }
 
-    // Auto-reset to step 1 after 25s of showing the success message
-    const [successCountdown, setSuccessCountdown] = useState(25)
+    // Auto-reset to step 1 after 10s of showing the success message
+    const [successCountdown, setSuccessCountdown] = useState(10)
     useEffect(() => {
-        if (!heroSuccess) { setSuccessCountdown(25); return }
-        setSuccessCountdown(25)
+        if (!heroSuccess) { setSuccessCountdown(10); return }
+        setSuccessCountdown(10)
         const interval = setInterval(() => {
             setSuccessCountdown(prev => {
                 if (prev <= 1) { clearInterval(interval); handleHeroReset(); return 0 }
@@ -416,6 +416,7 @@ export default function Home() {
                     {/* Bottom Row Forms Container */}
                     <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
                         <div ref={leadFormRef} className="w-full mb-8 relative z-20">
+                            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 relative z-10 pl-2">Fill This Form To Find Your Part</h3>
                             <div className={`bg-white/80 backdrop-blur-2xl shadow-[0_8px_40px_rgba(37,99,235,0.18),0_2px_12px_rgba(0,0,0,0.08)] border border-blue-200/60 relative z-20 overflow-visible
                                 before:absolute before:inset-0 before:rounded-[inherit] before:bg-gradient-to-b before:from-white/60 before:to-white/10 before:pointer-events-none
                                 ${heroStep === 2 && !heroSuccess ? 'rounded-3xl' : 'rounded-2xl lg:rounded-full'}`}>
@@ -428,7 +429,6 @@ export default function Home() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-black text-slate-900 text-[15px]">The lead has been submitted 🎉</p>
-                                            <p className="text-[12px] text-slate-400 mt-0.5">Resetting in <span className="font-bold text-emerald-600">{successCountdown}s</span></p>
                                         </div>
                                         <button onClick={handleHeroReset} className="text-blue-600 text-[13px] font-bold hover:underline whitespace-nowrap flex-shrink-0">New Search</button>
                                     </div>
@@ -731,9 +731,9 @@ export default function Home() {
                             {get('cta_banner', 'subheading', 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.')}
                         </p>
                         <div className="flex flex-wrap items-center gap-4">
-                            <button onClick={scrollToLeadForm} id="cta-get-quote-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold bg-white text-blue-600 transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/10">
+                            <Link to="/quote" id="cta-get-quote-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold bg-white text-blue-600 transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/10">
                                 {get('cta_banner', 'button_text', 'Get Free Quote Now')}
-                            </button>
+                            </Link>
                             <Link to="/vendors" id="cta-browse-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10 border border-white/20">
                                 Browse All Vendors
                             </Link>
@@ -772,7 +772,7 @@ export default function Home() {
 
             {/* Conversion Engine Components */}
             <MobileStickyBar />
-            <LiveActivityFeed />
+
 
             {/* AD SLIDER 5 */}
             <div className="bg-white pt-8">

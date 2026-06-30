@@ -224,7 +224,7 @@ const AllVendors = () => {
                                         {/* Status Badge */}
                                         <div className="flex items-center justify-between px-4 pt-4">
                                             <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${badgeColor}`}>
-                                                {vendor.is_featured ? 'Featured' : vendor.is_top_rated ? 'Top Rated' : 'Verified'}
+                                                ✓ {vendor.is_featured ? 'Featured' : vendor.is_top_rated ? 'Top Rated' : 'Verified'}
                                             </span>
                                             {(vendor.is_top_rated || vendor.is_featured) && (
                                                 <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} compact={true} />
@@ -259,10 +259,7 @@ const AllVendors = () => {
                                                 <Rating stars={vendor.rating_stars || 5} percentage={vendor.rating_percentage || 100} size="sm" showPercentage={false} />
                                             </div>
 
-                                            <div className="flex items-center justify-between mb-4 text-[12px]">
-                                                <span className="font-bold text-slate-600">{vendor.parts_count ? `${vendor.parts_count.toLocaleString()}+ Parts` : '10,000+ Parts'}</span>
-                                                <span className="font-black text-emerald-600">{priceTier}</span>
-                                            </div>
+                                            <div className="mb-2"></div>
 
                                             <div className="mt-auto">
                                                 <span className="w-full py-2.5 rounded-xl font-bold text-[13px] text-white bg-blue-600 group-hover:bg-blue-700 transition-colors flex justify-center items-center gap-1.5">

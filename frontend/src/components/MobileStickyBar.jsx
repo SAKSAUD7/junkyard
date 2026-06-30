@@ -7,19 +7,48 @@ export default function MobileStickyBar() {
     const location = useLocation()
 
     // Read scroll threshold
+    // Visibility calculation based on scroll threshold and footer overlap
     useEffect(() => {
-        const handleScroll = () => {
-            // Show bar after scrolling down 300px
-            if (window.scrollY > 300) {
+        let isFooterVisible = false;
+
+        // Check if footer intersects with the viewport
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0]) {
+                isFooterVisible = entries[0].isIntersecting;
+                updateVisibility(window.scrollY);
+            }
+        }, { threshold: 0.1 });
+
+        const checkFooter = () => {
+            const footer = document.querySelector('footer');
+            if (footer) {
+                observer.observe(footer);
+            } else {
+                setTimeout(checkFooter, 500); // Retry if not immediately available
+            }
+        };
+        checkFooter();
+
+        const updateVisibility = (scrollY) => {
+            // Show only if we scrolled down >300px AND the footer is NOT visible
+            if (scrollY > 300 && !isFooterVisible) {
                 setIsVisible(true)
             } else {
                 setIsVisible(false)
             }
         }
+
+        const handleScroll = () => {
+            updateVisibility(window.scrollY);
+        }
         
-        window.addEventListener('scroll', handleScroll)
+        window.addEventListener('scroll', handleScroll, { passive: true })
         handleScroll()
-        return () => window.removeEventListener('scroll', handleScroll)
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+            observer.disconnect();
+        }
     }, [])
 
     // Hide if on quote, add-a-yard, or similar pages

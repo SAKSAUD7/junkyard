@@ -8,6 +8,11 @@ import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 import DynamicAd from '../components/DynamicAd';
 import MobileAdBanner from '../components/MobileAdBanner';
+import { getLogoUrl } from '../utils/imageUrl';
+import Rating from '../components/Rating';
+import VendorBadges from '../components/VendorBadges';
+
+const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100','text-purple-700 bg-purple-50 border-purple-100','text-orange-700 bg-orange-50 border-orange-100','text-emerald-700 bg-emerald-50 border-emerald-100'];
 
 export default function BrowseState() {
     const { state } = useParams();
@@ -179,53 +184,63 @@ export default function BrowseState() {
                     </div>
                 ) : junkyards.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {junkyards.map((vendor) => (
-                                <Link
-                                    key={vendor.id}
-                                    to={`/junkyard/${vendor.id}`}
-                                    className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_40px_rgb(37,99,235,0.08)] hover:border-blue-100 transition-all duration-300 transform hover:-translate-y-1"
-                                >
-                                    {/* Logo Header */}
-                                    <div className="h-32 bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100 relative">
-                                        {/* Status indicator */}
-                                        <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-green-500"></div>
-                                        {vendor.logo ? (
-                                            <img
-                                                src={vendor.logo}
-                                                alt={vendor.name}
-                                                className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300"
-                                                onError={(e) => { e.target.src = '/images/logo-placeholder.png'; }}
-                                            />
-                                        ) : (
-                                            <span className="text-4xl font-black text-slate-200">{vendor.name.charAt(0)}</span>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Body */}
-                                    <div className="p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
-                                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                                        
-                                        <div>
-                                            <div className="flex items-center gap-1.5 mb-2">
-                                                <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                                <span className="text-sm font-bold text-slate-700">{vendor.rating}</span>
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+                            {junkyards.map((vendor, index) => {
+                                const logoUrl = vendor.logo ? getLogoUrl(vendor.logo) : null;
+                                const badgeColor = BADGE_COLORS[index % BADGE_COLORS.length];
+                                return (
+                                    <Link to={`/junkyard/${vendor.id}`} key={vendor.id} className="block group focus:outline-none">
+                                        <div className="bg-white rounded-[16px] md:rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full flex flex-col">
+
+                                            {/* Status Badge */}
+                                            <div className="flex items-center gap-1 justify-between px-3 md:px-4 pt-3 md:pt-4">
+                                                <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-wider px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-full border ${badgeColor}`}>
+                                                    ✓ {vendor.is_featured ? 'Featured' : vendor.is_top_rated ? 'Top Rated' : 'Verified'}
+                                                </span>
+                                                {(vendor.is_top_rated || vendor.is_featured) && (
+                                                    <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} compact={true} />
+                                                )}
                                             </div>
-                                            <h3 className="font-black text-lg text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-1" title={vendor.name}>
-                                                {vendor.name}
-                                            </h3>
-                                            <div className="flex items-start gap-2 text-slate-500 mb-4">
-                                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                                <p className="text-sm font-medium line-clamp-2 leading-relaxed tracking-tight">{vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}</p>
+
+                                            {/* Logo */}
+                                            <div className="h-20 md:h-32 flex items-center justify-center bg-slate-50 mx-3 md:mx-4 my-2 md:my-3 rounded-lg md:rounded-xl overflow-hidden">
+                                                {logoUrl ? (
+                                                    <img src={logoUrl} alt={vendor.name}
+                                                        className="max-h-full max-w-full object-contain p-2 md:p-3 group-hover:scale-105 transition-transform duration-300"
+                                                        onError={e => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                                                    />
+                                                ) : (
+                                                    <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-blue-100 text-blue-600 font-black text-sm md:text-xl flex items-center justify-center">
+                                                        {vendor.name?.charAt(0) || 'J'}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="px-3 md:px-4 pb-3 md:pb-4 flex-1 flex flex-col">
+                                                <h3 className="font-black text-slate-900 text-[12px] md:text-[15px] leading-snug mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                                    {vendor.name}
+                                                </h3>
+                                                <p className="text-[10px] md:text-[12px] font-medium text-slate-400 mb-2 flex items-center gap-1 md:gap-1.5">
+                                                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
+                                                    <span className="truncate">{vendor.city}, {vendor.state}</span>
+                                                </p>
+
+                                                <div className="mb-2 md:mb-3">
+                                                    <Rating stars={vendor.rating_stars || 5} percentage={vendor.rating_percentage || 100} size="sm" showPercentage={false} />
+                                                </div>
+
+                                                <div className="mt-auto">
+                                                    <span className="w-full py-2 md:py-2.5 rounded-lg md:rounded-xl font-bold text-[11px] md:text-[13px] text-white bg-blue-600 group-hover:bg-blue-700 transition-colors flex justify-center items-center gap-1 md:gap-1.5">
+                                                        View <span className="hidden md:inline">Inventory</span>
+                                                        <svg className="w-3 h-3 md:w-3.5 md:h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7"/></svg>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-bold">
-                                            <span className="text-slate-500">View Yard</span>
-                                            <svg className="w-5 h-5 text-blue-600 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                );
+                            })}
                         </div>
 
                         {/* Pagination */}

@@ -80,7 +80,7 @@ export default function BrowseStates() {
     };
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen flex flex-col pt-16">
+        <div className="bg-[#f8fafc] min-h-screen flex flex-col">
             <SEO
                 title="Browse Junkyards by State – Interactive USA Map | JunkyardsNearMe"
                 description={`Explore ${statesData.length} states on our interactive map. Find ${totalVendors}+ verified junkyards nationwide. Click any state to see local listings.`}
@@ -89,21 +89,35 @@ export default function BrowseStates() {
 
             <Navbar />
 
-            <div className="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row-reverse gap-6 lg:h-[calc(100vh-100px)] min-h-[600px] overflow-hidden">
+            {/* ── HERO ── */}
+            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
+
+                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                    <div className="text-center mb-4">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Interactive Map</span>
+                        </div>
+
+                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            Browse Junkyards <span className="text-blue-600">By State</span>
+                        </h1>
+                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
+                            Explore {statesData.length} states on our interactive map. Find {totalVendors.toLocaleString()}+ verified junkyards nationwide.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div className="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col-reverse lg:flex-row-reverse gap-6 lg:h-[calc(100vh-100px)] min-h-[600px] overflow-hidden">
                 
                 {/* LEFT PANEL - STATES LIST & SEARCH */}
                 <div className="w-full lg:w-[35%] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex-shrink-0 h-[600px] lg:h-full">
                     {/* Header */}
                     <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3 bg-blue-50 border border-blue-100">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                            <span className="text-blue-600 text-[10px] font-black uppercase tracking-wider">
-                                {statesData.length} States · {totalVendors.toLocaleString()}+ Yards
-                            </span>
-                        </div>
-                        <h1 className="text-3xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            Browse <span className="block mt-2" style={{ color: '#60a5fa' }}>by State</span>
-                        </h1>
+                        <h2 className="text-xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Find Your State</h2>
                         
                         {/* Search Input */}
                         <div className="relative">
@@ -164,7 +178,7 @@ export default function BrowseStates() {
                 </div>
 
                 {/* RIGHT PANEL - INTERACTIVE MAP */}
-                <div className="flex-1 bg-white rounded-3xl overflow-hidden relative border border-slate-200 shadow-[0_8px_40px_rgb(0,0,0,0.06)] min-h-[400px]">
+                <div className="flex-1 bg-white rounded-3xl overflow-hidden relative z-0 border border-slate-200 shadow-[0_8px_40px_rgb(0,0,0,0.06)] min-h-[400px]">
                     {/* Label badge */}
                     <div className="absolute top-4 left-4 z-10 hidden sm:block">
                         <div className="px-4 py-2 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl text-slate-700 text-sm font-semibold shadow-sm">

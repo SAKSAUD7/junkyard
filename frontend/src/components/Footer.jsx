@@ -47,10 +47,18 @@ export default function Footer() {
                     <div>
                         <h3 className="font-bold text-[14px] text-slate-900 mb-4">Quick Links</h3>
                         <ul className="space-y-3">
-                            {['Home', 'Browse Parts', 'Junkyards', 'Blog', 'About Us', 'Contact Us'].map(link => (
-                                <li key={link}>
-                                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
-                                        {link}
+                            {[
+                                { name: 'Home', path: '/' },
+                                { name: 'Search', path: '/search' },
+                                { name: 'Browse', path: '/browse' },
+                                { name: 'Junkyards', path: '/vendors' },
+                                { name: 'Blog', path: '/blog' },
+                                { name: 'About Us', path: '/about' },
+                                { name: 'Contact', path: '/contact' }
+                            ].map(item => (
+                                <li key={item.name}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
@@ -61,10 +69,13 @@ export default function Footer() {
                     <div>
                         <h3 className="font-bold text-[14px] text-slate-900 mb-4">For Buyers</h3>
                         <ul className="space-y-3">
-                            {['Search Parts', 'How It Works', 'Buying Guides', 'Shipping Info', 'Returns', 'Help Center'].map(link => (
-                                <li key={link}>
-                                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
-                                        {link}
+                            {[
+                                { name: 'How It Works', path: '/how-it-works' },
+                                { name: 'FAQ', path: '/faq' }
+                            ].map(item => (
+                                <li key={item.name}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
@@ -75,32 +86,52 @@ export default function Footer() {
                     <div>
                          <h3 className="font-bold text-[14px] text-slate-900 mb-4">For Vendors</h3>
                         <ul className="space-y-3">
-                            {['Become a Vendor', 'Vendor Dashboard', 'Add Inventory', 'Pricing Plans', 'Resources', 'Vendor Support'].map(link => (
-                                <li key={link}>
-                                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
-                                        {link}
+                            {[
+                                { name: 'Add a Yard', path: '/add-a-yard' },
+                                { name: 'Vendor Login', path: '/vendor/login' }
+                            ].map(item => (
+                                <li key={item.name}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
                     </div>
                     
-                    {/* Newsletter */}
+                    {/* Contact */}
                     <div className="lg:col-span-1 min-w-[240px]">
-                         <h3 className="font-bold text-[14px] text-slate-900 mb-4">Newsletter</h3>
-                         <p className="text-[12px] font-medium text-slate-500 mb-3">
-                            Subscribe for tips, deals & latest updates.
-                         </p>
-                         <form className="space-y-2.5" onSubmit={e => e.preventDefault()}>
-                            <input 
-                                type="email" 
-                                placeholder="Your email address" 
-                                className="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-medium text-[13px] shadow-inner"
-                            />
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded px-3 py-2 transition-colors shadow-sm text-[13px]">
-                                Subscribe
-                            </button>
-                         </form>
+                        <h3 className="font-bold text-[13px] tracking-widest text-slate-900 mb-6 uppercase">Contact</h3>
+                        <div className="space-y-4">
+                            {/* Phone */}
+                            <div className="flex items-center gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                                </div>
+                                <span className="text-[14px] font-medium text-slate-600 font-mono tracking-widest">1-866-293-3731</span>
+                            </div>
+                            
+                            {/* Email */}
+                            <div className="flex items-center gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                </div>
+                                <span className="text-[14px] font-medium text-slate-600 font-mono tracking-widest">info@jynm.com</span>
+                            </div>
+
+                            <div className="h-px bg-slate-100 w-full my-4"></div>
+
+                            {/* Location */}
+                            <div className="flex items-center gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-[#fff2eb] border border-[#ffedd5] flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5 text-[#ea580c]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[14px] font-bold text-slate-700">Nationwide Service</span>
+                                    <span className="text-[13px] font-medium text-slate-500">Serving all 50 States</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -113,7 +144,6 @@ export default function Footer() {
                     <div className="flex gap-6">
                         <Link to="/privacy" className="text-[12px] font-medium text-slate-500 hover-rainbow-text">Privacy Policy</Link>
                         <Link to="/terms" className="text-[12px] font-medium text-slate-500 hover-rainbow-text">Terms & Conditions</Link>
-                        <Link to="/sitemap" className="text-[12px] font-medium text-slate-500 hover-rainbow-text">Sitemap</Link>
                     </div>
                 </div>
             </div>

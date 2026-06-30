@@ -4,7 +4,7 @@ export default function MobileDrawer({ isOpen, onClose, navLinks, isAuthenticate
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 z-[9999] flex">
             {/* Overlay */}
             <div 
                 className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
