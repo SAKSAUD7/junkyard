@@ -32,11 +32,16 @@ class BlogPostListSerializer(serializers.ModelSerializer):
     category_slug = serializers.CharField(source='category.slug', read_only=True, default=None)
     author_info = AuthorSerializer(source='author', read_only=True)
     tags_info = BlogTagSerializer(source='tags', many=True, read_only=True)
+    image_url = serializers.SerializerMethodField()
+
+    def get_image_url(self, obj):
+        return obj.thumbnail_url or obj.cover_image_url or ''
 
     class Meta:
         model = BlogPost
         fields = [
-            'id', 'title', 'slug', 'excerpt', 'thumbnail_url',
+            'id', 'title', 'slug', 'excerpt',
+            'thumbnail_url', 'cover_image_url', 'image_url',
             'category', 'category_name', 'category_slug',
             'author', 'author_info', 'tags_info',
             'is_featured', 'is_trending', 'is_editors_pick', 'status',
