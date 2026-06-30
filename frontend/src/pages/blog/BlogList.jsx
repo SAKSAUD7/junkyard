@@ -181,7 +181,7 @@ export default function BlogList() {
                     className={`group relative overflow-hidden rounded-3xl ${idx === 0 ? 'lg:col-span-2 aspect-[21/9] md:aspect-[21/7]' : 'aspect-video'} bg-slate-900 shadow-xl transition-all duration-300 hover:shadow-blue-900/20 hover:-translate-y-1 block`}
                 >
                     <img 
-                      src={post.image_url} 
+                      src={post.image_url || post.thumbnail_url || post.cover_image_url} 
                       alt={post.title} 
                       className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" 
                     />

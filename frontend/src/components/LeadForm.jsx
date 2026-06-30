@@ -588,23 +588,24 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 required />
                         </div>
 
-                        {/* State + ZIP */}
-                        <div className="grid grid-cols-2 gap-2">
+                        {/* State + ZIP — improved layout */}
+                        <div className="space-y-2">
+                            {/* ZIP first — type to auto-detect state */}
                             <div className="space-y-1">
-                                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">State <span className="text-blue-500">*</span></label>
-                                <select value={state} onChange={e => handleStateChange(e.target.value)}
-                                    className="w-full bg-white text-slate-900 text-[13px] font-medium rounded-xl px-3 py-2.5 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
-                                    required>
-                                    <option value="">State</option>
-                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                                {loadingZipcodes && <p className="text-[10px] text-blue-500 animate-pulse">Loading...</p>}
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">ZIP <span className="text-blue-500">*</span></label>
+                                <label className="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wide">
+                                    <span>ZIP Code <span className="text-blue-500">*</span></span>
+                                    {loadingZipcode && <span className="font-normal lowercase text-blue-500 animate-pulse normal-case tracking-normal">Looking up…</span>}
+                                </label>
                                 <div className="relative">
-                                    <input type="text" value={zip}
+                                    <input
+                                        type="text"
+                                        value={zip}
+                                        autoComplete="off"
+                                        autoCorrect="off"
+                                        autoCapitalize="off"
+                                        spellCheck={false}
+                                        inputMode="numeric"
+                                        maxLength={10}
                                         onChange={e => {
                                             const val = e.target.value
                                             setZip(val)
@@ -613,35 +614,72 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                                 const match = zipcodes.find(z => z.postal_code === val)
                                                 if (match) { setZipcodeCity(match.city_name) }
                                                 else { setZipcodeCity(''); if (val.length === 5) handleZipChange(val) }
-                                            } else { handleZipChange(val) }
+                                            } else {
+                                                handleZipChange(val)
+                                            }
                                         }}
                                         onFocus={() => { if (zipcodes.length > 0) setShowZipSuggestions(true) }}
                                         onBlur={() => setTimeout(() => setShowZipSuggestions(false), 200)}
-                                        placeholder="Zip Code"
+                                        placeholder="e.g. 90210"
                                         className="w-full bg-white text-slate-900 text-[13px] font-medium rounded-xl px-3 py-2.5 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder-slate-400"
-                                        required />
+                                        required
+                                    />
+                                    {/* Spinner */}
                                     {loadingZipcode && (
                                         <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
                                             <div className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                                         </div>
                                     )}
+                                    {/* Suggestions dropdown */}
                                     {showZipSuggestions && zipcodes.length > 0 && (
-                                        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                                            {zipcodes.filter(z => z.postal_code.startsWith(zip)).slice(0, 100).map((z, i) => (
-                                                <div key={`${z.postal_code}-${i}`}
-                                                    className="px-3 py-2 text-[12px] hover:bg-blue-50 cursor-pointer text-slate-700 flex justify-between"
-                                                    onMouseDown={e => { e.preventDefault(); setZip(z.postal_code); setZipcodeCity(z.city_name); setShowZipSuggestions(false) }}>
-                                                    <span className="font-bold">{z.postal_code}</span>
-                                                    <span className="text-slate-400">{z.city_name}</span>
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                            {zipcodes.filter(z => z.postal_code.startsWith(zip)).slice(0, 80).map((z, i) => (
+                                                <div
+                                                    key={`${z.postal_code}-${i}`}
+                                                    className="px-3 py-2 text-[12px] hover:bg-blue-50 cursor-pointer text-slate-700 flex justify-between items-center border-b border-slate-50 last:border-0"
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setZip(z.postal_code);
+                                                        setZipcodeCity(z.city_name);
+                                                        setShowZipSuggestions(false);
+                                                    }}
+                                                >
+                                                    <span className="font-bold text-slate-800">{z.postal_code}</span>
+                                                    <span className="text-slate-400 text-[11px]">{z.city_name}</span>
                                                 </div>
                                             ))}
                                             {zipcodes.filter(z => z.postal_code.startsWith(zip)).length === 0 && (
-                                                <div className="px-3 py-2 text-[11px] text-slate-400 italic">No matches. You can type any zip.</div>
+                                                <div className="px-3 py-2.5 text-[11px] text-slate-400 italic text-center">No matches — you can type any ZIP code</div>
                                             )}
                                         </div>
                                     )}
                                 </div>
-                                {zipcodeCity && <p className="text-[10px] text-emerald-600 mt-1">📍 {zipcodeCity}, {state}</p>}
+                                {/* Auto-detected city/state feedback */}
+                                {zipcodeCity ? (
+                                    <p className="text-[10px] text-emerald-600 font-bold mt-1 flex items-center gap-1">
+                                        <span>✓</span> {zipcodeCity}, {state}
+                                    </p>
+                                ) : (
+                                    !state && <p className="text-[10px] text-slate-400 mt-1">Type your ZIP and we'll auto-detect your state</p>
+                                )}
+                            </div>
+
+                            {/* State — auto-filled or manual override */}
+                            <div className="space-y-1">
+                                <label className="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wide">
+                                    <span>State <span className="text-blue-500">*</span></span>
+                                    {state && !zipcodeCity && <span className="font-normal lowercase text-slate-400 normal-case tracking-normal text-[10px]">ZIP suggestions enabled</span>}
+                                </label>
+                                <select
+                                    value={state}
+                                    onChange={e => handleStateChange(e.target.value)}
+                                    className="w-full bg-white text-slate-900 text-[13px] font-medium rounded-xl px-3 py-2.5 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                                    required
+                                >
+                                    <option value="">Select State</option>
+                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                                {loadingZipcodes && <p className="text-[10px] text-blue-500 animate-pulse">Loading ZIP codes for {state}…</p>}
                             </div>
                         </div>
 

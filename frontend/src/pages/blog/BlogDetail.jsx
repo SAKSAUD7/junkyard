@@ -177,7 +177,11 @@ export default function BlogDetail() {
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-slate-500">
             <span className="flex items-center gap-2">
-              <img src="https://ui-avatars.com/api/?name=JYNM+Team&background=e0e7ff&color=4f46e5" alt="Author" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
+              <img
+                src={post.author_info?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author_info?.name || 'JYNM')}&background=e0e7ff&color=4f46e5`}
+                alt={post.author_info?.name || 'Author'}
+                className="w-8 h-8 rounded-full border-2 border-white shadow-sm object-cover"
+              />
               <span className="text-slate-900">{post.author_info?.name || 'JYNM Editorial'}</span>
             </span>
             <span className="flex items-center gap-1.5"><CalendarIcon className="w-5 h-5 text-slate-400" /> {formatDate(post.published_at || post.created_at)}</span>
@@ -199,35 +203,80 @@ export default function BlogDetail() {
             {/* Block Renderer */}
             <article className="prose prose-lg prose-slate max-w-none prose-headings:font-black prose-headings:font-['Outfit'] prose-p:leading-loose prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl">
                 {post.blocks && post.blocks.length > 0 ? (
-                    post.blocks.map(b => (
-                        <div key={b.id} className="mb-8 group">
-                            {b.type === 'heading' && React.createElement(b.level, { className: 'mt-12 mb-6 text-slate-900 tracking-tight' }, b.text)}
-                            {b.type === 'paragraph' && <p className="text-slate-700">{b.text}</p>}
-                            {b.type === 'image' && (
-                                <figure className="my-10">
-                                    <img src={b.url} alt={b.alt} className="w-full shadow-lg shadow-slate-100 border border-slate-100" />
-                                    {b.caption && <figcaption className="text-center text-sm font-medium text-slate-400 mt-3">{b.caption}</figcaption>}
-                                </figure>
-                            )}
-                            {b.type === 'list' && (
-                                b.style === 'number' 
-                                    ? <ol className="pl-6 space-y-3 marker:text-blue-600 marker:font-bold">{b.items.map((i, idx) => <li key={idx} className="text-slate-700 pl-2">{i}</li>)}</ol>
-                                    : <ul className="pl-6 space-y-3 marker:text-blue-400">{b.items.map((i, idx) => <li key={idx} className="text-slate-700 pl-2">{i}</li>)}</ul>
-                            )}
-                            {b.type === 'cta' && (
-                                <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl p-10 text-center text-white my-12 shadow-2xl shadow-blue-900/20 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-[80px] pointer-events-none"></div>
-                                    <h3 className="text-3xl font-black mb-4 text-white font-['Outfit'] relative z-10">{b.title}</h3>
-                                    <p className="text-blue-100/80 mb-8 text-lg font-medium relative z-10">{b.description}</p>
-                                    {b.buttonText && b.buttonLink && (
-                                        <Link to={b.buttonLink} className="inline-block bg-white text-slate-900 font-bold px-8 py-3.5 rounded-xl hover:scale-105 transition-transform relative z-10 shadow-lg shadow-black/10">
-                                            {b.buttonText}
-                                        </Link>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    ))
+                    post.blocks.map(b => {
+                        // Normalise field names — support both old schema (text, style, title/description/buttonLink)
+                        // and new seed schema (content, listType, heading/subtext/buttonUrl)
+                        const text     = b.content  || b.text   || '';
+                        const heading  = b.heading  || b.title  || '';
+                        const subtext  = b.subtext  || b.description || '';
+                        const btnUrl   = b.buttonUrl || b.buttonLink || '';
+                        const listType = b.listType  || b.style  || 'unordered';
+                        // Support numeric level (2) or string level ('h2')
+                        const tag = typeof b.level === 'number' ? `h${b.level}` : (b.level || 'h2');
+
+                        return (
+                            <div key={b.id} className="mb-8 group">
+                                {b.type === 'heading' && React.createElement(
+                                    tag,
+                                    { className: 'mt-12 mb-6 text-slate-900 tracking-tight' },
+                                    text
+                                )}
+                                {b.type === 'paragraph' && (
+                                    <p className="text-slate-700 leading-relaxed">{text}</p>
+                                )}
+                                {b.type === 'image' && (
+                                    <figure className="my-10">
+                                        <img
+                                            src={b.url}
+                                            alt={b.altText || b.alt || ''}
+                                            className="w-full rounded-2xl shadow-lg shadow-slate-100 border border-slate-100"
+                                        />
+                                        {b.caption && (
+                                            <figcaption className="text-center text-sm font-medium text-slate-400 mt-3 italic">
+                                                {b.caption}
+                                            </figcaption>
+                                        )}
+                                    </figure>
+                                )}
+                                {b.type === 'list' && b.items?.length > 0 && (
+                                    listType === 'ordered' || listType === 'number'
+                                        ? <ol className="pl-6 space-y-3 list-decimal marker:text-blue-600 marker:font-bold">
+                                            {b.items.map((item, idx) => (
+                                                <li key={idx} className="text-slate-700 pl-2 leading-relaxed">{item}</li>
+                                            ))}
+                                          </ol>
+                                        : <ul className="pl-6 space-y-3 list-disc marker:text-blue-400">
+                                            {b.items.map((item, idx) => (
+                                                <li key={idx} className="text-slate-700 pl-2 leading-relaxed">{item}</li>
+                                            ))}
+                                          </ul>
+                                )}
+                                {b.type === 'quote' && (
+                                    <blockquote className="border-l-4 border-blue-500 pl-6 py-2 my-8 bg-blue-50 rounded-r-2xl">
+                                        <p className="text-slate-700 italic text-xl leading-relaxed">{text}</p>
+                                        {b.author && <cite className="text-sm text-slate-400 not-italic font-semibold mt-2 block">— {b.author}</cite>}
+                                    </blockquote>
+                                )}
+                                {b.type === 'cta' && (
+                                    <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl p-10 text-center text-white my-12 shadow-2xl shadow-blue-900/20 relative overflow-hidden not-prose">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-[80px] pointer-events-none" />
+                                        <h3 className="text-3xl font-black mb-4 text-white relative z-10" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            {heading}
+                                        </h3>
+                                        <p className="text-blue-100/80 mb-8 text-lg font-medium relative z-10">{subtext}</p>
+                                        {b.buttonText && btnUrl && (
+                                            <Link
+                                                to={btnUrl}
+                                                className="inline-block bg-white text-slate-900 font-bold px-8 py-3.5 rounded-xl hover:scale-105 transition-transform relative z-10 shadow-lg shadow-black/10"
+                                            >
+                                                {b.buttonText}
+                                            </Link>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })
                 ) : (
                     <div dangerouslySetInnerHTML={{ __html: post.content || '<p>No content available.</p>' }} />
                 )}
@@ -276,7 +325,11 @@ export default function BlogDetail() {
 
             {/* Author Block Bottom */}
             <div className="mt-12 p-8 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-                <img src="https://ui-avatars.com/api/?name=JYNM+Team&background=e0e7ff&color=4f46e5&size=128" alt="Author" className="w-20 h-20 rounded-2xl shadow-sm bg-white" />
+            <img
+                src={post.author_info?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author_info?.name || 'JYNM')}&background=e0e7ff&color=4f46e5&size=128`}
+                alt={post.author_info?.name || 'Author'}
+                className="w-20 h-20 rounded-2xl shadow-sm bg-white object-cover"
+            />
                 <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Written By</span>
                     <h4 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -340,9 +393,14 @@ export default function BlogDetail() {
                 <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
                     <h4 className="font-black text-slate-900 text-sm uppercase tracking-wider mb-4">In this article</h4>
                     <ul className="space-y-3 text-sm font-medium text-slate-500">
-                        {post.blocks?.filter(b => b.type === 'heading').map((h, i) => (
-                            <li key={i} className="hover:text-blue-600 cursor-pointer transition-colors line-clamp-1">{h.text}</li>
-                        )) || <li>No sections</li>}
+                        {post.blocks?.filter(b => b.type === 'heading').length > 0
+                            ? post.blocks.filter(b => b.type === 'heading').map((h, i) => (
+                                <li key={i} className="hover:text-blue-600 cursor-pointer transition-colors line-clamp-1 border-l-2 border-transparent hover:border-blue-400 pl-2 py-0.5">
+                                    {h.content || h.text || 'Section'}
+                                </li>
+                              ))
+                            : <li className="text-slate-400 italic">No sections</li>
+                        }
                     </ul>
                 </div>
                 
