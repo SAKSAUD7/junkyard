@@ -97,7 +97,7 @@ export default function BlogDetail() {
         }
       } catch {
         // Use sample data on error (for demo purposes)
-        setPost(slug === SAMPLE_POST.slug ? SAMPLE_POST : { ...SAMPLE_POST, slug, title: \`Article: \${slug}\` });
+        setPost(slug === SAMPLE_POST.slug ? SAMPLE_POST : { ...SAMPLE_POST, slug, title: `Article: ${slug}` });
         setLikesCount(SAMPLE_POST.likes_count);
         setRelated(SAMPLE_RELATED);
       } finally {
