@@ -304,7 +304,7 @@ export default function AdminLeads() {
                             </button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
+                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-5">
                             {/* Status Change */}
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Update Status</label>
@@ -326,61 +326,89 @@ export default function AdminLeads() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
-                                {/* Customer */}
+                            {/* Single-column stacked layout for full data visibility */}
+                            <div className="space-y-4">
+
+                                {/* Customer Details */}
                                 <div>
                                     <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Customer Details</label>
-                                    <div className="bg-slate-50 rounded-xl p-4 space-y-3">
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Name</p>
-                                            <p className="text-sm font-semibold text-slate-900">{selectedLead.name}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Email</p>
-                                            <a href={`mailto:${selectedLead.email}`} className="text-sm font-semibold text-blue-600">{selectedLead.email}</a>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Phone</p>
-                                            <a href={`tel:${selectedLead.phone}`} className="text-sm font-semibold text-blue-600">{selectedLead.phone}</a>
-                                        </div>
-                                        {(selectedLead.state || selectedLead.zip) && (
-                                            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
-                                                <div>
-                                                    <p className="text-[10px] text-slate-500 uppercase">State</p>
-                                                    <p className="text-sm font-semibold text-slate-900">{selectedLead.state || '—'}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-[10px] text-slate-500 uppercase">ZIP Code</p>
-                                                    <p className="text-sm font-semibold text-slate-900">{selectedLead.zip || '—'}</p>
-                                                </div>
+                                    <div className="bg-slate-50 rounded-xl p-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-[10px] text-slate-500 uppercase">Name</p>
+                                                <p className="text-sm font-semibold text-slate-900">{selectedLead.name}</p>
                                             </div>
-                                        )}
-                                        {selectedLead.lead_type && (
-                                            <div className="pt-1">
-                                                <p className="text-[10px] text-slate-500 uppercase">Lead Type</p>
-                                                <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100">
-                                                    {selectedLead.lead_type === 'vendor' ? 'Junkyard Vendor' : 'Quality Auto Parts'}
-                                                </span>
+                                            <div>
+                                                <p className="text-[10px] text-slate-500 uppercase">Phone</p>
+                                                <a href={`tel:${selectedLead.phone}`} className="text-sm font-semibold text-blue-600">{selectedLead.phone}</a>
                                             </div>
-                                        )}
+                                            <div className="col-span-2">
+                                                <p className="text-[10px] text-slate-500 uppercase">Email</p>
+                                                <a href={`mailto:${selectedLead.email}`} className="text-sm font-semibold text-blue-600">{selectedLead.email}</a>
+                                            </div>
+                                            {(selectedLead.state || selectedLead.zip) && (
+                                                <>
+                                                    <div>
+                                                        <p className="text-[10px] text-slate-500 uppercase">State</p>
+                                                        <p className="text-sm font-semibold text-slate-900">{selectedLead.state || '—'}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[10px] text-slate-500 uppercase">ZIP Code</p>
+                                                        <p className="text-sm font-semibold text-slate-900">{selectedLead.zip || '—'}</p>
+                                                    </div>
+                                                </>
+                                            )}
+                                            {selectedLead.lead_type && (
+                                                <div className="col-span-2">
+                                                    <p className="text-[10px] text-slate-500 uppercase">Lead Type</p>
+                                                    <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100">
+                                                        {selectedLead.lead_type === 'vendor' ? 'Junkyard Vendor' : 'Quality Auto Parts'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Vehicle */}
+                                {/* Vehicle & Part */}
                                 <div>
-                                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Vehicle & Part</label>
-                                    <div className="bg-slate-50 rounded-xl p-4 space-y-3">
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Vehicle</p>
-                                            <p className="text-sm font-semibold text-slate-900">{selectedLead.year} {selectedLead.make} {selectedLead.model}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Requested Part</p>
-                                            <p className="text-sm font-semibold text-slate-900">{selectedLead.part}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-slate-500 uppercase">Hollander No.</p>
-                                            <p className="text-sm font-mono text-slate-700">{selectedLead.hollander_number || 'N/A'}</p>
+                                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Vehicle &amp; Part</label>
+                                    <div className="bg-slate-50 rounded-xl p-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="col-span-2">
+                                                <p className="text-[10px] text-slate-500 uppercase">Vehicle</p>
+                                                <p className="text-sm font-bold text-slate-900">{selectedLead.year} {selectedLead.make} {selectedLead.model}</p>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <p className="text-[10px] text-slate-500 uppercase">Requested Part</p>
+                                                <p className="text-sm font-semibold text-slate-900">{selectedLead.part || '—'}</p>
+                                            </div>
+                                            {selectedLead.options && (
+                                                <div className="col-span-2">
+                                                    <p className="text-[10px] text-slate-500 uppercase mb-1">Part Options / Specs</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {selectedLead.options.split(',').map((opt, i) => (
+                                                            <span key={i} className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                                {opt.trim()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="col-span-2">
+                                                <p className="text-[10px] text-slate-500 uppercase mb-1">Hollander Interchange No.</p>
+                                                {selectedLead.hollander_number && selectedLead.hollander_number !== 'N/A' && selectedLead.hollander_number !== 'Not Found' ? (
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-sm">
+                                                        <span className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0"></span>
+                                                        {selectedLead.hollander_number}
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 font-mono text-sm">
+                                                        <span className="w-2 h-2 bg-slate-400 rounded-full flex-shrink-0"></span>
+                                                        {selectedLead.hollander_number || 'N/A'}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
