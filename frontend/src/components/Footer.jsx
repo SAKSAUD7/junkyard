@@ -74,7 +74,8 @@ export default function Footer() {
                         <ul className="space-y-3">
                             {[
                                 { name: 'How It Works', path: '/how-it-works' },
-                                { name: 'FAQ', path: '/faq' }
+                                { name: 'FAQ', path: '/faq' },
+                                { name: 'Get a Quote', path: '/quote' }
                             ].map(item => (
                                 <li key={item.name}>
                                     <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover-rainbow-text hover:font-bold">
