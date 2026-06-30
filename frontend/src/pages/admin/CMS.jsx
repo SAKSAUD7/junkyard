@@ -21,7 +21,6 @@ const PAGES = [
     { key: 'contact',      label: 'Contact',        icon: <EnvelopeIcon className="w-5 h-5" /> },
     { key: 'browse',       label: 'Browse States',  icon: <MapIcon className="w-5 h-5" /> },
     { key: 'vendors',      label: 'Vendors',        icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-    { key: 'blog',         label: 'Blog',           icon: <BookOpenIcon className="w-5 h-5" /> },
     { key: 'faq',          label: 'FAQ',            icon: <QuestionMarkCircleIcon className="w-5 h-5" /> },
     { key: 'how_it_works', label: 'How It Works',   icon: <CogIcon className="w-5 h-5" /> },
     { key: 'navbar',       label: 'Navbar',         icon: <BookmarkIcon className="w-5 h-5" /> },
