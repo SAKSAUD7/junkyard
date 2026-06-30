@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { api } from '../../services/api';
 import { useCMSContext } from '../../contexts/CMSContext';
 import {
@@ -6,35 +8,68 @@ import {
     PhotoIcon, ArrowUpTrayIcon, LinkIcon, DocumentTextIcon,
     ChevronDownIcon, ChevronRightIcon, ExclamationTriangleIcon,
     CheckCircleIcon, ArrowPathIcon, EyeIcon, TrashIcon,
-    FolderOpenIcon, GlobeAltIcon, Squares2X2Icon,
+    FolderOpenIcon, GlobeAltIcon, Squares2X2Icon, BoltIcon, LinkIcon as ArrowTopRightOnSquareIcon,
+    HomeIcon, InformationCircleIcon, EnvelopeIcon, MapIcon, BuildingOffice2Icon,
+    BookOpenIcon, QuestionMarkCircleIcon, CogIcon, StarIcon, BookmarkIcon,
+    FilmIcon, XMarkIcon
 } from '@heroicons/react/24/outline';
 
 // ─── Page definitions ─────────────────────────────────────────────────────────
 const PAGES = [
-    { key: 'home',         label: 'Home',          icon: '🏠' },
-    { key: 'about',        label: 'About',          icon: 'ℹ️' },
-    { key: 'contact',      label: 'Contact',        icon: '✉️' },
-    { key: 'browse',       label: 'Browse States',  icon: '🗺️' },
-    { key: 'vendors',      label: 'Vendors',        icon: '🏭' },
-    { key: 'blog',         label: 'Blog',           icon: '📖' },
-    { key: 'faq',          label: 'FAQ',            icon: '❓' },
-    { key: 'how_it_works', label: 'How It Works',   icon: '⚙️' },
-    { key: 'navbar',       label: 'Navbar',         icon: '📌' },
-    { key: 'footer',       label: 'Footer',         icon: '🦶' },
-    { key: 'global',       label: 'Global / SEO',   icon: '🌐' },
-    { key: 'add_a_yard',   label: 'Add A Yard',     icon: '🏗️' },
-    { key: 'vendor_portal',label: 'Vendor Portal',  icon: '💼' },
-    { key: 'quote_request',label: 'Quote Request',  icon: '📝' },
+    { key: 'home',         label: 'Home',          icon: <HomeIcon className="w-5 h-5" /> },
+    { key: 'about',        label: 'About',          icon: <InformationCircleIcon className="w-5 h-5" /> },
+    { key: 'contact',      label: 'Contact',        icon: <EnvelopeIcon className="w-5 h-5" /> },
+    { key: 'browse',       label: 'Browse States',  icon: <MapIcon className="w-5 h-5" /> },
+    { key: 'vendors',      label: 'Vendors',        icon: <BuildingOffice2Icon className="w-5 h-5" /> },
+    { key: 'blog',         label: 'Blog',           icon: <BookOpenIcon className="w-5 h-5" /> },
+    { key: 'faq',          label: 'FAQ',            icon: <QuestionMarkCircleIcon className="w-5 h-5" /> },
+    { key: 'how_it_works', label: 'How It Works',   icon: <CogIcon className="w-5 h-5" /> },
+    { key: 'navbar',       label: 'Navbar',         icon: <BookmarkIcon className="w-5 h-5" /> },
+    { key: 'footer',       label: 'Footer',         icon: <StarIcon className="w-5 h-5" /> },
+    { key: 'global',       label: 'Global / SEO',   icon: <GlobeAltIcon className="w-5 h-5" /> },
+    { key: 'add_a_yard',   label: 'Add A Yard',     icon: <Squares2X2Icon className="w-5 h-5" /> },
+    { key: 'vendor_portal',label: 'Vendor Portal',  icon: <BuildingOffice2Icon className="w-5 h-5" /> },
+    { key: 'quote_request',label: 'Quote Request',  icon: <DocumentTextIcon className="w-5 h-5" /> },
 ];
 
 const TYPE_META = {
-    text:     { label: 'Text',     color: 'bg-slate-100 text-slate-600',    icon: '✏️' },
-    textarea: { label: 'Textarea', color: 'bg-green-100 text-green-700',    icon: '📝' },
-    html:     { label: 'HTML',     color: 'bg-blue-100 text-blue-700',      icon: '🌐' },
-    url:      { label: 'URL',      color: 'bg-cyan-100 text-cyan-700',      icon: '🔗' },
-    image:    { label: 'Image',    color: 'bg-purple-100 text-purple-700',  icon: '🖼️' },
-    boolean:  { label: 'Boolean',  color: 'bg-orange-100 text-orange-700',  icon: '🔘' },
-    json:     { label: 'JSON',     color: 'bg-yellow-100 text-yellow-700',  icon: '{ }' },
+    text:     { label: 'Text',     color: 'bg-slate-100 text-slate-600',    icon: <PencilSquareIcon className="w-5 h-5" /> },
+    textarea: { label: 'Textarea', color: 'bg-green-100 text-green-700',    icon: <DocumentTextIcon className="w-5 h-5" /> },
+    html:     { label: 'Visual',   color: 'bg-blue-100 text-blue-700',      icon: <Squares2X2Icon className="w-5 h-5" /> },
+    url:      { label: 'URL',      color: 'bg-cyan-100 text-cyan-700',      icon: <LinkIcon className="w-5 h-5" /> },
+    image:    { label: 'Image',    color: 'bg-purple-100 text-purple-700',  icon: <PhotoIcon className="w-5 h-5" /> },
+    video:    { label: 'Video',    color: 'bg-pink-100 text-pink-700',      icon: <FilmIcon className="w-5 h-5" /> },
+    boolean:  { label: 'Toggle',   color: 'bg-orange-100 text-orange-700',  icon: <CheckCircleIcon className="w-5 h-5" /> },
+    json:     { label: 'JSON',     color: 'bg-yellow-100 text-yellow-700',  icon: <DocumentTextIcon className="w-5 h-5" /> },
+};
+
+// Helper: detect if a key / value looks like a video field
+const isVideoField = (entry) => {
+    const key = (entry.key || '').toLowerCase();
+    const label = (entry.label || '').toLowerCase();
+    const val  = (entry.value || '').toLowerCase();
+    return (
+        key.includes('video') ||
+        label.includes('video') ||
+        val.endsWith('.mp4') ||
+        val.endsWith('.webm') ||
+        val.endsWith('.mov') ||
+        val.endsWith('.ogg')
+    );
+};
+
+// Helper: detect if a key / value looks like an image field (beyond content_type='image')
+const isImageUrlField = (entry) => {
+    const key = (entry.key || '').toLowerCase();
+    const label = (entry.label || '').toLowerCase();
+    return (
+        key.includes('image') ||
+        key.includes('photo') ||
+        key.includes('logo') ||
+        label.includes('image') ||
+        label.includes('photo') ||
+        label.includes('logo')
+    );
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -49,9 +84,9 @@ function Toast({ toasts }) {
             {toasts.map(t => (
                 <div
                     key={t.id}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white text-sm font-medium
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-slate-900 text-sm font-medium
                         pointer-events-auto animate-fade-in-up
-                        ${t.type === 'success' ? 'bg-emerald-600' : t.type === 'error' ? 'bg-red-600' : 'bg-indigo-600'}`}
+                        ${t.type === 'success' ? 'bg-emerald-600' : t.type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`}
                 >
                     {t.type === 'success'
                         ? <CheckCircleIcon className="w-4 h-4 flex-shrink-0" />
@@ -194,7 +229,7 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                     </div>
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center pointer-events-none">
-                        <div className="opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 bg-black/70 text-white text-xs font-semibold px-4 py-2 rounded-full">
+                        <div className="opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 bg-black/70 text-slate-900 text-xs font-semibold px-4 py-2 rounded-full">
                             <ArrowUpTrayIcon className="w-4 h-4" />
                             Click to replace
                         </div>
@@ -202,14 +237,14 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                     {/* Uploading overlay */}
                     {uploading && (
                         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-3">
-                            <ArrowPathIcon className="w-8 h-8 text-white animate-spin" />
+                            <ArrowPathIcon className="w-8 h-8 text-slate-900 animate-spin" />
                             <div className="w-40 bg-white/20 rounded-full h-1.5">
                                 <div
                                     className="bg-indigo-400 h-1.5 rounded-full transition-all duration-300"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
-                            <span className="text-white text-xs font-medium">{uploadProgress}%</span>
+                            <span className="text-slate-900 text-xs font-medium">{uploadProgress}%</span>
                         </div>
                     )}
                 </div>
@@ -227,17 +262,17 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                     {uploading ? (
                         <>
                             <ArrowPathIcon className="w-8 h-8 text-indigo-500 animate-spin mb-2" />
-                            <span className="text-sm font-medium text-indigo-600">Uploading… {uploadProgress}%</span>
+                            <span className="text-sm font-medium text-blue-600">Uploading… {uploadProgress}%</span>
                             <div className="w-32 bg-indigo-200 rounded-full h-1 mt-2">
                                 <div
-                                    className="bg-indigo-500 h-1 rounded-full transition-all"
+                                    className="bg-blue-600 h-1 rounded-full transition-all"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
                         </>
                     ) : (
                         <>
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center mb-3">
+                            <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-3">
                                 <PhotoIcon className="w-6 h-6 text-indigo-500" />
                             </div>
                             <span className="text-sm font-semibold text-slate-600">No image — click to upload</span>
@@ -254,9 +289,9 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                     type="button"
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading || saving}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
-                        disabled:opacity-50 text-white text-sm font-semibold transition-all flex-shrink-0
-                        shadow-sm shadow-indigo-200"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-indigo-700
+                        disabled:opacity-50 text-slate-900 text-sm font-semibold transition-all flex-shrink-0
+                        shadow-sm shadow-blue-200"
                 >
                     {uploading
                         ? <ArrowPathIcon className="w-4 h-4 animate-spin" />
@@ -286,7 +321,7 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                         onClick={() => onSave(entry.id)}
                         disabled={saving || uploading}
                         className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                            disabled:opacity-50 text-white text-sm font-semibold transition-all flex-shrink-0
+                            disabled:opacity-50 text-slate-900 text-sm font-semibold transition-all flex-shrink-0
                             shadow-sm shadow-emerald-200"
                     >
                         {saving
@@ -316,11 +351,148 @@ function ImageField({ entry, value, onChange, onSave, saving, dirty }) {
                         href={preview}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs text-indigo-600 hover:underline flex-shrink-0"
+                        className="text-xs text-blue-600 hover:underline flex-shrink-0"
                         onClick={e => e.stopPropagation()}
                     >
                         Open ↗
                     </a>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Video Upload / Preview Field ─────────────────────────────────────────────
+function VideoField({ entry, value, onChange, onSave, saving, dirty }) {
+    const fileRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [preview, setPreview] = useState(value || '');
+
+    useEffect(() => { setPreview(value || ''); }, [value]);
+
+    const handleUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const MAX = 200 * 1024 * 1024; // 200 MB
+        if (file.size > MAX) { setUploadError(`File too large (${(file.size/1024/1024).toFixed(0)} MB). Max 200 MB.`); e.target.value=''; return; }
+        const ALLOWED = ['video/mp4','video/webm','video/ogg','video/quicktime'];
+        if (!ALLOWED.includes(file.type)) { setUploadError('Unsupported format. Use MP4, WebM, OGG, or MOV.'); e.target.value=''; return; }
+        setUploadError(''); setUploading(true); setUploadProgress(0);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', file.name.replace(/\.[^/.]+$/, ''));
+            const baseURL = import.meta.env.VITE_API_URL || '';
+            const videoUrl = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.upload.onprogress = (ev) => { if (ev.lengthComputable) setUploadProgress(Math.round((ev.loaded/ev.total)*100)); };
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try { const d = JSON.parse(xhr.responseText); const u = d.resolved_url||d.url||d.file||''; if (!u) reject(new Error('No URL returned')); else resolve(u); }
+                        catch { reject(new Error('Invalid response')); }
+                    } else reject(new Error(`Upload failed (HTTP ${xhr.status})`));
+                };
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.open('POST', `${baseURL}/api/cms/admin/media/`);
+                xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+                xhr.send(formData);
+            });
+            setPreview(videoUrl);
+            onChange(entry.id, videoUrl);
+        } catch (err) { setUploadError(err.message); }
+        finally { setUploading(false); setUploadProgress(0); e.target.value=''; }
+    };
+
+    const handleRemove = () => { setPreview(''); setUploadError(''); onChange(entry.id, ''); };
+
+    return (
+        <div className="space-y-3">
+            <input ref={fileRef} type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" onChange={handleUpload} className="hidden" />
+
+            {preview ? (
+                <div className="relative rounded-xl overflow-hidden border-2 border-slate-200 bg-black group">
+                    <video
+                        key={preview}
+                        src={preview}
+                        controls
+                        className="w-full max-h-72 object-contain"
+                    />
+                    {uploading && (
+                        <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+                            <ArrowPathIcon className="w-8 h-8 text-white animate-spin" />
+                            <div className="w-40 bg-white/20 rounded-full h-1.5">
+                                <div className="bg-indigo-400 h-1.5 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                            </div>
+                            <span className="text-white text-xs font-medium">{uploadProgress}%</span>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div
+                    onClick={() => !uploading && fileRef.current?.click()}
+                    className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+                        uploading ? 'border-pink-400 bg-pink-50' : 'border-slate-300 bg-slate-50 hover:border-pink-400 hover:bg-pink-50'
+                    }`}
+                    style={{ minHeight: 140 }}
+                >
+                    {uploading ? (
+                        <>
+                            <ArrowPathIcon className="w-8 h-8 text-pink-500 animate-spin mb-2" />
+                            <span className="text-sm font-medium text-pink-600">Uploading… {uploadProgress}%</span>
+                            <div className="w-32 bg-pink-200 rounded-full h-1 mt-2">
+                                <div className="bg-pink-500 h-1 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center mb-3">
+                                <FilmIcon className="w-6 h-6 text-pink-500" />
+                            </div>
+                            <span className="text-sm font-semibold text-slate-600">No video — click to upload</span>
+                            <span className="text-xs text-slate-400 mt-1">MP4 · WebM · MOV · max 200 MB</span>
+                        </>
+                    )}
+                </div>
+            )}
+
+            {/* Current URL (editable) */}
+            <div className="relative">
+                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                    type="text"
+                    value={preview}
+                    onChange={e => { setPreview(e.target.value); onChange(entry.id, e.target.value); }}
+                    className="w-full pl-9 pr-4 py-2.5 text-sm rounded-lg bg-white border border-slate-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none transition-all font-mono"
+                    placeholder="/Video/filename.mp4 or https://…"
+                />
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading || saving}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-600 hover:bg-pink-700 text-white text-sm font-semibold transition-all shadow-sm shadow-pink-200 disabled:opacity-50">
+                    {uploading ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <ArrowUpTrayIcon className="w-4 h-4" />}
+                    {uploading ? `Uploading ${uploadProgress}%` : preview ? 'Replace Video' : 'Upload Video'}
+                </button>
+                {preview && !uploading && (
+                    <button type="button" onClick={handleRemove} disabled={saving}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold transition-all disabled:opacity-50">
+                        <TrashIcon className="w-4 h-4" /> Remove
+                    </button>
+                )}
+                {dirty && (
+                    <button type="button" onClick={() => onSave(entry.id)} disabled={saving || uploading}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-50">
+                        {saving ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <CheckIcon className="w-4 h-4" />}
+                        {saving ? 'Saving…' : 'Save'}
+                    </button>
+                )}
+            </div>
+            {uploadError && (
+                <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-red-50 border border-red-200">
+                    <ExclamationTriangleIcon className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-red-700 font-medium">{uploadError}</p>
                 </div>
             )}
         </div>
@@ -373,7 +545,7 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
             <div className="flex justify-between items-center">
                 <button
                     onClick={handleFormat}
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-xs font-semibold text-blue-600 hover:text-indigo-800 transition-colors"
                 >
                     {'{ }'} Pretty Print Format
                 </button>
@@ -382,7 +554,7 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
                         onClick={() => !jsonError && onSave(entryId)}
                         disabled={saving || !!jsonError}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                            text-white text-xs font-semibold disabled:opacity-50 transition-all"
+                            text-slate-900 text-xs font-semibold disabled:opacity-50 transition-all"
                     >
                         {saving ? <ArrowPathIcon className="w-3 h-3 animate-spin" /> : <CheckIcon className="w-3 h-3" />}
                         Save JSON
@@ -394,7 +566,7 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
                 onChange={e => handleChange(e.target.value)}
                 rows={8}
                 className={`w-full px-3 py-2.5 text-sm rounded-lg bg-slate-800 text-green-400 font-mono resize-y focus:outline-none focus:ring-2 border-2 ${
-                    jsonError ? 'border-red-500 focus:ring-red-200' : 'border-slate-700 focus:ring-indigo-500'
+                    jsonError ? 'border-red-500 focus:ring-red-200' : 'border-slate-700 focus:ring-blue-500'
                 }`}
                 placeholder="{ ... }"
                 spellCheck={false}
@@ -406,47 +578,46 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
     );
 }
 
-// ─── HTML Preview Field ───────────────────────────────────────────────────────
+// ─── HTML Rich Text Field ───────────────────────────────────────────────────────
+const QUILL_MODULES = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['link', 'clean']
+    ],
+};
+
 function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
-    const [showPreview, setShowPreview] = useState(false);
     return (
         <div className="space-y-2">
-            <div className="flex items-center justify-between">
-                <button
-                    onClick={() => setShowPreview(!showPreview)}
-                    className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
-                >
-                    <EyeIcon className="w-3.5 h-3.5" />
-                    {showPreview ? 'Switch to Editor' : 'Preview HTML'}
-                </button>
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Visual Editor</span>
                 {dirty && (
                     <button
                         onClick={() => onSave(entryId)}
                         disabled={saving}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                            text-white text-xs font-semibold disabled:opacity-50 transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                            text-white text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
                     >
                         {saving ? <ArrowPathIcon className="w-3 h-3 animate-spin" /> : <CheckIcon className="w-3 h-3" />}
-                        Save
+                        Save Content
                     </button>
                 )}
             </div>
-            {showPreview ? (
-                <div
-                    className="min-h-[4rem] px-3 py-2.5 text-sm rounded-lg border-2 border-indigo-100 bg-white prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: value || '<em class="text-slate-400">No HTML content</em>' }}
+            
+            <div className={`rounded-lg overflow-hidden bg-white transition-all ${
+                dirty ? 'border-2 border-indigo-300 ring-2 ring-indigo-50 shadow-sm' : 'border border-slate-200'
+            }`}>
+                <ReactQuill 
+                    theme="snow" 
+                    value={value || ''} 
+                    onChange={(content) => onChange(entryId, content)}
+                    modules={QUILL_MODULES}
+                    className="min-h-[150px] custom-quill"
                 />
-            ) : (
-                <textarea
-                    value={value || ''}
-                    onChange={e => onChange(entryId, e.target.value)}
-                    rows={4}
-                    className="w-full px-3 py-2.5 text-sm rounded-lg bg-white border border-slate-200
-                        focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none
-                        transition-all font-mono resize-y"
-                    placeholder="Enter HTML content…"
-                />
-            )}
+            </div>
         </div>
     );
 }
@@ -458,48 +629,39 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
     const saving  = savingIds.has(entry.id);
     const typeMeta = TYPE_META[entry.content_type] || TYPE_META.text;
 
-    const inputClass = `w-full px-3 py-2.5 text-sm rounded-lg bg-white border transition-all outline-none
+    const inputClass = `w-full px-4 py-3 text-sm rounded-lg bg-white border transition-all outline-none shadow-sm
         ${dirty
-            ? 'border-amber-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-100'
-            : 'border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100'}`;
+            ? 'border-indigo-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10'
+            : 'border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10'}`;
 
     return (
-        <div className={`rounded-xl border-2 transition-all duration-200
-            ${dirty
-                ? 'border-amber-300 bg-amber-50/40 shadow-sm shadow-amber-100'
-                : 'border-slate-100 bg-white hover:border-slate-200'}`}
-        >
-            {/* Field header */}
-            <div className="flex items-start justify-between gap-3 px-4 pt-3.5 pb-2">
-                <div className="flex items-start gap-2.5 min-w-0">
-                    <span className="text-lg flex-shrink-0 mt-0.5" title={entry.content_type}>
+        <div className="mb-2 relative">
+            {/* Label Row */}
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <span className="text-slate-400" title={entry.content_type}>
                         {typeMeta.icon}
                     </span>
-                    <div className="min-w-0">
-                        <p className="text-sm font-bold text-slate-800 leading-tight">
-                            {entry.label || entry.key}
-                        </p>
-                        <p className="text-xs text-slate-400 font-mono mt-0.5">
-                            {entry.section} › {entry.key}
-                        </p>
-                    </div>
+                    <label className="text-sm font-semibold text-slate-800">
+                        {entry.label || entry.key}
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono tracking-wider px-2 bg-slate-100 rounded-md">
+                        {entry.key}
+                    </span>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2">
                     {dirty && (
-                        <span className="flex items-center gap-1 text-xs text-amber-600 font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-indigo-600 tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                             Unsaved
                         </span>
                     )}
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${typeMeta.color}`}>
-                        {typeMeta.label}
-                    </span>
                 </div>
             </div>
 
             {/* Field input by content type */}
-            <div className="px-4 pb-4">
-                {entry.content_type === 'image' ? (
+            <div className="relative">
+                {(entry.content_type === 'image' || (entry.content_type !== 'url' && isImageUrlField(entry))) ? (
                     <ImageField
                         entry={entry}
                         value={value}
@@ -530,11 +692,11 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
                     />
 
                 ) : entry.content_type === 'textarea' ? (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         <textarea
                             value={value}
                             onChange={e => onValueChange(entry.id, e.target.value)}
-                            rows={3}
+                            rows={4}
                             className={inputClass + ' resize-y'}
                             placeholder={entry.label || entry.key}
                         />
@@ -543,75 +705,77 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
                                 <button
                                     onClick={() => onSave(entry.id)}
                                     disabled={saving}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                                        text-white text-xs font-semibold disabled:opacity-50 transition-all"
+                                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                                        text-white text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
                                 >
-                                    {saving ? <ArrowPathIcon className="w-3 h-3 animate-spin" /> : <CheckIcon className="w-3 h-3" />}
+                                    {saving ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <CheckIcon className="w-4 h-4" />}
                                     Save
                                 </button>
                             </div>
                         )}
                     </div>
 
+                ) : (entry.content_type === 'url' && isVideoField(entry)) ? (
+                    <VideoField
+                        entry={entry}
+                        value={value}
+                        onChange={onValueChange}
+                        onSave={onSave}
+                        saving={saving}
+                        dirty={dirty}
+                    />
+
                 ) : entry.content_type === 'url' ? (
                     <div className="flex gap-2">
                         <div className="relative flex-1">
-                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="url"
                                 value={value}
                                 onChange={e => onValueChange(entry.id, e.target.value)}
-                                className={inputClass + ' pl-8'}
-                                placeholder="https://…"
+                                className={inputClass + ' pl-9'}
+                                placeholder="https://… or /path/to/file"
                             />
                         </div>
                         {value && (
-                            <a
-                                href={value}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-all flex items-center"
-                            >
+                            <a href={value} target="_blank" rel="noreferrer"
+                                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold transition-all flex items-center">
                                 Open ↗
                             </a>
                         )}
                         {dirty && (
-                            <button
-                                onClick={() => onSave(entry.id)}
-                                disabled={saving}
-                                className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                                    text-white flex items-center gap-1.5 text-sm disabled:opacity-50 transition-all"
-                            >
-                                {saving ? <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" /> : <CheckIcon className="w-3.5 h-3.5" />}
+                            <button onClick={() => onSave(entry.id)} disabled={saving}
+                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 text-sm font-semibold disabled:opacity-50 transition-all shadow-sm">
+                                {saving ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <CheckIcon className="w-4 h-4" />}
                                 Save
                             </button>
                         )}
                     </div>
 
                 ) : entry.content_type === 'boolean' ? (
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-600">
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50">
+                        <span className="text-sm font-semibold text-slate-700">
                             {value === 'true' || value === true ? '✅ Visible' : '🚫 Hidden'}
                         </span>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                             <button
                                 onClick={() => onValueChange(entry.id, value === 'true' ? 'false' : 'true')}
-                                className={`relative w-11 h-6 rounded-full transition-all ${
+                                className={`relative w-12 h-6 rounded-full transition-all ${
                                     value === 'true' ? 'bg-emerald-500' : 'bg-slate-300'
                                 }`}
                             >
                                 <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
-                                    value === 'true' ? 'left-6' : 'left-1'
+                                    value === 'true' ? 'left-7' : 'left-1'
                                 }`} />
                             </button>
                             {dirty && (
                                 <button
                                     onClick={() => onSave(entry.id)}
                                     disabled={saving}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                                        text-white text-xs font-semibold disabled:opacity-50 transition-all"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                                        text-white text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
                                 >
-                                    {saving ? <ArrowPathIcon className="w-3 h-3 animate-spin" /> : <CheckIcon className="w-3 h-3" />}
+                                    {saving ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <CheckIcon className="w-4 h-4" />}
                                     Save
                                 </button>
                             )}
@@ -632,10 +796,10 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
                             <button
                                 onClick={() => onSave(entry.id)}
                                 disabled={saving}
-                                className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                                    text-white flex items-center gap-1.5 text-sm font-semibold disabled:opacity-50 transition-all flex-shrink-0"
+                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                                    text-white flex items-center gap-1.5 text-sm font-semibold disabled:opacity-50 transition-all flex-shrink-0 shadow-sm"
                             >
-                                {saving ? <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" /> : <CheckIcon className="w-3.5 h-3.5" />}
+                                {saving ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <CheckIcon className="w-4 h-4" />}
                                 Save
                             </button>
                         )}
@@ -646,82 +810,121 @@ function FieldRow({ entry, localValues, dirtyIds, savingIds, onValueChange, onSa
     );
 }
 
-// ─── Section Accordion ────────────────────────────────────────────────────────
+// ─── Section Card ────────────────────────────────────────────────────────
 function SectionAccordion({ sectionName, entries, localValues, dirtyIds, savingIds, onValueChange, onSave, onSaveSection }) {
-    const [open, setOpen] = useState(true);
     const dirtyCount = entries.filter(e => dirtyIds.has(e.id)).length;
-    const imageCount = entries.filter(e => e.content_type === 'image').length;
 
     return (
-        <div className="border border-slate-200 rounded-2xl overflow-hidden mb-4 shadow-sm">
-            {/* Accordion header */}
-            <button
-                onClick={() => setOpen(o => !o)}
-                className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-slate-50 transition-colors"
-            >
+        <div className="bg-white border border-slate-200 rounded-xl mb-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden">
+            {/* Section header */}
+            <div className="flex items-center justify-between px-6 py-5 bg-slate-50 border-b border-slate-200">
                 <div className="flex items-center gap-3 min-w-0">
-                    {open
-                        ? <ChevronDownIcon className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                        : <ChevronRightIcon className="w-4 h-4 text-slate-400 flex-shrink-0" />}
-                    <span className="font-bold text-slate-800 capitalize">
+                    <span className="font-extrabold text-slate-900 text-lg capitalize tracking-tight">
                         {sectionName.replace(/_/g, ' ')}
                     </span>
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-xs text-slate-400 font-mono">
-                            {entries.length} field{entries.length !== 1 ? 's' : ''}
+                    <span className="text-xs text-slate-500 font-semibold px-2 py-1 bg-slate-200/50 rounded-md">
+                        {entries.length} field{entries.length !== 1 ? 's' : ''}
+                    </span>
+                    {dirtyCount > 0 && (
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 font-bold shadow-sm">
+                            {dirtyCount} unsaved
                         </span>
-                        {imageCount > 0 && (
-                            <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-600 font-medium">
-                                {imageCount} 🖼️
-                            </span>
-                        )}
-                        {dirtyCount > 0 && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">
-                                {dirtyCount} unsaved
-                            </span>
-                        )}
-                    </div>
+                    )}
                 </div>
                 {dirtyCount > 0 && (
                     <button
-                        onClick={e => {
-                            e.stopPropagation();
+                        onClick={() => {
                             onSaveSection(entries.filter(en => dirtyIds.has(en.id)).map(en => en.id));
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700
-                            text-white text-xs font-semibold transition-all shadow-sm flex-shrink-0"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                            text-white text-sm font-semibold transition-all shadow-md flex-shrink-0"
                     >
-                        <CheckIcon className="w-3 h-3" />
-                        Save Section ({dirtyCount})
+                        <CheckIcon className="w-4 h-4" />
+                        Save All Changes
                     </button>
                 )}
-            </button>
+            </div>
 
-            {open && (
-                <div className="p-4 border-t border-slate-100 grid grid-cols-1 xl:grid-cols-2 gap-3 bg-slate-50/50">
-                    {entries.map(entry => (
-                        <div
-                            key={entry.id}
-                            className={
-                                entry.content_type === 'image' ||
-                                entry.content_type === 'textarea' ||
-                                entry.content_type === 'html'
-                                    ? 'xl:col-span-2'
-                                    : ''
-                            }
-                        >
-                            <FieldRow
-                                entry={entry}
-                                localValues={localValues}
-                                dirtyIds={dirtyIds}
-                                savingIds={savingIds}
-                                onValueChange={onValueChange}
-                                onSave={onSave}
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
+            <div className="p-6 grid grid-cols-1 xl:grid-cols-2 gap-8">
+                {(() => {
+                    // Group fields intelligently
+                    const grouped = [];
+                    const usedIds = new Set();
+
+                    entries.forEach(entry => {
+                        if (usedIds.has(entry.id)) return;
+                        
+                        let pair = null;
+                        if (entry.key.startsWith('label_')) {
+                            const suffix = entry.key.replace('label_', '');
+                            pair = entries.find(e => e.key === `value_${suffix}`);
+                        } else if (entry.key.startsWith('value_')) {
+                            const suffix = entry.key.replace('value_', '');
+                            pair = entries.find(e => e.key === `label_${suffix}`);
+                        } else if (entry.key.includes('_title')) {
+                            const base = entry.key.replace('_title', '');
+                            pair = entries.find(e => e.key === `${base}_desc`);
+                        } else if (entry.key.includes('_desc')) {
+                            const base = entry.key.replace('_desc', '');
+                            pair = entries.find(e => e.key === `${base}_title`);
+                        }
+                        
+                        if (pair && !usedIds.has(pair.id)) {
+                            const first = (entry.key.includes('label') || entry.key.includes('title')) ? entry : pair;
+                            const second = first.id === entry.id ? pair : entry;
+                            grouped.push({ type: 'pair', items: [first, second] });
+                            usedIds.add(first.id);
+                            usedIds.add(second.id);
+                        } else {
+                            grouped.push({ type: 'single', item: entry });
+                            usedIds.add(entry.id);
+                        }
+                    });
+
+                    return grouped.map((group, idx) => {
+                        if (group.type === 'pair') {
+                            const isWide = group.items.some(e => e.content_type === 'textarea' || e.content_type === 'html' || e.content_type === 'image');
+                            return (
+                                <div key={`pair-${idx}`} className={`grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 p-5 bg-slate-50/50 border border-slate-200/60 rounded-xl xl:col-span-2 relative`}>
+                                    <div className="absolute top-0 left-0 w-1.5 h-full bg-slate-300 rounded-l-xl"></div>
+                                    <div className="md:col-span-2">
+                                        <h4 className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest ml-2">Paired Group</h4>
+                                    </div>
+                                    <div className={isWide && group.items[0].content_type === 'textarea' ? 'md:col-span-2' : ''}>
+                                        <FieldRow entry={group.items[0]} localValues={localValues} dirtyIds={dirtyIds} savingIds={savingIds} onValueChange={onValueChange} onSave={onSave} />
+                                    </div>
+                                    <div className={isWide && group.items[1].content_type === 'textarea' ? 'md:col-span-2' : ''}>
+                                        <FieldRow entry={group.items[1]} localValues={localValues} dirtyIds={dirtyIds} savingIds={savingIds} onValueChange={onValueChange} onSave={onSave} />
+                                    </div>
+                                </div>
+                            );
+                        } else {
+                            const entry = group.item;
+                            return (
+                                <div
+                                    key={entry.id}
+                                    className={
+                                        entry.content_type === 'image' ||
+                                        entry.content_type === 'textarea' ||
+                                        entry.content_type === 'html'
+                                            ? 'xl:col-span-2'
+                                            : ''
+                                    }
+                                >
+                                    <FieldRow
+                                        entry={entry}
+                                        localValues={localValues}
+                                        dirtyIds={dirtyIds}
+                                        savingIds={savingIds}
+                                        onValueChange={onValueChange}
+                                        onSave={onSave}
+                                    />
+                                </div>
+                            );
+                        }
+                    });
+                })()}
+            </div>
         </div>
     );
 }
@@ -789,11 +992,11 @@ function MediaLibrary({ onToast }) {
             {/* Toolbar */}
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
                 <div>
-                    <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <FolderOpenIcon className="w-5 h-5 text-indigo-600" />
+                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        <FolderOpenIcon className="w-5 h-5 text-blue-600" />
                         Media Library
                     </h1>
-                    <p className="text-xs text-slate-400 mt-0.5">{assets.length} file{assets.length !== 1 ? 's' : ''} stored</p>
+                    <p className="text-sm text-slate-500 mt-1">{assets.length} file{assets.length !== 1 ? 's' : ''} stored</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <input
@@ -807,8 +1010,8 @@ function MediaLibrary({ onToast }) {
                     <button
                         onClick={() => fileRef.current?.click()}
                         disabled={uploading}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
-                            disabled:opacity-50 text-white text-sm font-semibold transition-all shadow-md shadow-indigo-200"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700
+                            disabled:opacity-50 text-white text-sm font-semibold transition-all shadow-sm"
                     >
                         {uploading ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <ArrowUpTrayIcon className="w-4 h-4" />}
                         {uploading ? 'Uploading…' : 'Upload Images'}
@@ -825,7 +1028,7 @@ function MediaLibrary({ onToast }) {
                     </div>
                 ) : assets.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-48 gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center">
                             <PhotoIcon className="w-8 h-8 text-slate-400" />
                         </div>
                         <div className="text-center">
@@ -840,7 +1043,7 @@ function MediaLibrary({ onToast }) {
                             return (
                                 <div
                                     key={asset.id}
-                                    className="group relative rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all"
+                                    className="group relative rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-sm transition-all"
                                 >
                                     {/* Preview */}
                                     <div className="aspect-square bg-slate-100 overflow-hidden">
@@ -862,7 +1065,7 @@ function MediaLibrary({ onToast }) {
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                                         <button
                                             onClick={() => copyUrl(url)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-slate-800
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-slate-900
                                                 text-xs font-semibold hover:bg-slate-100 transition-all"
                                         >
                                             {copied === url ? <CheckIcon className="w-3.5 h-3.5 text-emerald-600" /> : <LinkIcon className="w-3.5 h-3.5" />}
@@ -871,7 +1074,7 @@ function MediaLibrary({ onToast }) {
                                         <button
                                             onClick={() => handleDelete(asset.id, asset.name)}
                                             disabled={deleting === asset.id}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-slate-900
                                                 text-xs font-semibold hover:bg-red-600 transition-all disabled:opacity-50"
                                         >
                                             {deleting === asset.id
@@ -904,7 +1107,7 @@ function MediaLibrary({ onToast }) {
 export default function CMS() {
     const { invalidatePage } = useCMSContext();
     const [tab, setTab]           = useState('content'); // 'content' | 'media'
-    const [activePage, setActivePage] = useState('home');
+    const [activePage, setActivePage] = useState('dashboard');
     const [allEntries, setAllEntries] = useState([]);
     const [loading, setLoading]   = useState(true);
     const [localValues, setLocalValues] = useState({});
@@ -942,7 +1145,7 @@ export default function CMS() {
         }
     }, [addToast]);
 
-    useEffect(() => { if (tab === 'content') loadPage(activePage); }, [activePage, tab, loadPage]);
+    useEffect(() => { if (tab === 'content' && activePage !== 'dashboard') loadPage(activePage); }, [activePage, tab, loadPage]);
 
     // ── Value change ──────────────────────────────────────────────────────────
     const handleValueChange = useCallback((id, val) => {
@@ -989,7 +1192,7 @@ export default function CMS() {
         try {
             await api.cms.seedDefaults();
             addToast('Default content seeded ✓');
-            loadPage(activePage);
+            if (activePage !== 'dashboard') loadPage(activePage);
         } catch { addToast('Seed failed', 'error'); }
         finally { setSeeding(false); }
     };
@@ -1021,111 +1224,193 @@ export default function CMS() {
             <Toast toasts={toasts} />
 
             {/* ── Sidebar ─────────────────────────────────────────────────── */}
-            <aside className="w-60 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 overflow-y-auto">
-                {/* Logo */}
-                <div className="px-4 py-5 border-b border-slate-100">
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                            <PencilSquareIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                            <span className="font-extrabold text-slate-800 text-sm">Content Manager</span>
-                            <p className="text-xs text-slate-400">Edit site content</p>
-                        </div>
+            <aside className="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 overflow-y-auto">
+                <div className="px-5 py-5 border-b border-slate-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/30">
+                        <PencilSquareIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <span className="font-extrabold text-slate-900 text-base block leading-tight">JYNM Admin</span>
+                        <span className="text-xs text-slate-400 font-medium">Content Manager</span>
                     </div>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex p-3 gap-1.5 border-b border-slate-100">
-                    <button
-                        onClick={() => setTab('content')}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all
-                            ${tab === 'content' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-100'}`}
-                    >
-                        <Squares2X2Icon className="w-3.5 h-3.5" />
-                        Pages
-                    </button>
-                    <button
-                        onClick={() => setTab('media')}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all
-                            ${tab === 'media' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-100'}`}
-                    >
-                        <PhotoIcon className="w-3.5 h-3.5" />
-                        Media
-                    </button>
-                </div>
-
-                {/* Page nav — only in content tab */}
-                {tab === 'content' && (
-                    <nav className="flex-1 p-2">
-                        {PAGES.map(page => (
-                            <button
-                                key={page.key}
-                                onClick={() => setActivePage(page.key)}
-                                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium transition-all mb-0.5
-                                    ${activePage === page.key
-                                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                                        : 'text-slate-600 hover:bg-slate-100'}`}
-                            >
-                                <span className="text-base">{page.icon}</span>
-                                <span className="truncate">{page.label}</span>
+                <div className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
+                    {/* OVERVIEW */}
+                    <div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Overview</h3>
+                        <nav className="space-y-0.5">
+                            <button onClick={() => { setActivePage('dashboard'); setTab('content'); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === 'dashboard' && tab === 'content' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
+                                <GlobeAltIcon className="w-4 h-4 flex-shrink-0" /> Website Content
                             </button>
-                        ))}
-                    </nav>
-                )}
+                        </nav>
+                    </div>
+
+                    {/* PAGES */}
+                    <div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Pages</h3>
+                        <nav className="space-y-0.5">
+                            {PAGES.filter(p => !['navbar','footer','global'].includes(p.key)).map(page => (
+                                <button
+                                    key={page.key}
+                                    onClick={() => { setActivePage(page.key); setTab('content'); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
+                                >
+                                    <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}>{page.icon}</span>
+                                    {page.label}
+                                    {activePage === page.key && tab === 'content' && dirtyIds.size > 0 && (
+                                        <span className="ml-auto w-2 h-2 rounded-full bg-indigo-500 animate-pulse flex-shrink-0" />
+                                    )}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+
+                    {/* GLOBAL */}
+                    <div>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Global Settings</h3>
+                        <nav className="space-y-0.5">
+                            {PAGES.filter(p => ['navbar','footer','global'].includes(p.key)).map(page => (
+                                <button
+                                    key={page.key}
+                                    onClick={() => { setActivePage(page.key); setTab('content'); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
+                                >
+                                    <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}>{page.icon}</span>
+                                    {page.label}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
 
                 {/* Seed button */}
-                {tab === 'content' && (
-                    <div className="p-3 border-t border-slate-100">
-                        <button
-                            onClick={handleSeed}
-                            disabled={seeding}
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium
-                                bg-slate-100 hover:bg-slate-200 text-slate-600 transition-all disabled:opacity-50"
-                        >
-                            {seeding ? <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" /> : <ArrowPathIcon className="w-3.5 h-3.5" />}
-                            Seed Defaults
-                        </button>
-                    </div>
-                )}
+                <div className="p-3 border-t border-slate-100">
+                    <button onClick={handleSeed} disabled={seeding} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-700 transition-all disabled:opacity-50">
+                        {seeding ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <ArrowPathIcon className="w-4 h-4" />} Seed Defaults
+                    </button>
+                </div>
             </aside>
 
             {/* ── Main Panel ──────────────────────────────────────────────── */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {tab === 'media' ? (
                     <MediaLibrary onToast={addToast} />
+                ) : activePage === 'dashboard' ? (
+                    <div className="flex-1 overflow-y-auto p-8 bg-[#f8fafc]">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>CMS Dashboard</h1>
+                                <p className="text-slate-500">Manage all website content from one place</p>
+                            </div>
+
+                            <div className="mb-10">
+                                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <BoltIcon className="w-4 h-4 text-amber-500" /> Quick Actions
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <button onClick={() => setActivePage('home')} className="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:-translate-y-1 transition-all text-left text-white group">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="bg-white/20 p-2.5 rounded-xl"><PencilSquareIcon className="w-5 h-5 text-white" /></span>
+                                        </div>
+                                        <h3 className="font-bold text-lg mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Edit Home Page</h3>
+                                        <p className="text-white/80 text-xs">Manage main landing page content</p>
+                                    </button>
+                                    <a href="/" target="_blank" rel="noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg hover:-translate-y-1 hover:border-slate-300 transition-all text-left flex flex-col group block">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="bg-slate-100 p-2.5 rounded-xl group-hover:bg-blue-50 transition-colors"><ArrowTopRightOnSquareIcon className="w-5 h-5 text-slate-600 group-hover:text-blue-600" /></span>
+                                        </div>
+                                        <h3 className="font-bold text-slate-900 text-lg mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>View Live Site</h3>
+                                        <p className="text-slate-500 text-xs">Open the website in a new tab</p>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div className="mb-10">
+                                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <DocumentTextIcon className="w-4 h-4" /> Pages
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    {PAGES.filter(p => !['navbar','footer','global'].includes(p.key)).map(page => (
+                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all text-left flex flex-col group">
+                                            <div className="flex justify-between items-start mb-4 w-full">
+                                                <span className="bg-slate-100 w-12 h-12 rounded-xl flex items-center justify-center text-slate-600 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">{page.icon}</span>
+                                                <span className="text-[10px] font-bold px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md uppercase tracking-wider">Active</span>
+                                            </div>
+                                            <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-indigo-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>{page.label}</h3>
+                                            <p className="text-xs text-slate-400 font-mono">/{page.key.replace('_', '-')}</p>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Squares2X2Icon className="w-4 h-4" /> Content Collections
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    {PAGES.filter(p => ['navbar','footer','global'].includes(p.key)).map(page => (
+                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all text-left flex items-center gap-4 group">
+                                            <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex-shrink-0">
+                                                {page.icon}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-slate-900 text-base mb-0.5 group-hover:text-indigo-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>{page.label}</h3>
+                                                <p className="text-xs text-slate-400 truncate">Manage {page.label.toLowerCase()}</p>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                     <>
-                        {/* Header */}
-                        <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
+                        {/* Editor Header */}
+                        <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0 z-10 relative">
                             <div>
-                                <h1 className="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                                <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                                    <button onClick={() => setActivePage('dashboard')} className="hover:text-blue-600 transition-colors">Dashboard</button>
+                                    <ChevronRightIcon className="w-3 h-3" />
+                                    <span className="text-slate-600">{currentPage?.label}</span>
+                                </div>
+                                <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     <span className="text-xl">{currentPage?.icon}</span>
                                     {currentPage?.label} Content
                                 </h1>
-                                <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
+                                <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">
                                     <span>{allEntries.length} fields</span>
                                     {totalDirty > 0 && (
-                                        <span className="text-amber-600 font-semibold">
-                                            · {totalDirty} unsaved change{totalDirty > 1 ? 's' : ''}
+                                        <span className="inline-flex items-center gap-1.5 text-indigo-600 font-bold">
+                                            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                                            {totalDirty} unsaved change{totalDirty > 1 ? 's' : ''}
                                         </span>
                                     )}
                                 </p>
                             </div>
 
                             <div className="flex items-center gap-2 flex-wrap justify-end">
-                                {/* Type filter */}
+                                {/* Type filter chips */}
                                 {contentTypes.length > 2 && (
-                                    <select
-                                        value={typeFilter}
-                                        onChange={e => setTypeFilter(e.target.value)}
-                                        className="px-3 py-2 text-xs border border-slate-200 rounded-xl text-slate-600 outline-none
-                                            focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white capitalize cursor-pointer"
-                                    >
-                                        {contentTypes.map(t => (
-                                            <option key={t} value={t}>{t === 'all' ? 'All types' : t}</option>
-                                        ))}
-                                    </select>
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                        {contentTypes.map(t => {
+                                            const meta = TYPE_META[t];
+                                            const isActive = typeFilter === t;
+                                            return (
+                                                <button
+                                                    key={t}
+                                                    onClick={() => setTypeFilter(t)}
+                                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all ${
+                                                        isActive
+                                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                                                            : 'bg-white border border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-600'
+                                                    }`}
+                                                >
+                                                    {t === 'all' ? 'All' : (meta?.label || t)}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 )}
                                 {/* Search */}
                                 <div className="relative">
@@ -1143,8 +1428,8 @@ export default function CMS() {
                                 {totalDirty > 0 && (
                                     <button
                                         onClick={handleSaveAll}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700
-                                            text-white text-sm font-extrabold shadow-md shadow-emerald-200 transition-all"
+                                        className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
+                                            text-white text-sm font-bold shadow-md shadow-indigo-500/20 transition-all"
                                     >
                                         <CheckIcon className="w-4 h-4" />
                                         Save All ({totalDirty})
@@ -1162,7 +1447,7 @@ export default function CMS() {
                                 </div>
                             ) : allEntries.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-64 gap-5 text-center">
-                                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center">
                                         <DocumentTextIcon className="w-8 h-8 text-slate-400" />
                                     </div>
                                     <div>
@@ -1174,8 +1459,8 @@ export default function CMS() {
                                     <button
                                         onClick={handleSeed}
                                         disabled={seeding}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700
-                                            text-white text-sm font-semibold transition-all shadow-md shadow-indigo-200"
+                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-indigo-700
+                                            text-slate-900 text-sm font-semibold transition-all shadow-sm shadow-blue-200"
                                     >
                                         {seeding ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <ArrowPathIcon className="w-4 h-4" />}
                                         Seed Default Content
@@ -1190,7 +1475,7 @@ export default function CMS() {
                                     </p>
                                     <button
                                         onClick={() => { setSearch(''); setTypeFilter('all'); }}
-                                        className="text-indigo-600 text-xs hover:underline font-medium"
+                                        className="text-blue-600 text-xs hover:underline font-medium"
                                     >
                                         Clear filters
                                     </button>

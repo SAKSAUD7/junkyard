@@ -82,8 +82,8 @@ export default function BrowseStates() {
     return (
         <div className="bg-[#f8fafc] min-h-screen flex flex-col">
             <SEO
-                title="Browse Junkyards by State – Interactive USA Map | JunkyardsNearMe"
-                description={`Explore ${statesData.length} states on our interactive map. Find ${totalVendors}+ verified junkyards nationwide. Click any state to see local listings.`}
+                title={get('seo', 'meta_title', 'Browse Junkyards by State – Interactive USA Map | JunkyardsNearMe')}
+                description={get('seo', 'meta_desc', `Explore ${statesData.length} states on our interactive map. Find ${totalVendors}+ verified junkyards nationwide. Click any state to see local listings.`)}
                 schema={schema}
             />
 
@@ -98,14 +98,14 @@ export default function BrowseStates() {
                     <div className="text-center mb-4">
                         {/* Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Interactive Map</span>
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">{get('hero', 'badge', 'Interactive Map')}</span>
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Browse Junkyards <span className="text-blue-600">By State</span>
+                            {get('hero', 'heading', 'Browse Junkyards')} <span className="text-blue-600">{get('hero', 'heading_accent', 'By State')}</span>
                         </h1>
                         <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
-                            Explore {statesData.length} states on our interactive map. Find {totalVendors.toLocaleString()}+ verified junkyards nationwide.
+                            {get('hero', 'subheading', 'Explore our interactive map. Find verified junkyards nationwide.')}
                         </p>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ export default function BrowseStates() {
                 <div className="w-full lg:w-[35%] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex-shrink-0 h-[600px] lg:h-full">
                     {/* Header */}
                     <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                        <h2 className="text-xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Find Your State</h2>
+                        <h2 className="text-xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('map', 'panel_heading', 'Find Your State')}</h2>
                         
                         {/* Search Input */}
                         <div className="relative">
@@ -128,7 +128,7 @@ export default function BrowseStates() {
                                 type="text"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search for a state..."
+                                placeholder={get('map', 'search_placeholder', 'Search for a state...')}
                                 className="w-full pl-12 pr-10 py-3.5 bg-white border border-slate-200 rounded-xl text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
                             />
                             {searchTerm && (
@@ -183,7 +183,7 @@ export default function BrowseStates() {
                     <div className="absolute top-4 left-4 z-10 hidden sm:block">
                         <div className="px-4 py-2 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl text-slate-700 text-sm font-semibold shadow-sm">
                             <span className="w-2 h-2 rounded-full bg-blue-500 inline-block mr-2 animate-pulse" />
-                            Click a State to Browse
+                            {get('map', 'click_hint', 'Click a State to Browse')}
                         </div>
                     </div>
 

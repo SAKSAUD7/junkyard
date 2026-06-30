@@ -74,8 +74,8 @@ const AllVendors = () => {
     return (
         <div className="bg-[#f8fafc] min-h-screen">
             <SEO
-                title={`All Junkyards - Browse ${totalCount} Auto Salvage Yards Nationwide`}
-                description={`Browse our complete directory of ${totalCount} verified auto salvage yards. Find used auto parts, compare prices, and connect with local junkyards.`}
+                title={get('seo', 'meta_title', `All Junkyards - Browse ${totalCount} Auto Salvage Yards Nationwide`)}
+                description={get('seo', 'meta_desc', `Browse our complete directory of ${totalCount} verified auto salvage yards. Find used auto parts, compare prices, and connect with local junkyards.`)}
                 canonicalUrl={`/vendors${currentPage > 1 ? `?page=${currentPage}` : ''}`}
                 structuredData={[collectionSchema]}
             />
@@ -93,15 +93,15 @@ const AllVendors = () => {
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
                             <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
                             <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">
-                                50 States • {totalCount > 0 ? `${totalCount.toLocaleString()}+` : '6,500+'} Verified Yards
+                                {get('hero', 'badge', '50 States • Verified Yards').replace('Verified Yards', totalCount > 0 ? `${totalCount.toLocaleString()}+ Verified Yards` : '6,500+ Verified Yards')}
                             </span>
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Find Trusted Junkyards <span className="text-blue-600">Near You</span>
+                            {get('hero', 'heading', 'Find Trusted Junkyards')} <span className="text-blue-600">{get('hero', 'heading_accent', 'Near You')}</span>
                         </h1>
                         <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
-                            Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.
+                            {get('hero', 'subheading', 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.')}
                         </p>
 
                         {/* Search Bar */}
@@ -117,7 +117,7 @@ const AllVendors = () => {
                                         type="text"
                                         value={searchTerm}
                                         onChange={handleSearchChange}
-                                        placeholder="Search by name, city, or ZIP..."
+                                        placeholder={get('hero', 'search_placeholder', 'Search by name, city, or ZIP...')}
                                         className="w-full pl-12 pr-4 py-3.5 bg-white rounded-xl border border-slate-100 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
                                     />
                                 </div>
@@ -141,7 +141,7 @@ const AllVendors = () => {
                                 </div>
                                 {/* Search Button */}
                                 <button className="px-7 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] whitespace-nowrap text-[14px]">
-                                    Search Yards
+                                    {get('hero', 'search_btn', 'Search Yards')}
                                 </button>
                             </div>
                             {/* Active filters */}
@@ -176,7 +176,7 @@ const AllVendors = () => {
                 <div className="flex items-center justify-between mb-7">
                     <div>
                         <h2 className="text-xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Top Rated Junkyards
+                            {get('results', 'section_heading', 'Top Rated Junkyards')}
                         </h2>
                         <p className="text-[13px] text-slate-500 font-medium mt-0.5">
                             {loading ? 'Loading...' : vendors.length > 0

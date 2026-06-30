@@ -204,7 +204,7 @@ export default function About() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                        Our <span className="text-blue-600">Journey</span>
+                        {get('journey', 'heading', 'Our')} <span className="text-blue-600">{get('journey', 'heading_accent', 'Journey')}</span>
                     </h2>
                 </div>
                 
@@ -214,10 +214,26 @@ export default function About() {
                     
                     <div className="grid md:grid-cols-4 gap-8">
                         {[
-                            { year: '2020', title: 'The Idea', desc: 'Started as a local directory connecting a few shops in Texas.' },
-                            { year: '2022', title: 'Going National', desc: 'Expanded our database to cover 25 states and 500+ yards.' },
-                            { year: '2024', title: 'AI Integration', desc: 'Launched instant quote matching algorithms and verification.' },
-                            { year: '2026', title: 'Market Leader', desc: '1,200+ verified yards processing thousands of quotes daily.' }
+                            { 
+                                year: get('journey', 'milestone1_year', '2020'), 
+                                title: get('journey', 'milestone1_title', 'The Idea'), 
+                                desc: get('journey', 'milestone1_desc', 'Started as a local directory connecting a few shops in Texas.') 
+                            },
+                            { 
+                                year: get('journey', 'milestone2_year', '2022'), 
+                                title: get('journey', 'milestone2_title', 'Going National'), 
+                                desc: get('journey', 'milestone2_desc', 'Expanded our database to cover 25 states and 500+ yards.') 
+                            },
+                            { 
+                                year: get('journey', 'milestone3_year', '2024'), 
+                                title: get('journey', 'milestone3_title', 'AI Integration'), 
+                                desc: get('journey', 'milestone3_desc', 'Launched instant quote matching algorithms and verification.') 
+                            },
+                            { 
+                                year: get('journey', 'milestone4_year', '2026'), 
+                                title: get('journey', 'milestone4_title', 'Market Leader'), 
+                                desc: get('journey', 'milestone4_desc', '1,200+ verified yards processing thousands of quotes daily.') 
+                            }
                         ].map((milestone, i) => (
                             <div key={i} className="relative z-10 flex flex-col items-center text-center">
                                 <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex justify-center items-center font-black text-xl mb-6 shadow-xl shadow-blue-600/30 border-4 border-white">
