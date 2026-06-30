@@ -245,9 +245,14 @@ export default function AdminLeads() {
                                                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs flex-shrink-0">
                                                         {lead.name.charAt(0)}
                                                     </div>
-                                                    <div>
+                                            <div>
                                                         <p className="text-sm font-bold text-slate-900">{lead.name}</p>
-                                                        <p className="text-[11px] text-slate-500">{lead.zipcode || 'No ZIP'}</p>
+                                                        <p className="text-[11px] text-slate-500">
+                                                            {lead.state && lead.zip
+                                                                ? `${lead.state} ${lead.zip}`
+                                                                : lead.zip || lead.state || 'No location'
+                                                            }
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -338,6 +343,26 @@ export default function AdminLeads() {
                                             <p className="text-[10px] text-slate-500 uppercase">Phone</p>
                                             <a href={`tel:${selectedLead.phone}`} className="text-sm font-semibold text-blue-600">{selectedLead.phone}</a>
                                         </div>
+                                        {(selectedLead.state || selectedLead.zip) && (
+                                            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                                                <div>
+                                                    <p className="text-[10px] text-slate-500 uppercase">State</p>
+                                                    <p className="text-sm font-semibold text-slate-900">{selectedLead.state || '—'}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] text-slate-500 uppercase">ZIP Code</p>
+                                                    <p className="text-sm font-semibold text-slate-900">{selectedLead.zip || '—'}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {selectedLead.lead_type && (
+                                            <div className="pt-1">
+                                                <p className="text-[10px] text-slate-500 uppercase">Lead Type</p>
+                                                <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100">
+                                                    {selectedLead.lead_type === 'vendor' ? 'Junkyard Vendor' : 'Quality Auto Parts'}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
