@@ -1,15 +1,17 @@
 """
-CMS Database Cleanup Script
-============================
-1. Converts all 'html' content_type fields to 'textarea' in the live database
-2. Strips Quill editor HTML wrapper tags from heading/subheading values
-   that were corrupted by the visual editor (e.g. <h1 class="ql-align-center">...)
-3. Restores clean default values for corrupted fields
+Full CMS Reset & Sync Script
+==============================
+This script:
+1. Strips all Quill/rich-text HTML from any corrupted field values
+2. Converts all 'html' content_type fields to 'textarea'
+3. Removes STALE/ORPHANED keys that no longer exist in default_content.py
+4. Syncs the database to match the current default_content.py exactly
+   (without overwriting values that an admin has intentionally changed)
+
+Run this on the Hostinger server after git pull.
 """
 
-import os
-import sys
-import re
+import os, sys, re
 import django
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -17,87 +19,140 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
 from apps.cms.models import SiteContent
+from apps.cms.default_content import DEFAULT_CMS_CONTENT
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 1. Build the canonical set of (page, section, key) tuples from defaults
+# ──────────────────────────────────────────────────────────────────────────────
+canonical_keys = {
+    (item['page'], item['section'], item['key'])
+    for item in DEFAULT_CMS_CONTENT
+}
+
+# Build a lookup dict for defaults
+default_lookup = {
+    (item['page'], item['section'], item['key']): item
+    for item in DEFAULT_CMS_CONTENT
+}
+
+print("\n========================================")
+print("  CMS Full Reset & Sync")
+print("========================================\n")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 2. Remove orphaned/stale DB records not in default_content.py
+# ──────────────────────────────────────────────────────────────────────────────
+print("Step 1: Removing stale/orphaned CMS keys...")
+all_db_records = SiteContent.objects.all()
+stale_count = 0
+for record in all_db_records:
+    key_tuple = (record.page, record.section, record.key)
+    # Skip vendor_portal ad_plans (dynamic, not in defaults)
+    if record.key == 'ad_plans':
+        continue
+    if key_tuple not in canonical_keys:
+        print(f"  Removing stale key: {record.page}/{record.section}/{record.key}")
+        record.delete()
+        stale_count += 1
+print(f"  Removed {stale_count} stale records.\n")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 3. Strip Quill HTML from any remaining field values
+# ──────────────────────────────────────────────────────────────────────────────
 def strip_quill_html(value):
-    """Remove Quill editor wrapper tags and restore clean HTML-allowed values."""
     if not value:
         return value
-    # Check if value is wrapped in Quill-generated block tags
     if re.search(r'<(h1|h2|h3|p|div)[^>]*class="ql-', value):
-        # Extract inner text content, preserving only span tags
-        # Remove outer block-level tags added by Quill
-        cleaned = re.sub(r'<(h1|h2|h3|h4|p|div)[^>]*>(.*?)</(h1|h2|h3|h4|p|div)>', 
-                          lambda m: m.group(2), value, flags=re.DOTALL)
-        # Remove <br> tags added by Quill between paragraphs
+        cleaned = re.sub(r'<(h1|h2|h3|h4|p|div)[^>]*>(.*?)</(h1|h2|h3|h4|p|div)>',
+                         lambda m: m.group(2), value, flags=re.DOTALL)
         cleaned = re.sub(r'<p><br\s*/?></p>', '', cleaned)
         cleaned = re.sub(r'<br\s*/?>', ' ', cleaned)
-        # Remove empty paragraph tags
         cleaned = re.sub(r'<p>\s*</p>', '', cleaned)
-        # Strip color styles from spans that Quill adds (rgb color codes)
         cleaned = re.sub(r'<span style="color: rgb\([^)]+\);">(.*?)</span>', r'\1', cleaned)
-        # Clean whitespace
         cleaned = cleaned.strip()
         return cleaned if cleaned else value
     return value
 
+print("Step 2: Stripping Quill HTML from corrupted field values...")
+quill_fixed = 0
+for record in SiteContent.objects.all():
+    if record.value and re.search(r'<(h1|h2|h3|p|div)[^>]*class="ql-', record.value):
+        original = record.value
+        record.value = strip_quill_html(record.value)
+        if record.value != original:
+            print(f"  Cleaned: {record.page}/{record.section}/{record.key}")
+            record.save(update_fields=['value'])
+            quill_fixed += 1
+print(f"  Cleaned {quill_fixed} Quill-corrupted values.\n")
 
-def fix_cms_database():
-    print("\n=== CMS Database Cleanup ===\n")
-    
-    # Step 1: Convert all 'html' content_type to 'textarea'
-    html_fields = SiteContent.objects.filter(content_type='html')
-    count = html_fields.count()
-    print(f"Found {count} fields with 'html' content_type — converting to 'textarea'...")
-    html_fields.update(content_type='textarea')
-    print(f"[OK] Converted {count} fields to 'textarea'\n")
+# ──────────────────────────────────────────────────────────────────────────────
+# 4. Convert all 'html' content_type to 'textarea'
+# ──────────────────────────────────────────────────────────────────────────────
+print("Step 3: Converting 'html' content_type to 'textarea'...")
+html_count = SiteContent.objects.filter(content_type='html').count()
+SiteContent.objects.filter(content_type='html').update(content_type='textarea')
+print(f"  Converted {html_count} fields.\n")
 
-    # Step 2: Clean up Quill-corrupted values across ALL pages
-    print("Scanning for Quill-corrupted field values...")
-    all_fields = SiteContent.objects.all()
-    fixed_count = 0
-    for field in all_fields:
-        if field.value and re.search(r'<(h1|h2|h3|p|div)[^>]*class="ql-', field.value):
-            original = field.value
-            cleaned = strip_quill_html(field.value)
-            if cleaned != original:
-                print(f"  Cleaning [{field.page}/{field.section}/{field.key}]:")
-                print(f"    Before: {original[:80]}...")
-                print(f"    After:  {cleaned[:80]}")
-                field.value = cleaned
-                field.save(update_fields=['value'])
-                fixed_count += 1
+# ──────────────────────────────────────────────────────────────────────────────
+# 5. CRITICAL: Reset known heading fields that have Quill-corrupted values
+#    to their proper clean defaults
+# ──────────────────────────────────────────────────────────────────────────────
+print("Step 4: Resetting corrupted heading/subheading fields to clean defaults...")
+reset_count = 0
+for item in DEFAULT_CMS_CONTENT:
+    key_tuple = (item['page'], item['section'], item['key'])
+    try:
+        record = SiteContent.objects.get(page=item['page'], section=item['section'], key=item['key'])
+        # Reset if value looks like Quill HTML OR if the key is a heading/subheading that is corrupted
+        needs_reset = False
+        if record.value and '<p>' in record.value and 'color: rgb' in record.value:
+            needs_reset = True
+        if record.value and re.search(r'<(h1|h2|h3|p|div)', record.value) and \
+           item['content_type'] in ('text', 'textarea') and \
+           item['key'] in ('heading', 'subheading', 'title', 'heading_accent', 'badge'):
+            needs_reset = True
+        
+        if needs_reset:
+            print(f"  Resetting [{item['page']}/{item['section']}/{item['key']}]")
+            print(f"    Old: {repr(record.value[:60])}")
+            print(f"    New: {repr(item['value'][:60])}")
+            record.value = item['value']
+            record.content_type = item['content_type']
+            record.save(update_fields=['value', 'content_type'])
+            reset_count += 1
+    except SiteContent.DoesNotExist:
+        pass
 
-    if fixed_count == 0:
-        print("  No Quill-corrupted values found.")
-    else:
-        print(f"\n[OK] Cleaned {fixed_count} corrupted field values\n")
+print(f"  Reset {reset_count} heading fields.\n")
 
-    # Step 3: Restore known clean defaults for Vendors page heading
-    # (These are most commonly broken by the visual editor)
-    KNOWN_DEFAULTS = {
-        ('vendors', 'hero', 'heading'):    'Find Trusted Junkyards',
-        ('vendors', 'hero', 'subheading'): 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.',
-        ('home', 'hero', 'heading'):       'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds',
-        ('home', 'hero', 'subheading'):    'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.',
-    }
+# ──────────────────────────────────────────────────────────────────────────────
+# 6. Seed any missing default keys (new fields added in code but not in DB)
+# ──────────────────────────────────────────────────────────────────────────────
+print("Step 5: Seeding missing CMS keys...")
+seeded = 0
+for item in DEFAULT_CMS_CONTENT:
+    exists = SiteContent.objects.filter(
+        page=item['page'], section=item['section'], key=item['key']
+    ).exists()
+    if not exists:
+        SiteContent.objects.create(
+            page=item['page'],
+            section=item['section'],
+            key=item['key'],
+            label=item.get('label', item['key']),
+            value=item['value'],
+            content_type=item['content_type'],
+        )
+        print(f"  Seeded: {item['page']}/{item['section']}/{item['key']}")
+        seeded += 1
+print(f"  Seeded {seeded} new fields.\n")
 
-    print("Checking known heading defaults...")
-    for (page, section, key), default_value in KNOWN_DEFAULTS.items():
-        try:
-            field = SiteContent.objects.get(page=page, section=section, key=key)
-            # If the stored value still contains Quill tags, reset to clean default
-            if field.value and re.search(r'<(h1|h2|h3|p|div)[^>]*class="ql-', field.value):
-                print(f"  Resetting [{page}/{section}/{key}] to clean default")
-                field.value = default_value
-                field.content_type = 'textarea'
-                field.save(update_fields=['value', 'content_type'])
-        except SiteContent.DoesNotExist:
-            pass
-
-    print("\n=== Cleanup Complete ===")
-    print("Your CMS is now clean! All fields use simple textarea editors.")
-    print("The website will render inline HTML spans correctly on the frontend.")
-
-
-if __name__ == '__main__':
-    fix_cms_database()
+print("========================================")
+print("  CMS Reset Complete!")
+print("========================================")
+print(f"  - Removed:  {stale_count} stale keys")
+print(f"  - Cleaned:  {quill_fixed} Quill values")
+print(f"  - Converted:{html_count} html->textarea")
+print(f"  - Reset:    {reset_count} headings to defaults")
+print(f"  - Seeded:   {seeded} new keys")
+print("\nYour CMS is now fully clean and synced.")
