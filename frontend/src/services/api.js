@@ -221,6 +221,11 @@ export const api = {
     return response.data;
   },
 
+  deleteLead: async (token, id) => {
+    const response = await axiosInstance.delete(`/leads/${id}/`);
+    return response.data;
+  },
+
   exportLeads: async (token, params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     const url = `/leads/export_csv/?${queryString}`;
@@ -262,7 +267,7 @@ export const api = {
   },
 
   getAdminAds: async (token, params = {}) => {
-    const queryString = new URLSearchParams(params).toString();
+    const queryString = new URLSearchParams({ page_size: 1000, ...params }).toString();
     const url = `/ads/manage/${queryString ? `?${queryString}` : ''}`;
     const response = await axiosInstance.get(url);
     return response.data;

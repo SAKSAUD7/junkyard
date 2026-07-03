@@ -10,6 +10,8 @@ export default function PromoBanner({ className = '' }) {
     const logoUrl = logo ? getLogoUrl(logo) : null;
     const heading = get('promo_card', 'heading', 'QUALITY AUTO PARTS');
     const phone = get('promo_card', 'phone', '1-866-293-3731');
+    const targetUrl = get('promo_card', 'target_url', 'https://www.qualityautoparts.com/iweb/index.php');
+    const buttonText = get('promo_card', 'button_text', 'Visit Us');
     
     const bullets = [
         get('promo_card', 'bullet_1', '✔ QUALITY USED AUTO PARTS'),
@@ -19,7 +21,10 @@ export default function PromoBanner({ className = '' }) {
     ].filter(Boolean);
 
     return (
-        <div className={`w-full bg-white border border-blue-100/60 rounded-[2rem] p-4 lg:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.06)] flex flex-col lg:flex-row items-center justify-between gap-6 ${className}`}>
+        <div 
+            onClick={() => window.open(targetUrl, '_blank')}
+            className={`w-full bg-white border border-blue-100/60 rounded-[2rem] p-4 lg:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.06)] flex flex-col lg:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-[0_12px_48px_rgba(37,99,235,0.12)] transition-all ${className}`}
+        >
             
             {/* Left Section: Logo & Name */}
             <div className="flex items-center gap-4 shrink-0">
@@ -63,15 +68,25 @@ export default function PromoBanner({ className = '' }) {
 
             {/* Right Section: Call to Action */}
             <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full lg:w-auto md:border-l md:border-slate-100 md:pl-6">
-                <a href={`tel:${phone.replace(/\D/g, '')}`} className="flex items-center justify-center gap-2 text-slate-800 hover:text-blue-600 transition-colors group">
+                <a 
+                    href={`tel:${phone.replace(/\D/g, '')}`} 
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center justify-center gap-2 text-slate-800 hover:text-blue-600 transition-colors group"
+                >
                     <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     </div>
                     <span className="font-black text-[18px] tracking-tight">{phone}</span>
                 </a>
-                <Link to="/quote" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold py-2.5 px-6 rounded-xl transition-all shadow-[0_4px_12px_rgba(37,99,235,0.2)] hover:shadow-[0_6px_16px_rgba(37,99,235,0.3)] text-center whitespace-nowrap">
-                    Get Instant Quote
-                </Link>
+                <a 
+                    href={targetUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold py-2.5 px-6 rounded-xl transition-all shadow-[0_4px_12px_rgba(37,99,235,0.2)] hover:shadow-[0_6px_16px_rgba(37,99,235,0.3)] text-center whitespace-nowrap"
+                >
+                    {buttonText}
+                </a>
             </div>
         </div>
     );

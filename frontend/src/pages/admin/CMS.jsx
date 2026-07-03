@@ -13,22 +13,28 @@ import {
     BookOpenIcon, QuestionMarkCircleIcon, CogIcon, StarIcon, BookmarkIcon,
     FilmIcon, XMarkIcon
 } from '@heroicons/react/24/outline';
+import {
+    HomeIcon as HomeSolid, InformationCircleIcon as InfoSolid, EnvelopeIcon as MailSolid,
+    MapIcon as MapSolid, BuildingOffice2Icon as BuildingSolid, QuestionMarkCircleIcon as QuestionSolid,
+    CogIcon as CogSolid, StarIcon as StarSolid, BookmarkIcon as BookmarkSolid,
+    GlobeAltIcon as GlobeSolid, Squares2X2Icon as SquaresSolid, DocumentTextIcon as DocSolid
+} from '@heroicons/react/24/solid';
 
 // ─── Page definitions ─────────────────────────────────────────────────────────
 const PAGES = [
-    { key: 'home',         label: 'Home',          icon: <HomeIcon className="w-5 h-5" /> },
-    { key: 'about',        label: 'About',          icon: <InformationCircleIcon className="w-5 h-5" /> },
-    { key: 'contact',      label: 'Contact',        icon: <EnvelopeIcon className="w-5 h-5" /> },
-    { key: 'browse',       label: 'Browse States',  icon: <MapIcon className="w-5 h-5" /> },
-    { key: 'vendors',      label: 'Vendors',        icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-    { key: 'faq',          label: 'FAQ',            icon: <QuestionMarkCircleIcon className="w-5 h-5" /> },
-    { key: 'how_it_works', label: 'How It Works',   icon: <CogIcon className="w-5 h-5" /> },
-    { key: 'navbar',       label: 'Navbar',         icon: <BookmarkIcon className="w-5 h-5" /> },
-    { key: 'footer',       label: 'Footer',         icon: <StarIcon className="w-5 h-5" /> },
-    { key: 'global',       label: 'Universal Logo', icon: <GlobeAltIcon className="w-5 h-5" /> },
-    { key: 'add_a_yard',   label: 'Add A Yard',     icon: <Squares2X2Icon className="w-5 h-5" /> },
-    { key: 'vendor_portal',label: 'Vendor Portal',  icon: <BuildingOffice2Icon className="w-5 h-5" /> },
-    { key: 'quote_request',label: 'Quote Request',  icon: <DocumentTextIcon className="w-5 h-5" /> },
+    { key: 'home',         label: 'Home',          icon: HomeSolid,     color: 'from-blue-500 to-indigo-600',   shadow: 'shadow-blue-500/30' },
+    { key: 'about',        label: 'About',         icon: InfoSolid,     color: 'from-emerald-400 to-teal-500',  shadow: 'shadow-emerald-500/30' },
+    { key: 'contact',      label: 'Contact',       icon: MailSolid,     color: 'from-rose-400 to-pink-500',     shadow: 'shadow-pink-500/30' },
+    { key: 'browse',       label: 'Browse States', icon: MapSolid,      color: 'from-amber-400 to-orange-500',  shadow: 'shadow-orange-500/30' },
+    { key: 'vendors',      label: 'Vendors',       icon: BuildingSolid, color: 'from-purple-500 to-fuchsia-600',shadow: 'shadow-purple-500/30' },
+    { key: 'faq',          label: 'FAQ',           icon: QuestionSolid, color: 'from-cyan-400 to-blue-500',    shadow: 'shadow-cyan-500/30' },
+    { key: 'how_it_works', label: 'How It Works',  icon: CogSolid,      color: 'from-slate-600 to-slate-800',   shadow: 'shadow-slate-500/30' },
+    { key: 'navbar',       label: 'Navbar',        icon: BookmarkSolid, color: 'from-indigo-400 to-purple-500', shadow: 'shadow-indigo-500/30' },
+    { key: 'footer',       label: 'Footer',        icon: StarSolid,     color: 'from-sky-400 to-blue-600',      shadow: 'shadow-blue-500/30' },
+    { key: 'global',       label: 'Universal Logo',icon: GlobeSolid,    color: 'from-teal-400 to-emerald-600',  shadow: 'shadow-teal-500/30' },
+    { key: 'add_a_yard',   label: 'Add A Yard',    icon: SquaresSolid,  color: 'from-orange-400 to-red-500',    shadow: 'shadow-red-500/30' },
+    { key: 'vendor_portal',label: 'Vendor Portal', icon: BuildingSolid, color: 'from-fuchsia-500 to-pink-600',  shadow: 'shadow-fuchsia-500/30' },
+    { key: 'quote_request',label: 'Quote Request', icon: DocSolid,      color: 'from-green-400 to-emerald-600', shadow: 'shadow-emerald-500/30' },
 ];
 
 const TYPE_META = {
@@ -1260,7 +1266,7 @@ export default function CMS() {
                                     onClick={() => { setActivePage(page.key); setTab('content'); }}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
                                 >
-                                    <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}>{page.icon}</span>
+                                    {(() => { const Icon = page.icon; return <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}><Icon className="w-4 h-4" /></span>; })()}
                                     {page.label}
                                     {activePage === page.key && tab === 'content' && dirtyIds.size > 0 && (
                                         <span className="ml-auto w-2 h-2 rounded-full bg-indigo-500 animate-pulse flex-shrink-0" />
@@ -1280,7 +1286,7 @@ export default function CMS() {
                                     onClick={() => { setActivePage(page.key); setTab('content'); }}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
                                 >
-                                    <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}>{page.icon}</span>
+                                    {(() => { const Icon = page.icon; return <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}><Icon className="w-4 h-4" /></span>; })()}
                                     {page.label}
                                 </button>
                             ))}
@@ -1315,16 +1321,22 @@ export default function CMS() {
                                     <DocumentTextIcon className="w-4 h-4" /> Pages
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {PAGES.filter(p => !['navbar','footer','global'].includes(p.key)).map(page => (
-                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all text-left flex flex-col group">
-                                            <div className="flex justify-between items-start mb-4 w-full">
-                                                <span className="bg-slate-100 w-12 h-12 rounded-xl flex items-center justify-center text-slate-600 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">{page.icon}</span>
+                                    {PAGES.filter(p => !['navbar','footer','global'].includes(p.key)).map(page => {
+                                        const Icon = page.icon;
+                                        return (
+                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-xl hover:border-indigo-200 hover:-translate-y-1.5 transition-all text-left flex flex-col group relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                                            <div className="flex justify-between items-start mb-5 w-full relative z-10">
+                                                <span className={`bg-gradient-to-br ${page.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg ${page.shadow} group-hover:scale-110 transition-transform duration-300`}>
+                                                    <Icon className="w-7 h-7" />
+                                                </span>
                                                 <span className="text-[10px] font-bold px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md uppercase tracking-wider">Active</span>
                                             </div>
                                             <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-indigo-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>{page.label}</h3>
                                             <p className="text-xs text-slate-400 font-mono">/{page.key.replace('_', '-')}</p>
                                         </button>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -1333,17 +1345,20 @@ export default function CMS() {
                                     <Squares2X2Icon className="w-4 h-4" /> Content Collections
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {PAGES.filter(p => ['navbar','footer','global'].includes(p.key)).map(page => (
-                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all text-left flex items-center gap-4 group">
-                                            <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex-shrink-0">
-                                                {page.icon}
+                                    {PAGES.filter(p => ['navbar','footer','global'].includes(p.key)).map(page => {
+                                        const Icon = page.icon;
+                                        return (
+                                        <button key={page.key} onClick={() => setActivePage(page.key)} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-lg hover:border-indigo-200 hover:-translate-y-1 transition-all text-left flex items-center gap-4 group">
+                                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${page.color} flex items-center justify-center text-white shadow-md ${page.shadow} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                                                <Icon className="w-6 h-6" />
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-slate-900 text-base mb-0.5 group-hover:text-indigo-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>{page.label}</h3>
                                                 <p className="text-xs text-slate-400 truncate">Manage {page.label.toLowerCase()}</p>
                                             </div>
                                         </button>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -1359,7 +1374,7 @@ export default function CMS() {
                                     <span className="text-slate-600">{currentPage?.label}</span>
                                 </div>
                                 <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    <span className="text-xl">{currentPage?.icon}</span>
+                                    {currentPage && (() => { const Icon = currentPage.icon; return <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br ${currentPage.color} text-white flex-shrink-0`}><Icon className="w-4 h-4" /></span>; })()}
                                     {currentPage?.label} Content
                                 </h1>
                                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">

@@ -91,6 +91,8 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'home', 'section': 'promo_card', 'key': 'bullet_2', 'label': 'Bullet 2', 'value': '✔ LOW PRICES', 'content_type': 'text'},
     {'page': 'home', 'section': 'promo_card', 'key': 'bullet_3', 'label': 'Bullet 3', 'value': '✔ WARRANTIED OEM PARTS', 'content_type': 'text'},
     {'page': 'home', 'section': 'promo_card', 'key': 'bullet_4', 'label': 'Bullet 4', 'value': '✔ MILLIONS OF PARTS AVAILABLE', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'button_text', 'label': 'Button Text', 'value': 'Visit Us', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'target_url', 'label': 'Target URL', 'value': 'https://www.qualityautoparts.com/iweb/index.php', 'content_type': 'url'},
 
     # Vendor CTA
     {'page': 'home', 'section': 'vendor_cta', 'key': 'heading', 'label': 'Heading', 'value': 'Are You A Junkyard Owner?', 'content_type': 'text'},

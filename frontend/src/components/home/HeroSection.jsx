@@ -409,7 +409,7 @@ export default function HeroSection({ get }) {
                             {!heroSuccess && heroStep === 1 && heroPartId && partVariants.length === 1 && (
                                 <div className="absolute -bottom-8 left-0 w-full flex justify-center animate-fade-in-up">
                                     <span className="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-                                        ✓ Hollander No: {hollanderNumber || 'Found'} {options && <span className="opacity-75 font-medium ml-1">| {options.replace(/^\(|\)$/g, '').trim()}</span>}
+                                        ✓ Exact Part Confirmed {options && <span className="opacity-75 font-medium ml-1">| {options.replace(/^\(|\)$/g, '').trim()}</span>}
                                     </span>
                                 </div>
                             )}
@@ -440,14 +440,7 @@ export default function HeroSection({ get }) {
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="mt-2 space-y-1">
-                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Hollander Interchange No.</span>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[13px] font-mono font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                                                {hollanderNumber || 'Not Found'}
-                                            </span>
-                                        </div>
-                                    </div>
+
                                     <button type="button" onClick={handleHeroNext}
                                         className="w-full bg-blue-600 text-white text-[13px] font-bold rounded-xl px-7 py-3.5 hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] flex items-center justify-center gap-2 group mt-2">
                                         Confirm Options

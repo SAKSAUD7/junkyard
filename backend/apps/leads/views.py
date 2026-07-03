@@ -17,7 +17,7 @@ from rest_framework.throttling import ScopedRateThrottle
 
 class VendorLeadViewSet(viewsets.ModelViewSet):
     throttle_scope = 'lead_submit'
-    throttle_classes = [ScopedRateThrottle]
+
     """
     API endpoint for vendor leads management.
     - POST (create): Public access (anyone can submit a vendor lead)
@@ -35,6 +35,14 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
 
+    def get_throttles(self):
+        """
+        Only throttle the public 'create' endpoint to prevent spam.
+        """
+        if self.action == 'create':
+            return [ScopedRateThrottle()]
+        return []
+
     def list(self, request, *args, **kwargs):
         try:
             return super().list(request, *args, **kwargs)
@@ -46,15 +54,9 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
     def export_csv(self, request):
         """
         Export vendor leads to CSV file.
-        Supports filtering by status via query params.
         """
         # Get filtered queryset
         queryset = self.get_queryset()
-        
-        # Apply status filter if provided
-        status = request.query_params.get('status')
-        if status and status != 'all':
-            queryset = queryset.filter(status=status)
         
         # Apply search filter if provided
         search = request.query_params.get('search')
@@ -77,7 +79,6 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
         writer.writerow([
             'ID',
             'Date Created',
-            'Status',
             'Customer Name',
             'Email',
             'Phone',
@@ -94,7 +95,6 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
             writer.writerow([
                 lead.id,
                 lead.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                lead.status or 'new',
                 lead.name,
                 lead.email,
                 lead.phone,
@@ -112,7 +112,7 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
 
 class LeadViewSet(viewsets.ModelViewSet):
     throttle_scope = 'lead_submit'
-    throttle_classes = [ScopedRateThrottle]
+
     """
     API endpoint for leads management.
     - POST (create): Public access (anyone can submit a lead)
@@ -129,6 +129,14 @@ class LeadViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+
+    def get_throttles(self):
+        """
+        Only throttle the public 'create' endpoint to prevent spam.
+        """
+        if self.action == 'create':
+            return [ScopedRateThrottle()]
+        return []
 
     def perform_create(self, serializer):
         # 1. Save the initial lead (includes the frontend-supplied hollander_number)
@@ -316,15 +324,9 @@ class LeadViewSet(viewsets.ModelViewSet):
     def export_csv(self, request):
         """
         Export leads to CSV file.
-        Supports filtering by status via query params.
         """
         # Get filtered queryset
         queryset = self.get_queryset()
-        
-        # Apply status filter if provided
-        status = request.query_params.get('status')
-        if status and status != 'all':
-            queryset = queryset.filter(status=status)
         
         # Apply search filter if provided
         search = request.query_params.get('search')
@@ -347,7 +349,6 @@ class LeadViewSet(viewsets.ModelViewSet):
         writer.writerow([
             'ID',
             'Date Created',
-            'Status',
             'Customer Name',
             'Email',
             'Phone',
@@ -357,6 +358,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             'Model',
             'VIN',
             'Part Needed',
+            'Options',
+            'Hollander Number',
             'Condition',
             'Notes'
         ])
@@ -366,7 +369,6 @@ class LeadViewSet(viewsets.ModelViewSet):
             writer.writerow([
                 lead.id,
                 lead.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                lead.status or 'new',
                 lead.name,
                 lead.email,
                 lead.phone,
@@ -376,6 +378,8 @@ class LeadViewSet(viewsets.ModelViewSet):
                 lead.model,
                 getattr(lead, 'vin', '') or '',
                 lead.part,
+                getattr(lead, 'options', '') or '',
+                getattr(lead, 'hollander_number', '') or '',
                 getattr(lead, 'condition', '') or '',
                 getattr(lead, 'notes', '') or ''
             ])

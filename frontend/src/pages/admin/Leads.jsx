@@ -17,13 +17,17 @@ export default function AdminLeads() {
     const { token } = useContext(AuthContext);
     const [leads, setLeads] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [statusFilter, setStatusFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLead, setSelectedLead] = useState(null);
     const [toast, setToast] = useState(null);
-    const [updatingStatus, setUpdatingStatus] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
+    
+    // Vendor Assignment State
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [vendors, setVendors] = useState([]);
+    const [assigning, setAssigning] = useState(false);
+    const [vendorSearch, setVendorSearch] = useState('');
 
     // Hollander Editing State
     const [editingLeadVariants, setEditingLeadVariants] = useState(null);
@@ -63,7 +67,6 @@ export default function AdminLeads() {
         setExporting(true);
         try {
             const params = {};
-            if (statusFilter !== 'all') params.status = statusFilter;
             if (searchTerm) params.search = searchTerm;
 
             const blob = await api.exportLeads(token, params);
@@ -149,24 +152,6 @@ export default function AdminLeads() {
         }
     };
 
-    const handleStatusUpdate = async (leadId, newStatus) => {
-        setUpdatingStatus(true);
-        try {
-            await api.updateLead(token, leadId, { status: newStatus });
-            setLeads(leads.map(lead =>
-                lead.id === leadId ? { ...lead, status: newStatus } : lead
-            ));
-            if (selectedLead && selectedLead.id === leadId) {
-                setSelectedLead({ ...selectedLead, status: newStatus });
-            }
-            showToast(`Lead status updated to ${newStatus}`);
-        } catch (error) {
-            showToast('Failed to update lead status', 'error');
-        } finally {
-            setUpdatingStatus(false);
-        }
-    };
-
     const filteredLeads = leads.filter(lead => {
         const matchesSearch =
             lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -174,20 +159,8 @@ export default function AdminLeads() {
             lead.phone.includes(searchTerm) ||
             lead.make.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
-
-        return matchesSearch && matchesStatus;
+        return matchesSearch;
     });
-
-    const getStatusConfig = (status) => {
-        switch (status) {
-            case 'new': return { bg: 'bg-blue-50', text: 'text-blue-600', label: 'New' };
-            case 'contacted': return { bg: 'bg-amber-50', text: 'text-amber-600', label: 'Contacted' };
-            case 'closed': return { bg: 'bg-slate-100', text: 'text-slate-600', label: 'Closed' };
-            case 'converted': return { bg: 'bg-emerald-50', text: 'text-emerald-600', label: 'Converted' };
-            default: return { bg: 'bg-slate-100', text: 'text-slate-600', label: 'Unknown' };
-        }
-    };
 
     const toggleSelectAll = () => {
         if (selectedIds.length === filteredLeads.length) {
@@ -199,6 +172,45 @@ export default function AdminLeads() {
 
     const toggleSelect = (id) => {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    };
+
+    const handleBulkDelete = async () => {
+        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} leads?`)) return;
+        try {
+            await Promise.all(selectedIds.map(id => api.deleteLead(token, id)));
+            setSelectedIds([]);
+            fetchLeads();
+            showToast(`Deleted ${selectedIds.length} leads successfully`, 'success');
+        } catch (error) {
+            showToast('Failed to delete some leads', 'error');
+        }
+    };
+
+    const handleOpenAssignModal = async () => {
+        setShowAssignModal(true);
+        if (vendors.length === 0) {
+            try {
+                const data = await api.getAdminVendors(token, { limit: 100 });
+                setVendors(data.results || data);
+            } catch (err) {
+                console.error('Failed to load vendors', err);
+            }
+        }
+    };
+
+    const handleAssignToVendor = async (vendorId) => {
+        setAssigning(true);
+        try {
+            await Promise.all(selectedIds.map(id => api.updateLead(token, id, { vendor: vendorId })));
+            setSelectedIds([]);
+            setShowAssignModal(false);
+            fetchLeads();
+            showToast(`Successfully assigned ${selectedIds.length} leads to vendor!`, 'success');
+        } catch (error) {
+            showToast('Failed to assign some leads', 'error');
+        } finally {
+            setAssigning(false);
+        }
     };
 
     if (loading) {
@@ -226,39 +238,20 @@ export default function AdminLeads() {
                         <ArrowDownTrayIcon className="h-4 w-4" />
                         Export CSV
                     </button>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all">
-                        + Add Lead
-                    </button>
                 </div>
             </div>
 
             {/* ── Filters ───────────────────────────────────────────────────── */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-1 max-w-md">
-                        <input
-                            type="text"
-                            placeholder="Search leads..."
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
-                    </div>
-                    <div className="relative w-40">
-                        <select
-                            className="w-full appearance-none pl-10 pr-8 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm text-slate-700 bg-white"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="all">All Status</option>
-                            <option value="new">New</option>
-                            <option value="contacted">Contacted</option>
-                            <option value="converted">Converted</option>
-                            <option value="closed">Closed</option>
-                        </select>
-                        <FunnelIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-                    </div>
+                <div className="relative max-w-md">
+                    <input
+                        type="text"
+                        placeholder="Search leads, vendors, messages..."
+                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
                 </div>
             </div>
 
@@ -270,8 +263,8 @@ export default function AdminLeads() {
                         <span className="text-sm font-semibold text-blue-900">{selectedIds.length} leads selected</span>
                     </div>
                     <div className="flex gap-2">
-                        <button className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-md text-xs font-semibold hover:bg-slate-50">Assign to...</button>
-                        <button className="px-3 py-1.5 bg-white border border-slate-200 text-rose-600 rounded-md text-xs font-semibold hover:bg-rose-50">Delete</button>
+                        <button onClick={handleOpenAssignModal} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-md text-xs font-semibold hover:bg-slate-50 transition-colors">Assign to...</button>
+                        <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-white border border-slate-200 text-rose-600 rounded-md text-xs font-semibold hover:bg-rose-50 transition-colors">Delete</button>
                     </div>
                 </div>
             )}
@@ -299,14 +292,12 @@ export default function AdminLeads() {
                                     <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer</th>
                                     <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contact</th>
                                     <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vehicle / Part</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
                                     <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
                                     <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {filteredLeads.map((lead) => {
-                                    const statusConfig = getStatusConfig(lead.status || 'new');
                                     const isSelected = selectedIds.includes(lead.id);
                                     return (
                                         <tr key={lead.id} className={`hover:bg-slate-50/50 transition-colors ${isSelected ? 'bg-blue-50/30' : ''}`}>
@@ -341,11 +332,6 @@ export default function AdminLeads() {
                                             <td className="px-4 py-3">
                                                 <p className="text-xs font-bold text-slate-900">{lead.year} {lead.make} {lead.model}</p>
                                                 <p className="text-[11px] text-slate-500">{lead.part}</p>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-md ${statusConfig.bg} ${statusConfig.text}`}>
-                                                    {statusConfig.label}
-                                                </span>
                                             </td>
                                             <td className="px-4 py-3 text-xs text-slate-500">
                                                 {new Date(lead.created_at).toLocaleDateString()}
@@ -383,28 +369,6 @@ export default function AdminLeads() {
                         </div>
 
                         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-5">
-                            {/* Status Change */}
-                            <div>
-                                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Update Status</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {['new', 'contacted', 'converted', 'closed'].map((status) => (
-                                        <button
-                                            key={status}
-                                            onClick={() => handleStatusUpdate(selectedLead.id, status)}
-                                            disabled={updatingStatus || selectedLead.status === status}
-                                            className={`px-4 py-1.5 rounded-lg text-xs font-semibold border ${
-                                                selectedLead.status === status
-                                                    ? 'bg-blue-50 border-blue-200 text-blue-700'
-                                                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                                            }`}
-                                        >
-                                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Single-column stacked layout for full data visibility */}
                             <div className="space-y-4">
 
                                 {/* Customer Details */}
@@ -574,6 +538,52 @@ export default function AdminLeads() {
                             <a href={`mailto:${selectedLead.email}`} className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold text-center hover:bg-blue-700 shadow-sm">
                                 Send Email
                             </a>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Assign Vendor Modal ───────────────────────────────────────── */}
+            {showAssignModal && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex justify-center items-center p-4 z-[9999]">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+                        <div className="flex justify-between items-center p-5 border-b border-slate-100">
+                            <div>
+                                <h3 className="text-lg font-bold text-slate-900">Assign Leads</h3>
+                                <p className="text-sm text-slate-500">Select a vendor for {selectedIds.length} lead(s)</p>
+                            </div>
+                            <button onClick={() => setShowAssignModal(false)} className="text-slate-400 hover:text-slate-600">
+                                <XMarkIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+                        <div className="p-5">
+                            <div className="relative mb-4">
+                                <input
+                                    type="text"
+                                    placeholder="Search vendors..."
+                                    value={vendorSearch}
+                                    onChange={(e) => setVendorSearch(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm"
+                                />
+                                <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3 top-2.5" />
+                            </div>
+                            <div className="max-h-64 overflow-y-auto space-y-2 border border-slate-100 rounded-lg p-2 bg-slate-50">
+                                {vendors.filter(v => v.name?.toLowerCase().includes(vendorSearch.toLowerCase())).map(vendor => (
+                                    <button
+                                        key={vendor.id}
+                                        onClick={() => handleAssignToVendor(vendor.id)}
+                                        disabled={assigning}
+                                        className="w-full text-left p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-colors group flex items-center justify-between"
+                                    >
+                                        <div>
+                                            <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-700">{vendor.name}</p>
+                                            <p className="text-xs text-slate-500">{vendor.city}, {vendor.state}</p>
+                                        </div>
+                                        <div className="text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">Assign</div>
+                                    </button>
+                                ))}
+                                {vendors.length === 0 && <p className="text-center text-slate-500 text-sm py-4">Loading vendors...</p>}
+                            </div>
                         </div>
                     </div>
                 </div>

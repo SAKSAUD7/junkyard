@@ -114,74 +114,99 @@ export default function Navbar() {
 
                         {/* Desktop Auth/Action Buttons */}
                         <div className="hidden lg:flex items-center gap-3 shrink-0">
-                            {isAuthenticated ? (
-                                <div className="relative" ref={accountDropdownRef}>
-                                    <button
-                                        onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors border border-slate-200"
-                                    >
-                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white bg-blue-600">
+                            <div className="relative" ref={accountDropdownRef}>
+                                <button
+                                    onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border-2 ${
+                                        accountDropdownOpen 
+                                            ? 'border-blue-600 text-blue-600 bg-blue-50' 
+                                            : 'border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    {isAuthenticated ? (
+                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white bg-blue-600 shadow-sm">
                                             {user?.first_name?.[0] || user?.email?.[0] || 'U'}
                                         </div>
-                                        <span>Account</span>
-                                        <svg className={`w-4 h-4 transition-transform duration-300 ${accountDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    ) : (
+                                        <svg className="w-5 h-5 text-current opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
-                                    </button>
-
-                                    {accountDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
-                                            <div className="px-4 py-3 border-b border-slate-50">
-                                                <p className="text-sm font-semibold text-slate-900">{user?.first_name} {user?.last_name}</p>
-                                                <p className="text-xs truncate text-slate-500">{user?.email}</p>
-                                            </div>
-
-                                            {user?.is_superuser && (
-                                                <DropdownLink to="/admin-portal/dashboard" icon="⚙" label="Admin Portal" onClick={() => setAccountDropdownOpen(false)} />
-                                            )}
-
-                                            {user?.user_type === 'vendor' ? (
-                                                <>
-                                                    <DropdownLink to="/vendor/dashboard" icon="📊" label="Dashboard" onClick={() => setAccountDropdownOpen(false)} />
-                                                    <DropdownLink to="/vendor/leads" icon="👥" label="Leads" onClick={() => setAccountDropdownOpen(false)} />
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <DropdownLink to="/profile" icon="👤" label="Profile" onClick={() => setAccountDropdownOpen(false)} />
-                                                    {!user?.is_superuser && (
-                                                        <DropdownLink to="/add-a-yard" icon="➕" label="Manage Yard" onClick={() => setAccountDropdownOpen(false)} />
-                                                    )}
-                                                </>
-                                            )}
-                                            
-                                            <div className="border-t border-slate-50 my-1" />
-                                            <button
-                                                onClick={handleLogout}
-                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
-                                            >
-                                                <span className="text-base">🚪</span> Log out
-                                            </button>
-                                        </div>
                                     )}
-                                </div>
-                            ) : (
-                                <>
-                                    <Link
-                                        to="/add-a-yard"
-                                        className="px-5 py-2.5 rounded-full text-[13px] font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
-                                        style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '0.02em' }}
-                                    >
-                                        Become a Vendor
-                                    </Link>
-                                    <button
-                                        onClick={() => setLoginModalOpen(true)}
-                                        className="px-5 py-2.5 rounded-full text-[13px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
-                                        style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '0.02em' }}
-                                    >
-                                        Sign In
-                                    </button>
-                                </>
-                            )}
+                                    <span>Account</span>
+                                    <svg className={`w-4 h-4 opacity-70 transition-transform duration-300 ${accountDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                {accountDropdownOpen && (
+                                    <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 overflow-hidden transform origin-top-right transition-all">
+                                        {isAuthenticated ? (
+                                            <>
+                                                <div className="px-5 py-4 border-b border-slate-50 bg-slate-50/50">
+                                                    <p className="text-sm font-bold text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
+                                                    <p className="text-xs text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                                </div>
+
+                                                <div className="py-2">
+                                                    {user?.is_superuser && (
+                                                        <DropdownLink to="/admin-portal/dashboard" icon="⚙️" label="Admin Portal" onClick={() => setAccountDropdownOpen(false)} />
+                                                    )}
+
+                                                    {user?.user_type === 'vendor' ? (
+                                                        <>
+                                                            <DropdownLink to="/vendor/dashboard" icon="📊" label="Dashboard" onClick={() => setAccountDropdownOpen(false)} />
+                                                            <DropdownLink to="/vendor/leads" icon="👥" label="Leads" onClick={() => setAccountDropdownOpen(false)} />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <DropdownLink to="/profile" icon="👤" label="Profile" onClick={() => setAccountDropdownOpen(false)} />
+                                                            {!user?.is_superuser && (
+                                                                <DropdownLink to="/add-a-yard" icon="➕" label="Manage Yard" onClick={() => setAccountDropdownOpen(false)} />
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                                
+                                                <div className="border-t border-slate-50" />
+                                                <div className="py-2">
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full text-left px-5 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-3 transition-colors"
+                                                    >
+                                                        <span className="text-lg">🚪</span> Log out
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="pt-2 pb-1 px-5">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">For Buyers</span>
+                                                </div>
+                                                <button onClick={() => { setAccountDropdownOpen(false); setLoginModalOpen(true); }} className="w-full text-left px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 flex items-center gap-3 transition-colors">
+                                                    <span className="text-lg">👤</span> Sign In
+                                                </button>
+                                                <button onClick={() => { setAccountDropdownOpen(false); setSignupModalOpen(true); }} className="w-full text-left px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 flex items-center gap-3 transition-colors">
+                                                    <span className="text-lg">🚀</span> Create Free Account
+                                                </button>
+                                                
+                                                <div className="border-t border-slate-50 my-2 mx-3" />
+                                                
+                                                <div className="pt-2 pb-1 px-5">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">For Partners</span>
+                                                </div>
+                                                <DropdownLink to="/add-a-yard" icon="➕" label="Add Your Yard" onClick={() => setAccountDropdownOpen(false)} />
+                                                <DropdownLink to="/vendor/login" icon="🏪" label="Vendor Login" onClick={() => setAccountDropdownOpen(false)} />
+                                                
+                                                <div className="border-t border-slate-50 my-2 mx-3" />
+                                                
+                                                <div className="py-1">
+                                                    <DropdownLink to="/admin/login" icon="⚙️" label="Admin Login" onClick={() => setAccountDropdownOpen(false)} />
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -238,10 +263,10 @@ function DropdownLink({ to, icon, label, onClick }) {
         <Link
             to={to}
             onClick={onClick}
-            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 transition-colors w-full text-left"
         >
-            <span className="text-base">{icon}</span>
-            <span className="font-medium">{label}</span>
+            <span className="text-lg">{icon}</span>
+            <span>{label}</span>
         </Link>
     )
 }
