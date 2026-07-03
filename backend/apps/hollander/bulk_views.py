@@ -51,7 +51,8 @@ def get_vehicle_data_bulk(request, make_id):
             'part_type_ref__part_id',
             'part_type_ref__part_name',
             'hollander_number',
-            'option1', 'option2', 'option3' # Fetch first few options for quick display
+            'option1', 'option2', 'option3', 'option4', 'option5', 
+            'option6', 'option7', 'option8', 'option9', 'option10'
         )
         
         # Process Pricing Data in Memory
@@ -73,37 +74,54 @@ def get_vehicle_data_bulk(request, make_id):
             
             # Add Parts (buckets by year)
             # This is tricky because one record spans multiple years.
-            # We construct a part object
+            
+            p_id_base = row['part_type_ref__part_id']
+            h_num = row['hollander_number'] or ''
+            options_str = ', '.join(filter(None, [
+                row['option1'], row['option2'], row['option3'], row['option4'], 
+                row['option5'], row['option6'], row['option7'], row['option8'], 
+                row['option9'], row['option10']
+            ]))
+            
+            # IMPORTANT: Keep part_name CLEAN (no options appended).
+            # Options are a separate field; the frontend resolves them from the composite key.
+            p_name = row['part_type_ref__part_name']
+            
+            # Use a unique key so we don't deduplicate variations of the same part
+            unique_part_key = f"{p_id_base}_{h_num}"
+
+            # We construct a part object with clean name + separate options
             part_obj = {
-                'part_id': row['part_type_ref__part_id'],
-                'part_name': row['part_type_ref__part_name'],
-                'hollander_number': row['hollander_number'] or '',
-                # Simple option concat for list view
-                'options': ', '.join(filter(None, [row['option1'], row['option2'], row['option3']]))
+                'part_id': unique_part_key,
+                'part_name': p_name,           # Clean name — no options appended
+                'hollander_number': h_num,
+                'options': options_str          # Options stored separately
             }
             
             # Add to all relevant years for this model
-            # To avoid exploding memory, we only add to year buckets if we track them
             if s <= e:
-                pass 
-                # Doing this for every year in range for every part is expensive memory-wise.
-                # Optimization: Store parts by (model) and just filter in Frontend?
-                # No, frontend expects hierarchical.
-                # Let's simple check: limit range to [2000-2030] for full detail?
-                # Or just do it. Python is efficient enough for 50k objects usually.
-                
-                # Let's optimize: Store generic parts list per model, and year availability?
-                # Frontend expects: model_data['parts'][year] = [list of parts]
-                
                 for y in range(s, e + 1):
-                    if y < 1980: continue # Skip very old data for bulk performance
+                    if y < 1980: continue
                     
-                    if str(y) not in model_map[m_id]['parts']:
-                        model_map[m_id]['parts'][str(y)] = {} # Use dict for dedupe
+                    y_str = str(y)
+                    if y_str not in model_map[m_id]['parts']:
+                        model_map[m_id]['parts'][y_str] = {}
                     
-                    p_id = part_obj['part_id']
-                    if p_id not in model_map[m_id]['parts'][str(y)]:
-                        model_map[m_id]['parts'][str(y)][p_id] = part_obj
+                    base_key = str(p_id_base)
+                    if base_key not in model_map[m_id]['parts'][y_str]:
+                        model_map[m_id]['parts'][y_str][base_key] = {
+                            'part_id': p_id_base,
+                            'part_name': p_name,
+                            'variants': []
+                        }
+                    
+                    # Add this variant (deduplicate by hollander_number)
+                    existing = {v['hollander_number'] for v in model_map[m_id]['parts'][y_str][base_key]['variants']}
+                    if h_num not in existing:
+                        model_map[m_id]['parts'][y_str][base_key]['variants'].append({
+                            'hollander_number': h_num,
+                            'options': options_str
+                        })
 
         # 3. Fallback: Hollander Index (Query #3 & #4 - Catalog Years)
         # Robust Logic: Bridge Local Model Names -> Hollander Ref Names -> Hollander Index
@@ -241,13 +259,45 @@ def get_vehicle_data_bulk(request, make_id):
         # Typically HollanderPartRef is more accurate for Catalog codes.
         
         # F. Merge Data back to Models
+        # First, bulk-fetch HollanderInterchange records for the matched h_models
+        # so we can fill in real hollander_number values (instead of blank placeholder)
+        from .models import HollanderInterchange
+        
+        # Build a lookup: (h_model, part_type_code) -> hollander_number
+        # We query all relevant HollanderInterchange records at once
+        hinter_lookup = {}  # key: (model_nm_upper, part_type_code_str) -> hollander_number
+        if h_model_list:
+            hinter_records = HollanderInterchange.objects.filter(
+                model__in=list(h_model_list)
+            ).values('model', 'year_start', 'year_end', 'part_type', 'hollander_number')
+            
+            # Also try to get part type code -> name mapping from HollanderPartRef
+            # We need to map part_type (name) in HollanderInterchange to part_type_nbr codes
+            # HollanderInterchange.part_type is a name string like "Bumper Reinforcement - Front"
+            # HollanderPartRef maps code -> name
+            # Build reverse map: part_name -> code
+            part_name_to_code = {v: k for k, v in part_code_map.items()}
+            
+            for rec in hinter_records:
+                p_name = rec['part_type']
+                p_code = part_name_to_code.get(p_name, '')
+                if not p_code:
+                    # Try partial match
+                    for name, code in part_name_to_code.items():
+                        if name and p_name and (name.lower() in p_name.lower() or p_name.lower() in name.lower()):
+                            p_code = code
+                            break
+                key = (rec['model'].upper(), p_code, rec['year_start'], rec['year_end'])
+                if key not in hinter_lookup and rec['hollander_number']:
+                    hinter_lookup[key] = rec['hollander_number']
+        
         # Organization: catalog_by_h_model[h_name] = [entries...]
         catalog_by_h_model = {}
         for entry in catalog_entries:
             nm = entry['model_nm']
             if nm not in catalog_by_h_model: catalog_by_h_model[nm] = []
             catalog_by_h_model[nm].append(entry)
-            
+
         # Assign to Local Models
         for m_id, h_names in model_to_h_models.items():
             if not h_names: continue
@@ -265,26 +315,35 @@ def get_vehicle_data_bulk(request, make_id):
                                  if 'year_set' not in model_map[m_id]: model_map[m_id]['year_set'] = set()
                                  model_map[m_id]['year_set'].update(range(s, e + 1))
                                  
-                                 # 2. Add Parts (for every year in range)
-                                 # Optimization: Listing EVERY part for EVERY year is heavy.
-                                 # But necessary for "Select Year -> Select Part" flow.
-                                 
                                  if p_code and p_code in part_code_map:
                                      p_name = part_code_map[p_code]
+                                     
+                                     # Try to resolve real Hollander number from HollanderInterchange lookup
+                                     resolved_hollander = ''
+                                     lookup_key = (h_name.upper(), p_code, s, e)
+                                     if lookup_key in hinter_lookup:
+                                         resolved_hollander = hinter_lookup[lookup_key]
+                                     else:
+                                         # Try a broader search with just model + part_code
+                                         for (lm, lc, ls, le), lh in hinter_lookup.items():
+                                             if lm == h_name.upper() and lc == p_code:
+                                                 resolved_hollander = lh
+                                                 break
                                      
                                      # Convert to int for frontend compatibility
                                      try:
                                          p_id_int = int(p_code)
                                      except (ValueError, TypeError):
-                                         # Skip invalid non-numeric parts if any
                                          continue
 
-                                     # Create part object
+                                     unique_part_key = f"{p_id_int}_{resolved_hollander}"
+
+                                     # Create part object WITH real hollander_number
                                      p_obj = {
-                                         'part_id': p_id_int, 
+                                         'part_id': unique_part_key, 
                                          'part_name': p_name,
-                                         'hollander_number': '', # No specific number known yet
-                                         'options': 'Check Availability' # Placeholder
+                                         'hollander_number': resolved_hollander,
+                                         'options': ''
                                      }
                                      
                                      for y in range(s, e + 1):
@@ -294,9 +353,21 @@ def get_vehicle_data_bulk(request, make_id):
                                          if y_str not in model_map[m_id]['parts']:
                                              model_map[m_id]['parts'][y_str] = {}
                                          
-                                         # Dedupe by Code (using int ID as key is fine)
-                                         if p_id_int not in model_map[m_id]['parts'][y_str]:
-                                              model_map[m_id]['parts'][y_str][p_id_int] = p_obj
+                                         base_key = str(p_id_int)
+                                         # Only add if PartPricing hasn't already provided this part
+                                         if base_key not in model_map[m_id]['parts'][y_str]:
+                                             model_map[m_id]['parts'][y_str][base_key] = {
+                                                 'part_id': p_id_int,
+                                                 'part_name': p_name,
+                                                 'variants': []
+                                             }
+                                         
+                                         existing = {v['hollander_number'] for v in model_map[m_id]['parts'][y_str][base_key]['variants']}
+                                         if resolved_hollander not in existing:
+                                             model_map[m_id]['parts'][y_str][base_key]['variants'].append({
+                                                 'hollander_number': resolved_hollander,
+                                                 'options': ''
+                                             })
         
         # Final Assembly (Filter out empty models)
         for m_id, data in model_map.items():

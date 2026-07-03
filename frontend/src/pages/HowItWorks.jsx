@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { getHowToSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
 
 const HowItWorks = () => {
@@ -50,6 +51,7 @@ const HowItWorks = () => {
             <SEO
                 title={get('meta', 'title', 'How It Works - Find Used Auto Parts in 4 Easy Steps')}
                 description={get('meta', 'description', 'Learn how to find quality used auto parts through our network of verified junkyards. Simple 4-step process.')}
+                schema={getHowToSchema()}
             />
             <Navbar />
 

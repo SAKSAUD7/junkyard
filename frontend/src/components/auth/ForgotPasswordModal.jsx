@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import LogoImage from '../../assets/jynm_logo.png';
 import { useCMS } from '../../hooks/useCMS';
 
 const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
-    const { get } = useCMS('navbar');
+    const { get: getGlobal } = useCMS('global');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [touched, setTouched] = useState(false);
@@ -70,7 +69,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
 
     if (!isOpen) return null;
 
-    const logoUrl = get('brand', 'logo', LogoImage);
+    const logoUrl = getGlobal('brand', 'logo');
 
     return (
         <div
@@ -94,12 +93,17 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
 
                 <div className="flex flex-col md:flex-row">
                     {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-12 flex-col justify-center items-center text-slate-800">
+                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-10 flex-col justify-center items-center">
                         <div className="text-center">
-                            <div className="mb-6">
-                                <img src={logoUrl} alt="JYNM AutoParts Hub" className="h-20 w-auto object-contain mx-auto mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
+                            <div className="bg-white rounded-2xl shadow-xl px-8 py-6 mb-8 inline-flex items-center justify-center">
+                                <img
+                                    src={logoUrl || '/logo.png'}
+                                    alt="JYNM"
+                                    className="h-16 w-auto object-contain"
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
                             </div>
-                            <p className="text-lg font-medium mb-2">Forgot Password?</p>
+                            <p className="text-xl font-bold text-white mb-2">Forgot Password?</p>
                             <p className="text-blue-100 text-sm">No worries! We'll send you reset instructions.</p>
                         </div>
                     </div>

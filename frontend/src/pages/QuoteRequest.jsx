@@ -154,7 +154,7 @@ export default function QuoteRequest() {
             await api.createLead({
                 make: make || 'Unknown',
                 model: model || 'Unknown',
-                year: parseInt(year) || null,
+                year: year ? parseInt(year) : 2024,
                 part: part || 'Unknown',
                 name: formData.name,
                 email: formData.email,
@@ -183,7 +183,7 @@ export default function QuoteRequest() {
             <Navbar />
 
             <div className="flex-1 pt-12 md:pt-16 pb-20">
-                <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                <div className="max-w-xl mx-auto px-4 sm:px-6">
                     {/* Header Banner */}
                     <div className="text-center mb-10">
                         <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[13px] font-bold border border-blue-100">
@@ -425,6 +425,27 @@ export default function QuoteRequest() {
                             </>
                         )}
                     </div>
+
+                    {/* Trust Badges below form */}
+                    <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[13px] font-bold text-slate-500">
+                        {cmsData.trust_text ? (
+                            cmsData.trust_text.split('•').map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {item.trim()}
+                                </div>
+                            ))
+                        ) : (
+                            <>
+                                <div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>Secure & Encrypted</div>
+                                <div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>100% Free</div>
+                                <div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>No Obligation</div>
+                            </>
+                        )}
+                    </div>
+
                 </div>
             </div>
 

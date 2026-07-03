@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { vendorNotifications } from '../../services/vendorApi';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorNotifications = () => {
+    const { get } = useCMS('vendor_portal');
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -110,10 +112,10 @@ const VendorNotifications = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
-                        <h1 className="text-3xl font-extrabold font-display tracking-tight ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Notifications</h1>
+                        <h1 className="text-3xl font-extrabold font-display tracking-tight ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('notifications', 'heading', 'Notifications')}</h1>
                     </div>
                     <p className="text-slate-500 font-medium ml-[4rem] mt-0.5 flex items-center gap-2">
-                        Stay updated with your activity
+                        {get('notifications', 'subheading', 'Stay updated on leads and system alerts')}
                         {unreadCount > 0 && (
                             <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
                                 {unreadCount} new

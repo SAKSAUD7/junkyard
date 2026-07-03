@@ -5,77 +5,99 @@ const AD_CLICK_URL = (id) => {
     return `${base}/ads/${id}/click/`;
 };
 
-// ─── Shared Badge ──────────────────────────────────────────────────────────────
-const FeaturedBadge = ({ color = 'blue' }) => {
-    const colors = {
-        blue: 'bg-blue-50 text-blue-600 border-blue-100',
-        gold: 'bg-amber-50 text-amber-600 border-amber-100',
-        purple: 'bg-purple-50 text-purple-600 border-purple-100',
-        green: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+// Resolve image URL safely
+const resolveImg = (ad) => {
+    const src = ad.resolved_image_url || ad.image_url || ad.image;
+    if (!src) return null;
+    if (src.startsWith('http') || src.startsWith('/media')) return src;
+    return src;
+};
+
+// Initials avatar fallback
+const InitialsAvatar = ({ name, size = 'md', gradient = 'blue' }) => {
+    const initials = name ? name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() : 'AD';
+    const gradients = {
+        blue:   'from-blue-500 to-blue-700',
+        purple: 'from-violet-500 to-purple-700',
+        orange: 'from-orange-400 to-red-600',
+        green:  'from-emerald-400 to-teal-600',
+        dark:   'from-slate-600 to-slate-900',
+    };
+    const sizes = { sm: 'w-10 h-10 text-sm', md: 'w-14 h-14 text-base', lg: 'w-20 h-20 text-xl' };
+    return (
+        <div className={`${sizes[size]} rounded-full bg-gradient-to-br ${gradients[gradient] || gradients.blue} flex items-center justify-center font-black text-white flex-shrink-0`}>
+            {initials}
+        </div>
+    );
+};
+
+// Sponsored pill badge
+const SponsoredPill = ({ variant = 'light' }) => {
+    const vars = {
+        light:  'bg-slate-100 text-slate-500',
+        blue:   'bg-blue-50 text-blue-500 border border-blue-100',
+        dark:   'bg-white/10 text-white/70',
+        amber:  'bg-amber-400/15 text-amber-500 border border-amber-300/30',
     };
     return (
-        <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${colors[color] || colors.blue}`}>
-            <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
+        <span className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full ${vars[variant]}`}>
+            <svg className="w-2 h-2 fill-current" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" /></svg>
             Sponsored
         </span>
     );
 };
 
+// Arrow CTA icon
+const ArrowIcon = ({ className = 'w-3.5 h-3.5' }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+    </svg>
+);
+
+
 // ─── Standard Template ─────────────────────────────────────────────────────────
-// Full-width horizontal card — great for strip/banner slot between sections
+// Horizontal card with left logo + right content — clean & readable
 export const StandardTemplate = ({ ad }) => {
-    const [hovered, setHovered] = useState(false);
+    const img = resolveImg(ad);
     return (
         <a
             href={AD_CLICK_URL(ad.id)}
             target="_blank"
             rel="noopener noreferrer"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
             className="group block w-full outline-none"
             aria-label={`Sponsored: ${ad.title}`}
         >
-            <div
-                className="relative flex flex-col sm:flex-row items-stretch bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300"
-                style={{
-                    boxShadow: hovered
-                        ? '0 16px 48px rgba(26,86,255,0.10), 0 2px 8px rgba(0,0,0,0.04)'
-                        : '0 4px 20px rgba(0,0,0,0.04)',
-                    transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
-                }}
-            >
-                {/* Accent top bar */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#1a56ff] via-[#8b5cf6] to-[#ec4899]" />
+            <div className="relative flex items-stretch bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300 hover:border-blue-100 hover:shadow-[0_8px_40px_rgba(26,86,255,0.08)] hover:-translate-y-0.5">
+                {/* Left color accent stripe */}
+                <div className="w-1 flex-shrink-0 bg-gradient-to-b from-[#1a56ff] to-[#6366f1]" />
 
-                {/* Image Panel */}
-                {ad.image && (
-                    <div className="sm:w-[200px] md:w-[240px] flex-shrink-0 overflow-hidden bg-slate-50">
+                {/* Logo panel */}
+                <div className="flex items-center justify-center bg-slate-50 w-[88px] flex-shrink-0 border-r border-slate-100 px-4">
+                    {img ? (
                         <img
-                            src={ad.image}
+                            src={img}
                             alt={ad.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            style={{ minHeight: '120px', maxHeight: '180px' }}
-                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
+                            className="w-12 h-12 object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
+                            onError={e => e.target.style.display = 'none'}
                         />
-                    </div>
-                )}
+                    ) : (
+                        <InitialsAvatar name={ad.title} size="md" gradient="blue" />
+                    )}
+                </div>
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col justify-between p-5 gap-3">
-                    <div>
-                        {ad.show_badge && <FeaturedBadge color="blue" />}
-                        <h3 className="mt-2 text-[16px] font-black text-slate-900 leading-snug line-clamp-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                <div className="flex flex-1 items-center gap-4 px-4 py-3.5">
+                    <div className="flex-1 min-w-0">
+                        <SponsoredPill variant="blue" />
+                        <h3 className="mt-1 text-[15px] font-black text-slate-900 leading-tight line-clamp-1 group-hover:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {ad.title}
                         </h3>
+                        <p className="text-[12px] text-slate-500 font-medium mt-0.5">Quality Used Auto Parts</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1a56ff] text-white text-[13px] font-bold transition-all duration-200 group-hover:bg-[#0e48db] group-hover:shadow-[0_8px_20px_rgba(26,86,255,0.3)]">
-                            {ad.button_text || 'Learn More'}
-                            <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
+                    <div className="flex-shrink-0">
+                        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1a56ff] text-white text-[12px] font-bold whitespace-nowrap transition-all duration-200 group-hover:bg-[#0e48db] group-hover:shadow-[0_6px_16px_rgba(26,86,255,0.3)]">
+                            {ad.button_text || 'Visit Yard'}
+                            <ArrowIcon className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                         </span>
                     </div>
                 </div>
@@ -84,192 +106,176 @@ export const StandardTemplate = ({ ad }) => {
     );
 };
 
+
 // ─── Minimal Template ──────────────────────────────────────────────────────────
-// Clean sidebar card — narrow, vertically stacked
+// Clean pill-style inline strip — great for tight horizontal rows
 export const MinimalTemplate = ({ ad }) => {
-    const [hovered, setHovered] = useState(false);
+    const img = resolveImg(ad);
     return (
         <a
             href={AD_CLICK_URL(ad.id)}
             target="_blank"
             rel="noopener noreferrer"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="group block w-full outline-none"
+            className="group flex items-center gap-3 w-full bg-white border border-slate-100 rounded-2xl px-4 py-3 outline-none transition-all duration-200 hover:border-slate-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:-translate-y-0.5"
             aria-label={`Sponsored: ${ad.title}`}
         >
-            <div
-                className="relative bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300"
-                style={{
-                    boxShadow: hovered
-                        ? '0 12px 36px rgba(0,0,0,0.08)'
-                        : '0 2px 12px rgba(0,0,0,0.03)',
-                    transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
-                }}
-            >
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-slate-400 to-slate-600" />
-
-                {ad.image && (
-                    <div className="w-full overflow-hidden bg-slate-50" style={{ height: '140px' }}>
-                        <img
-                            src={ad.image}
-                            alt={ad.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
-                        />
-                    </div>
-                )}
-
-                <div className="p-4 space-y-3">
-                    {ad.show_badge && <FeaturedBadge color="blue" />}
-                    <h3 className="text-[14px] font-bold text-slate-800 leading-snug line-clamp-2">
-                        {ad.title}
-                    </h3>
-                    <span className="inline-flex w-full items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 text-white text-[12px] font-bold transition-all group-hover:bg-slate-700">
-                        {ad.button_text || 'Visit Site'} →
-                    </span>
+            {/* Thumbnail */}
+            {img ? (
+                <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
+                    <img src={img} alt={ad.title} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" onError={e => e.target.style.display='none'} />
                 </div>
+            ) : (
+                <InitialsAvatar name={ad.title} size="sm" gradient="dark" />
+            )}
+
+            {/* Name */}
+            <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-black text-slate-800 leading-snug line-clamp-1 group-hover:text-slate-900 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    {ad.title}
+                </p>
+                <SponsoredPill variant="light" />
             </div>
+
+            {/* CTA */}
+            <span className="flex-shrink-0 text-[11px] font-bold text-blue-600 group-hover:text-blue-700 flex items-center gap-1 whitespace-nowrap">
+                {ad.button_text || 'View'} <ArrowIcon className="w-2.5 h-2.5 group-hover:translate-x-0.5 transition-transform" />
+            </span>
         </a>
     );
 };
 
+
 // ─── Premium Template ──────────────────────────────────────────────────────────
-// Full-width vibrant hero card with gradient accent — flagship ads
+// Dark glassmorphism hero card — flagship sponsored content
 export const PremiumTemplate = ({ ad }) => {
-    const [hovered, setHovered] = useState(false);
+    const img = resolveImg(ad);
     return (
         <a
             href={AD_CLICK_URL(ad.id)}
             target="_blank"
             rel="noopener noreferrer"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
             className="group block w-full outline-none"
             aria-label={`Sponsored: ${ad.title}`}
         >
-            <div
-                className="relative flex flex-col sm:flex-row items-stretch bg-gradient-to-br from-[#0f172a] to-[#1e293b] rounded-2xl overflow-hidden transition-all duration-300"
-                style={{
-                    boxShadow: hovered
-                        ? '0 20px 60px rgba(139,92,246,0.25), 0 4px 16px rgba(0,0,0,0.2)'
-                        : '0 8px 32px rgba(0,0,0,0.15)',
-                    transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
-                }}
-            >
-                {/* Gradient glow overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#8b5cf6]/10 via-transparent to-[#1a56ff]/10 pointer-events-none" />
+            <div className="relative flex items-stretch bg-gradient-to-br from-[#0c1a3a] via-[#0f2055] to-[#1a1040] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_20px_60px_rgba(99,102,241,0.25)] hover:-translate-y-1"
+                style={{ minHeight: '120px' }}>
 
-                {/* Image */}
-                {ad.image && (
-                    <div className="sm:w-[220px] md:w-[260px] flex-shrink-0 overflow-hidden relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0f172a]/60 z-10 sm:block hidden" />
-                        <img
-                            src={ad.image}
-                            alt={ad.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            style={{ minHeight: '140px', maxHeight: '200px' }}
-                            onError={(e) => { e.target.closest('div').style.display = 'none'; }}
-                        />
+                {/* Animated gradient orbs */}
+                <div className="absolute -top-8 -left-8 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/30 transition-all duration-700" />
+                <div className="absolute -bottom-4 -right-4 w-28 h-28 bg-violet-500/20 rounded-full blur-2xl pointer-events-none group-hover:bg-violet-500/30 transition-all duration-700" />
+
+                {/* Mesh grid overlay */}
+                <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)',
+                    backgroundSize: '24px 24px'
+                }} />
+
+                {/* Image as background panel */}
+                {img && (
+                    <div className="absolute right-0 top-0 w-2/5 h-full overflow-hidden pointer-events-none">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a3a] to-transparent z-10" />
+                        <img src={img} alt="" className="w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500 group-hover:scale-105 transition-transform duration-700" onError={e => e.target.parentElement.style.display='none'} />
                     </div>
                 )}
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col justify-between p-5 md:p-6 gap-4 relative z-10">
-                    <div>
-                        {ad.show_badge && (
-                            <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                ⭐ Premium Partner
-                            </span>
-                        )}
-                        <h3 className="mt-2 text-[18px] md:text-[20px] font-black text-white leading-snug line-clamp-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            {ad.title}
-                        </h3>
+                <div className="relative z-10 flex flex-col justify-between p-5 flex-1">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                            <SponsoredPill variant="amber" />
+                            <h3 className="mt-1.5 text-[17px] font-black text-white leading-snug line-clamp-2 max-w-[70%]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                {ad.title}
+                            </h3>
+                        </div>
+                        {!img && <InitialsAvatar name={ad.title} size="md" gradient="purple" />}
                     </div>
-                    <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#1a56ff] text-white text-[13px] font-bold w-fit transition-all duration-200 group-hover:shadow-[0_8px_24px_rgba(139,92,246,0.4)]">
-                        {ad.button_text || 'Get Access'}
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#1a56ff] text-white text-[12px] font-bold transition-all duration-200 group-hover:shadow-[0_8px_20px_rgba(79,70,229,0.5)]">
+                            {ad.button_text || 'Visit Yard'}
+                            <ArrowIcon className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                        <span className="text-[11px] text-white/40 font-medium">Premium Vendor</span>
+                    </div>
                 </div>
             </div>
         </a>
     );
 };
 
+
 // ─── Compact Template ──────────────────────────────────────────────────────────
-// Side-by-side mini card — ideal for tight sidebar slots
+// Sleek icon + name card — for tighter marquee slots
 export const CompactTemplate = ({ ad }) => {
-    const [hovered, setHovered] = useState(false);
+    const img = resolveImg(ad);
+    // Pick a color accent based on title hash
+    const colors = ['blue', 'purple', 'orange', 'green'];
+    const accentIdx = ad.title ? ad.title.charCodeAt(0) % colors.length : 0;
+    const accent = colors[accentIdx];
+    const accentClasses = {
+        blue:   { pill: 'bg-blue-50 text-blue-600 border-blue-100', ring: 'ring-blue-100' },
+        purple: { pill: 'bg-violet-50 text-violet-600 border-violet-100', ring: 'ring-violet-100' },
+        orange: { pill: 'bg-orange-50 text-orange-600 border-orange-100', ring: 'ring-orange-100' },
+        green:  { pill: 'bg-emerald-50 text-emerald-600 border-emerald-100', ring: 'ring-emerald-100' },
+    };
+    const cls = accentClasses[accent];
+
     return (
         <a
             href={AD_CLICK_URL(ad.id)}
             target="_blank"
             rel="noopener noreferrer"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="group flex items-center gap-3 bg-white rounded-xl border border-slate-100 p-3 outline-none transition-all duration-200"
+            className="group flex flex-col items-center text-center bg-white border border-slate-100 rounded-2xl p-4 outline-none transition-all duration-200 hover:border-slate-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] hover:-translate-y-1 w-full"
             aria-label={`Sponsored: ${ad.title}`}
-            style={{
-                boxShadow: hovered ? '0 8px 24px rgba(0,0,0,0.07)' : '0 2px 8px rgba(0,0,0,0.03)',
-                transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
-            }}
         >
-            {/* Thumbnail */}
-            {ad.image ? (
-                <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-slate-50">
-                    <img
-                        src={ad.image}
-                        alt={ad.title}
-                        className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
-                        onError={(e) => { e.target.closest('div').style.display = 'none'; }}
-                    />
-                </div>
-            ) : (
-                <div className="w-14 h-14 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-            )}
-
-            {/* Text */}
-            <div className="flex-1 min-w-0">
-                {ad.show_badge && (
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-blue-500">Sponsored</span>
+            {/* Logo / Avatar */}
+            <div className={`relative mb-3 ring-4 ${cls.ring} rounded-full transition-all group-hover:ring-8`}>
+                {img ? (
+                    <div className="w-14 h-14 rounded-full overflow-hidden">
+                        <img src={img} alt={ad.title} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                    </div>
+                ) : (
+                    <InitialsAvatar name={ad.title} size="md" gradient={accent} />
                 )}
-                <p className="text-[12px] font-bold text-slate-800 leading-snug line-clamp-2 mt-0.5">{ad.title}</p>
-                <span className="text-[11px] font-semibold text-blue-600 group-hover:underline">{ad.button_text || 'View'} →</span>
+                {/* Verified dot */}
+                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center">
+                    <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                </span>
             </div>
+
+            <p className="text-[13px] font-black text-slate-900 leading-snug line-clamp-2 mb-1 group-hover:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                {ad.title}
+            </p>
+            <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${cls.pill} mb-3`}>Sponsored</span>
+
+            <span className="text-[11px] font-bold text-blue-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                {ad.button_text || 'View'} <ArrowIcon className="w-2.5 h-2.5" />
+            </span>
         </a>
     );
 };
 
+
 // ─── Micro Template ────────────────────────────────────────────────────────────
-// Tiny square card — used in mobile hero or tight grids
-export const MicroTemplate = ({ ad }) => (
-    <a
-        href={AD_CLICK_URL(ad.id)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block w-20 rounded-xl overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow"
-        aria-label={`Sponsored: ${ad.title}`}
-    >
-        <div className="relative aspect-square bg-slate-50">
-            {ad.image && (
-                <img
-                    src={ad.image}
-                    alt={ad.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                />
+// Tiny inline chip — mobile or ultra-compact slots
+export const MicroTemplate = ({ ad }) => {
+    const img = resolveImg(ad);
+    return (
+        <a
+            href={AD_CLICK_URL(ad.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 bg-white border border-slate-100 rounded-full px-3 py-1.5 outline-none transition-all duration-200 hover:border-blue-200 hover:shadow-[0_4px_12px_rgba(26,86,255,0.1)] hover:bg-blue-50"
+            aria-label={`Sponsored: ${ad.title}`}
+        >
+            {img ? (
+                <img src={img} alt={ad.title} className="w-5 h-5 rounded-full object-cover flex-shrink-0" onError={e => e.target.style.display='none'} />
+            ) : (
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[7px] font-black text-white">{ad.title?.[0]}</span>
+                </div>
             )}
-            <span className="absolute top-0 right-0 bg-blue-600 text-white text-[7px] font-black px-1 py-0.5 rounded-bl">AD</span>
-        </div>
-        <div className="p-1.5 text-center">
-            <span className="block text-[9px] font-bold text-slate-700 line-clamp-1">{ad.title}</span>
-            <span className="block text-[8px] text-blue-600 font-semibold mt-0.5">Open →</span>
-        </div>
-    </a>
-);
+            <span className="text-[11px] font-bold text-slate-700 group-hover:text-blue-700 transition-colors line-clamp-1 max-w-[100px]">{ad.title}</span>
+            <span className="text-[9px] text-slate-400 font-medium flex-shrink-0">AD</span>
+        </a>
+    );
+};

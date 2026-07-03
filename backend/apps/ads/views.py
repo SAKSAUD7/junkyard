@@ -42,7 +42,8 @@ class AdvertisementListView(generics.ListAPIView):
                 )
             ).order_by('-is_exact_page', '-priority', '-created_at')
             
-        return queryset
+        # Limit to 12 per slot to prevent visible repetition in marquee
+        return queryset[:12]
 
 class AdClickView(APIView):
     def get(self, request, pk):

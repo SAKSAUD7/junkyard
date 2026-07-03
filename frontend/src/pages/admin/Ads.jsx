@@ -21,12 +21,13 @@ export default function AdminAds() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingAd, setEditingAd] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
 
     const [formData, setFormData] = useState({
         title: '',
         redirect_url: '',
         page: 'home',
-        slot: 'left_sidebar_ad',
+        slot: 'carousel_1',
         template_type: 'standard',
         button_text: 'Visit Website',
         show_badge: true,
@@ -40,15 +41,28 @@ export default function AdminAds() {
     const [filePreview, setFilePreview] = useState(null);
 
     useEffect(() => {
-        fetchAds();
+        const storedToken = token || localStorage.getItem('access_token');
+        if (storedToken) {
+            fetchAds();
+        } else {
+            setLoading(false);
+            setFetchError('session_expired');
+        }
     }, [token]);
 
     const fetchAds = async () => {
         try {
+            setFetchError(null);
             const data = await api.getAdminAds(token);
             setAds(data.results || data);
         } catch (error) {
             console.error('Error fetching ads:', error);
+            const status = error?.response?.status;
+            if (status === 403 || status === 401) {
+                setFetchError('session_expired');
+            } else {
+                setFetchError('generic');
+            }
         } finally {
             setLoading(false);
         }
@@ -115,7 +129,7 @@ export default function AdminAds() {
                 title: '',
                 redirect_url: '',
                 page: 'home',
-                slot: 'left_sidebar_ad',
+                slot: 'carousel_1',
                 template_type: 'standard',
                 button_text: 'Visit Website',
                 show_badge: true,
@@ -166,20 +180,15 @@ export default function AdminAds() {
     };
 
     const getPositionBadge = (page, slot) => {
-        const positions = {
-            'home-left_sidebar_ad':    { label: 'Home Left',          color: 'bg-blue-50 text-blue-600' },
-            'home-right_sidebar_ad':   { label: 'Home Right',         color: 'bg-orange-50 text-orange-500' },
-            'vendors-left_sidebar_ad': { label: 'Vendors Left',       color: 'bg-[#d1fae5] text-[#10b981]' },
-            'vendors-right_sidebar_ad':{ label: 'Vendors Right',      color: 'bg-[#fef3c7] text-[#f59e0b]' },
-            'browse-left_sidebar_ad':  { label: 'Browse Left',        color: 'bg-[#dbeafe] text-[#1e40af]' },
-            'browse-right_sidebar_ad': { label: 'Browse Right',       color: 'bg-[#fce7f3] text-[#be185d]' },
-        };
-        // Strip slot labels
         if (slot === 'strip_top')      return { label: `${page} Strip Top`,    color: 'bg-orange-50 text-orange-600' };
         if (slot === 'strip_bottom')   return { label: `${page} Strip Bottom`, color: 'bg-teal-50 text-teal-600' };
         if (slot === 'strip_home_mid') return { label: 'Home Strip Mid',        color: 'bg-sky-50 text-sky-600' };
-        const key = `${page}-${slot}`;
-        return positions[key] || { label: `${page} - ${slot}`, color: 'bg-[#f3f4f6] text-[#374151]' };
+        if (slot === 'carousel_1')     return { label: 'Carousel 1 (Top)',      color: 'bg-blue-50 text-blue-600' };
+        if (slot === 'carousel_2')     return { label: 'Carousel 2',            color: 'bg-violet-50 text-violet-600' };
+        if (slot === 'carousel_3')     return { label: 'Carousel 3 (Mid)',      color: 'bg-emerald-50 text-emerald-600' };
+        if (slot === 'carousel_4')     return { label: 'Carousel 4',            color: 'bg-amber-50 text-amber-600' };
+        if (slot === 'carousel_5')     return { label: 'Carousel 5 (Bottom)',   color: 'bg-pink-50 text-pink-600' };
+        return { label: `${page} - ${slot}`, color: 'bg-slate-50 text-slate-600' };
     };
 
     if (loading) {
@@ -188,6 +197,23 @@ export default function AdminAds() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-[#6b7280] font-medium">Loading ads...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (fetchError === 'session_expired') {
+        return (
+            <div className="flex flex-col items-center justify-center h-96 text-center">
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-md">
+                    <svg className="w-12 h-12 text-amber-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h3 className="text-lg font-bold text-slate-800 mb-2">Session Expired or Unauthorized</h3>
+                    <p className="text-sm text-slate-500 mb-6">Your admin session has expired or you don't have permission to manage ads. Please log in again.</p>
+                    <a href="/admin/login" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all">
+                        Sign In Again
+                    </a>
                 </div>
             </div>
         );
@@ -418,11 +444,6 @@ export default function AdminAds() {
                                         value={formData.slot}
                                         onChange={e => setFormData({ ...formData, slot: e.target.value })}
                                     >
-                                        {/* Sidebar Slots */}
-                                        <optgroup label="Sidebar Slots">
-                                            <option value="left_sidebar_ad">Left Sidebar</option>
-                                            <option value="right_sidebar_ad">Right Sidebar</option>
-                                        </optgroup>
                                         {/* Strip Slots (horizontal banner) */}
                                         <optgroup label="Strip Slots (Horizontal Banner)">
                                             <option value="strip_top">Strip — Top (below hero)</option>

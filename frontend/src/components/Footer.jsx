@@ -4,9 +4,9 @@ import { useCMS } from '../hooks/useCMS'
 export default function Footer() {
     const currentYear = new Date().getFullYear()
     const { get: getFooter } = useCMS('footer')
-    const { get: getNavbar } = useCMS('navbar')
+    const { get: getGlobal } = useCMS('global')
     
-    const logoUrl = getNavbar('brand', 'logo');
+    const logoUrl = getGlobal('brand', 'logo');
 
     return (
         <footer className="bg-white border-t border-slate-100 pt-12 pb-6 font-inter">
@@ -15,15 +15,12 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="lg:col-span-2">
                         <div className="flex items-center gap-3 mb-5">
-                            {logoUrl ? (
-                                <img src={logoUrl} alt="JYNM Logo" className="w-8 h-8 object-contain" />
-                            ) : (
-                                <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                    </svg>
-                                </div>
-                            )}
+                            <img
+                                src={logoUrl || '/logo.png'}
+                                alt="JYNM Logo"
+                                className="w-8 h-8 object-contain"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
                             <div>
                                 <div className="text-lg font-black text-slate-900 leading-none tracking-tight">JYNM</div>
                                 <div className="text-[9px] font-bold text-slate-500 tracking-widest uppercase mt-0.5">Junkyards Near Me</div>

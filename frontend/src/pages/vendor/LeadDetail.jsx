@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { vendorLeads } from '../../services/vendorApi';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorLeadDetail = () => {
+    const { get } = useCMS('vendor_portal');
     const { id } = useParams();
     const navigate = useNavigate();
     const [lead, setLead] = useState(null);
@@ -57,7 +59,7 @@ const VendorLeadDetail = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a56ff]"></div>
             </div>
         );
     }
@@ -78,7 +80,7 @@ const VendorLeadDetail = () => {
             {/* Header Section */}
             <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-b-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border-b border-slate-100">
                 <div className="max-w-7xl mx-auto text-slate-900">
-                    <Link to="/vendor/leads" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors mb-6 text-sm font-bold bg-slate-50 hover:bg-blue-50 px-3 py-1.5 rounded-xl border border-slate-100 hover:border-blue-100">
+                    <Link to="/vendor/leads" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#1a56ff] transition-colors mb-6 text-sm font-bold bg-slate-50 hover:bg-[#1a56ff]/10 px-3 py-1.5 rounded-xl border border-slate-100 hover:border-[#1a56ff]/20">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
@@ -91,6 +93,9 @@ const VendorLeadDetail = () => {
                                 <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
+                                {get('lead_detail', 'subheading', 'Review and respond to this customer request')}
+                            </p>
+                            <p className="text-slate-500 font-medium flex items-center gap-2 mt-1">
                                 {new Date(lead.created_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
@@ -131,7 +136,7 @@ const VendorLeadDetail = () => {
                         {/* Vehicle Card */}
                         <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 md:p-8 overflow-hidden relative">
                             <div className="flex items-center gap-3 mb-6 relative z-10">
-                                <span className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <span className="w-10 h-10 rounded-xl bg-[#1a56ff]/10 text-[#1a56ff] flex items-center justify-center">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 012-2v0m2 0a2 2 0 012 2l0 0m-6 0a2 2 0 012-2h2a2 2 0 012 2" />
@@ -145,9 +150,9 @@ const VendorLeadDetail = () => {
                                     <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Vehicle</div>
                                     <div className="text-lg font-bold text-gray-900">{lead.year} {lead.make} {lead.model}</div>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100">
-                                    <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">Requested Part</div>
-                                    <div className="text-lg font-bold text-blue-900">{lead.part}</div>
+                                <div className="p-4 rounded-2xl bg-[#1a56ff]/5 border border-[#1a56ff]/20">
+                                    <div className="text-xs font-bold text-[#1a56ff]/70 uppercase tracking-wider mb-1">Requested Part</div>
+                                    <div className="text-lg font-bold text-[#1a56ff]">{lead.part}</div>
                                 </div>
                                 {lead.options && (
                                     <div className="sm:col-span-2">
@@ -155,12 +160,21 @@ const VendorLeadDetail = () => {
                                         <div className="text-base font-medium text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-100">{lead.options}</div>
                                     </div>
                                 )}
-                                {lead.hollander_number && (
-                                    <div>
-                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Hollander #</div>
-                                        <div className="text-base font-medium text-gray-900">{lead.hollander_number}</div>
-                                    </div>
-                                )}
+                                <div className="sm:col-span-2">
+                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Hollander Interchange No.</div>
+                                    {lead.hollander_number && lead.hollander_number !== 'Not Found' && lead.hollander_number !== 'N/A' && lead.hollander_number !== '' ? (
+                                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-base shadow-sm">
+                                            <span className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0 animate-pulse"></span>
+                                            {lead.hollander_number}
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-mono text-base">
+                                            <span className="w-2 h-2 bg-slate-400 rounded-full flex-shrink-0"></span>
+                                            N/A
+                                        </span>
+                                    )}
+                                </div>
+
                             </div>
                         </div>
 
@@ -188,7 +202,7 @@ const VendorLeadDetail = () => {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <a href={`mailto:${lead.customer_email}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors group">
-                                        <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-blue-600 flex items-center justify-center shadow-sm transition-colors">
+                                        <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-[#1a56ff] flex items-center justify-center shadow-sm transition-colors">
                                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                             </svg>
@@ -234,7 +248,7 @@ const VendorLeadDetail = () => {
                                         onClick={() => handleStatusUpdate(status.id)}
                                         disabled={updating || lead.status === status.id}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all border-2 ${lead.status === status.id
-                                            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                                            ? 'border-[#1a56ff] bg-[#1a56ff]/10 text-[#1a56ff] shadow-sm'
                                             : 'border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:scale-[1.02]'
                                             } disabled:opacity-100 disabled:cursor-default`}
                                     >
@@ -243,7 +257,7 @@ const VendorLeadDetail = () => {
                                             {status.label}
                                         </span>
                                         {lead.status === status.id && (
-                                            <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg className="w-5 h-5 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
                                         )}

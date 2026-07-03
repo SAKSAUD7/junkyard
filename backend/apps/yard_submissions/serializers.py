@@ -24,6 +24,15 @@ class YardSubmissionSerializer(serializers.ModelSerializer):
             'brands',
             'parts_categories',
             'description',
+            'payment_methods',
+            'business_hours',
+            'subscription_plan',
+            'toll_free',
+            'fax',
+            'owner_first_name',
+            'owner_last_name',
+            'owner_phone',
+            'owner_email',
             'logo',
             'images',
             'status',
@@ -69,6 +78,15 @@ class YardSubmissionCreateSerializer(serializers.ModelSerializer):
             'brands',
             'parts_categories',
             'description',
+            'payment_methods',
+            'business_hours',
+            'subscription_plan',
+            'toll_free',
+            'fax',
+            'owner_first_name',
+            'owner_last_name',
+            'owner_phone',
+            'owner_email',
             'logo',
             'images',
         ]
@@ -100,6 +118,6 @@ class YardSubmissionAdminSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update submission and track review"""
         if 'status' in validated_data and validated_data['status'] != instance.status:
-            from django.utils import timezone
+            from django.utils import timezone  # type: ignore
             instance.reviewed_at = timezone.now()
         return super().update(instance, validated_data)

@@ -89,12 +89,14 @@ const VendorDetail = () => {
         logo: logoUrl
     });
 
+    const canonicalPath = `https://junkyardsnearme.com/vendors/${vendor.id}`;
+
     return (
         <div className="min-h-screen bg-[#f8fafc]">
             <SEO
                 title={`${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}`}
                 description={vendor.description || `Find used auto parts at ${vendor.name} in ${vendor.city}, ${vendor.state}. ${vendor.rating} customer rating. Get a quote today!`}
-                canonicalUrl={`/vendors/${vendor.id}`}
+                canonical={canonicalPath}
                 schema={localBusinessSchema}
             />
             <Navbar />

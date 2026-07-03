@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
+import Captcha from './Captcha'
 
 // US States and Canadian Provinces (from zipcode database)
 const US_STATES = [
@@ -33,9 +34,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     // Selections
     const [selectedMake, setSelectedMake] = useState('')
+    const [selectedMakeName, setSelectedMakeName] = useState('')
+    
     const [selectedModel, setSelectedModel] = useState('')
+    const [selectedModelName, setSelectedModelName] = useState('')
+    
     const [selectedYear, setSelectedYear] = useState('')
+    
     const [selectedPart, setSelectedPart] = useState('')
+    const [selectedPartName, setSelectedPartName] = useState('')
 
     // Loading States
     const [loadingMakes, setLoadingMakes] = useState(false)
@@ -60,7 +67,17 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     // Hollander / Options
     const [options, setOptions] = useState('')
     const [hollanderNumber, setHollanderNumber] = useState('')
+    const [hollanderCandidates, setHollanderCandidates] = useState([]) // all remaining when unresolved
     const [loadingHollander, setLoadingHollander] = useState(false)
+
+    // Progressive question engine state
+    const [partVariants, setPartVariants] = useState([])
+    const [questionAnswers, setQuestionAnswers] = useState([])  // [{slot, value}, ...]
+    const [currentQuestion, setCurrentQuestion] = useState(null) // next question to show
+    const [candidatesCount, setCandidatesCount] = useState(0)   // remaining candidates
+    const [totalVariants, setTotalVariants] = useState(0)       // initial variant count
+    const [hollanderResolved, setHollanderResolved] = useState(false) // true when 1 candidate
+    const [loadingQuestion, setLoadingQuestion] = useState(false)
 
     // Security
     const [securityCode, setSecurityCode] = useState('')
@@ -228,7 +245,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
         // Find model in cache
         const model = vehicleDataCache.models.find(
-            m => m.model_id === parseInt(selectedModel)
+            m => m.model_id == selectedModel
         )
 
         if (model) {
@@ -245,38 +262,117 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
 
 
-    // OPTIMIZED: Auto-populate Hollander from cache (NO API CALL - INSTANT)
+    // Reset question engine when part/year selection changes
     useEffect(() => {
         if (leadType === 'vendor') return
-
         if (!vehicleDataCache || !selectedModel || !selectedYear || !selectedPart) {
             setHollanderNumber('')
             setOptions('')
+            setPartVariants([])
+            setQuestionAnswers([])
+            setCurrentQuestion(null)
+            setCandidatesCount(0)
+            setTotalVariants(0)
+            setHollanderResolved(false)
+            setHollanderCandidates([])
             return
         }
+        // Get variants from cache to check if we need Step 2
+        const model = vehicleDataCache.models.find(m => m.model_id == selectedModel)
+        const yearParts = model?.parts?.[selectedYear] || []
+        const partObj = yearParts.find(p => String(p.part_id) === String(selectedPart))
 
-        // Find part in cache
-        const model = vehicleDataCache.models.find(
-            m => m.model_id === parseInt(selectedModel)
-        )
+        setQuestionAnswers([])
+        setCurrentQuestion(null)
+        setHollanderResolved(false)
+        setHollanderCandidates([])
 
-        if (model && model.parts && model.parts[selectedYear]) {
-            const part = model.parts[selectedYear].find(
-                p => p.part_id === parseInt(selectedPart)
-            )
+        if (!partObj) return
+        const variants = partObj.variants || []
+        setPartVariants(variants)
+        setTotalVariants(variants.length)
 
-            if (part) {
-                setHollanderNumber(part.hollander_number || 'Not Found')
-                setOptions(part.options || '')
-            } else {
-                setHollanderNumber('Not Found')
-                setOptions('')
+        if (variants.length === 0) {
+            // No PartPricing data — try legacy lookup
+            const realPartId = parseInt(String(selectedPart).split('_')[0])
+            const cleanName = (selectedPartName || '').split(' (')[0].trim()
+            setHollanderNumber('Loading...')
+            const doLookup = async () => {
+                try {
+                    const res = await api.lookupHollander({
+                        make_id: parseInt(selectedMake), model_id: parseInt(selectedModel),
+                        part_id: realPartId, year: parseInt(selectedYear),
+                        make_name: selectedMakeName, part_name: cleanName
+                    })
+                    setHollanderNumber(res.hollander_number || 'Not Found')
+                    setOptions(res.options || '')
+                    setHollanderResolved(!!res.hollander_number)
+                } catch { setHollanderNumber('Not Found'); setOptions('') }
             }
+            doLookup()
+        } else if (variants.length === 1) {
+            // Single variant — immediately resolved, no Step 2 needed
+            setHollanderNumber(variants[0].hollander_number || '')
+            setOptions(variants[0].options || '')
+            setHollanderResolved(true)
+            setCandidatesCount(1)
         } else {
-            setHollanderNumber('Not Found')
-            setOptions('')
+            // Multiple variants — set initial best-guess and kick off question engine
+            setHollanderNumber(variants[0].hollander_number || '')
+            setOptions(variants[0].options || '')
+            setCandidatesCount(variants.length)
+            // Trigger initial question fetch
+            fetchNextQuestion([])
         }
     }, [selectedPart, vehicleDataCache, selectedModel, selectedYear, leadType])
+
+    // Fetch next question from backend based on current answers
+    const fetchNextQuestion = async (answers) => {
+        if (!selectedMakeName || !selectedModelName || !selectedPartName || !selectedYear) return
+        setLoadingQuestion(true)
+        try {
+            const cleanPartName = selectedPartName.split(' (')[0].trim()
+            const result = await api.resolveHollanderQuestions({
+                make: selectedMakeName,
+                model: selectedModelName,
+                part_name: cleanPartName,
+                year: parseInt(selectedYear),
+                answers,
+            })
+            setCandidatesCount(result.candidates_count || 0)
+            setTotalVariants(result.total_candidates || totalVariants)
+            setHollanderCandidates(result.all_candidates || [])
+
+            if (result.resolved) {
+                // Exact resolution
+                setHollanderNumber(result.resolved)
+                setOptions(result.current_best_options || '')
+                setCurrentQuestion(null)
+                setHollanderResolved(true)
+            } else {
+                // Use best-guess
+                if (result.current_best_hn) setHollanderNumber(result.current_best_hn)
+                if (result.current_best_options) setOptions(result.current_best_options)
+                setCurrentQuestion(result.next_question || null)
+                setHollanderResolved(false)
+            }
+        } catch (e) {
+            console.warn('[LeadForm] Question fetch error:', e)
+        } finally {
+            setLoadingQuestion(false)
+        }
+    }
+
+    // Handle customer answering a disambiguation question
+    const answerQuestion = (slot, value) => {
+        const newAnswers = [...questionAnswers, { slot, value }]
+        setQuestionAnswers(newAnswers)
+        fetchNextQuestion(newAnswers)
+    }
+
+    // Check if Step 2 disambiguation is needed
+    const hasQuestions = totalVariants > 1 && (currentQuestion !== null || !hollanderResolved)
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -308,15 +404,23 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
         setSubmitting(true)
 
-        const makeObj = makes.find(m => m.makeID === parseInt(selectedMake))
-        const partObj = parts.find(p => p.partID === parseInt(selectedPart))
-
         // Determine endpoint and payload based on lead type
         let payload;
 
+        // Force resolve names directly from arrays at submit time to prevent state race conditions
+        const finalMake = makes.find(m => String(m.makeID) === String(selectedMake))?.makeName || selectedMakeName || 'Unknown';
+        const finalModel = models.find(m => String(m.modelID) === String(selectedModel))?.modelName || selectedModelName || selectedModel;
+        
+        let finalPart = selectedPartName || selectedPart || '';
+        if (leadType !== 'vendor' && vehicleDataCache) {
+            const m = vehicleDataCache.models?.find(x => x.model_id == selectedModel);
+            const p = m?.parts?.[selectedYear]?.find(x => String(x.part_id) === String(selectedPart));
+            if (p) finalPart = p.part_name;
+        }
+
         payload = {
-            make: makeObj ? makeObj.makeName : 'Unknown',
-            model: selectedModel,
+            make: finalMake,
+            model: finalModel,
             year: parseInt(selectedYear),
             name,
             email,
@@ -331,10 +435,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 await api.createVendorLead(payload)
             } else {
                 // Quality Auto Parts Lead
-                payload.part = partObj ? partObj.partName : 'Unknown';
+                payload.part = finalPart.split(' (')[0].trim();
                 payload.lead_type = leadType;
                 payload.options = options || '';
-                payload.hollander_number = hollanderNumber || 'Not Found';
+                payload.hollander_number = (hollanderNumber && hollanderNumber !== 'Not Found' && hollanderNumber !== 'Loading...')
+                    ? hollanderNumber
+                    : '';
+                // Include all candidate HNs if unresolved (admin will confirm)
+                payload.hollander_candidates = hollanderResolved ? [] : hollanderCandidates;
                 await api.createLead(payload)
             }
 
@@ -382,24 +490,43 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     // Step Navigation Handlers
     const handleNext = () => {
         // Validate Step 1
-        if (leadType === 'quality_auto_parts') {
-            if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
-                setSubmitError('Please select all vehicle details.')
-                return
+        if (currentStep === 1) {
+            if (leadType === 'quality_auto_parts') {
+                if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
+                    setSubmitError('Please select all vehicle details.')
+                    return
+                }
+                setSubmitError(null)
+                // Go to Step 2 if there are disambiguation questions, skip to 3 if already resolved
+                if (hasQuestions) {
+                    setCurrentStep(2)
+                } else {
+                    setCurrentStep(3)
+                }
+            } else {
+                if (!selectedMake || !selectedModel || !selectedYear) {
+                    setSubmitError('Please select vehicle details.')
+                    return
+                }
+                setSubmitError(null)
+                setCurrentStep(3)
             }
-        } else {
-            if (!selectedMake || !selectedModel || !selectedYear) {
-                setSubmitError('Please select vehicle details.')
-                return
-            }
+        } else if (currentStep === 2) {
+            setCurrentStep(3)
         }
-        setSubmitError(null)
-        setCurrentStep(2)
     }
 
     const handleBack = () => {
         setSubmitError(null)
-        setCurrentStep(1)
+        if (currentStep === 3) {
+            if (leadType === 'quality_auto_parts' && hasQuestions) {
+                setCurrentStep(2)
+            } else {
+                setCurrentStep(1)
+            }
+        } else if (currentStep === 2) {
+            setCurrentStep(1)
+        }
     }
 
     if (isSuccess) {
@@ -426,7 +553,9 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     // Step Visibility Logic
     const showVehicleDetails = !enableSteps || currentStep === 1;
-    const showContactInfo = !enableSteps || currentStep === 2;
+    const showContactInfo = !enableSteps || currentStep === 3;
+    const totalSteps = (leadType === 'quality_auto_parts' && partVariants.length > 1 && allUniqueOptions.length > 0) ? 3 : 2;
+    const displayStep = currentStep > totalSteps ? totalSteps : currentStep; // fallback if step is 3 but total is 2 (handled by logic anyway)
 
     return (
         <div className="w-full font-sans">
@@ -437,7 +566,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     {leadType === 'quality_auto_parts' ? 'Find a Used Part' : 'Contact This Yard'}
                 </p>
                 {enableSteps && (
-                    <p className="text-[11px] text-slate-400 mt-0.5">Step {currentStep} of 2</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Step {displayStep} of {totalSteps}</p>
                 )}
             </div>
 
@@ -467,10 +596,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                 {/* Step Label */}
                 {enableSteps && currentStep === 1 && (
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Vehicle Details</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Step 1: Vehicle Details</p>
                 )}
                 {enableSteps && currentStep === 2 && (
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Your Contact Info</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Step 2: Narrow Down Part</p>
+                )}
+                {enableSteps && currentStep === 3 && (
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Step 3: Contact Info</p>
                 )}
 
                 {/* ── VEHICLE FIELDS ── */}
@@ -483,7 +615,12 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                             <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wide">
                                 Make <span className="text-blue-500">*{loadingMakes && <span className="font-normal lowercase text-slate-400 animate-pulse"> loading...</span>}</span>
                             </label>
-                            <select value={selectedMake} onChange={e => setSelectedMake(e.target.value)}
+                            <select value={selectedMake} onChange={e => {
+                                const val = e.target.value;
+                                setSelectedMake(val);
+                                const found = makes.find(m => String(m.makeID) === String(val));
+                                setSelectedMakeName(found ? found.makeName : '');
+                            }}
                                 className="w-full bg-white text-slate-900 text-[13px] font-medium rounded-xl px-3 py-2.5 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
                                 required>
                                 <option value="">Select Make</option>
@@ -496,7 +633,12 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                             <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wide">
                                 Model <span className="text-blue-500">*{loadingVehicleData && <span className="font-normal lowercase text-slate-400 animate-pulse"> loading...</span>}</span>
                             </label>
-                            <select value={selectedModel} onChange={e => setSelectedModel(e.target.value)}
+                            <select value={selectedModel} onChange={e => {
+                                const val = e.target.value;
+                                setSelectedModel(val);
+                                const found = models.find(m => String(m.modelID) === String(val));
+                                setSelectedModelName(found ? found.modelName : '');
+                            }}
                                 disabled={!selectedMake}
                                 className={`w-full text-[13px] font-medium rounded-xl px-3 py-2.5 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all ${
                                     !selectedMake ? 'bg-slate-100 text-slate-400 border-slate-100 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-200'
@@ -529,9 +671,33 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wide">
                                     Part <span className="text-blue-500">*{loadingParts && <span className="font-normal lowercase text-slate-400 animate-pulse"> loading...</span>}</span>
                                 </label>
-                                <select value={selectedPart} onChange={e => setSelectedPart(e.target.value)}
+                                <select value={selectedPart} onChange={e => {
+                                    const val = e.target.value;
+                                    setSelectedPart(val);
+                                    
+                                    // Use partCache or parts array if available, or fallback to parsing the ID
+                                    // Note: parts are stored differently here since it uses vehicleDataCache.
+                                    // But we can extract it cleanly:
+                                    const model = vehicleDataCache?.models?.find(m => m.model_id == selectedModel);
+                                    const yearParts = model?.parts?.[selectedYear] || [];
+                                    const partObj = yearParts.find(p => String(p.part_id) === String(val));
+                                    
+                                    if (partObj) {
+                                        setSelectedPartName(partObj.part_name);
+                                    } else {
+                                        // Fallback if not found in cache for some reason
+                                        const rawName = e.target.options[e.target.selectedIndex]?.text || '';
+                                        setSelectedPartName(rawName.split(' (')[0].trim());
+                                    }
+
+                                    // Reset variant state on every new part selection
+                                    setPartVariants([])
+                                    setSelectedOptionTags([])
+                                    setHollanderNumber('')
+                                    setOptions('')
+                                }}
                                     disabled={loadingParts}
-                                    className={`w-full text-[13px] font-medium rounded-xl px-3 py-2.5 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all ${
+                                    className={`w-full truncate text-[13px] font-medium rounded-xl px-3 py-2.5 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all ${
                                         loadingParts ? 'bg-slate-100 text-slate-400 border-slate-100 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-200'
                                     }`}
                                     required>
@@ -540,8 +706,20 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 </select>
                             </div>
                         )}
+                                {/* Options tags for single variant — clean (strip wrapping parens from DB values) */}
+                                {options && partVariants.length <= 1 && (
+                                    <div className="space-y-1">
+                                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Part Options / Specs</label>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {options.split(',').filter(Boolean).map((opt, i) => (
+                                                <span key={i} className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                    {opt.replace(/^\(|\)$/g, '').trim()}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
-                        {/* Next Step button (step mode) */}
                         {enableSteps && (
                             <button type="button" onClick={handleNext}
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[13px] py-3 rounded-xl shadow-[0_4px_12px_rgb(37,99,235,0.25)] transition-all flex items-center justify-center gap-2 group mt-2">
@@ -552,6 +730,93 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     </div>
                 )}
 
+                {/* ── STEP 2: NARROW DOWN PART (OPTIONS) ── */}
+                {enableSteps && currentStep === 2 && hasQuestions && (
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+                            <button type="button" onClick={handleBack} className="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full text-[13px] font-black flex items-center justify-center transition">
+                                ←
+                            </button>
+                            <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Narrow Down Your Part</span>
+                        </div>
+                        
+                        {loadingQuestion ? (
+                            <div className="py-8 flex flex-col items-center justify-center space-y-3">
+                                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">Analyzing Options...</span>
+                            </div>
+                        ) : currentQuestion ? (
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+                                <h4 className="text-[14px] font-bold text-slate-800 leading-snug">
+                                    {currentQuestion.question || `Select ${currentQuestion.feature}`}
+                                </h4>
+                                
+                                {currentQuestion.type === 'yesno' ? (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => answerQuestion(currentQuestion.slot, currentQuestion.yes_value)}
+                                            className="px-4 py-3 bg-white border-2 border-emerald-100 hover:border-emerald-500 hover:bg-emerald-50 text-emerald-700 rounded-xl text-[13px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm"
+                                        >
+                                            <span className="text-[18px]">✅</span>
+                                            Yes
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => answerQuestion(currentQuestion.slot, currentQuestion.no_value)}
+                                            className="px-4 py-3 bg-white border-2 border-rose-100 hover:border-rose-500 hover:bg-rose-50 text-rose-700 rounded-xl text-[13px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm"
+                                        >
+                                            <span className="text-[18px]">❌</span>
+                                            No
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col gap-2">
+                                        {currentQuestion.values.map(val => (
+                                            <button
+                                                type="button"
+                                                key={val}
+                                                onClick={() => answerQuestion(currentQuestion.slot, val)}
+                                                className="px-4 py-2.5 bg-white border border-slate-200 hover:border-blue-400 hover:text-blue-600 text-slate-700 rounded-xl text-[13px] font-bold transition-all text-left shadow-sm flex items-center justify-between group"
+                                            >
+                                                {val}
+                                                <svg className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
+                                <div className="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                </div>
+                                <div>
+                                    <h4 className="text-[14px] font-bold text-emerald-800">Part Confirmed</h4>
+                                    <p className="text-[12px] text-emerald-600 mt-0.5">We have enough information to identify your exact part.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex items-center justify-between px-1">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                                Matching Parts: <span className="text-blue-600">{candidatesCount}</span> / {totalVariants}
+                            </span>
+                        </div>
+
+
+
+                        <button type="button" onClick={handleNext} disabled={loadingQuestion || (!hollanderResolved && currentQuestion)}
+                            className={`w-full text-[13px] font-bold rounded-xl px-7 py-3.5 flex items-center justify-center gap-2 group mt-2 transition-all ${
+                                loadingQuestion || (!hollanderResolved && currentQuestion)
+                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-[0_8px_20px_rgb(37,99,235,0.25)]'
+                            }`}>
+                            {hollanderResolved ? 'Continue to Contact Info' : 'I am not sure, skip'}
+                            {!loadingQuestion && (hollanderResolved || !currentQuestion) && <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
+                        </button>
+                    </div>
+                )}
                 {/* ── CONTACT FIELDS ── */}
                 {showContactInfo && (
                     <div className="space-y-3">
@@ -685,13 +950,14 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                         {/* CAPTCHA */}
                         <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl mt-1">
-                            <div className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 font-mono font-black text-[16px] text-slate-800 tracking-[0.2em] select-none min-w-[72px] text-center shadow-sm">
-                                {securityCode}
-                            </div>
-                            <input type="text" value={userSecurityCode} onChange={e => setUserSecurityCode(e.target.value)}
+                            <Captcha 
+                                code={securityCode} 
+                                onRefresh={() => { generateSecurityCode(); setUserSecurityCode('') }} 
+                            />
+                            <input type="text" value={userSecurityCode} onChange={e => setUserSecurityCode(e.target.value.toUpperCase().slice(0, 4))}
                                 placeholder="Enter code"
                                 className="flex-1 bg-white text-slate-900 text-[13px] font-medium rounded-xl px-3 py-2 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder-slate-400 uppercase text-center font-bold"
-                                maxLength={4} required />
+                                maxLength={4} required autoComplete="off" />
                         </div>
 
                         {/* Error */}

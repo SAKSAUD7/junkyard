@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.http import JsonResponse
 from rest_framework.routers import DefaultRouter
 from apps.hollander.views import hollander_lookup, PartPricingViewSet
+from apps.leads.views import resolve_hollander_questions
 from apps.hollander.import_views import VendorImportViewSet
 from apps.leads.urls import vendor_leads_urlpatterns
 from apps.ads.views import AdClickView  # Import ad click view
@@ -35,8 +36,13 @@ def health_check(request):
     """Health check endpoint"""
     return JsonResponse({"status": "ok"})
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
 def db_check(request):
-    """Diagnostic endpoint - check DB connectivity and config"""
+    """Diagnostic endpoint - check DB connectivity and config (Admin Only)"""
     import os
     from django.conf import settings
     from django.db import connection, OperationalError
@@ -101,8 +107,9 @@ urlpatterns = [
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
     path("api/vendor/", include("apps.vendor_portal.urls")),  # Vendor portal API
     
-    # Hollander lookup endpoint
+    # Hollander endpoints
     path("api/hollander/lookup/", hollander_lookup, name="hollander_lookup"),
+    path("api/hollander/resolve-questions/", resolve_hollander_questions, name="resolve_hollander_questions"),
     path("api/hollander/", include("apps.hollander.urls")),  # New reference data endpoints
     
     # Part Pricing API

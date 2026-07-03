@@ -70,14 +70,34 @@ class VendorDashboardSerializer(serializers.Serializer):
     contacted_leads = serializers.IntegerField()
     converted_leads = serializers.IntegerField()
     closed_leads = serializers.IntegerField()
+    total_listings = serializers.IntegerField(required=False)
+    active_ads = serializers.IntegerField(required=False)
+    total_views = serializers.IntegerField(required=False)
     recent_leads = serializers.SerializerMethodField()
     account_status = serializers.CharField()
     unread_notifications = serializers.IntegerField()
+    vendor = serializers.SerializerMethodField()
     
     def get_recent_leads(self, obj):
         # Return last 5 leads
         leads = obj.get('recent_leads', [])
         return VendorLeadSerializer(leads, many=True).data
+
+    def get_vendor(self, obj):
+        vendor = obj.get('vendor')
+        if vendor:
+            try:
+                logo_url = vendor.logo.url if vendor.logo and hasattr(vendor.logo, 'url') else None
+            except Exception:
+                logo_url = None
+                
+            return {
+                'id': getattr(vendor, 'id', None) or getattr(vendor, 'yard_id', None),
+                'name': getattr(vendor, 'name', 'Your Yard'),
+                'logo': logo_url,
+                'is_active': getattr(vendor, 'is_active', True)
+            }
+        return None
 
 
 class VendorBusinessHoursSerializer(serializers.ModelSerializer):

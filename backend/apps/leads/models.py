@@ -17,8 +17,9 @@ class Lead(models.Model):
     part = models.CharField(max_length=100)
     
     # NEW: Part specifications and Hollander number
-    options = models.CharField(max_length=200, blank=True, default='')  # e.g., "62 Amp"
-    hollander_number = models.CharField(max_length=50, blank=True, default='')  # e.g., "601-00181"
+    options = models.CharField(max_length=500, blank=True, default='')  # e.g., "Night Vision, Adaptive Cruise"
+    hollander_number = models.CharField(max_length=50, blank=True, default='')  # e.g., "100-10138A"
+    hollander_candidates = models.JSONField(blank=True, default=list, help_text="All candidate HNs when exact resolution not possible")  # e.g., ["100-10138A", "100-10138B"]
     
     # Contact Info
     name = models.CharField(max_length=100, default='')

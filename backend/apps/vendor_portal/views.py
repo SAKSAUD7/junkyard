@@ -16,6 +16,7 @@ from .serializers import (
     VendorProfileUpdateSerializer,
     VendorInventorySerializer,
     VendorLeadSerializer,
+    VendorLeadForPortalSerializer,
     LeadStatusUpdateSerializer,
     VendorNotificationSerializer,
     VendorBusinessHoursSerializer,
@@ -71,7 +72,8 @@ class VendorDashboardView(APIView):
             'unread_notifications': VendorNotification.objects.filter(
                 vendor=vendor, 
                 is_read=False
-            ).count()
+            ).count(),
+            'vendor': vendor
         }
         
         serializer = VendorDashboardSerializer(dashboard_data)

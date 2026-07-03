@@ -1,0 +1,22 @@
+# Pyrefly configuration for Django backend
+# Suppresses false-positive errors from Pyrefly's in-memory virtual analysis
+# and Django ORM dynamic attribute access.
+
+[python]
+# Target Python version
+python_version = "3.11"
+
+[errors]
+# Suppress "Cannot find type stubs" warnings for django packages
+# (install django-stubs if you want full type checking)
+ignore_missing_type_stubs = true
+
+[project]
+# Exclude virtual in-memory files Pyrefly creates for hover/inline analysis
+# These generate false positives since they run fragments without full context
+exclude = [
+    "__pyrefly_virtual__/**",
+    "**/venv/**",
+    "**/venv_old/**",
+    "**/migrations/**",
+]

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { vendorInventory } from '../../services/vendorApi';
 import { EmptyState } from '../../components/vendor/UIElements';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorInventory = () => {
+    const { get } = useCMS('vendor_portal');
     const [inventory, setInventory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -101,27 +103,27 @@ const VendorInventory = () => {
     return (
         <div className="min-h-full pb-20 md:pb-8 w-full bg-[#f8fafc]">
             {/* Pristine Light Header */}
-            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border border-slate-100 mt-2 mx-1">
+            <div className="relative bg-white p-5 md:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] mb-6 overflow-hidden border border-slate-100 mx-1">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center text-slate-900 relative z-10 gap-4 md:gap-0 w-full">
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
-                                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="w-12 h-12 bg-[#1a56ff]/10 rounded-2xl flex items-center justify-center border border-[#1a56ff]/20 shadow-sm">
+                                <svg className="w-6 h-6 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </div>
-                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Parts Inventory</h1>
+                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('inventory', 'heading', 'Parts Inventory')}</h1>
                         </div>
-                        <p className="text-slate-500 font-medium ml-[3.75rem]">Manage your parts and stock levels</p>
+                        <p className="text-slate-500 font-medium ml-[3.75rem]">{get('inventory', 'subheading', 'Manage your parts and stock levels')}</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="bg-[#1d4ed8] hover:bg-[#1e40af] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-[0_8px_20px_rgb(29,78,216,0.25)] transition-all hover:scale-[1.02]"
+                        className="bg-[#1a56ff] hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-[0_8px_20px_rgba(26,86,255,0.25)] transition-all hover:scale-[1.02]"
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                         </svg>
-                        <span>Add Part</span>
+                        <span>{get('inventory', 'add_btn', 'Add Part')}</span>
                     </button>
                 </div>
             </div>
@@ -237,7 +239,7 @@ const VendorInventory = () => {
                                             type="button"
                                             onClick={() => setFormData({ ...formData, item_type: type })}
                                             className={`py-2 rounded-xl text-sm font-bold capitalize transition-all border-2 ${formData.item_type === type
-                                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                ? 'border-[#1a56ff] bg-[#1a56ff]/10 text-[#1a56ff]'
                                                 : 'border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100'
                                                 }`}
                                         >
@@ -352,7 +354,7 @@ const VendorInventory = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-[0_8px_20px_rgb(37,99,235,0.25)] transition-all"
+                                    className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-[#1a56ff] hover:bg-blue-700 shadow-[0_8px_20px_rgba(26,86,255,0.25)] transition-all"
                                 >
                                     Add Item
                                 </button>

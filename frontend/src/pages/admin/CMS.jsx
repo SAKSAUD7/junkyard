@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { api } from '../../services/api';
@@ -25,7 +25,7 @@ const PAGES = [
     { key: 'how_it_works', label: 'How It Works',   icon: <CogIcon className="w-5 h-5" /> },
     { key: 'navbar',       label: 'Navbar',         icon: <BookmarkIcon className="w-5 h-5" /> },
     { key: 'footer',       label: 'Footer',         icon: <StarIcon className="w-5 h-5" /> },
-    { key: 'global',       label: 'Global / SEO',   icon: <GlobeAltIcon className="w-5 h-5" /> },
+    { key: 'global',       label: 'Universal Logo', icon: <GlobeAltIcon className="w-5 h-5" /> },
     { key: 'add_a_yard',   label: 'Add A Yard',     icon: <Squares2X2Icon className="w-5 h-5" /> },
     { key: 'vendor_portal',label: 'Vendor Portal',  icon: <BuildingOffice2Icon className="w-5 h-5" /> },
     { key: 'quote_request',label: 'Quote Request',  icon: <DocumentTextIcon className="w-5 h-5" /> },
@@ -589,6 +589,10 @@ const QUILL_MODULES = {
 };
 
 function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
+    // Memoize modules and formats to prevent ReactQuill from re-registering
+    // on every render, which is what triggers the findDOMNode warning.
+    const quillModules = useMemo(() => QUILL_MODULES, []);
+
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between mb-2">
@@ -613,8 +617,9 @@ function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
                     theme="snow" 
                     value={value || ''} 
                     onChange={(content) => onChange(entryId, content)}
-                    modules={QUILL_MODULES}
+                    modules={quillModules}
                     className="min-h-[150px] custom-quill"
+                    preserveWhitespace
                 />
             </div>
         </div>
@@ -1303,27 +1308,7 @@ export default function CMS() {
                                 <p className="text-slate-500">Manage all website content from one place</p>
                             </div>
 
-                            <div className="mb-10">
-                                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <BoltIcon className="w-4 h-4 text-amber-500" /> Quick Actions
-                                </h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <button onClick={() => setActivePage('home')} className="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:-translate-y-1 transition-all text-left text-white group">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <span className="bg-white/20 p-2.5 rounded-xl"><PencilSquareIcon className="w-5 h-5 text-white" /></span>
-                                        </div>
-                                        <h3 className="font-bold text-lg mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Edit Home Page</h3>
-                                        <p className="text-white/80 text-xs">Manage main landing page content</p>
-                                    </button>
-                                    <a href="/" target="_blank" rel="noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg hover:-translate-y-1 hover:border-slate-300 transition-all text-left flex flex-col group block">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <span className="bg-slate-100 p-2.5 rounded-xl group-hover:bg-blue-50 transition-colors"><ArrowTopRightOnSquareIcon className="w-5 h-5 text-slate-600 group-hover:text-blue-600" /></span>
-                                        </div>
-                                        <h3 className="font-bold text-slate-900 text-lg mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>View Live Site</h3>
-                                        <p className="text-slate-500 text-xs">Open the website in a new tab</p>
-                                    </a>
-                                </div>
-                            </div>
+
                             
                             <div className="mb-10">
                                 <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">

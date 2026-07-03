@@ -4,11 +4,15 @@ Default CMS content — every editable field across the entire website.
 
 DEFAULT_CMS_CONTENT = [
     # ══════════════════════════════════════════════════════════════════
+    # GLOBAL: Brand & SEO
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'global', 'section': 'brand', 'key': 'logo', 'label': 'Main Website Logo', 'value': '/logo.png', 'content_type': 'image'},
+
+    # ══════════════════════════════════════════════════════════════════
     # GLOBAL: Navbar
     # ══════════════════════════════════════════════════════════════════
     {'page': 'navbar', 'section': 'brand', 'key': 'name_short', 'label': 'Brand Short Name', 'value': 'JYNM', 'content_type': 'text'},
     {'page': 'navbar', 'section': 'brand', 'key': 'name_long', 'label': 'Brand Long Name', 'value': 'Junkyards Near Me', 'content_type': 'text'},
-    {'page': 'navbar', 'section': 'brand', 'key': 'logo', 'label': 'Logo Image (optional)', 'value': '', 'content_type': 'image'},
     
     # ══════════════════════════════════════════════════════════════════
     # GLOBAL: Footer
@@ -78,6 +82,15 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'home', 'section': 'cta_banner', 'key': 'trust_1', 'label': 'Trust Marker 1', 'value': '✓ 6,500+ Trusted Yards', 'content_type': 'text'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'trust_2', 'label': 'Trust Marker 2', 'value': '✓ 50 States', 'content_type': 'text'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'trust_3', 'label': 'Trust Marker 3', 'value': '✓ Free to Use', 'content_type': 'text'},
+
+    # Promo Card
+    {'page': 'home', 'section': 'promo_card', 'key': 'logo', 'label': 'Logo URL / Image', 'value': '', 'content_type': 'image'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'heading', 'label': 'Heading', 'value': 'QUALITY AUTO PARTS', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'phone', 'label': 'Phone Number', 'value': '1-866-293-3731', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'bullet_1', 'label': 'Bullet 1', 'value': '✔ QUALITY USED AUTO PARTS', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'bullet_2', 'label': 'Bullet 2', 'value': '✔ LOW PRICES', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'bullet_3', 'label': 'Bullet 3', 'value': '✔ WARRANTIED OEM PARTS', 'content_type': 'text'},
+    {'page': 'home', 'section': 'promo_card', 'key': 'bullet_4', 'label': 'Bullet 4', 'value': '✔ MILLIONS OF PARTS AVAILABLE', 'content_type': 'text'},
 
     # Vendor CTA
     {'page': 'home', 'section': 'vendor_cta', 'key': 'heading', 'label': 'Heading', 'value': 'Are You A Junkyard Owner?', 'content_type': 'text'},
@@ -202,4 +215,103 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'about', 'section': 'journey', 'key': 'milestone4_year', 'label': 'Milestone 4 — Year', 'value': '2026', 'content_type': 'text'},
     {'page': 'about', 'section': 'journey', 'key': 'milestone4_title', 'label': 'Milestone 4 — Title', 'value': 'Market Leader', 'content_type': 'text'},
     {'page': 'about', 'section': 'journey', 'key': 'milestone4_desc', 'label': 'Milestone 4 — Description', 'value': '1,200+ verified yards processing thousands of quotes daily.', 'content_type': 'textarea'},
+
+    # ══════════════════════════════════════════════════════════════════
+    # QUOTE REQUEST PAGE
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'quote_request', 'section': 'hero', 'key': 'heading', 'label': 'Heading', 'value': 'Request a Free Quote', 'content_type': 'text'},
+    {'page': 'quote_request', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Fill out the form below to get instant prices from our nationwide network of verified auto salvage yards.', 'content_type': 'textarea'},
+    {'page': 'quote_request', 'section': 'hero', 'key': 'trust_text', 'label': 'Trust Text', 'value': 'Secure & Encrypted • 100% Free • No Obligation', 'content_type': 'text'},
+
+    # ══════════════════════════════════════════════════════════════════
+    # ADD A YARD PAGE
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'add_a_yard', 'section': 'hero', 'key': 'title', 'label': 'Hero Title', 'value': 'Partner With JYNM', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'hero', 'key': 'subtitle', 'label': 'Hero Subtitle', 'value': 'List your yard and connect with thousands of buyers searching for auto parts daily.', 'content_type': 'textarea'},
+    
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'success_heading', 'label': 'Success Heading', 'value': 'Application Submitted!', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'success_message', 'label': 'Success Message', 'value': 'Thank you for joining our platform. Our team will review your application and get back to you shortly. Once approved, you can manage your inventory and ads from the Vendor Portal.', 'content_type': 'textarea'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'login_btn', 'label': 'Login Button', 'value': 'Go to Vendor Login', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'success', 'key': 'home_btn', 'label': 'Home Button', 'value': 'Back to Home', 'content_type': 'text'},
+    
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_title', 'label': 'Step 1 Title', 'value': 'Business Info', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step1_sub', 'label': 'Step 1 Subtitle', 'value': 'Basic details', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step2_title', 'label': 'Step 2 Title', 'value': 'Location & Owner', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step2_sub', 'label': 'Step 2 Subtitle', 'value': 'Where and who', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step3_title', 'label': 'Step 3 Title', 'value': 'Services & Setup', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step3_sub', 'label': 'Step 3 Subtitle', 'value': 'What you do', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step4_title', 'label': 'Step 4 Title', 'value': 'Plan & Review', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'steps', 'key': 'step4_sub', 'label': 'Step 4 Subtitle', 'value': 'Final check', 'content_type': 'text'},
+
+    {'page': 'add_a_yard', 'section': 'form_sec1', 'key': 'sec1_heading', 'label': 'Section 1 Heading', 'value': 'Business Information', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec1', 'key': 'sec1_subheading', 'label': 'Section 1 Subheading', 'value': "Let's start with your core business details.", 'content_type': 'text'},
+
+    {'page': 'add_a_yard', 'section': 'form_sec2', 'key': 'sec2_heading', 'label': 'Section 2 Heading', 'value': 'Location & Owner', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec2', 'key': 'sec2_subheading', 'label': 'Section 2 Subheading', 'value': 'Where are you located and who is the main contact?', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec2', 'key': 'owner_details_title', 'label': 'Owner Details Title', 'value': 'Owner / Manager Details', 'content_type': 'text'},
+
+    {'page': 'add_a_yard', 'section': 'form_sec3', 'key': 'sec3_heading', 'label': 'Section 3 Heading', 'value': 'Services & Setup', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec3', 'key': 'sec3_subheading', 'label': 'Section 3 Subheading', 'value': "Tell customers what you offer and when you're open.", 'content_type': 'text'},
+
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'sec4_heading', 'label': 'Section 4 Heading', 'value': 'Choose Plan & Submit', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'sec4_subheading', 'label': 'Section 4 Subheading', 'value': 'Select your listing plan and review your application.', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan1_name', 'label': 'Plan 1 Name', 'value': 'Standard Plan', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan1_desc', 'label': 'Plan 1 Desc', 'value': 'Basic directory listing', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan1_price', 'label': 'Plan 1 Price', 'value': 'Free', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan2_name', 'label': 'Plan 2 Name', 'value': 'Premium Plan', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan2_desc', 'label': 'Plan 2 Desc', 'value': 'Featured placement & analytics', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'plan2_price', 'label': 'Plan 2 Price', 'value': '$49/mo', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_sec4', 'key': 'terms_text', 'label': 'Terms Text', 'value': 'By submitting, you agree to our Terms of Service and Privacy Policy. A representative will contact you shortly after review.', 'content_type': 'textarea'},
+
+    {'page': 'add_a_yard', 'section': 'form_buttons', 'key': 'back_btn', 'label': 'Back Button', 'value': 'Back', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_buttons', 'key': 'continue_btn', 'label': 'Continue Button', 'value': 'Continue →', 'content_type': 'text'},
+    {'page': 'add_a_yard', 'section': 'form_buttons', 'key': 'submit_btn', 'label': 'Submit Button', 'value': 'Submit Application', 'content_type': 'text'},
+
+    # ══════════════════════════════════════════════════════════════════
+    # VENDOR PORTAL - LOGIN & DASHBOARD
+    # ══════════════════════════════════════════════════════════════════
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'panel_heading', 'label': 'Left Panel Heading', 'value': 'Welcome Back!', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'panel_subtext', 'label': 'Left Panel Subtext', 'value': 'Sign in to access your account', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'form_heading', 'label': 'Form Heading (HTML)', 'value': 'Welcome <span class="text-blue-600">Back</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'form_subtext', 'label': 'Form Subtext', 'value': 'Sign in to your account', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'email_label', 'label': 'Email Input Label', 'value': 'Email Address', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'password_label', 'label': 'Password Input Label', 'value': 'Password', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'forgot_password', 'label': 'Forgot Password Text', 'value': 'Forgot Password?', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'submit_btn', 'label': 'Submit Button', 'value': 'Sign In', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'signup_text', 'label': 'Signup Prompt', 'value': "Don't have an account?", 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'signup_link', 'label': 'Signup Link Text', 'value': 'Sign Up', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'welcome_heading', 'label': 'Welcome Heading', 'value': 'Welcome Back', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'stat1_label', 'label': 'Stat 1 Label', 'value': 'Total Listings', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'stat2_label', 'label': 'Stat 2 Label', 'value': 'Active Ads', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'stat3_label', 'label': 'Stat 3 Label', 'value': 'Profile Views', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'stat4_label', 'label': 'Stat 4 Label', 'value': 'Converted Leads', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'system_status', 'label': 'System Status Title', 'value': 'System Status', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'requests_heading', 'label': 'Requests Heading', 'value': 'Recent Network Requests', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'view_all', 'label': 'View All Text', 'value': 'View All', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'no_requests_title', 'label': 'No Requests Title', 'value': 'No active requests found', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'dashboard', 'key': 'no_requests_sub', 'label': 'No Requests Subtitle', 'value': 'Stand by to receive incoming transmissions for your inventory.', 'content_type': 'textarea'},
+
+    {'page': 'vendor_portal', 'section': 'inventory', 'key': 'heading', 'label': 'Inventory Heading', 'value': 'Parts Inventory', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'inventory', 'key': 'subheading', 'label': 'Inventory Subheading', 'value': 'Manage and track your available auto parts inventory.', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'inventory', 'key': 'add_btn', 'label': 'Add Button Text', 'value': 'Add Part', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_title', 'label': 'Ads Header Title (HTML)', 'value': 'Vendor <span class="text-blue-600">Ads</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_desc', 'label': 'Ads Header Description', 'value': "Boost your yard's visibility and dominate the search results with our premium ad placements.", 'content_type': 'textarea'},
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'active_heading', 'label': 'Active Ads Heading', 'value': 'Your Active Placements', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'leads', 'key': 'heading', 'label': 'Leads Heading', 'value': 'Customer Inquiries', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'leads', 'key': 'subheading', 'label': 'Leads Subheading', 'value': 'Connect with customers looking for parts', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'leads', 'key': 'search_placeholder', 'label': 'Search Placeholder', 'value': 'Search by name, make, model, or part...', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'lead_detail', 'key': 'subheading', 'label': 'Detail Subheading', 'value': 'Review and respond to this customer request', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'profile', 'key': 'heading', 'label': 'Profile Heading', 'value': 'Yard Profile', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'profile', 'key': 'subheading', 'label': 'Profile Subheading', 'value': 'Manage your business details and settings', 'content_type': 'text'},
+    
+    {'page': 'vendor_portal', 'section': 'notifications', 'key': 'heading', 'label': 'Notifications Heading', 'value': 'Notifications', 'content_type': 'text'},
+    {'page': 'vendor_portal', 'section': 'notifications', 'key': 'subheading', 'label': 'Notifications Subheading', 'value': 'Stay updated on leads and system alerts', 'content_type': 'text'},
+
+    {'page': 'vendor_portal', 'section': 'forgot_password', 'key': 'heading', 'label': 'Heading (HTML)', 'value': 'Recover <span class="text-blue-600">Account</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'forgot_password', 'key': 'subtext', 'label': 'Subtext', 'value': "Enter your email to receive a password reset link.", 'content_type': 'text'},
 ]

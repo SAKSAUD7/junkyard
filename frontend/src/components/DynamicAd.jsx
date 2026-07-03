@@ -46,23 +46,38 @@ export default function DynamicAd({ slot, page = 'all', templateOverride = null 
         }
     }
 
-    // If multiple ads in same slot — show one at a time with dots
+    // If multiple ads in same slot — show as a continuous marquee
     if (ads.length > 1) {
+        // We duplicate the array to ensure the infinite scroll has enough content to be seamless
+        const displayAds = [...ads, ...ads];
+
         return (
-            <div className="w-full">
-                <div className="transition-opacity duration-300">
-                    {renderTemplate(ads[currentIndex])}
-                </div>
-                {/* Dots */}
-                <div className="flex justify-center gap-1.5 mt-3">
-                    {ads.map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => { clearInterval(timerRef.current); setCurrentIndex(i); }}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-5 bg-[#1a56ff]' : 'w-1.5 bg-slate-200 hover:bg-slate-300'}`}
-                            aria-label={`Ad ${i + 1}`}
-                        />
-                    ))}
+            <div className="w-full overflow-hidden relative group">
+                <style>{`
+                    @keyframes dynamic-ad-marquee {
+                        0% { transform: translateX(0); }
+                        100% { transform: translateX(-50%); }
+                    }
+                    .dynamic-ad-marquee-container:hover .dynamic-ad-marquee-track {
+                        animation-play-state: paused !important;
+                    }
+                `}</style>
+                
+                {/* Fade gradients at edges */}
+                <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none" />
+
+                <div className="dynamic-ad-marquee-container w-full">
+                    <div 
+                        className="flex gap-4 sm:gap-6 min-w-max dynamic-ad-marquee-track py-2"
+                        style={{ animation: 'dynamic-ad-marquee 60s linear infinite' }}
+                    >
+                        {displayAds.map((ad, i) => (
+                            <div key={`${ad.id}-${i}`} className="w-[300px] sm:w-[450px] md:w-[600px] flex-shrink-0">
+                                {renderTemplate(ad)}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         )

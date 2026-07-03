@@ -12,9 +12,9 @@ print(f"Status: {response.status_code}")
 data = response.json()
 print(f"Total ads: {len(data.get('results', data))}")
 
-# Test 2: Get ads for home page, left sidebar
-print("\n2. Get ads for home page, left sidebar:")
-response = requests.get(url, params={'slot': 'left_sidebar_ad', 'target_page': 'home'})
+# Test 2: Get ads for home page, carousel 1
+print("\n2. Get ads for home page, carousel 1:")
+response = requests.get(url, params={'slot': 'carousel_1', 'target_page': 'home'})
 print(f"Status: {response.status_code}")
 data = response.json()
 results = data.get('results', data)
@@ -25,9 +25,9 @@ if results:
 else:
     print("  No ads found!")
 
-# Test 3: Get ads for home page, right sidebar
-print("\n3. Get ads for home page, right sidebar:")
-response = requests.get(url, params={'slot': 'right_sidebar_ad', 'target_page': 'home'})
+# Test 3: Get ads for home page, strip home mid
+print("\n3. Get ads for home page, strip home mid:")
+response = requests.get(url, params={'slot': 'strip_home_mid', 'target_page': 'home'})
 print(f"Status: {response.status_code}")
 data = response.json()
 results = data.get('results', data)

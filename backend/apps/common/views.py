@@ -11,17 +11,17 @@ from .serializers import (
 
 class MakeViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for vehicle makes"""
-    queryset = Make.objects.all()
+    queryset = Make.objects.all()  # type: ignore[attr-defined]
     serializer_class = MakeSerializer
 
 
 class ModelViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for vehicle models"""
-    queryset = Model.objects.all()
+    queryset = Model.objects.all()  # type: ignore[attr-defined]
     serializer_class = ModelSerializer
 
     def get_queryset(self):
-        queryset = Model.objects.all()
+        queryset = Model.objects.all()  # type: ignore[attr-defined]
         
         # Filter by makeID if provided (frontend uses camelCase)
         make_id = self.request.query_params.get('makeID', None) or self.request.query_params.get('make_id', None)
@@ -33,13 +33,13 @@ class ModelViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PartViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for auto parts"""
-    queryset = PartType.objects.all()
+    queryset = PartType.objects.all()  # type: ignore[attr-defined]
     serializer_class = PartSerializer
 
 
 class StateViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for states"""
-    queryset = State.objects.all()
+    queryset = State.objects.all()  # type: ignore[attr-defined]
     serializer_class = StateSerializer
 
 
@@ -49,7 +49,7 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
     POST: Public (AllowAny)
     GET/PUT/DELETE: Admin only (IsAdminUser)
     """
-    queryset = ContactMessage.objects.all()
+    queryset = ContactMessage.objects.all()  # type: ignore[attr-defined]
     serializer_class = ContactMessageSerializer
     
     def get_permissions(self):
@@ -86,7 +86,7 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
         if not ids:
             return Response({'error': 'No IDs provided'}, status=status.HTTP_400_BAD_REQUEST)
         
-        deleted_count = ContactMessage.objects.filter(id__in=ids).delete()[0]
+        deleted_count = ContactMessage.objects.filter(id__in=ids).delete()[0]  # type: ignore[attr-defined]
         return Response({'status': f'{deleted_count} messages deleted'})
 
 
@@ -104,6 +104,7 @@ class SiteStatsView(APIView):
     Results are cached for 5 minutes to avoid repeated DB hits.
     """
     permission_classes = [permissions.AllowAny]
+    throttle_classes = []  # Public cached read-only — exempt from rate limiting
 
     def get(self, request):
         from django.core.cache import cache
@@ -117,11 +118,11 @@ class SiteStatsView(APIView):
             pass
 
         if stats is None:
-            active_vendors = Vendor.objects.filter(is_active=True).count()
+            active_vendors = Vendor.objects.filter(is_active=True).count()  # type: ignore[attr-defined]
 
             # Count distinct states that have at least one active vendor
             states_covered = (
-                Vendor.objects.filter(is_active=True)
+                Vendor.objects.filter(is_active=True)  # type: ignore[attr-defined]
                 .values('state')
                 .exclude(state__isnull=True)
                 .exclude(state__exact='')
@@ -131,7 +132,7 @@ class SiteStatsView(APIView):
 
             # Total parts listed across all yards
             try:
-                parts_listed = YardPart.objects.count()
+                parts_listed = YardPart.objects.count()  # type: ignore[attr-defined]
             except Exception:
                 parts_listed = 0
 
@@ -148,6 +149,23 @@ class SiteStatsView(APIView):
                 pass
 
         return Response(stats)
+        
+class CityListView(APIView):
+    """
+    Returns a distinct list of cities where active vendors are located.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        from apps.hollander.models import Vendor
+        cities = (
+            Vendor.objects.filter(is_active=True)  # type: ignore[attr-defined]
+            .values_list('city', flat=True)
+            .exclude(city__isnull=True)
+            .exclude(city__exact='')
+        )
+        cities = cities.distinct().order_by('city')
+        return Response(list(cities))
 
 
 class AdminStatsView(APIView):
@@ -164,8 +182,8 @@ class AdminStatsView(APIView):
         from django.core.cache import cache
         
         # Basic stats with optimized queries
-        total_leads = Lead.objects.count()
-        new_leads = Lead.objects.filter(status='new').count()
+        total_leads = Lead.objects.count()  # type: ignore[attr-defined]
+        new_leads = Lead.objects.filter(status='new').count()  # type: ignore[attr-defined]
         
         # Cache total vendor count for 5 minutes to avoid repeated full table scans
         # Wrap in try-except in case cache backend is not configured
@@ -176,29 +194,33 @@ class AdminStatsView(APIView):
             print(f"Cache get failed: {e}")
             
         if total_vendors is None:
-            total_vendors = Vendor.objects.count()
+            total_vendors = Vendor.objects.count()  # type: ignore[attr-defined]
             try:
                 cache.set('total_vendors_count', total_vendors, 300)  # 5 minutes
             except Exception as e:
                 print(f"Cache set failed: {e}")
         
-        active_vendors = Vendor.objects.filter(is_active=True).count()
-        total_ads = Advertisement.objects.count()
-        active_ads = Advertisement.objects.filter(is_active=True).count()
-        unread_messages = ContactMessage.objects.filter(is_read=False).count()
+        active_vendors = Vendor.objects.filter(is_active=True).count()  # type: ignore[attr-defined]
+        total_ads = Advertisement.objects.count()  # type: ignore[attr-defined]
+        active_ads = Advertisement.objects.filter(is_active=True).count()  # type: ignore[attr-defined]
+        unread_messages = ContactMessage.objects.filter(is_read=False).count()  # type: ignore[attr-defined]
         
         # Vendor distribution by state (top 10) - use only active vendors
-        vendor_distribution = Vendor.objects.filter(is_active=True).values('state').annotate(
-            count=Count('id')
-        ).order_by('-count')[:10]
+        vendor_distribution = (
+            Vendor.objects.filter(is_active=True)  # type: ignore[attr-defined]
+            .values('state')
+            .annotate(count=Count('id'))
+            .order_by('-count')[:10]
+        )
         
         # Recent leads (last 7 days) - optimized with indexed created_at
         seven_days_ago = datetime.now() - timedelta(days=7)
-        recent_leads_qs = Lead.objects.filter(
-            created_at__gte=seven_days_ago
-        ).values('created_at__date').annotate(
-            count=Count('id')
-        ).order_by('created_at__date')
+        recent_leads_qs = (
+            Lead.objects.filter(created_at__gte=seven_days_ago)  # type: ignore[attr-defined]
+            .values('created_at__date')
+            .annotate(count=Count('id'))
+            .order_by('created_at__date')
+        )
         
         # Format recent leads for chart — real daily counts
         leads_trend = []
@@ -212,13 +234,15 @@ class AdminStatsView(APIView):
             })
         
         # Recent activity — last 5 leads with full contact fields
-        recent_activity = list(Lead.objects.order_by('-created_at')[:5].values(
-            'id', 'name', 'email', 'make', 'model', 'year', 'part', 'lead_type', 'created_at', 'status'
-        ))
+        recent_activity = list(
+            Lead.objects.order_by('-created_at')[:5].values(  # type: ignore[attr-defined]
+                'id', 'name', 'email', 'make', 'model', 'year', 'part', 'lead_type', 'created_at', 'status'
+            )
+        )
 
         # Top vendors by number of leads assigned to them
         top_vendors_by_leads = list(
-            Vendor.objects
+            Vendor.objects  # type: ignore[attr-defined]
             .filter(is_active=True, leads__isnull=False)
             .annotate(lead_count=Count('leads'))
             .order_by('-lead_count')
@@ -227,7 +251,7 @@ class AdminStatsView(APIView):
 
         # Lead type distribution — real breakdown for donut chart
         lead_type_dist = (
-            Lead.objects
+            Lead.objects  # type: ignore[attr-defined]
             .values('lead_type')
             .annotate(count=Count('id'))
             .order_by('-count')
@@ -270,9 +294,11 @@ class UploadAndMigrateLeadDataView(APIView):
     def post(self, request, format=None):
         from django.conf import settings
         
-        # Security check using shared secret header
-        # Use hardcoded secret since we can't read KeyVault secret locally
-        MIGRATION_SECRET = "temp-migration-key-2024"
+        import os
+        MIGRATION_SECRET = os.environ.get('MIGRATION_SECRET', '')
+        if not MIGRATION_SECRET:
+            return Response({'error': 'Migration not configured'}, status=403)
+            
         secret = request.headers.get('X-Migration-Secret')
         if secret != MIGRATION_SECRET:
             return Response({'error': 'Unauthorized'}, status=403)
@@ -325,8 +351,8 @@ class UploadAndMigrateLeadDataView(APIView):
                 stats['makes']['found'] = len(rows)
                 
                 for row in rows:
-                    _, created = Make.objects.get_or_create(
-                        make_id=row[0], 
+                    _, created = Make.objects.get_or_create(  # type: ignore[attr-defined]
+                        make_id=row[0],
                         defaults={'make_name': row[1]}
                     )
                     if created: stats['makes']['created'] += 1
@@ -340,10 +366,10 @@ class UploadAndMigrateLeadDataView(APIView):
                 stats['states']['found'] = len(rows)
                 
                 for row in rows:
-                    _, created = State.objects.get_or_create(
+                    _, created = State.objects.get_or_create(  # type: ignore[attr-defined]
                         state_code=row[0],
                         defaults={
-                            'name': row[1], 
+                            'name': row[1],
                             'country_id': row[2] if len(row) > 2 else 1
                         }
                     )
@@ -358,7 +384,7 @@ class UploadAndMigrateLeadDataView(APIView):
                 stats['parts']['found'] = len(rows)
                 
                 for row in rows:
-                    _, created = PartType.objects.get_or_create(
+                    _, created = PartType.objects.get_or_create(  # type: ignore[attr-defined]
                         part_id=row[0],
                         defaults={'part_name': row[1]}
                     )
@@ -374,7 +400,7 @@ class UploadAndMigrateLeadDataView(APIView):
                 
                 batch_size = 500
                 objs = []
-                existing_ids = set(Model.objects.values_list('model_id', flat=True))
+                existing_ids = set(Model.objects.values_list('model_id', flat=True))  # type: ignore[attr-defined]
                 
                 for row in rows:
                     m_id = row[0]
@@ -386,14 +412,14 @@ class UploadAndMigrateLeadDataView(APIView):
                         ))
                         
                         if len(objs) >= batch_size:
-                            Model.objects.bulk_create(objs)
+                            Model.objects.bulk_create(objs)  # type: ignore[attr-defined]
                             objs = []
                 
                 if objs:
-                    Model.objects.bulk_create(objs)
+                    Model.objects.bulk_create(objs)  # type: ignore[attr-defined]
                     
                 # Re-count to get created approximate (or just check count diff)
-                stats['models']['created'] = Model.objects.count() - len(existing_ids)
+                stats['models']['created'] = Model.objects.count() - len(existing_ids)  # type: ignore[attr-defined]
                 
             except Exception as e:
                 print(f"Model migration error: {e}")
@@ -417,52 +443,79 @@ from django.http import HttpResponse
 class SitemapView(APIView):
     """
     Dynamically generates the sitemap.xml for SEO indexing.
-    Returns valid XML containing static routes and dynamic Vendor profiles.
+    Returns valid XML containing static routes, state browse pages,
+    dynamic Vendor profiles, and published blog posts.
     """
     permission_classes = [permissions.AllowAny]
+    throttle_classes = []  # Exempt — Googlebot must never get rate-limited on sitemap
 
     def get(self, request):
         from apps.hollander.models import Vendor
         import xml.etree.ElementTree as ET
-        
+        from datetime import datetime, timezone
+
         urlset = ET.Element('urlset', xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
-        
+
         base_url = 'https://junkyardsnearme.com'
-        
-        # Static Pages
-        static_pages = [
-            '/', '/about', '/search', '/faq', '/browse', 
-            '/contact', '/terms', '/privacy', '/auth/login', 
-            '/auth/register', '/add-yard'
-        ]
-        
-        for path in static_pages:
+        today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+        def add_url(path, priority='0.8', changefreq='weekly', lastmod=None):
             url_node = ET.SubElement(urlset, 'url')
-            loc_node = ET.SubElement(url_node, 'loc')
-            loc_node.text = f"{base_url}{path}"
-            changefreq = ET.SubElement(url_node, 'changefreq')
-            changefreq.text = 'weekly'
-            priority = ET.SubElement(url_node, 'priority')
-            priority.text = '1.0' if path == '/' else '0.8'
-            
-        # Dynamic Vendor Pages
+            ET.SubElement(url_node, 'loc').text = f"{base_url}{path}"
+            ET.SubElement(url_node, 'changefreq').text = changefreq
+            ET.SubElement(url_node, 'priority').text = priority
+            ET.SubElement(url_node, 'lastmod').text = lastmod or today
+
+        # ── Static pages ──────────────────────────────────────────────────────
+        add_url('/', priority='1.0', changefreq='daily')
+        add_url('/browse', priority='0.9', changefreq='daily')
+        add_url('/search', priority='0.8', changefreq='weekly')
+        add_url('/faq', priority='0.7', changefreq='monthly')
+        add_url('/about', priority='0.6', changefreq='monthly')
+        add_url('/contact', priority='0.6', changefreq='monthly')
+        add_url('/how-it-works', priority='0.6', changefreq='monthly')
+        add_url('/terms', priority='0.4', changefreq='yearly')
+        add_url('/privacy', priority='0.4', changefreq='yearly')
+        add_url('/add-a-yard', priority='0.6', changefreq='monthly')
+        add_url('/blog', priority='0.8', changefreq='daily')
+
+        # ── State browse pages (high-value local search traffic) ──────────────
+        US_STATES = [
+            'al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga',
+            'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md',
+            'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj',
+            'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc',
+            'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy',
+            'dc'
+        ]
+        for state in US_STATES:
+            add_url(f'/browse/{state}', priority='0.9', changefreq='weekly')
+
+        # ── Active Vendor / Junkyard profile pages ────────────────────────────
         try:
-            active_vendors = Vendor.objects.filter(is_active=True).values('id')
+            active_vendors = Vendor.objects.filter(is_active=True).values('id', 'updated_at')  # type: ignore[attr-defined]
             for vendor in active_vendors:
-                url_node = ET.SubElement(urlset, 'url')
-                loc_node = ET.SubElement(url_node, 'loc')
-                loc_node.text = f"{base_url}/vendors/{vendor['id']}"
-                
-                changefreq = ET.SubElement(url_node, 'changefreq')
-                changefreq.text = 'weekly'
-                priority = ET.SubElement(url_node, 'priority')
-                priority.text = '0.7'
+                lastmod = vendor.get('updated_at')
+                lastmod_str = lastmod.strftime('%Y-%m-%d') if lastmod else today
+                add_url(f"/junkyard/{vendor['id']}", priority='0.7', changefreq='monthly', lastmod=lastmod_str)
         except Exception as e:
             print(f"Sitemap vendor resolution error: {e}")
+
+        # ── Published blog posts ──────────────────────────────────────────────
+        try:
+            from apps.blog.models import BlogPost
+            published_posts = BlogPost.objects.filter(status='published').values('slug', 'updated_at', 'published_at')  # type: ignore[attr-defined]
+            for post in published_posts:
+                lastmod = post.get('updated_at') or post.get('published_at')
+                lastmod_str = lastmod.strftime('%Y-%m-%d') if lastmod else today
+                add_url(f"/blog/{post['slug']}", priority='0.7', changefreq='weekly', lastmod=lastmod_str)
+        except Exception as e:
+            print(f"Sitemap blog resolution error: {e}")
 
         # Generate XML
         xml_str = ET.tostring(urlset, encoding='utf-8', method='xml')
         xml_declaration = b'<?xml version="1.0" encoding="UTF-8"?>\n'
-        
+
         return HttpResponse(xml_declaration + xml_str, content_type='application/xml')
+
 

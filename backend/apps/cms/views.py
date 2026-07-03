@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 class PublicCMSView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
+    throttle_classes = []  # Public read-only — exempt from rate limiting
 
     def get(self, request):
         # NOTE: we use 'cms_page' to avoid collision with DRF PageNumberPagination's '?page=' param

@@ -13,7 +13,11 @@ from .serializers import (
 )
 
 
+from rest_framework.throttling import ScopedRateThrottle
+
 class RegisterView(generics.CreateAPIView):
+    throttle_scope = 'auth'
+    throttle_classes = [ScopedRateThrottle]
     """User registration endpoint"""
     
     queryset = User.objects.all()
@@ -39,6 +43,8 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
+    throttle_scope = 'auth'
+    throttle_classes = [ScopedRateThrottle]
     """User login endpoint"""
     
     permission_classes = [AllowAny]

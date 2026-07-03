@@ -25,11 +25,9 @@ export default function MobileAdBanner({ page = 'all' }) {
 
         const fetchAds = async () => {
             try {
-                const leftAds = await api.getAds({ slot: 'left_sidebar_ad', target_page: page })
-                const rightAds = await api.getAds({ slot: 'right_sidebar_ad', target_page: page })
+                const bottomAds = await api.getAds({ slot: 'strip_bottom', target_page: page })
                 const allAds = [
-                    ...(leftAds.results || leftAds || []),
-                    ...(rightAds.results || rightAds || [])
+                    ...(bottomAds.results || bottomAds || [])
                 ]
                 if (allAds.length > 0) {
                     setAds(allAds)

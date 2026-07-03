@@ -1,28 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
 import { api } from '../services/api';
-import '../styles/vendor.css';
+import { getLogoUrl } from '../utils/imageUrl';
+
+// Icons
+const Icon = ({ path, path2, className = 'w-5 h-5' }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={path} />
+        {path2 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={path2} />}
+    </svg>
+);
+
+const NAV_ITEMS = [
+    {
+        to: '/vendor/dashboard', label: 'Dashboard',
+        icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+    },
+    {
+        to: '/vendor/profile', label: 'Profile',
+        icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+    },
+    {
+        to: '/vendor/inventory', label: 'Inventory',
+        icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+    },
+    {
+        to: '/vendor/leads', label: 'Leads',
+        icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+    },
+    {
+        to: '/vendor/ads', label: 'Marketing & Ads',
+        icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z',
+        icon2: 'M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z',
+    },
+];
 
 const VendorLayout = () => {
     const { user, vendorProfile, logout } = useVendorAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [logo, setLogo] = useState('');
 
     useEffect(() => {
-        const fetchBrand = async () => {
+        (async () => {
             try {
-                const response = await api.cms.getContent('global');
-                if (response?.data) {
-                    const logoItem = response.data.find(i => i.key === 'portal_logo');
+                const content = await api.cms.getPageContent('global');
+                if (content?.data) {
+                    const logoItem = content.data.find(i => i.key === 'logo' && i.section === 'brand');
                     if (logoItem?.value) setLogo(logoItem.value);
                 }
-            } catch (err) {
-                console.error("CMS Vendor Logo Fetch Failed", err);
-            }
-        };
-        fetchBrand();
+            } catch { /* cosmetic — fail silently */ }
+        })();
     }, []);
 
     const handleLogout = async () => {
@@ -30,147 +60,162 @@ const VendorLayout = () => {
         navigate('/vendor/login');
     };
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
+    const closeSidebar = () => setSidebarOpen(false);
 
-    const closeSidebar = () => {
-        setSidebarOpen(false);
-    };
+    const vendorName = vendorProfile?.vendor_name || vendorProfile?.vendor?.name || vendorProfile?.name || 'Your Yard';
+    const vendorId = vendorProfile?.vendor_id || vendorProfile?.vendor?.yard_id || vendorProfile?.vendor?.id || '';
+    const vendorLogo = vendorProfile?.vendor?.logo; // Logo may not be in vendorProfile, might need to rely on API if available
+    const vendorInitial = vendorName.charAt(0).toUpperCase();
+
+    // Current page title
+    const currentNav = NAV_ITEMS.find(n => location.pathname.startsWith(n.to));
+    const pageTitle = currentNav?.label || 'Portal';
 
     return (
-        <div className="flex min-h-screen bg-slate-900 font-sans text-slate-100 selection:bg-indigo-500/30">
-            {/* Sidebar (Glassmorphism Dark) */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out bg-slate-900/60 backdrop-blur-3xl border-r border-slate-700/50 flex flex-col shadow-2xl lg:shadow-none`}>
-                <div className="flex items-center justify-between px-6 py-8 border-b border-slate-700/50">
+        <div className="flex min-h-screen bg-[#f8fafc] font-sans selection:bg-blue-100">
+            {/* ── Sidebar ─────────────────────────────────────────── */}
+            <aside className={`
+                fixed inset-y-0 left-0 z-50 w-64 flex flex-col
+                bg-white border-r border-slate-100
+                shadow-[4px_0_24px_rgba(0,0,0,0.04)]
+                transform transition-transform duration-300 ease-in-out
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+            `}>
+                {/* Brand */}
+                <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                        {logo ? (
-                            <img src={logo} alt="JYNM Logo" className="h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
-                        ) : (
-                            <div className="flex flex-col">
-                                <span className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">JYNM</span>
-                                <span className="text-[0.6rem] tracking-[0.2em] font-mono text-slate-400 uppercase">Vendor Portal</span>
+                        <img
+                            src={logo || '/logo.png'}
+                            alt="JYNM"
+                            className="h-9 object-contain"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                        {!logo && (
+                            <div>
+                                <span className="block text-[15px] font-black text-slate-900 tracking-tight leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</span>
+                                <span className="block text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400">Vendor Portal</span>
                             </div>
                         )}
                     </div>
-                    {/* Close button for mobile */}
-                    <button
-                        onClick={closeSidebar}
-                        className="lg:hidden text-slate-400 hover:text-white transition-colors"
-                        aria-label="Close menu"
-                    >
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onClick={closeSidebar} className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto hidden-scrollbar">
-                    <NavLink
-                        to="/vendor/dashboard"
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${isActive ? 'bg-indigo-500/10 text-indigo-400 border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-                        onClick={closeSidebar}
-                    >
-                        <svg className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        Dashboard
-                    </NavLink>
+                {/* Vendor Identity Card */}
+                <div className="mx-4 mt-4 mb-2 p-3 rounded-2xl bg-gradient-to-br from-[#eff6ff] to-[#e0e7ff] border border-blue-100">
+                    <div className="flex items-center gap-3">
+                        {vendorLogo ? (
+                            <img src={getLogoUrl(vendorLogo)} alt={vendorName} className="w-10 h-10 rounded-xl object-contain bg-white border border-blue-100 p-1 flex-shrink-0" onError={e => e.target.style.display='none'} />
+                        ) : (
+                            <div className="w-10 h-10 rounded-xl bg-[#1a56ff] flex items-center justify-center flex-shrink-0 font-black text-white text-[15px]">
+                                {vendorInitial}
+                            </div>
+                        )}
+                        <div className="min-w-0">
+                            <p className="text-[12px] font-black text-slate-800 leading-tight line-clamp-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{vendorName}</p>
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-blue-600">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                                Active
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-                    <NavLink
-                        to="/vendor/profile"
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${isActive ? 'bg-indigo-500/10 text-indigo-400 border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-                        onClick={closeSidebar}
-                    >
-                        <svg className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Profile
-                    </NavLink>
-
-                    <NavLink
-                        to="/vendor/inventory"
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${isActive ? 'bg-indigo-500/10 text-indigo-400 border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-                        onClick={closeSidebar}
-                    >
-                        <svg className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        Inventory
-                    </NavLink>
-
-                    <NavLink
-                        to="/vendor/leads"
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${isActive ? 'bg-indigo-500/10 text-indigo-400 border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-                        onClick={closeSidebar}
-                    >
-                        <svg className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Leads
-                    </NavLink>
-
-                    <NavLink
-                        to="/vendor/ads"
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${isActive ? 'bg-indigo-500/10 text-indigo-400 border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-                        onClick={closeSidebar}
-                    >
-                        <svg className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                        </svg>
-                        Marketing & Ads
-                    </NavLink>
+                {/* Navigation */}
+                <nav className="flex-1 px-3 py-2 overflow-y-auto space-y-0.5">
+                    {NAV_ITEMS.map(({ to, label, icon, icon2 }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            onClick={closeSidebar}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-150 ${
+                                    isActive
+                                        ? 'bg-[#eff6ff] text-[#1a56ff] shadow-[inset_3px_0_0_#1a56ff]'
+                                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                }`
+                            }
+                        >
+                            <Icon path={icon} path2={icon2} className="w-[18px] h-[18px] flex-shrink-0" />
+                            {label}
+                        </NavLink>
+                    ))}
                 </nav>
+
+                {/* Logout */}
+                <div className="px-3 py-4 border-t border-slate-100">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-150"
+                    >
+                        <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign Out
+                    </button>
+                    <p className="text-[10px] text-slate-400 font-medium text-center mt-2 truncate px-1">{user?.email}</p>
+                </div>
             </aside>
 
-            {/* Overlay for mobile */}
+            {/* Mobile overlay */}
             {sidebarOpen && (
-                <div className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm" onClick={closeSidebar} />
+                <div className="fixed inset-0 bg-black/30 z-40 lg:hidden backdrop-blur-sm" onClick={closeSidebar} />
             )}
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col lg:ml-64 w-full relative">
-                {/* Header Glassmorphism */}
-                <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-slate-900/60 backdrop-blur-xl border-b border-slate-700/50 shadow-sm">
-                    <div className="flex items-center gap-4">
+            {/* ── Main Content ─────────────────────────────────────── */}
+            <div className="flex-1 flex flex-col lg:ml-64 w-full min-w-0">
+                {/* Top header bar */}
+                <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3.5 bg-white border-b border-slate-100 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+                    <div className="flex items-center gap-3">
+                        {/* Mobile hamburger */}
                         <button
-                            onClick={toggleSidebar}
-                            className="p-2 lg:hidden rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
-                            aria-label="Toggle menu"
+                            onClick={() => setSidebarOpen(true)}
+                            className="p-2 lg:hidden rounded-xl bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors"
                         >
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <h2 className="hidden sm:block text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-white">
-                            {vendorProfile?.vendor?.name || 'Authorized Network Yard'}
-                        </h2>
+                        {/* Breadcrumb */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-slate-400 font-medium hidden sm:block">Vendor Portal</span>
+                            <span className="text-slate-300 hidden sm:block">/</span>
+                            <h1 className="text-[15px] font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{pageTitle}</h1>
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                        <div className="hidden sm:flex flex-col text-right">
-                            <span className="text-sm font-bold text-slate-200">{user?.email}</span>
-                            <span className="text-xs font-mono tracking-widest text-indigo-400">VENDOR HUB</span>
+                    <div className="flex items-center gap-3">
+                        {/* Yard name pill */}
+                        <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5">
+                            <div className="w-5 h-5 rounded-full bg-[#1a56ff] flex items-center justify-center flex-shrink-0">
+                                <span className="text-[9px] font-black text-white">{vendorInitial}</span>
+                            </div>
+                            <span className="text-[12px] font-bold text-slate-700 max-w-[140px] truncate">{vendorName}</span>
                         </div>
-
-                        <button
-                            onClick={handleLogout}
-                            className="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all duration-200"
+                        {/* View public profile link */}
+                        <a
+                            href={`/vendors/${vendorId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors"
                         >
-                            Logout
-                        </button>
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            View Profile
+                        </a>
                     </div>
                 </header>
 
-                {/* Page Content */}
-                <main className="flex-1 p-6 md:p-10 mx-auto w-full max-w-7xl">
+                {/* Page content */}
+                <main className="flex-1 p-4 pb-24 sm:p-6 lg:p-8 lg:pb-8 mx-auto w-full max-w-7xl">
                     <React.Suspense fallback={
-                        <div className="flex justify-center items-center h-64">
-                            <svg className="animate-spin h-10 w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                        <div className="flex flex-col items-center justify-center h-64 gap-4">
+                            <div className="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+                            <p className="text-sm text-slate-400 font-medium">Loading...</p>
                         </div>
                     }>
                         <Outlet />
@@ -178,58 +223,22 @@ const VendorLayout = () => {
                 </main>
             </div>
 
-            {/* Bottom Navigation Bar - Mobile Only */}
-            <nav className="vendor-bottom-nav">
-                <NavLink
-                    to="/vendor/dashboard"
-                    className={({ isActive }) => `vendor-bottom-nav-item ${isActive ? 'active' : ''}`}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    <span>Dashboard</span>
-                </NavLink>
-
-                <NavLink
-                    to="/vendor/profile"
-                    className={({ isActive }) => `vendor-bottom-nav-item ${isActive ? 'active' : ''}`}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>Profile</span>
-                </NavLink>
-
-                <NavLink
-                    to="/vendor/inventory"
-                    className={({ isActive }) => `vendor-bottom-nav-item ${isActive ? 'active' : ''}`}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                    <span>Inventory</span>
-                </NavLink>
-
-                <NavLink
-                    to="/vendor/leads"
-                    className={({ isActive }) => `vendor-bottom-nav-item ${isActive ? 'active' : ''}`}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <span>Leads</span>
-                </NavLink>
-
-                <NavLink
-                    to="/vendor/ads"
-                    className={({ isActive }) => `vendor-bottom-nav-item ${isActive ? 'active' : ''}`}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                    </svg>
-                    <span>Ads</span>
-                </NavLink>
+            {/* ── Mobile bottom nav ────────────────────────────────── */}
+            <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-slate-100 flex items-stretch shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                {NAV_ITEMS.map(({ to, label, icon, icon2 }) => (
+                    <NavLink
+                        key={to}
+                        to={to}
+                        className={({ isActive }) =>
+                            `flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[9px] font-bold uppercase tracking-wide transition-colors ${
+                                isActive ? 'text-[#1a56ff]' : 'text-slate-400'
+                            }`
+                        }
+                    >
+                        <Icon path={icon} path2={icon2} className="w-5 h-5" />
+                        <span className="line-clamp-1">{label.split(' ')[0]}</span>
+                    </NavLink>
+                ))}
             </nav>
         </div>
     );

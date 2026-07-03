@@ -16,13 +16,6 @@ export const getOrganizationSchema = () => ({
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
     description: 'Find junkyards and auto salvage yards near you. Search by make, model, part, or location.',
-    contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+1-800-555-1234',
-        contactType: 'Customer Service',
-        areaServed: 'US',
-        availableLanguage: 'English'
-    },
     sameAs: [
         // Add social media profiles when available
     ]
@@ -121,4 +114,36 @@ export const getCollectionPageSchema = ({ name, description, url, numberOfItems 
     description,
     url,
     ...(numberOfItems && { numberOfItems })
+});
+
+/**
+ * HowTo Schema - Use on How It Works page
+ */
+export const getHowToSchema = () => ({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Find Used Auto Parts at Junkyards Near Me',
+    description: 'Learn how to find quality used auto parts through our network of verified junkyards in 4 simple steps.',
+    step: [
+        {
+            '@type': 'HowToStep',
+            name: 'Tell Us What You Need',
+            text: "Fill out our simple form with your vehicle details (make, model, year) and the specific part you're looking for. Add your contact information and location."
+        },
+        {
+            '@type': 'HowToStep',
+            name: 'We Notify Our Network',
+            text: 'Your request is instantly sent to our network of verified junkyards and auto salvage yards in your area.'
+        },
+        {
+            '@type': 'HowToStep',
+            name: 'Receive Free Quotes',
+            text: 'Junkyards with your part in stock will contact you directly with pricing, availability, and shipping options.'
+        },
+        {
+            '@type': 'HowToStep',
+            name: 'Order & Save',
+            text: 'Purchase directly from the junkyard of your choice. Arrange pickup or shipping, and get your quality used part.'
+        }
+    ]
 });

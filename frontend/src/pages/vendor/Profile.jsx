@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { vendorProfile } from '../../services/vendorApi';
 import { getLogoUrl } from '../../utils/imageUrl';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorProfile = () => {
+    const { get } = useCMS('vendor_portal');
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -84,7 +86,7 @@ const VendorProfile = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a56ff]"></div>
             </div>
         );
     }
@@ -121,20 +123,20 @@ const VendorProfile = () => {
                         )}
                         <div>
                             <div className="flex items-center gap-2.5 mb-1.5">
-                                <h1 className="text-3xl font-extrabold tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Yard Profile</h1>
+                                <h1 className="text-3xl font-extrabold tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('profile', 'heading', 'Yard Profile')}</h1>
                             </div>
-                            <p className="text-slate-500 font-medium">Manage your business information and settings</p>
+                            <p className="text-slate-500 font-medium">{get('profile', 'subheading', 'Manage your business information and settings')}</p>
                         </div>
                     </div>
                     {!isEditing && (
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="bg-white hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 border border-slate-200 shadow-sm"
+                            className="bg-[#1a56ff] hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-[0_8px_20px_rgba(26,86,255,0.25)] hover:scale-[1.02]"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
-                            Edit
+                            Edit Profile
                         </button>
                     )}
                 </div>
@@ -170,7 +172,7 @@ const VendorProfile = () => {
                                     id="name"
                                     name="name"
                                     type="text"
-                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
+                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
                                     value={formData.name}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -184,7 +186,7 @@ const VendorProfile = () => {
                                     id="address"
                                     name="address"
                                     type="text"
-                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
+                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
                                     value={formData.address}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -199,7 +201,7 @@ const VendorProfile = () => {
                                         id="city"
                                         name="city"
                                         type="text"
-                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
+                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
                                         value={formData.city}
                                         onChange={handleChange}
                                         disabled={!isEditing}
@@ -212,7 +214,7 @@ const VendorProfile = () => {
                                         id="state"
                                         name="state"
                                         type="text"
-                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
+                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
                                         value={formData.state}
                                         onChange={handleChange}
                                         disabled={!isEditing}
@@ -226,7 +228,7 @@ const VendorProfile = () => {
                                         id="zipcode"
                                         name="zipcode"
                                         type="text"
-                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
+                                        className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none`}
                                         value={formData.zipcode}
                                         onChange={handleChange}
                                         disabled={!isEditing}
@@ -240,7 +242,7 @@ const VendorProfile = () => {
                                 <textarea
                                     id="description"
                                     name="description"
-                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none min-h-[120px]`}
+                                    className={`w-full px-4 py-3 rounded-xl border ${isEditing ? 'border-gray-200 bg-white focus:ring-2 focus:ring-[#1a56ff]/20 focus:border-[#1a56ff]' : 'border-transparent bg-gray-50 text-gray-800'} transition-all outline-none min-h-[120px]`}
                                     value={formData.description}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -261,7 +263,7 @@ const VendorProfile = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-800 bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all"
+                                    className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#1a56ff] hover:bg-blue-700 shadow-md shadow-[#1a56ff]/20 transition-all"
                                     disabled={saving}
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
@@ -306,16 +308,15 @@ const VendorProfile = () => {
                     </div>
                 </div>
 
-                {/* Review Snippet */}
                 {profile?.review_snippet && (
                     <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 md:p-8">
                         <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-5 h-5 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
                             Featured Review
                         </h3>
-                        <div className="bg-blue-50/50 p-6 rounded-2xl border-l-4 border-blue-500">
+                        <div className="bg-[#1a56ff]/5 p-6 rounded-2xl border-l-4 border-[#1a56ff]">
                             <p className="text-gray-700 italic text-lg leading-relaxed">"{profile.review_snippet}"</p>
                         </div>
                         <p className="text-xs text-gray-400 mt-3 text-center">This review snippet is displayed on your public vendor profile.</p>

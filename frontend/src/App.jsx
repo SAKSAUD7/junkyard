@@ -57,12 +57,14 @@ const AdminAds = lazy(() => import('./pages/admin/Ads'))
 const AdminSettings = lazy(() => import('./pages/admin/Settings'))
 const AdminCMS = lazy(() => import('./pages/admin/CMS'))
 const AdminRoles = lazy(() => import('./pages/admin/Roles'))
+const AdminPartPricing = lazy(() => import('./pages/admin/PartPricing'))
 
 // Blog imports
 const BlogList = lazy(() => import('./pages/blog/BlogList'))
 const BlogDetail = lazy(() => import('./pages/blog/BlogDetail'))
 const AdminBlogList = lazy(() => import('./pages/admin/blog/BlogList'))
 const AdminBlogEditor = lazy(() => import('./pages/admin/blog/BlogEditor'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Page load spinner (minimal, no deps)
 function PageSpinner() {
@@ -140,12 +142,10 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/admin/login" element={<SignIn />} />
 
+            {/* Public Routes */}
+            <Route path="/add-a-yard" element={<AddYardPage />} />
+
             {/* Protected Routes */}
-            <Route path="/add-a-yard" element={
-              <ProtectedRoute>
-                <AddYardPage />
-              </ProtectedRoute>
-            } />
 
             <Route path="/vendors" element={<AllVendors />} />
             <Route path="/junkyards" element={<Navigate to="/vendors" replace />} />
@@ -225,8 +225,12 @@ function App() {
               <Route path="cms" element={<AdminCMS />} />
               <Route path="cms/:page" element={<AdminCMS />} />
               <Route path="roles" element={<AdminRoles />} />
+              <Route path="part-pricing" element={<AdminPartPricing />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
+
+            {/* Catch-all 404 Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </PageTransition>
       </Suspense>

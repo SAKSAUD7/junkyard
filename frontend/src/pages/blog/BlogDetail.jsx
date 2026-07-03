@@ -145,13 +145,42 @@ export default function BlogDetail() {
 
   if (!post) return null;
 
+  const articleSchema = post ? {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt || post.meta_description || '',
+    image: post.cover_image_url || post.og_image_url || 'https://junkyardsnearme.com/images/og-default.jpg',
+    author: {
+      '@type': 'Person',
+      name: post.author_info?.name || 'JYNM Editorial'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Junkyards Near Me',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://junkyardsnearme.com/jynm_logo.png'
+      }
+    },
+    datePublished: post.published_at || post.created_at,
+    dateModified: post.updated_at || post.published_at || post.created_at,
+    url: `https://junkyardsnearme.com/blog/${post.slug}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://junkyardsnearme.com/blog/${post.slug}`
+    }
+  } : null;
+
   return (
     <div className="bg-white min-h-screen font-inter">
       <SEO
         title={post.seo_title || post.meta_title || post.title}
         description={post.seo_description || post.meta_description || post.excerpt}
-        canonicalUrl={post.canonical_url || `/blog/${post.slug}`}
+        canonical={post.canonical_url || `https://junkyardsnearme.com/blog/${post.slug}`}
         ogImage={post.og_image_url || post.cover_image_url}
+        ogType="article"
+        schema={articleSchema}
       />
       <Navbar />
 

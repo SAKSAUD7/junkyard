@@ -85,9 +85,7 @@ INSTALLED_APPS = [
     "apps.rbac",           # Role-Based Access Control
 ]
 
-# Media files (for ad images and submissions)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # CORS Configuration - Read from env var or use default production + local origins
 _cors_env = os.environ.get('CORS_ALLOWED_ORIGINS', '')
@@ -279,6 +277,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '600/hour',   # ~10 full page loads per minute
+        'user': '3000/hour',  # authenticated users
+        'lead_submit': '10/hour',
+        'auth': '20/hour',
+    }
 }
 
 # Custom User Model
@@ -308,3 +316,42 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Import database signals to disable foreign key constraints
 import core.db_signals  # noqa
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/django.log',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'apps': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

@@ -6,7 +6,8 @@ import { vendorAuth } from '../../services/vendorApi';
 import { useCMS } from '../../hooks/useCMS';
 
 const VendorForgotPassword = () => {
-    const { get } = useCMS('navbar');
+    const { get: getGlobal } = useCMS('global');
+    const { get } = useCMS('vendor_portal');
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
@@ -28,14 +29,19 @@ const VendorForgotPassword = () => {
         }
     };
 
-    const logoUrl = get('brand', 'logo', '/logo.svg');
+    const logoUrl = getGlobal('brand', 'logo');
 
     return (
         <div className="flex min-h-screen w-full bg-white relative overflow-hidden font-sans">
             {/* LEFT SIDE: Solid Blue Panel */}
             <div className="hidden lg:flex w-1/2 bg-[#3b82f6] flex-col items-center justify-center p-12 text-center text-white">
-                <div className="w-80 h-40 bg-white rounded-lg shadow-[0_20px_40px_rgb(0,0,0,0.15)] mb-16 flex items-center justify-center p-6">
-                    <img src={logoUrl} alt="JYNM Logo" className="h-12 w-auto opacity-80" />
+                <div className="w-80 bg-white rounded-2xl shadow-xl mb-12 flex items-center justify-center p-8">
+                    <img
+                        src={logoUrl || '/logo.png'}
+                        alt="JYNM Logo"
+                        className="h-20 w-auto object-contain"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
                 </div>
                 <h2 className="text-[32px] font-bold mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Recover Access</h2>
                 <p className="text-blue-100 text-lg font-medium">Reset your vendor account password</p>
@@ -76,11 +82,9 @@ const VendorForgotPassword = () => {
                     ) : (
                         <>
                             <div className="text-center mb-10">
-                                <h1 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    Forgot <span className="text-blue-600">Password?</span>
-                                </h1>
+                                <h1 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }} dangerouslySetInnerHTML={{ __html: get('forgot_password', 'heading', 'Recover <span class="text-blue-600">Account</span>') }} />
                                 <p className="text-slate-500 font-medium text-[15px]">
-                                    Enter your email to receive reset instructions
+                                    {get('forgot_password', 'subtext', 'Enter your email to receive a password reset link.')}
                                 </p>
                             </div>
 

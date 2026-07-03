@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { vendorDashboard } from '../../services/vendorApi';
 import { getLogoUrl } from '../../utils/imageUrl';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorDashboard = () => {
+    const { get } = useCMS('vendor_portal');
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -103,7 +105,7 @@ const VendorDashboard = () => {
                     <p className="text-slate-500 mb-6 font-medium">{error}</p>
                     <button
                         onClick={loadDashboard}
-                        className="w-full bg-[#1d4ed8] hover:bg-[#1e40af] text-white py-3 px-6 rounded-xl font-bold transition-all shadow-md"
+                        className="w-full bg-[#1a56ff] hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-bold transition-all shadow-md"
                     >
                         Try Again
                     </button>
@@ -126,13 +128,13 @@ const VendorDashboard = () => {
     return (
         <div className="min-h-full pb-20 md:pb-8 w-full bg-[#f8fafc]">
             {/* Pristine Light Header */}
-            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border border-slate-100 mt-2 mx-1">
+            <div className="relative bg-white p-5 md:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] mb-6 overflow-hidden border border-slate-100 mx-1">
                 <div className="max-w-7xl mx-auto flex justify-between items-center text-slate-900 relative z-10 w-full">
                     <div className="flex-1">
-                        <div className="flex items-center gap-4 mb-2">
+                        <div className="flex items-center gap-4">
                             {/* Vendor Logo */}
                             {dashboardData?.vendor?.logo ? (
-                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden p-1.5">
+                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden p-1.5 flex-shrink-0">
                                     <img
                                         src={getLogoUrl(dashboardData.vendor.logo)}
                                         alt={dashboardData.vendor.name}
@@ -140,7 +142,7 @@ const VendorDashboard = () => {
                                         onError={(e) => {
                                             e.target.style.display = 'none';
                                             e.target.parentElement.innerHTML = `
-                                                <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                                 </svg>
                                             `;
@@ -148,16 +150,16 @@ const VendorDashboard = () => {
                                     />
                                 </div>
                             ) : (
-                                <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
-                                    <svg className="w-7 h-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
                                 </div>
                             )}
-                            <div>
-                                <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Dashboard</h1>
+                            <div className="min-w-0">
+                                <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 truncate" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('dashboard', 'welcome_heading', 'Welcome Back')}</h1>
                                 {dashboardData?.vendor?.name && (
-                                    <p className="text-slate-500 font-medium">{dashboardData.vendor.name}</p>
+                                    <p className="text-[12px] md:text-sm text-slate-500 font-medium mt-0.5 truncate">Here's what's happening with {dashboardData.vendor.name} today.</p>
                                 )}
                             </div>
                         </div>
@@ -165,20 +167,20 @@ const VendorDashboard = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-1 sm:px-2 block w-full space-y-6">
+            <div className="max-w-7xl mx-auto px-1 sm:px-2 block w-full space-y-4 md:space-y-6">
                 {/* White Grid Stat Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+                    <div className="bg-white p-4 md:p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
                         <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                             </svg>
                         </div>
                         <span className="text-4xl font-extrabold text-slate-900 tabular-nums font-outfit">{dashboardData?.total_listings || 0}</span>
-                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">Total Listings</span>
+                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">{get('dashboard', 'stat1_label', 'Total Listings')}</span>
                     </div>
 
-                    <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
+                    <div className="bg-white p-4 md:p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
                         <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
@@ -186,10 +188,10 @@ const VendorDashboard = () => {
                             </svg>
                         </div>
                         <span className="text-4xl font-extrabold text-slate-900 tabular-nums font-outfit">{dashboardData?.active_ads || 0}</span>
-                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">Active Ads</span>
+                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">{get('dashboard', 'stat2_label', 'Active Ads')}</span>
                     </div>
 
-                    <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
+                    <div className="bg-white p-4 md:p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
                         <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -197,24 +199,24 @@ const VendorDashboard = () => {
                             </svg>
                         </div>
                         <span className="text-4xl font-extrabold text-slate-900 tabular-nums font-outfit">{dashboardData?.total_views || 0}</span>
-                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">Profile Views</span>
+                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">{get('dashboard', 'stat3_label', 'Profile Views')}</span>
                     </div>
 
-                    <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-emerald-200 hover:shadow-md transition-all duration-300 group">
+                    <div className="bg-white p-4 md:p-5 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex flex-col items-center text-center hover:border-emerald-200 hover:shadow-md transition-all duration-300 group">
                         <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <span className="text-4xl font-extrabold text-slate-900 tabular-nums font-outfit">{dashboardData?.converted_leads || 0}</span>
-                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">Converted Leads</span>
+                        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 block">{get('dashboard', 'stat4_label', 'Converted Leads')}</span>
                     </div>
                 </div>
 
                 {/* Account Status Card - Solid Blue Minimal Component */}
-                <div className="bg-[#1d4ed8] rounded-3xl p-6 shadow-lg mb-8 flex justify-between items-center relative overflow-hidden group">
+                <div className="bg-[#1a56ff] rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgba(26,86,255,0.2)] mb-6 md:mb-8 flex justify-between items-center relative overflow-hidden group">
                     <div className="relative z-10">
-                        <h3 className="text-[17px] font-bold text-white mb-2 font-outfit">System Status</h3>
+                        <h3 className="text-[17px] font-bold text-white mb-2 font-outfit">{get('dashboard', 'system_status', 'System Status')}</h3>
                         <div className="flex items-center gap-2 bg-blue-900/30 w-max px-3 py-1.5 rounded-full">
                             <span className={`w-2.5 h-2.5 rounded-full ${dashboardData?.account_status === 'Active' ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></span>
                             <span className="text-[13px] font-bold tracking-wider uppercase text-blue-50">{dashboardData?.account_status || 'Active'}</span>
@@ -225,12 +227,12 @@ const VendorDashboard = () => {
                 {/* Recent Leads Section */}
                 <div className="mb-8">
                     <div className="flex justify-between items-center mb-4 px-2">
-                        <h3 className="text-xl font-bold text-slate-900 tracking-tight font-outfit">Recent Network Requests</h3>
+                        <h3 className="text-xl font-bold text-slate-900 tracking-tight font-outfit">{get('dashboard', 'requests_heading', 'Recent Network Requests')}</h3>
                         <Link
                             to="/vendor/leads"
                             className="text-[14px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 group transition-colors"
                         >
-                            View All <span className="group-hover:translate-x-1 transition-transform">→</span>
+                            {get('dashboard', 'view_all', 'View All')} <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </Link>
                     </div>
 
@@ -273,8 +275,8 @@ const VendorDashboard = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                     </svg>
                                 </div>
-                                <p className="text-slate-900 font-bold text-[17px] mb-2 font-outfit">No active requests found</p>
-                                <p className="text-[14px] text-slate-500 font-medium">Stand by to receive incoming transmissions for your inventory.</p>
+                                <p className="text-slate-900 font-bold text-[17px] mb-2 font-outfit">{get('dashboard', 'no_requests_title', 'No active requests found')}</p>
+                                <p className="text-[14px] text-slate-500 font-medium">{get('dashboard', 'no_requests_sub', 'Stand by to receive incoming transmissions for your inventory.')}</p>
                             </div>
                         )}
                     </div>

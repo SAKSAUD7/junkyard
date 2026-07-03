@@ -94,6 +94,37 @@ export const api = {
     return response.data;
   },
 
+  // Direct Hollander number lookup — cascades through PartPricing then HollanderInterchange
+  lookupHollander: async ({ make_id, model_id, part_id, year, make_name, part_name }) => {
+    try {
+      const response = await axiosInstance.post('/hollander/lookup/', {
+        make_id, model_id, part_id, year,
+        make: make_name || '',       // used for HollanderInterchange string lookup
+        part_type: part_name || ''   // used for HollanderInterchange string lookup
+      });
+      const results = response.data?.results || [];
+      if (results.length > 0) {
+        return { hollander_number: results[0].hollander_number || '', options: results[0].options || '' };
+      }
+      return { hollander_number: '', options: '' };
+    } catch {
+      return { hollander_number: '', options: '' };
+    }
+  },
+
+  // Progressive Hollander question resolution
+  // Fetches the next disambiguation question based on current answers
+  resolveHollanderQuestions: async ({ make, model, part_name, year, answers = [] }) => {
+    try {
+      const response = await axiosInstance.post('/hollander/resolve-questions/', {
+        make, model, part_name, year, answers
+      });
+      return response.data;
+    } catch {
+      return { candidates_count: 0, resolved: null, next_question: null, all_candidates: [] };
+    }
+  },
+
   getStates: async () => {
     const response = await axiosInstance.get('/common/states/');
     return response.data;
@@ -193,8 +224,6 @@ export const api = {
   exportLeads: async (token, params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     const url = `/leads/export_csv/?${queryString}`;
-    console.log('Exporting leads from:', url);
-
     const response = await axiosInstance.get(url, { responseType: 'blob' });
     return response.data;
   },

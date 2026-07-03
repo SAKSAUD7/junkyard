@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { getOrganizationSchema } from '../utils/structuredData'
 import { api } from '../services/api'
-import Carousel3D from '../components/Carousel3D'
+
 import { useCMS } from '../hooks/useCMS'
 import AdCarousel from '../components/AdCarousel'
 

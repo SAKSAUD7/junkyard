@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { vendorLeads } from '../../services/vendorApi';
+import { useCMS } from '../../hooks/useCMS';
 
 const VendorLeads = () => {
+    const { get } = useCMS('vendor_portal');
     const [leads, setLeads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -90,18 +92,18 @@ const VendorLeads = () => {
     return (
         <div className="min-h-full pb-20 md:pb-8 w-full bg-[#f8fafc]">
             {/* Enhanced Header */}
-            <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 md:mb-8 overflow-hidden border border-slate-100 mt-2 mx-1">
+            <div className="relative bg-white p-5 md:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] mb-6 overflow-hidden border border-slate-100 mx-1">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center text-slate-900 relative z-10 gap-4 md:gap-0 w-full">
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
-                                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="w-12 h-12 bg-[#1a56ff]/10 rounded-2xl flex items-center justify-center border border-[#1a56ff]/20 shadow-sm">
+                                <svg className="w-6 h-6 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                             </div>
-                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Customer Inquiries</h1>
+                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('leads', 'heading', 'Customer Inquiries')}</h1>
                         </div>
-                        <p className="text-slate-500 font-medium ml-[3.75rem]">Connect with customers looking for parts</p>
+                        <p className="text-slate-500 font-medium ml-[3.75rem]">{get('leads', 'subheading', 'Connect with customers looking for parts')}</p>
                     </div>
                 </div>
             </div>
@@ -116,7 +118,7 @@ const VendorLeads = () => {
                         <input
                             type="text"
                             className="w-full pl-12 pr-4 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 outline-none transition-all text-slate-900 placeholder-slate-400 text-sm md:text-base border border-transparent focus:shadow-[0_4px_20px_rgb(0,0,0,0.03)]"
-                            placeholder="Search by name, make, model, or part..."
+                            placeholder={get('leads', 'search_placeholder', 'Search by name, make, model, or part...')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -268,7 +270,7 @@ const VendorLeads = () => {
                                         setSearchQuery('');
                                         setStatusFilter('');
                                     }}
-                                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 active:scale-95 transition-all text-sm"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#1a56ff] text-white rounded-xl font-semibold hover:bg-blue-700 active:scale-95 transition-all text-sm"
                                 >
                                     Clear All Filters
                                 </button>

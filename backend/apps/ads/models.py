@@ -3,8 +3,6 @@ from django.utils import timezone
 
 class Advertisement(models.Model):
     SLOT_CHOICES = (
-        ('left_sidebar_ad',  'Left Sidebar Ad'),
-        ('right_sidebar_ad', 'Right Sidebar Ad'),
         # Horizontal strip slots
         ('strip_top',       'Strip — Top (below hero)'),
         ('strip_bottom',    'Strip — Bottom (before footer)'),

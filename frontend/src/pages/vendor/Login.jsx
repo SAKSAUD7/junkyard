@@ -7,7 +7,8 @@ import Footer from '../../components/Footer';
 import PasswordInput from '../../components/PasswordInput';
 
 const VendorLogin = () => {
-    const { get } = useCMS('navbar');
+    const { get: getGlobal } = useCMS('global');
+    const { get } = useCMS('vendor_portal');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -29,17 +30,22 @@ const VendorLogin = () => {
         }
     };
 
-    const logoUrl = get('brand', 'logo', '/logo.svg');
+    const logoUrl = getGlobal('brand', 'logo');
 
     return (
         <div className="flex min-h-screen w-full bg-white relative overflow-hidden font-sans">
             {/* LEFT SIDE: Solid Blue Welcome Panel */}
             <div className="hidden lg:flex w-1/2 bg-[#3b82f6] flex-col items-center justify-center p-12 text-center text-white">
-                <div className="w-80 h-40 bg-white rounded-lg shadow-[0_20px_40px_rgb(0,0,0,0.15)] mb-16 flex items-center justify-center p-6">
-                    <img src={logoUrl} alt="JYNM Logo" className="h-12 w-auto opacity-80" />
+                <div className="w-80 bg-white rounded-2xl shadow-xl mb-12 flex items-center justify-center p-8">
+                    <img
+                        src={logoUrl || '/logo.png'}
+                        alt="JYNM Logo"
+                        className="h-20 w-auto object-contain"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
                 </div>
-                <h2 className="text-[32px] font-bold mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Welcome Back!</h2>
-                <p className="text-blue-100 text-lg font-medium">Sign in to access your account</p>
+                <h2 className="text-[32px] font-bold mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('login', 'panel_heading', 'Welcome Back!')}</h2>
+                <p className="text-blue-100 text-lg font-medium">{get('login', 'panel_subtext', 'Sign in to access your account')}</p>
             </div>
 
             {/* RIGHT SIDE: White Auth Card */}
@@ -53,10 +59,8 @@ const VendorLogin = () => {
 
                 <div className="w-full max-w-[420px] mx-auto flex-1 flex flex-col justify-center animate-fade-in-up">
                     <div className="text-center mb-10">
-                        <h1 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Welcome <span className="text-blue-600">Back</span>
-                        </h1>
-                        <p className="text-slate-500 font-medium text-[15px]">Sign in to your account</p>
+                        <h1 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }} dangerouslySetInnerHTML={{ __html: get('login', 'form_heading', 'Welcome <span class="text-blue-600">Back</span>') }} />
+                        <p className="text-slate-500 font-medium text-[15px]">{get('login', 'form_subtext', 'Sign in to your account')}</p>
                     </div>
 
                     {/* Error Message */}
@@ -83,7 +87,7 @@ const VendorLogin = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-slate-700 text-[14px] font-bold mb-2">
-                                Email Address
+                                {get('login', 'email_label', 'Email Address')}
                             </label>
                             <input
                                 id="email"
@@ -99,7 +103,7 @@ const VendorLogin = () => {
 
                         <div>
                             <label htmlFor="password" className="block text-slate-700 text-[14px] font-bold mb-2">
-                                Password
+                                {get('login', 'password_label', 'Password')}
                             </label>
                             <PasswordInput
                                 id="password"
@@ -115,7 +119,7 @@ const VendorLogin = () => {
                                     to="/vendor/forgot-password"
                                     className="text-blue-600 hover:text-blue-700 text-[13px] font-semibold transition-colors"
                                 >
-                                    Forgot Password?
+                                    {get('login', 'forgot_password', 'Forgot Password?')}
                                 </Link>
                             </div>
                         </div>
@@ -131,15 +135,15 @@ const VendorLogin = () => {
                                     Signing In...
                                 </>
                             ) : (
-                                "Sign In"
+                                get('login', 'submit_btn', 'Sign In')
                             )}
                         </button>
                     </form>
 
                     <div className="mt-8 text-center text-[14px] font-medium text-slate-500">
-                        Don't have an account?{' '}
+                        {get('login', 'signup_text', "Don't have an account?")}{' '}
                         <Link to="/vendor/signup" className="text-blue-600 hover:text-blue-700 font-bold transition-colors">
-                            Sign Up
+                            {get('login', 'signup_link', 'Sign Up')}
                         </Link>
                     </div>
                 </div>

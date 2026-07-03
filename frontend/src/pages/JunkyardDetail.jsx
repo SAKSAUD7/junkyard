@@ -71,8 +71,8 @@ const JunkyardDetail = () => {
             <SEO
                 title={vendor ? `${vendor.name} - Auto Salvage Yard in ${vendor.city}, ${vendor.state}` : 'Junkyard Details'}
                 description={vendor?.description || `Find used auto parts at ${vendor?.name}.`}
-                canonicalUrl={`/junkyard/${id}`}
-                structuredData={[localBusinessSchema, breadcrumbSchema]}
+                canonical={`/junkyard/${id}`}
+                schema={[localBusinessSchema, breadcrumbSchema].filter(Boolean)}
             />
             <Navbar />
 

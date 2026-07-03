@@ -9,6 +9,7 @@ import { useCMS } from '../hooks/useCMS'
 
 export default function Navbar() {
     const { get } = useCMS('navbar')
+    const { get: getGlobal } = useCMS('global')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const [signupModalOpen, setSignupModalOpen] = useState(false)
@@ -75,17 +76,12 @@ export default function Navbar() {
 
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="JYNM Home">
-                            {get('brand', 'logo') ? (
-                                <img src={get('brand', 'logo')} alt="JYNM Logo" className="h-8 md:h-10 w-auto object-contain" />
-                            ) : (
-                                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg flex items-center justify-center bg-blue-600">
-                                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                        <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                        <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                            )}
+                            <img
+                                src={getGlobal('brand', 'logo') || '/logo.png'}
+                                alt="JYNM Logo"
+                                className="h-11 md:h-13 w-auto object-contain"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
                             <div className="flex flex-col leading-none">
                                 <span className="text-xl md:text-2xl font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {get('brand', 'name_short', 'JYNM')}

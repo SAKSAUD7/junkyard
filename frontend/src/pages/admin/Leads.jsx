@@ -25,19 +25,32 @@ export default function AdminLeads() {
     const [exporting, setExporting] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
 
+    // Hollander Editing State
+    const [editingLeadVariants, setEditingLeadVariants] = useState(null);
+    const [loadingVariants, setLoadingVariants] = useState(false);
+    const [editingLeadId, setEditingLeadId] = useState(null);
+
     useEffect(() => {
         fetchLeads();
+        
+        // Auto-refresh leads every 10 seconds
+        const intervalId = setInterval(() => {
+            fetchLeads(false); // Pass false to indicate background fetch (no loading spinner)
+        }, 10000);
+        
+        return () => clearInterval(intervalId);
     }, [token]);
 
-    const fetchLeads = async () => {
+    const fetchLeads = async (showLoading = true) => {
+        if (showLoading) setLoading(true);
         try {
             const data = await api.getAdminLeads(token);
             setLeads(data.results || data);
         } catch (error) {
             console.error('Error fetching leads:', error);
-            showToast('Failed to load leads', 'error');
+            if (showLoading) showToast('Failed to load leads', 'error');
         } finally {
-            setLoading(false);
+            if (showLoading) setLoading(false);
         }
     };
 
@@ -68,6 +81,71 @@ export default function AdminLeads() {
             showToast('Failed to export leads', 'error');
         } finally {
             setExporting(false);
+        }
+    };
+
+    const handleEditHollander = async (lead) => {
+        setLoadingVariants(true);
+        setEditingLeadVariants(null);
+        setEditingLeadId(lead.id);
+        
+        try {
+            // 1. Get Make ID
+            const makes = await api.getMakes();
+            const makeObj = makes.find(m => (m.makeName || m.make_name || '').toLowerCase() === (lead.make || '').toLowerCase());
+            if (!makeObj) throw new Error(`Make "${lead.make}" not found in database.`);
+
+            // 2. Get Bulk Data
+            const makeIdToUse = makeObj.makeID || makeObj.make_id;
+            const bulk = await api.getVehicleDataBulk(makeIdToUse);
+            const modelObj = bulk.models.find(m => (m.modelName || m.model_name || '').toLowerCase() === (lead.model || '').toLowerCase());
+            if (!modelObj) throw new Error(`Model "${lead.model}" not found for ${lead.make}.`);
+
+            // 3. Get Parts for Year
+            const yearParts = modelObj.parts[lead.year];
+            if (!yearParts) throw new Error(`No parts catalog for ${lead.year} ${lead.make} ${lead.model}.`);
+
+            // 4. Find the Specific Part
+            const partObj = yearParts.find(p => (p.partName || p.part_name || '').toLowerCase() === (lead.part || '').toLowerCase());
+            if (!partObj) throw new Error(`Part "${lead.part}" not found for this vehicle.`);
+
+            if (partObj.variants && partObj.variants.length > 0) {
+                setEditingLeadVariants(partObj.variants);
+            } else {
+                throw new Error("No Hollander variants exist for this exact part in the database.");
+            }
+        } catch (error) {
+            showToast(error.message, 'error');
+            setEditingLeadId(null);
+        } finally {
+            setLoadingVariants(false);
+        }
+    };
+
+    const handleSaveHollander = async (leadId, variant) => {
+        try {
+            await api.updateLead(token, leadId, {
+                hollander_number: variant.hollander_number,
+                options: variant.options || ''
+            });
+            showToast('Lead updated successfully');
+            setEditingLeadId(null);
+            setEditingLeadVariants(null);
+            
+            // Update local state to reflect change instantly
+            setLeads(prev => prev.map(l => {
+                if (l.id === leadId) {
+                    return { ...l, hollander_number: variant.hollander_number, options: variant.options || '' };
+                }
+                return l;
+            }));
+            
+            // If the currently viewed lead is the one we updated, update it too
+            if (selectedLead && selectedLead.id === leadId) {
+                setSelectedLead(prev => ({ ...prev, hollander_number: variant.hollander_number, options: variant.options || '' }));
+            }
+        } catch (error) {
+            showToast('Failed to update lead', 'error');
         }
     };
 
@@ -389,7 +467,7 @@ export default function AdminLeads() {
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {selectedLead.options.split(',').map((opt, i) => (
                                                             <span key={i} className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                                                                {opt.trim()}
+                                                                {opt.replace(/^\(|\)$/g, '').trim()}
                                                             </span>
                                                         ))}
                                                     </div>
@@ -398,17 +476,82 @@ export default function AdminLeads() {
                                             <div className="col-span-2">
                                                 <p className="text-[10px] text-slate-500 uppercase mb-1">Hollander Interchange No.</p>
                                                 {selectedLead.hollander_number && selectedLead.hollander_number !== 'N/A' && selectedLead.hollander_number !== 'Not Found' ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-sm">
-                                                        <span className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0"></span>
-                                                        {selectedLead.hollander_number}
-                                                    </span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-sm">
+                                                            <CheckCircleIcon className="w-4 h-4" />
+                                                            {selectedLead.hollander_number}
+                                                        </span>
+                                                        <button 
+                                                            onClick={() => handleEditHollander(selectedLead)}
+                                                            className="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline px-2 py-1"
+                                                        >
+                                                            Change
+                                                        </button>
+                                                    </div>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 font-mono text-sm">
-                                                        <span className="w-2 h-2 bg-slate-400 rounded-full flex-shrink-0"></span>
-                                                        {selectedLead.hollander_number || 'N/A'}
-                                                    </span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 font-mono font-bold text-sm">
+                                                            Unresolved
+                                                        </span>
+                                                        <button 
+                                                            onClick={() => handleEditHollander(selectedLead)}
+                                                            className="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline px-2 py-1 bg-blue-50 rounded"
+                                                        >
+                                                            Resolve Manually
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Show Candidates if available (from new progressive question engine) */}
+                                                {selectedLead.hollander_candidates && selectedLead.hollander_candidates.length > 0 && (
+                                                    <div className="mt-3">
+                                                        <p className="text-[10px] text-rose-500 uppercase font-bold mb-1 flex items-center gap-1">
+                                                            <span>⚠️</span> Needs Manual Disambiguation ({selectedLead.hollander_candidates.length} variants found)
+                                                        </p>
+                                                        <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 max-h-[120px] overflow-y-auto">
+                                                            <div className="flex flex-wrap gap-1.5">
+                                                                {selectedLead.hollander_candidates.map(hn => (
+                                                                    <span key={hn} className="px-2 py-1 bg-white border border-rose-200 rounded text-rose-700 font-mono text-[11px] font-bold shadow-sm">
+                                                                        {hn}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </div>
+                                                
+                                                {/* Variant Picker UI */}
+                                                {editingLeadId === selectedLead.id && (
+                                                    <div className="mt-3 p-3 bg-white border border-blue-200 rounded-xl shadow-sm">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <span className="text-[11px] font-bold text-blue-900 uppercase">Select Correct Part Variant</span>
+                                                            <button onClick={() => setEditingLeadId(null)} className="text-slate-400 hover:text-slate-600"><XMarkIcon className="w-4 h-4" /></button>
+                                                        </div>
+                                                        {loadingVariants ? (
+                                                            <p className="text-xs text-slate-500 animate-pulse">Loading database variations...</p>
+                                                        ) : editingLeadVariants ? (
+                                                            <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                                                                {editingLeadVariants.map((v, idx) => (
+                                                                    <button 
+                                                                        key={idx}
+                                                                        onClick={() => handleSaveHollander(selectedLead.id, v)}
+                                                                        className="w-full text-left p-2 rounded-lg border border-slate-100 hover:border-blue-300 hover:bg-blue-50 transition-colors group flex items-start gap-3"
+                                                                    >
+                                                                        <span className="inline-block px-1.5 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] font-bold rounded group-hover:bg-blue-100 group-hover:text-blue-700">
+                                                                            {v.hollander_number}
+                                                                        </span>
+                                                                        <span className="text-[11px] text-slate-600 flex-1 leading-snug">
+                                                                            {v.options ? v.options.replace(/^\(|\)$/g, '').trim() : 'Base Part (No Specific Options)'}
+                                                                        </span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-xs text-red-500">Failed to load variations.</p>
+                                                        )}
+                                                    </div>
+                                                )}
                                         </div>
                                     </div>
                                 </div>

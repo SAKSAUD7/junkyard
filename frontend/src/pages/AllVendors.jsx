@@ -9,6 +9,8 @@ import { getCollectionPageSchema } from '../utils/structuredData';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
 import { useCMS } from '../hooks/useCMS';
+import VendorCard from '../components/VendorCard';
+import PromoBanner from '../components/PromoBanner';
 
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
 
@@ -87,8 +89,8 @@ const AllVendors = () => {
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
                 <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
 
-                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="text-center mb-10">
+                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col items-center gap-10">
+                    <div className="text-center w-full max-w-3xl flex flex-col items-center">
                         {/* Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
                             <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
@@ -100,12 +102,12 @@ const AllVendors = () => {
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {get('hero', 'heading', 'Find Trusted Junkyards')} <span className="text-blue-600">{get('hero', 'heading_accent', 'Near You')}</span>
                         </h1>
-                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
+                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
                             {get('hero', 'subheading', 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.')}
                         </p>
 
                         {/* Search Bar */}
-                        <div className="max-w-3xl mx-auto">
+                        <div className="max-w-3xl mx-auto w-full">
                             <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-2xl p-2 flex flex-col sm:flex-row gap-2">
                                 {/* Name/ZIP input */}
                                 <div className="flex-[2] relative">
@@ -146,7 +148,7 @@ const AllVendors = () => {
                             </div>
                             {/* Active filters */}
                             {(searchTerm || selectedState) && (
-                                <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
+                                <div className="flex items-center justify-center lg:justify-start gap-3 mt-4 flex-wrap">
                                     {searchTerm && (
                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-100 text-blue-700 rounded-full text-[12px] font-bold">
                                             "{searchTerm}"
@@ -165,6 +167,11 @@ const AllVendors = () => {
                                 </div>
                             )}
                         </div>
+                    </div>
+
+                    {/* Promo Banner Bottom */}
+                    <div className="w-full">
+                        <PromoBanner />
                     </div>
                 </div>
             </section>

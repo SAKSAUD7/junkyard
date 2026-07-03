@@ -7,7 +7,7 @@ async function test() {
   form.append('title', 'Test');
   form.append('redirect_url', 'https://new-portfolio-orpin-iota-64.vercel.app/#contact');
   form.append('page', 'home');
-  form.append('slot', 'left_sidebar_ad');
+  form.append('slot', 'carousel_1');
   form.append('template_type', 'minimal');
   form.append('button_text', 'Visit Website');
   // Django DRF sometimes has issues with "true"/"false" if not properly parsed in multipart payload
