@@ -221,63 +221,9 @@ const AllVendors = () => {
                 {!loading && !error && vendors.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {vendors.map((vendor, index) => {
-                            const logoUrl = vendor.logo ? getLogoUrl(vendor.logo) : null;
-                            const priceTier = PRICE_TIERS[index % PRICE_TIERS.length];
-                            const badgeColor = BADGE_COLORS[index % BADGE_COLORS.length];
-                            return (
-                                <Link to={`/vendors/${vendor.id}`} key={vendor.id} className="block group focus:outline-none">
-                                    <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full flex flex-col">
-
-                                        {/* Status Badge */}
-                                        <div className="flex items-center justify-between px-4 pt-4">
-                                            <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${badgeColor}`}>
-                                                ✓ {vendor.is_featured ? 'Featured' : vendor.is_top_rated ? 'Top Rated' : 'Verified'}
-                                            </span>
-                                            {(vendor.is_top_rated || vendor.is_featured) && (
-                                                <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} compact={true} />
-                                            )}
-                                        </div>
-
-                                        {/* Logo */}
-                                        <div className="h-32 flex items-center justify-center bg-slate-50 mx-4 my-3 rounded-xl overflow-hidden">
-                                            {logoUrl ? (
-                                                <img src={logoUrl} alt={vendor.name}
-                                                    className="max-h-full max-w-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
-                                                    onError={e => { e.target.onerror = null; e.target.style.display = 'none'; }}
-                                                />
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-black text-xl flex items-center justify-center">
-                                                    {vendor.name?.charAt(0) || 'J'}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Info */}
-                                        <div className="px-4 pb-4 flex-1 flex flex-col">
-                                            <h3 className="font-black text-slate-900 text-[15px] leading-snug mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                                {vendor.name}
-                                            </h3>
-                                            <p className="text-[12px] font-medium text-slate-400 mb-2.5 flex items-center gap-1.5">
-                                                <svg className="w-3 h-3 text-slate-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
-                                                {vendor.city}, {vendor.state}
-                                            </p>
-
-                                            <div className="mb-3">
-                                                <Rating stars={vendor.rating_stars || 5} percentage={vendor.rating_percentage || 100} size="sm" showPercentage={false} />
-                                            </div>
-
-                                            <div className="mb-2"></div>
-
-                                            <div className="mt-auto">
-                                                <span className="w-full py-2.5 rounded-xl font-bold text-[13px] text-white bg-blue-600 group-hover:bg-blue-700 transition-colors flex justify-center items-center gap-1.5">
-                                                    View Inventory
-                                                    <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7"/></svg>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            );
+                                <div key={vendor.id} className="h-full">
+                                    <VendorCard vendor={vendor} />
+                                </div>
                         })}
                     </div>
                 )}

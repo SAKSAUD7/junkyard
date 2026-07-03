@@ -337,7 +337,9 @@ export default function AdminVendors() {
             rating_stars: vendor.rating_stars || 5,
             rating_percentage: vendor.rating_percentage || 100,
             is_active: vendor.is_active || false,
-            trusted_vendor: vendor.trusted_vendor || false
+            trusted_vendor: vendor.trusted_vendor || false,
+            is_top_rated: vendor.is_top_rated || false,
+            is_featured: vendor.is_featured || false
         });
     };
 
@@ -952,6 +954,74 @@ export default function AdminVendors() {
                                                 className={`w-12 h-6 rounded-full transition-all duration-300 cursor-pointer flex items-center px-0.5 ${formData.trusted_vendor ? 'bg-gradient-to-r from-blue-500 to-purple-600' : 'bg-gray-300'}`}
                                             >
                                                 <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${formData.trusted_vendor ? 'translate-x-6' : 'translate-x-0'}`} />
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    {/* Top Rated Toggle */}
+                                    <label
+                                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${formData.is_top_rated
+                                            ? 'border-orange-300 bg-orange-50 shadow-sm'
+                                            : 'border-slate-100 bg-gray-50 hover:border-orange-200'}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.is_top_rated ? 'bg-orange-500 shadow-sm' : 'bg-gray-200'}`}>
+                                                <StarIcon className={`h-5 w-5 ${formData.is_top_rated ? 'text-white' : 'text-gray-400'}`} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                                    Top Rated Vendor
+                                                    {formData.is_top_rated && (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200">
+                                                            ★ Badge Active
+                                                        </span>
+                                                    )}
+                                                </p>
+                                                <p className="text-xs text-slate-400 mt-0.5">
+                                                    Shows the Top Rated badge on the vendor card
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="relative ml-4 flex-shrink-0">
+                                            <div
+                                                onClick={() => setFormData({ ...formData, is_top_rated: !formData.is_top_rated })}
+                                                className={`w-12 h-6 rounded-full transition-all duration-300 cursor-pointer flex items-center px-0.5 ${formData.is_top_rated ? 'bg-orange-500' : 'bg-gray-300'}`}
+                                            >
+                                                <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${formData.is_top_rated ? 'translate-x-6' : 'translate-x-0'}`} />
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    {/* Featured Toggle */}
+                                    <label
+                                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${formData.is_featured
+                                            ? 'border-blue-300 bg-blue-50 shadow-sm'
+                                            : 'border-slate-100 bg-gray-50 hover:border-blue-200'}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.is_featured ? 'bg-blue-500 shadow-sm' : 'bg-gray-200'}`}>
+                                                <StarIcon className={`h-5 w-5 ${formData.is_featured ? 'text-white' : 'text-gray-400'}`} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                                    Featured Vendor
+                                                    {formData.is_featured && (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                                                            ✦ Badge Active
+                                                        </span>
+                                                    )}
+                                                </p>
+                                                <p className="text-xs text-slate-400 mt-0.5">
+                                                    Shows the Featured badge on the vendor card
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="relative ml-4 flex-shrink-0">
+                                            <div
+                                                onClick={() => setFormData({ ...formData, is_featured: !formData.is_featured })}
+                                                className={`w-12 h-6 rounded-full transition-all duration-300 cursor-pointer flex items-center px-0.5 ${formData.is_featured ? 'bg-blue-500' : 'bg-gray-300'}`}
+                                            >
+                                                <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${formData.is_featured ? 'translate-x-6' : 'translate-x-0'}`} />
                                             </div>
                                         </div>
                                     </label>
