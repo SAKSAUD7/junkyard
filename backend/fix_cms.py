@@ -86,12 +86,19 @@ for record in SiteContent.objects.all():
 print(f"  Cleaned {quill_fixed} Quill-corrupted values.\n")
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 4. Convert all 'html' content_type to 'textarea'
+# 4. Sync content_type for existing fields to match default_content.py
 # ──────────────────────────────────────────────────────────────────────────────
-print("Step 3: Converting 'html' content_type to 'textarea'...")
-html_count = SiteContent.objects.filter(content_type='html').count()
-SiteContent.objects.filter(content_type='html').update(content_type='textarea')
-print(f"  Converted {html_count} fields.\n")
+print("Step 3: Syncing content_type from default_content.py...")
+type_fixed = 0
+for record in SiteContent.objects.all():
+    key_tuple = (record.page, record.section, record.key)
+    if key_tuple in default_lookup:
+        expected_type = default_lookup[key_tuple]['content_type']
+        if record.content_type != expected_type:
+            record.content_type = expected_type
+            record.save(update_fields=['content_type'])
+            type_fixed += 1
+print(f"  Updated content_type for {type_fixed} fields.\n")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 5. CRITICAL: Reset known heading fields that have Quill-corrupted values
@@ -152,7 +159,7 @@ print("  CMS Reset Complete!")
 print("========================================")
 print(f"  - Removed:  {stale_count} stale keys")
 print(f"  - Cleaned:  {quill_fixed} Quill values")
-print(f"  - Converted:{html_count} html->textarea")
+print(f"  - Updated:  {type_fixed} content_types synced")
 print(f"  - Reset:    {reset_count} headings to defaults")
 print(f"  - Seeded:   {seeded} new keys")
 print("\nYour CMS is now fully clean and synced.")
