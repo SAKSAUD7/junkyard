@@ -27,8 +27,8 @@ DEFAULT_CMS_CONTENT = [
     # HOME PAGE
     # ══════════════════════════════════════════════════════════════════
     # Hero Section
-    {'page': 'home', 'section': 'hero', 'key': 'heading', 'label': 'Main Headline (HTML allowed)', 'value': 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds', 'content_type': 'html'},
-    {'page': 'home', 'section': 'hero', 'key': 'subheading', 'label': 'Sub-Headline (HTML allowed)', 'value': 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.', 'content_type': 'html'},
+    {'page': 'home', 'section': 'hero', 'key': 'heading', 'label': 'Main Headline (HTML allowed)', 'value': 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds', 'content_type': 'textarea'},
+    {'page': 'home', 'section': 'hero', 'key': 'subheading', 'label': 'Sub-Headline (HTML allowed)', 'value': 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.', 'content_type': 'textarea'},
     {'page': 'home', 'section': 'hero', 'key': 'video_bg', 'label': 'Background Video URL', 'value': '/Video/hero-models-bg.mp4', 'content_type': 'url'},
     
     # Stats Section
