@@ -27,8 +27,8 @@ DEFAULT_CMS_CONTENT = [
     # HOME PAGE
     # ══════════════════════════════════════════════════════════════════
     # Hero Section
-    {'page': 'home', 'section': 'hero', 'key': 'heading', 'label': 'Main Headline (HTML allowed)', 'value': 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds', 'content_type': 'textarea'},
-    {'page': 'home', 'section': 'hero', 'key': 'subheading', 'label': 'Sub-Headline (HTML allowed)', 'value': 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.', 'content_type': 'textarea'},
+    {'page': 'home', 'section': 'hero', 'key': 'heading', 'label': 'Main Headline (HTML allowed)', 'value': 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds', 'content_type': 'html'},
+    {'page': 'home', 'section': 'hero', 'key': 'subheading', 'label': 'Sub-Headline (HTML allowed)', 'value': 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.', 'content_type': 'html'},
     {'page': 'home', 'section': 'hero', 'key': 'video_bg', 'label': 'Background Video URL', 'value': '/Video/hero-models-bg.mp4', 'content_type': 'url'},
     
     # Stats Section
@@ -76,7 +76,7 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'home', 'section': 'how_it_works', 'key': 'step4_desc', 'label': 'Step 4 Description', 'value': 'Save up to 80% instantly', 'content_type': 'textarea'},
 
     # CTA Banner
-    {'page': 'home', 'section': 'cta_banner', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>', 'content_type': 'textarea'},
+    {'page': 'home', 'section': 'cta_banner', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>', 'content_type': 'html'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'subheading', 'label': 'Subheading', 'value': 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.', 'content_type': 'textarea'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'button_text', 'label': 'Primary Button Text', 'value': 'Get Free Quote Now', 'content_type': 'text'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'trust_1', 'label': 'Trust Marker 1', 'value': '✓ 6,500+ Trusted Yards', 'content_type': 'text'},
@@ -149,13 +149,13 @@ DEFAULT_CMS_CONTENT = [
     # ══════════════════════════════════════════════════════════════════
     # FAQ PAGE
     # ══════════════════════════════════════════════════════════════════
-    {'page': 'faq', 'section': 'hero', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Frequently Asked <span class="text-blue-600">Questions</span>', 'content_type': 'textarea'},
+    {'page': 'faq', 'section': 'hero', 'key': 'heading', 'label': 'Heading (HTML editor)', 'value': 'Frequently Asked <span class="text-blue-600">Questions</span>', 'content_type': 'html'},
     {'page': 'faq', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Everything you need to know about finding and buying used auto parts through our platform.', 'content_type': 'textarea'},
 
     # ══════════════════════════════════════════════════════════════════
     # HOW IT WORKS PAGE
     # ══════════════════════════════════════════════════════════════════
-    {'page': 'how_it_works', 'section': 'hero', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'How It <span class="text-blue-600">Works</span>', 'content_type': 'textarea'},
+    {'page': 'how_it_works', 'section': 'hero', 'key': 'heading', 'label': 'Heading (HTML editor)', 'value': 'How It <span class="text-blue-600">Works</span>', 'content_type': 'html'},
     {'page': 'how_it_works', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide.', 'content_type': 'textarea'},
     {'page': 'how_it_works', 'section': 'steps', 'key': 'step1_title', 'label': 'Step 1 Title', 'value': 'Tell Us What You Need', 'content_type': 'text'},
     {'page': 'how_it_works', 'section': 'steps', 'key': 'step1_desc', 'label': 'Step 1 Description', 'value': "Fill out our simple form with your vehicle details (make, model, year) and the specific part you're looking for. Add your contact information and location.", 'content_type': 'textarea'},
@@ -189,7 +189,7 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'vendors', 'section': 'hero', 'key': 'badge', 'label': 'Badge Text', 'value': '50 States • Verified Yards', 'content_type': 'text'},
     {'page': 'vendors', 'section': 'hero', 'key': 'heading', 'label': 'Heading', 'value': 'Find Trusted Junkyards', 'content_type': 'text'},
     {'page': 'vendors', 'section': 'hero', 'key': 'heading_accent', 'label': 'Heading Accent (colored)', 'value': 'Near You', 'content_type': 'text'},
-    {'page': 'vendors', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.', 'content_type': 'textarea'},
+    {'page': 'vendors', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading (HTML allowed)', 'value': 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.', 'content_type': 'html'},
     {'page': 'vendors', 'section': 'hero', 'key': 'search_placeholder', 'label': 'Search Input Placeholder', 'value': 'Search by name, city, or ZIP...', 'content_type': 'text'},
     {'page': 'vendors', 'section': 'hero', 'key': 'search_btn', 'label': 'Search Button Text', 'value': 'Search Yards', 'content_type': 'text'},
     {'page': 'vendors', 'section': 'results', 'key': 'section_heading', 'label': 'Results Section Heading', 'value': 'Top Rated Junkyards', 'content_type': 'text'},
