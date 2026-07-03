@@ -76,7 +76,7 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'home', 'section': 'how_it_works', 'key': 'step4_desc', 'label': 'Step 4 Description', 'value': 'Save up to 80% instantly', 'content_type': 'textarea'},
 
     # CTA Banner
-    {'page': 'home', 'section': 'cta_banner', 'key': 'heading', 'label': 'Heading (HTML allowed)', 'value': 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>', 'content_type': 'html'},
+    {'page': 'home', 'section': 'cta_banner', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Ready to Find Your <span style="background: linear-gradient(135deg, #93c5fd, #bfdbfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Part?</span>', 'content_type': 'textarea'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'subheading', 'label': 'Subheading', 'value': 'Join thousands of mechanics and car owners who save hundreds by using JYNM to source quality used auto parts across all 50 states.', 'content_type': 'textarea'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'button_text', 'label': 'Primary Button Text', 'value': 'Get Free Quote Now', 'content_type': 'text'},
     {'page': 'home', 'section': 'cta_banner', 'key': 'trust_1', 'label': 'Trust Marker 1', 'value': '✓ 6,500+ Trusted Yards', 'content_type': 'text'},
@@ -149,13 +149,13 @@ DEFAULT_CMS_CONTENT = [
     # ══════════════════════════════════════════════════════════════════
     # FAQ PAGE
     # ══════════════════════════════════════════════════════════════════
-    {'page': 'faq', 'section': 'hero', 'key': 'heading', 'label': 'Heading (HTML)', 'value': 'Frequently Asked <span class="text-blue-600">Questions</span>', 'content_type': 'html'},
+    {'page': 'faq', 'section': 'hero', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Frequently Asked <span class="text-blue-600">Questions</span>', 'content_type': 'textarea'},
     {'page': 'faq', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Everything you need to know about finding and buying used auto parts through our platform.', 'content_type': 'textarea'},
 
     # ══════════════════════════════════════════════════════════════════
     # HOW IT WORKS PAGE
     # ══════════════════════════════════════════════════════════════════
-    {'page': 'how_it_works', 'section': 'hero', 'key': 'heading', 'label': 'Heading (HTML)', 'value': 'How It <span class="text-blue-600">Works</span>', 'content_type': 'html'},
+    {'page': 'how_it_works', 'section': 'hero', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'How It <span class="text-blue-600">Works</span>', 'content_type': 'textarea'},
     {'page': 'how_it_works', 'section': 'hero', 'key': 'subheading', 'label': 'Subheading', 'value': 'Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide.', 'content_type': 'textarea'},
     {'page': 'how_it_works', 'section': 'steps', 'key': 'step1_title', 'label': 'Step 1 Title', 'value': 'Tell Us What You Need', 'content_type': 'text'},
     {'page': 'how_it_works', 'section': 'steps', 'key': 'step1_desc', 'label': 'Step 1 Description', 'value': "Fill out our simple form with your vehicle details (make, model, year) and the specific part you're looking for. Add your contact information and location.", 'content_type': 'textarea'},
@@ -274,7 +274,7 @@ DEFAULT_CMS_CONTENT = [
     # ══════════════════════════════════════════════════════════════════
     {'page': 'vendor_portal', 'section': 'login', 'key': 'panel_heading', 'label': 'Left Panel Heading', 'value': 'Welcome Back!', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'login', 'key': 'panel_subtext', 'label': 'Left Panel Subtext', 'value': 'Sign in to access your account', 'content_type': 'text'},
-    {'page': 'vendor_portal', 'section': 'login', 'key': 'form_heading', 'label': 'Form Heading (HTML)', 'value': 'Welcome <span class="text-blue-600">Back</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'login', 'key': 'form_heading', 'label': 'Form Heading (supports HTML spans)', 'value': 'Welcome <span class="text-blue-600">Back</span>', 'content_type': 'textarea'},
     {'page': 'vendor_portal', 'section': 'login', 'key': 'form_subtext', 'label': 'Form Subtext', 'value': 'Sign in to your account', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'login', 'key': 'email_label', 'label': 'Email Input Label', 'value': 'Email Address', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'login', 'key': 'password_label', 'label': 'Password Input Label', 'value': 'Password', 'content_type': 'text'},
@@ -298,7 +298,7 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'vendor_portal', 'section': 'inventory', 'key': 'subheading', 'label': 'Inventory Subheading', 'value': 'Manage and track your available auto parts inventory.', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'inventory', 'key': 'add_btn', 'label': 'Add Button Text', 'value': 'Add Part', 'content_type': 'text'},
 
-    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_title', 'label': 'Ads Header Title (HTML)', 'value': 'Vendor <span class="text-blue-600">Ads</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_title', 'label': 'Ads Header Title (supports HTML spans)', 'value': 'Vendor <span class="text-blue-600">Ads</span>', 'content_type': 'textarea'},
     {'page': 'vendor_portal', 'section': 'ads', 'key': 'header_desc', 'label': 'Ads Header Description', 'value': "Boost your yard's visibility and dominate the search results with our premium ad placements.", 'content_type': 'textarea'},
     {'page': 'vendor_portal', 'section': 'ads', 'key': 'active_heading', 'label': 'Active Ads Heading', 'value': 'Your Active Placements', 'content_type': 'text'},
 
@@ -314,6 +314,6 @@ DEFAULT_CMS_CONTENT = [
     {'page': 'vendor_portal', 'section': 'notifications', 'key': 'heading', 'label': 'Notifications Heading', 'value': 'Notifications', 'content_type': 'text'},
     {'page': 'vendor_portal', 'section': 'notifications', 'key': 'subheading', 'label': 'Notifications Subheading', 'value': 'Stay updated on leads and system alerts', 'content_type': 'text'},
 
-    {'page': 'vendor_portal', 'section': 'forgot_password', 'key': 'heading', 'label': 'Heading (HTML)', 'value': 'Recover <span class="text-blue-600">Account</span>', 'content_type': 'html'},
+    {'page': 'vendor_portal', 'section': 'forgot_password', 'key': 'heading', 'label': 'Heading (supports HTML spans)', 'value': 'Recover <span class="text-blue-600">Account</span>', 'content_type': 'textarea'},
     {'page': 'vendor_portal', 'section': 'forgot_password', 'key': 'subtext', 'label': 'Subtext', 'value': "Enter your email to receive a password reset link.", 'content_type': 'text'},
 ]
