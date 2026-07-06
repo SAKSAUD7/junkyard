@@ -65,6 +65,24 @@ vendorApi.interceptors.response.use(
 // ============================================
 
 export const vendorAuth = {
+    register: async (data) => {
+        const response = await axios.post(`${API_BASE_URL}/auth/register/`, {
+            ...data,
+            user_type: 'vendor'
+        });
+
+        if (response.data.tokens) {
+            localStorage.setItem('vendor_access_token', response.data.tokens.access);
+            localStorage.setItem('vendor_refresh_token', response.data.tokens.refresh);
+            localStorage.setItem('vendor_user', JSON.stringify(response.data.user));
+            // Usually vendor profile is initialized after registration, or returned
+            if (response.data.vendor_profile) {
+                localStorage.setItem('vendor_profile', JSON.stringify(response.data.vendor_profile));
+            }
+        }
+        return response.data;
+    },
+
     login: async (email, password) => {
         const response = await axios.post(`${API_BASE_URL}/auth/login/`, {
             email,

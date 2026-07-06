@@ -7,7 +7,6 @@ import DynamicAd from '../components/DynamicAd'
 import MobileAdBanner from '../components/MobileAdBanner'
 import FloatingActionButtons from '../components/FloatingActionButtons'
 import SEO from '../components/SEO'
-import MobileStickyBar from '../components/MobileStickyBar'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 import { useCMS } from '../hooks/useCMS'
 import AdCarousel from '../components/AdCarousel'
@@ -76,7 +75,7 @@ function useSiteStats() {
 
 export default function Home() {
     const siteStats = useSiteStats()
-    const { get } = useCMS('home')
+    const { get, ready } = useCMS('home')
 
     const combinedSchema = {
         '@context': 'https://schema.org',
@@ -96,7 +95,7 @@ export default function Home() {
             {/* ============================================================
                 HERO SECTION — 2-step lead form + video background
             ============================================================ */}
-            <HeroSection get={get} />
+            <HeroSection get={get} ready={ready} />
 
             {/* AD SLIDER 1 */}
             <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />
@@ -152,7 +151,6 @@ export default function Home() {
             <FloatingActionButtons />
 
             {/* Conversion Engine Components */}
-            <MobileStickyBar />
 
             {/* AD SLIDER 5 */}
             <div className="bg-white pt-8">

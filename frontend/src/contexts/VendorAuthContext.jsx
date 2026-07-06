@@ -31,6 +31,32 @@ export const VendorAuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    const register = async (userData) => {
+        try {
+            const data = await vendorAuth.register(userData);
+            setUser(data.user);
+            if (data.vendor_profile) setVendorProfile(data.vendor_profile);
+            return { success: true };
+        } catch (error) {
+            console.error('Registration error:', error);
+            
+            let errorMessage = 'Registration failed';
+            if (error.response?.data) {
+                const data = error.response.data;
+                if (data.error) errorMessage = data.error;
+                else if (typeof data === 'string') errorMessage = data;
+                else if (data.email?.[0]) errorMessage = data.email[0];
+                else if (data.username?.[0]) errorMessage = data.username[0];
+                else errorMessage = Object.values(data).flat()[0] || 'Registration failed';
+            }
+
+            return {
+                success: false,
+                error: errorMessage,
+            };
+        }
+    };
+
     const login = async (email, password) => {
         try {
             const data = await vendorAuth.login(email, password);
@@ -66,6 +92,7 @@ export const VendorAuthProvider = ({ children }) => {
         user,
         vendorProfile,
         loading,
+        register,
         login,
         logout,
         isAuthenticated,
