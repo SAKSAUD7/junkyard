@@ -4,6 +4,7 @@ from django.utils import timezone
 
 class YardSubmission(models.Model):
     """Public yard submission model for marketplace expansion"""
+    objects = models.Manager()
     
     STATUS_CHOICES = (
         ('pending', 'Pending Review'),
@@ -14,8 +15,17 @@ class YardSubmission(models.Model):
     PLAN_CHOICES = (
         ('standard', 'Standard Plan - Basic Listing'),
         ('minimal', 'Minimal Plan - Clean & Simple'),
-        ('premium', 'Premium Plan - Featured Listing'),
+        ('premium', 'Premium Plan - $49/mo'),
         ('compact', 'Compact Plan - Quick View'),
+        ('free', 'Free Plan - $0/mo'),
+        ('featured', 'Featured Plan - $99/mo'),
+    )
+    
+    PAYMENT_STATUS_CHOICES = (
+        ('none', 'No Payment Required (Free)'),
+        ('pending', 'Payment Pending'),
+        ('paid', 'Paid'),
+        ('failed', 'Payment Failed'),
     )
     
     # Business Information
@@ -52,12 +62,18 @@ class YardSubmission(models.Model):
     parts_categories = models.TextField(blank=True, help_text="Types of parts available")
     description = models.TextField(help_text="Business description")
     
-    # Subscription Plan
+    # Subscription Plan & Payment
     subscription_plan = models.CharField(
         max_length=20, 
         choices=PLAN_CHOICES, 
-        default='standard',
-        help_text="Selected advertising plan"
+        default='free',
+        help_text="Selected subscription plan"
+    )
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='pending',
+        help_text="Status of the Authorize.net transaction"
     )
     
     # Media
@@ -102,6 +118,23 @@ class YardSubmission(models.Model):
         if admin_user:
             self.reviewed_by = admin_user
         self.save()
+        
+    def approve_and_notify(self, admin_user=None):
+        """Approve and send an email notification to the vendor"""
+        self.mark_as_approved(admin_user)
+        # Assuming email sending happens here (using django send_mail ideally)
+        from django.core.mail import send_mail
+        try:
+            send_mail(
+                subject='Your Yard Application is Approved!',
+                message=f'Hello {self.business_name},\n\nGood news! Your yard marketplace application has been approved and your {self.get_subscription_plan_display()} is active.\n\nThank you for joining!',
+                from_email='no-reply@jynm.com',
+                recipient_list=[self.email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            # log failure
+            pass
     
     def mark_as_rejected(self, admin_user=None, notes=''):
         """Mark submission as rejected"""

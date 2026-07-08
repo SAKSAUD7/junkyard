@@ -586,7 +586,7 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
 // ─── HTML Rich Text Field ───────────────────────────────────────────────────────
 const QUILL_MODULES = {
     toolbar: [
-        [{ 'header': [1, 2, 3, false] }],
+        [{ 'header': [1, 2, 3, false] }, { 'size': ['small', false, 'large', 'huge'] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ 'color': [] }, { 'background': [] }],
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],

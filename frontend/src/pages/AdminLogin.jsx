@@ -18,7 +18,6 @@ export default function AdminLogin() {
     const { login, isAuthenticated, user } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({ email: '', password: '', remember: false });
-    const [honeypot, setHoneypot] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [failCount, setFailCount] = useState(() => parseInt(sessionStorage.getItem('admin_fail_count') || '0'));
@@ -56,14 +55,12 @@ export default function AdminLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Honeypot check
-        if (honeypot) return;
         if (isLocked) { setError(`Too many attempts. Try again in ${Math.ceil(countdown / 60)} min.`); return; }
 
         setError(''); setLoading(true);
         try {
             await login(formData.email, formData.password);
-        } catch {
+        } catch (err) {
             const newCount = failCount + 1;
             setFailCount(newCount);
             sessionStorage.setItem('admin_fail_count', newCount);
@@ -73,7 +70,8 @@ export default function AdminLogin() {
                 sessionStorage.setItem('admin_lockout_end', end);
                 setError(`Too many failed attempts. Access locked for 15 minutes.`);
             } else {
-                setError(`Invalid credentials. ${MAX_ATTEMPTS - newCount} attempt(s) remaining.`);
+                const errMessage = err.response?.data?.error || err.response?.data?.detail || err.message || 'Invalid credentials.';
+                setError(`${errMessage}. ${MAX_ATTEMPTS - newCount} attempt(s) remaining.`);
             }
             setLoading(false);
         }
@@ -143,17 +141,6 @@ export default function AdminLogin() {
                         )}
 
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Honeypot — hidden from real users, filled by bots */}
-                            <input
-                                type="text"
-                                name="website"
-                                value={honeypot}
-                                onChange={e => setHoneypot(e.target.value)}
-                                tabIndex={-1}
-                                autoComplete="off"
-                                style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
-                                aria-hidden="true"
-                            />
 
                             <div>
                                 <label className="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Email</label>

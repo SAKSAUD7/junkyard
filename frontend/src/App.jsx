@@ -68,6 +68,7 @@ const BlogDetail = lazy(() => import('./pages/blog/BlogDetail'))
 const AdminBlogList = lazy(() => import('./pages/admin/blog/BlogList'))
 const AdminBlogEditor = lazy(() => import('./pages/admin/blog/BlogEditor'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+const FeedbackWidget = lazy(() => import('./components/FeedbackWidget'))
 
 // Page load spinner (minimal, no deps)
 function PageSpinner() {
@@ -132,6 +133,7 @@ function App() {
     <MotionConfig reducedMotion="user">
       <ScrollObserver />
       <Suspense fallback={<PageSpinner />}>
+        <FeedbackWidget />
         <PageTransition>
           <Routes>
             {/* Public Routes */}

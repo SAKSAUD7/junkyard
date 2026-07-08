@@ -2,10 +2,10 @@ from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
-from .models import ContactMessage
+from .models import ContactMessage, Feedback
 from .serializers import (
     MakeSerializer, ModelSerializer, PartSerializer,
-    StateSerializer, ContactMessageSerializer
+    StateSerializer, ContactMessageSerializer, FeedbackSerializer
 )
 
 
@@ -24,7 +24,7 @@ class ModelViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Model.objects.all()  # type: ignore[attr-defined]
         
         # Filter by makeID if provided (frontend uses camelCase)
-        make_id = self.request.query_params.get('makeID', None) or self.request.query_params.get('make_id', None)
+        make_id = self.request.query_params.get('makeID', None) or self.request.query_params.get('make_id', None)  # type: ignore[union-attr]
         if make_id:
             queryset = queryset.filter(make__make_id=make_id)
         
@@ -90,6 +90,23 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
         return Response({'status': f'{deleted_count} messages deleted'})
 
 
+class FeedbackViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for global feedback.
+    POST: Public (AllowAny)
+    GET/PUT/DELETE: Admin only (IsAdminUser)
+    """
+    queryset = Feedback.objects.all()  # type: ignore[attr-defined]
+    serializer_class = FeedbackSerializer
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -153,19 +170,24 @@ class SiteStatsView(APIView):
 class CityListView(APIView):
     """
     Returns a distinct list of cities where active vendors are located.
+    Optionally filter by ?state=XX to get cities in a specific state.
     """
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         from apps.hollander.models import Vendor
+        state = request.query_params.get('state', None)
         cities = (
             Vendor.objects.filter(is_active=True)  # type: ignore[attr-defined]
             .values_list('city', flat=True)
             .exclude(city__isnull=True)
             .exclude(city__exact='')
         )
+        if state:
+            cities = cities.filter(state__iexact=state)
         cities = cities.distinct().order_by('city')
         return Response(list(cities))
+
 
 
 class AdminStatsView(APIView):

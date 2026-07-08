@@ -61,6 +61,20 @@ class YardSubmissionSerializer(serializers.ModelSerializer):
 
 class YardSubmissionCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating new yard submissions (public endpoint)"""
+
+    # Allow blank for optional fields that the user may not fill in
+    brands = serializers.CharField(required=False, allow_blank=True, default='')
+    services = serializers.CharField(required=False, allow_blank=True, default='General Auto Parts & Services')
+    parts_categories = serializers.CharField(required=False, allow_blank=True, default='')
+    description = serializers.CharField(required=False, allow_blank=True, default='')
+    toll_free = serializers.CharField(required=False, allow_blank=True, default='')
+    fax = serializers.CharField(required=False, allow_blank=True, default='')
+    owner_first_name = serializers.CharField(required=False, allow_blank=True, default='')
+    owner_last_name = serializers.CharField(required=False, allow_blank=True, default='')
+    owner_phone = serializers.CharField(required=False, allow_blank=True, default='')
+    owner_email = serializers.EmailField(required=False, allow_blank=True, default='')
+    address = serializers.CharField(required=False, allow_blank=True, default='')
+    website = serializers.URLField(required=False, allow_blank=True, default='')
     
     class Meta:
         model = YardSubmission
@@ -98,12 +112,21 @@ class YardSubmissionCreateSerializer(serializers.ModelSerializer):
         return value
     
     def validate_description(self, value):
-        """Validate description length"""
-        if len(value) < 50:
-            raise serializers.ValidationError("Description must be at least 50 characters")
-        if len(value) > 2000:
-            raise serializers.ValidationError("Description must be less than 2000 characters")
+        """Skip description length enforcement — auto-generated if blank"""
         return value
+    
+    def create(self, validated_data):
+        """Auto-fill description if not provided"""
+        if not validated_data.get('description'):
+            name = validated_data.get('business_name', '')
+            city = validated_data.get('city', '')
+            state = validated_data.get('state', '')
+            services = validated_data.get('services', 'auto parts')
+            validated_data['description'] = (
+                f"{name} is a junkyard/auto parts business located in {city}, {state}. "
+                f"We offer {services}. Contact us for availability and pricing."
+            )
+        return super().create(validated_data)
 
 
 class YardSubmissionAdminSerializer(serializers.ModelSerializer):

@@ -20,7 +20,7 @@ class Make(models.Model):
         ordering = ['make_name']
     
     def __str__(self):
-        return self.make_name
+        return str(self.make_name)
 
 
 class Model(models.Model):
@@ -50,7 +50,7 @@ class PartType(models.Model):
         ordering = ['part_name']
     
     def __str__(self):
-        return self.part_name
+        return str(self.part_name)
 
 
 class YearRange(models.Model):
@@ -108,6 +108,7 @@ class HollanderInterchange(models.Model):
 
 class Vendor(models.Model):
     """Vendor/Yard Information Table"""
+    objects = models.Manager()
     yard_id = models.IntegerField(unique=True, help_text="Legacy ID from _yard.json")
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=255, blank=True, default='')
@@ -120,9 +121,12 @@ class Vendor(models.Model):
     
     # UI/Frontend Fields
     description = models.TextField(blank=True, default='')
+    services = models.TextField(blank=True, default='', help_text="Services/Parts offered (from submission/portal)")
+    brands = models.TextField(blank=True, default='', help_text="Brands specialized in")
     review_snippet = models.TextField(blank=True, default='')
     profile_url = models.CharField(max_length=255, blank=True, default='')
     logo = models.ImageField(upload_to='vendor_logos/', blank=True, null=True, default='')
+    images = models.JSONField(default=list, blank=True, help_text="Array of image URLs for the yard")
     
     rating = models.CharField(max_length=20, default="100%")
     rating_stars = models.IntegerField(default=5)
@@ -142,7 +146,7 @@ class Vendor(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class VendorAd(models.Model):
@@ -364,7 +368,7 @@ class HollanderPartRef(models.Model):
         db_table = 'hollander_part_ref'
 
     def __str__(self):
-        return self.part_name
+        return str(self.part_name)
 
 
 class HollanderIndex(models.Model):
@@ -521,7 +525,7 @@ class Association(models.Model):
         db_table = 'hollander_association'
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class LegacyAccount(models.Model):
@@ -554,7 +558,7 @@ class LegacyAccount(models.Model):
         db_table = 'hollander_legacy_account'
 
     def __str__(self):
-        return self.name or f"Account {self.account_id}"
+        return str(self.name) if self.name else f"Account {self.account_id}"
 
 
 class LegacyUser(models.Model):
@@ -580,7 +584,7 @@ class LegacyUser(models.Model):
         db_table = 'hollander_legacy_user'
 
     def __str__(self):
-        return self.email
+        return str(self.email)
 
 
     # Phase 6: Configuration & Presets
@@ -597,7 +601,7 @@ class Country(models.Model):
         verbose_name_plural = 'Countries'
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 # -- Preset Categories --
 

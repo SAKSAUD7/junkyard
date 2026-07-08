@@ -145,7 +145,7 @@ export default function Home() {
             <CTABanner get={get} />
 
             {/* Mobile Ad Banner — all ads as swipe carousel */}
-            <MobileAdBanner page="home" />
+            {/* <MobileAdBanner page="home" /> */}
 
             {/* Floating Action Buttons — WhatsApp, Call, AI Chat */}
             <FloatingActionButtons />
