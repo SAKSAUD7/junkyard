@@ -6,6 +6,7 @@ import PageTransition from './components/PageTransition'
 
 // Eagerly loaded (critical path)
 import Home from './pages/Home'
+import FloatingLeadWidget from './components/FloatingLeadWidget'
 
 // Lazily loaded pages — split into separate chunks
 const Search       = lazy(() => import('./pages/Search'))
@@ -128,6 +129,7 @@ function App() {
   return (
     <MotionConfig reducedMotion="user">
       <ScrollObserver />
+      <FloatingLeadWidget />
       <Suspense fallback={<PageSpinner />}>
         <PageTransition>
           <Routes>
