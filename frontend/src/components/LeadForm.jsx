@@ -293,7 +293,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     }
 
 
-    // OPTIMIZED: Bulk fetch all vehicle data when Make changes (SINGLE API CALL)
+    // OPTIMIZED: Bulk fetch all vehicle data when Make changes (SINGLE API CALL + localStorage cache)
     useEffect(() => {
         if (!selectedMake) {
             setVehicleDataCache(null)
@@ -302,15 +302,36 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             return
         }
 
+        const CACHE_VERSION = 'v3'
+        const LS_KEY = `jynm_vdata_${CACHE_VERSION}_${selectedMake}`
+        const CACHE_TTL_MS = 12 * 60 * 60 * 1000 // 12 hours
+
         const fetchVehicleDataBulk = async () => {
+            // 1. Try localStorage first (instant)
+            try {
+                const raw = localStorage.getItem(LS_KEY)
+                if (raw) {
+                    const { ts, data } = JSON.parse(raw)
+                    if (Date.now() - ts < CACHE_TTL_MS) {
+                        setVehicleDataCache(data)
+                        setModels((data.models || []).map(m => ({ modelID: m.model_id, modelName: m.model_name })))
+                        setLoadingVehicleData(false)
+                        return
+                    }
+                }
+            } catch (_) { /* ignore parse errors */ }
+
+            // 2. Fetch from server
             setLoadingVehicleData(true)
             try {
                 const data = await api.getVehicleDataBulk(selectedMake)
 
-                // Cache the entire dataset
-                setVehicleDataCache(data)
+                // Store in localStorage for next time
+                try {
+                    localStorage.setItem(LS_KEY, JSON.stringify({ ts: Date.now(), data }))
+                } catch (_) { /* storage full — skip */ }
 
-                // Populate models immediately from cache
+                setVehicleDataCache(data)
                 const modelsList = (data.models || []).map(m => ({
                     modelID: m.model_id,
                     modelName: m.model_name
@@ -319,7 +340,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
             } catch (err) {
                 console.warn("[LeadForm] Vehicle data unavailable")
-                // Fallback to old API if bulk fails
                 try {
                     const data = await api.getModels({ make_id: selectedMake })
                     setModels(data || [])
@@ -338,6 +358,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         setSelectedYear('')
         setYears([])
     }, [selectedMake])
+
 
     // OPTIMIZED: Client-side filtering for Years (NO API CALL - INSTANT)
     useEffect(() => {

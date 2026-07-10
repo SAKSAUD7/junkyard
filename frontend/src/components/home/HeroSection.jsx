@@ -300,26 +300,51 @@ export default function HeroSection({ get, ready = false }) {
       setHeroPartId("");
       return;
     }
+    setHeroModel("");
+    setHeroYear("");
+    setHeroPartId("");
+
+    const CACHE_VERSION = 'v3';
+    const LS_KEY = `jynm_vdata_${CACHE_VERSION}_${heroMake}`;
+    const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+
+    const applyData = (d) => {
+      setVehicleCache(d);
+      setModels(
+        (d.models || []).map((m) => ({
+          modelID: m.model_id,
+          modelName: m.model_name,
+          years: m.years || [],
+          parts: m.parts || {},
+        })),
+      );
+    };
+
+    // Try localStorage first (instant — no spinner needed)
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        const { ts, data } = JSON.parse(raw);
+        if (Date.now() - ts < CACHE_TTL_MS) {
+          applyData(data);
+          setLoadingVehicle(false);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Fetch from server
     setLoadingVehicle(true);
     api
       .getVehicleDataBulk(heroMake)
       .then((d) => {
-        setVehicleCache(d);
-        setModels(
-          (d.models || []).map((m) => ({
-            modelID: m.model_id,
-            modelName: m.model_name,
-            years: m.years || [],
-            parts: m.parts || {},
-          })),
-        );
+        try { localStorage.setItem(LS_KEY, JSON.stringify({ ts: Date.now(), data: d })); } catch (_) {}
+        applyData(d);
       })
       .catch(() => setModels([]))
       .finally(() => setLoadingVehicle(false));
-    setHeroModel("");
-    setHeroYear("");
-    setHeroPartId("");
   }, [heroMake]);
+
 
   /* Filter years from cache when model changes */
   useEffect(() => {

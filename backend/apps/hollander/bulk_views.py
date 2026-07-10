@@ -6,8 +6,11 @@ Eliminates sequential API calls and loading delays
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
+from django.core.cache import cache
 from .models import Make, Model, PartPricing, PartType, HollanderIndex
 from .views import query_catalog_index
+
+CACHE_TTL = 60 * 60 * 24  # 24 hours
 
 
 @api_view(['GET'])
@@ -16,10 +19,17 @@ def get_vehicle_data_bulk(request, make_id):
     Return complete hierarchical data for a make:
     Make → Models → Years → Parts → Hollander/Options
     
-    OPTIMIZED VERSION: Uses 3 bulk queries instead of loops.
+    OPTIMIZED VERSION: Uses 3 bulk queries + 24-hour server-side cache.
     """
     try:
         make_id = int(make_id)
+
+        # --- Serve from cache if available ---
+        cache_key = f'bulk_vehicle_data_v3_{make_id}'
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return Response(cached)
+
         make = Make.objects.filter(make_id=make_id).first()
         
         if not make:
@@ -428,6 +438,9 @@ def get_vehicle_data_bulk(request, make_id):
             
         # Sort models alphabetically by name
         result['models'].sort(key=lambda x: x['model_name'])
+
+        # --- Store in cache for 24 hours ---
+        cache.set(cache_key, result, CACHE_TTL)
         
         return Response(result)
         
