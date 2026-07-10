@@ -499,7 +499,7 @@ export default function HeroSection({ get, ready = false }) {
         hollander_number:
           hollanderNumber && hollanderNumber !== "Not Found"
             ? hollanderNumber
-            : null,
+            : "",
         options: options || "",
         name: heroName,
         email: heroEmail,
