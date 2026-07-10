@@ -250,13 +250,16 @@ def get_vehicle_data_bulk(request, make_id):
         part_code_map = {}
         from .models import HollanderPartRef, PartType
         
-        # 1. Try HollanderPartRef (Catalog Names)
+        # 1. PRIMARY: Use PartType table - fully populated with all part names
+        part_types = PartType.objects.filter(part_id__in=unique_part_codes).values('part_id', 'part_name')
+        for r in part_types:
+            part_code_map[str(r['part_id'])] = r['part_name']
+        
+        # 2. SUPPLEMENT: HollanderPartRef (may override with Hollander-specific names where available)
         refs = HollanderPartRef.objects.filter(part_code__in=unique_part_codes).values('part_code', 'part_name')
         for r in refs:
-            part_code_map[r['part_code']] = r['part_name']
-            
-        # 2. Try PartType (Local Inventory Names) - Fallback or Merge?
-        # Typically HollanderPartRef is more accurate for Catalog codes.
+            if r['part_name']:  # Only override if HollanderPartRef has a valid name
+                part_code_map[str(r['part_code'])] = r['part_name']
         
         # F. Merge Data back to Models
         # First, bulk-fetch HollanderInterchange records for the matched h_models

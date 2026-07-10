@@ -30,7 +30,7 @@ function SearchableDropdown({
     .filter((o) =>
       (o.label || o).toString().toLowerCase().includes(query.toLowerCase()),
     )
-    .slice(0, 40);
+    .slice(0, 1000);
 
   return (
     <div ref={ref} className="relative w-full">
@@ -331,7 +331,12 @@ export default function HeroSection({ get, ready = false }) {
       return;
     }
     const mod = models.find((m) => String(m.modelID) === String(heroModel));
-    setYears(mod ? mod.years : []);
+    let modelYears = mod ? mod.years : [];
+    if (modelYears.length === 0 && heroModel) {
+      // Fallback to static years if the database has no years mapped for this model
+      modelYears = Array.from({length: 45}, (_, i) => 2024 - i);
+    }
+    setYears(modelYears);
     setHeroYear("");
     setHeroPartId("");
   }, [heroModel, models]);
