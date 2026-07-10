@@ -369,12 +369,50 @@ def get_vehicle_data_bulk(request, make_id):
                                                  'options': ''
                                              })
         
-        # Final Assembly (Filter out empty models)
+        # Final Assembly (Filter out empty models and merge duplicates by name)
+        merged_models = {}
         for m_id, data in model_map.items():
-            # Convert year set to sorted list
+            # Include ALL models for the make, even if they don't have parts/years
+                
+            m_name = data['model_name'].strip().upper()
+            
+            if m_name not in merged_models:
+                merged_models[m_name] = {
+                    'model_id': data['model_id'], # keep first model id
+                    'model_name': data['model_name'],
+                    'year_set': set(),
+                    'parts': {}
+                }
+            
+            # Merge years
             if 'year_set' in data:
-                data['years'] = sorted(list(data['year_set']), reverse=True)
-                del data['year_set']
+                merged_models[m_name]['year_set'].update(data['year_set'])
+                
+            # Merge parts
+            for y_key, p_dict in data.get('parts', {}).items():
+                if y_key not in merged_models[m_name]['parts']:
+                    merged_models[m_name]['parts'][y_key] = {}
+                
+                for p_key, p_data in p_dict.items():
+                    if p_key not in merged_models[m_name]['parts'][y_key]:
+                        merged_models[m_name]['parts'][y_key][p_key] = {
+                            'part_id': p_data['part_id'],
+                            'part_name': p_data['part_name'],
+                            'variants': []
+                        }
+                    
+                    # Merge variants deduplicating by hollander number
+                    existing = {v['hollander_number'] for v in merged_models[m_name]['parts'][y_key][p_key]['variants']}
+                    for v in p_data.get('variants', []):
+                        if v['hollander_number'] not in existing:
+                            merged_models[m_name]['parts'][y_key][p_key]['variants'].append(v)
+                            existing.add(v['hollander_number'])
+                            
+        # Format the final list
+        for m_name, data in merged_models.items():
+            # Convert year set to sorted list
+            data['years'] = sorted(list(data['year_set']), reverse=True)
+            del data['year_set']
             
             # Convert parts dicts to lists
             for y_key in list(data['parts'].keys()):
@@ -382,12 +420,12 @@ def get_vehicle_data_bulk(request, make_id):
                 p_list = list(data['parts'][y_key].values())
                 p_list.sort(key=lambda x: x['part_name'])
                 data['parts'][y_key] = p_list
+                
+            result['models'].append(data)
             
-            # ONLY include models that have data (years or parts)
-            # This filters out "ghost models" like Renault Clio, Mercedes 190E-16, etc.
-            if data['years'] or data['parts']:
-                result['models'].append(data)
-            
+        # Sort models alphabetically by name
+        result['models'].sort(key=lambda x: x['model_name'])
+        
         return Response(result)
         
     except Exception as e:

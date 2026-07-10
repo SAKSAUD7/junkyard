@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill';
+import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
+
+// Register custom px font sizes so they appear in the toolbar picker
+const QuillSize = Quill.import('attributors/style/size');
+QuillSize.whitelist = ['10px','12px','14px','16px','18px','20px','24px','28px','32px','36px','48px','54px','64px','72px'];
+Quill.register(QuillSize, true);
 import { api } from '../../services/api';
 import { useCMSContext } from '../../contexts/CMSContext';
 import {
@@ -586,6 +592,7 @@ function JsonField({ value, onChange, entryId, onSave, saving, dirty }) {
 // ─── HTML Rich Text Field ───────────────────────────────────────────────────────
 const QUILL_MODULES = {
     toolbar: [
+        [{ 'size': ['10px','12px','14px', false,'18px','20px','24px','28px','32px','36px','48px','54px','64px','72px'] }],
         [{ 'header': [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ 'color': [] }, { 'background': [] }],
@@ -594,10 +601,18 @@ const QUILL_MODULES = {
     ],
 };
 
+const QUILL_FORMATS = [
+    'size', 'header',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'list', 'bullet',
+    'link'
+];
+
 function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
-    // Memoize modules and formats to prevent ReactQuill from re-registering
-    // on every render, which is what triggers the findDOMNode warning.
     const quillModules = useMemo(() => QUILL_MODULES, []);
+    const quillFormats = useMemo(() => QUILL_FORMATS, []);
+
 
     return (
         <div className="space-y-2">
@@ -624,6 +639,7 @@ function HtmlField({ value, onChange, entryId, onSave, saving, dirty }) {
                     value={value || ''} 
                     onChange={(content) => onChange(entryId, content)}
                     modules={quillModules}
+                    formats={quillFormats}
                     className="min-h-[150px] custom-quill"
                     preserveWhitespace
                 />

@@ -4,6 +4,79 @@ import Captcha from '../Captcha';
 import PincodeSearch from '../PincodeSearch';
 import PromoBanner from '../PromoBanner';
 
+// ── Searchable Dropdown Component ───────────────────────────────────────────
+function SearchableDropdown({ value, label, placeholder, options, onSelect, disabled, loading }) {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const filtered = options.filter(o =>
+        (o.label || o).toString().toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 40);
+
+    return (
+        <div ref={ref} className="relative w-full">
+            <button
+                type="button"
+                disabled={disabled}
+                onClick={() => { if (!disabled) setOpen(v => !v); setQuery(''); }}
+                className={`w-full flex items-center justify-between gap-1 px-4 py-3 lg:py-2.5 text-[14px] font-bold transition-all
+                    ${ disabled ? 'text-slate-400 cursor-not-allowed' : 'text-slate-800 cursor-pointer hover:text-blue-600' }
+                    bg-transparent outline-none border-0 rounded-xl lg:rounded-none border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r-2
+                `}
+            >
+                <span className={`truncate ${!value ? 'text-slate-400 font-semibold' : 'text-slate-900'}`}>
+                    {loading ? 'Loading...' : (value || placeholder)}
+                </span>
+                <svg className={`w-3.5 h-3.5 shrink-0 transition-transform ${open ? 'rotate-180' : ''} text-slate-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7"/></svg>
+            </button>
+
+            {open && (
+                <div className="absolute top-full left-0 z-[200] mt-2 w-64 bg-white rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.18)] border border-slate-100 overflow-hidden">
+                    {/* Search input */}
+                    <div className="px-3 pt-3 pb-2 border-b border-slate-100">
+                        <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2">
+                            <svg className="w-4 h-4 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input
+                                autoFocus
+                                type="text"
+                                value={query}
+                                onChange={e => setQuery(e.target.value)}
+                                placeholder={`Search ${label}...`}
+                                className="bg-transparent text-[13px] font-semibold text-slate-800 placeholder-slate-400 outline-none w-full"
+                            />
+                        </div>
+                    </div>
+                    {/* List */}
+                    <div className="max-h-52 overflow-y-auto py-1">
+                        {filtered.length === 0 ? (
+                            <p className="px-4 py-3 text-[13px] text-slate-400 text-center">No results for "{query}"</p>
+                        ) : filtered.map((o, i) => {
+                            const val = o.value !== undefined ? o.value : o;
+                            const lbl = o.label !== undefined ? o.label : o;
+                            return (
+                                <button key={i} type="button"
+                                    onClick={() => { onSelect(val, lbl); setOpen(false); setQuery(''); }}
+                                    className={`w-full text-left px-4 py-2.5 text-[13px] font-semibold transition-colors
+                                        ${String(val) === String(value?.split(' ')[0]) ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'}`}
+                                >
+                                    {lbl}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function HeroSection({ get }) {
     const leadFormRef = useRef(null);
 
@@ -285,7 +358,7 @@ export default function HeroSection({ get }) {
                     className="w-full h-full object-cover mix-blend-multiply opacity-90"
                     style={{ filter: 'brightness(1.05) contrast(1.1)' }}
                 >
-                    <source src="/Video/hero-models-bg-v2.mp4" type="video/mp4" />
+                    <source src="/Video/hero-models-bg-v2.mp4?nocache=1" type="video/mp4" />
                 </video>
                 {/* Light Gradient Overlay */}
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent w-3/4" />
@@ -300,11 +373,11 @@ export default function HeroSection({ get }) {
                         The #1 Junkyard & Auto Salvage Network in the U.S.
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15]" style={{ fontFamily: "'Outfit', sans-serif" }}
+                    <div className="hero-responsive-text text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-3 tracking-tight leading-[1.15] [&>p]:m-0" style={{ fontFamily: "'Outfit', sans-serif" }}
                         dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds') }}
                     />
 
-                    <p className="text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0"
+                    <div className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-6 lg:mb-6 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 [&>p]:m-0"
                         dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.') }}
                     />
                 </div>
@@ -315,15 +388,20 @@ export default function HeroSection({ get }) {
                         className="w-full h-full object-cover scale-[1.1] origin-[center_70%] opacity-100"
                         style={{ filter: 'brightness(1.05) contrast(1.05)' }}
                     >
-                        <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
+                        <source src="/Video/hero-models-bg.mp4?nocache=1" type="video/mp4" />
                     </video>
                 </div>
 
                 <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
-                    <div ref={leadFormRef} className="w-full mb-8 relative z-20">
-                        <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 relative z-10 pl-2">Fill This Form To Find Your Part</h3>
-                        <div className={`bg-white/80 backdrop-blur-2xl shadow-[0_8px_40px_rgba(37,99,235,0.18),0_2px_12px_rgba(0,0,0,0.08)] border border-blue-200/60 relative z-20 overflow-visible
-                            before:absolute before:inset-0 before:rounded-[inherit] before:bg-gradient-to-b before:from-white/60 before:to-white/10 before:pointer-events-none
+                    <div ref={leadFormRef} className="w-full mb-8 relative z-[100]">
+                        <div className="flex items-center gap-3 mb-4 pl-1">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.45)] animate-pulse">
+                                <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                                Free Instant Quote
+                            </span>
+                            <h3 className="text-[13px] font-black text-slate-700 uppercase tracking-[0.2em]">Find Your Part in Seconds</h3>
+                        </div>
+                        <div className={`bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] ring-[8px] ring-blue-500/15 border-2 border-blue-500 relative z-[100] overflow-visible transition-all duration-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.25)]
                             ${heroStep > 1 && !heroSuccess ? 'rounded-3xl' : 'rounded-2xl lg:rounded-full'}`}>
 
                             {/* SUCCESS STATE */}
@@ -338,70 +416,87 @@ export default function HeroSection({ get }) {
                                     <button onClick={handleHeroReset} className="text-blue-600 text-[13px] font-bold hover:underline whitespace-nowrap flex-shrink-0">New Search</button>
                                 </div>
                             )}
-
-                            {/* STEP 1 — Vehicle + Part */}
+                             {/* STEP 1 — Vehicle + Part */}
                             {!heroSuccess && heroStep === 1 && (
-                                <div className="flex flex-col lg:flex-row items-stretch lg:items-center p-1.5 lg:p-1.5 gap-3 lg:gap-0 w-full">
-                                    <div className="hidden lg:flex items-center gap-2 px-5 border-r border-slate-100 shrink-0">
-                                        <span className="w-6 h-6 bg-blue-600 text-white rounded-full text-[11px] font-black flex items-center justify-center">1</span>
-                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Vehicle</span>
+                                <div className="flex flex-col lg:flex-row items-stretch lg:items-center p-2 lg:p-2 gap-3 lg:gap-0 w-full">
+                                    <div className="hidden lg:flex items-center gap-2.5 px-6 border-r-2 border-slate-100 shrink-0">
+                                        <span className="w-7 h-7 bg-blue-600 text-white rounded-full text-[13px] font-black flex items-center justify-center shadow-md">1</span>
+                                        <span className="text-[12px] font-black text-slate-800 uppercase tracking-[0.15em]">Vehicle</span>
                                     </div>
+
+                                    {/* Mobile: 2x2 grid, Desktop: flex row */}
                                     <div className="grid grid-cols-2 lg:flex lg:flex-1 lg:flex-row gap-2 lg:gap-0 min-w-0">
-                                        <select value={heroMake} onChange={e => {
-                                            const val = e.target.value;
-                                            setHeroMake(val);
-                                            const found = makes.find(m => String(m.makeID) === String(val));
-                                            setHeroMakeName(found ? found.makeName : '');
-                                        }}
-                                            className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer rounded-xl lg:rounded-none truncate">
-                                            <option value="">{loadingMakes ? 'Loading...' : '🚗 Make'}</option>
-                                            {makes.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
-                                        </select>
-                                        <select value={heroModel} onChange={e => {
-                                            const val = e.target.value;
-                                            setHeroModel(val);
-                                            const found = models.find(m => String(m.modelID) === String(val));
-                                            setHeroModelName(found ? found.modelName : '');
-                                        }} disabled={!heroMake}
-                                            className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none truncate">
-                                            <option value="">{loadingVehicle ? 'Loading...' : 'Model'}</option>
-                                            {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
-                                        </select>
-                                        <select value={heroYear} onChange={e => setHeroYear(e.target.value)} disabled={!heroModel}
-                                            className="col-span-1 lg:flex-1 lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-y-0 lg:border-l-0 lg:border-r text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none truncate">
-                                            <option value="">Year</option>
-                                            {years.map(y => <option key={y} value={y}>{y}</option>)}
-                                        </select>
-                                        <select value={heroPartId} onChange={e => {
-                                            const val = e.target.value;
-                                            setHeroPartId(val);
-                                            const found = parts.find(p => String(p.partID) === String(val));
-                                            setHeroPartName(found ? found.partName : '');
-                                            
-                                            if (found) {
-                                                setPartVariants(found.variants || []);
-                                                setSelectedOptionTags([]);
-                                                if (found.variants?.length === 1) {
-                                                    setHollanderNumber(found.variants[0].hollander_number || '');
-                                                    setOptions(found.variants[0].options || '');
-                                                } else if (found.variants?.length > 1) {
-                                                    setHollanderNumber(found.variants[0].hollander_number || '');
-                                                    setOptions(found.variants[0].options || '');
-                                                } else {
-                                                    setHollanderNumber('');
-                                                    setOptions('');
-                                                }
-                                            }
-                                        }} disabled={!heroYear || loadingParts}
-                                            className="col-span-1 lg:flex-[1.5] lg:min-w-0 bg-slate-50 lg:bg-transparent border border-slate-100 lg:border-none text-[13px] font-semibold text-slate-700 outline-none px-4 py-2.5 lg:py-2 appearance-none cursor-pointer disabled:opacity-40 rounded-xl lg:rounded-none truncate lg:max-w-[280px]">
-                                            <option value="">{loadingParts ? 'Loading...' : '🔩 Part'}</option>
-                                            {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                                        </select>
+
+                                        {/* MAKE */}
+                                        <div className="col-span-1 lg:flex-1 lg:min-w-0">
+                                            <SearchableDropdown
+                                                label="Make"
+                                                placeholder="Make"
+                                                value={heroMakeName}
+                                                loading={loadingMakes}
+                                                options={makes.map(m => ({ value: m.makeID, label: m.makeName }))}
+                                                onSelect={(val, lbl) => { setHeroMake(String(val)); setHeroMakeName(lbl); }}
+                                            />
+                                        </div>
+
+                                        {/* MODEL */}
+                                        <div className="col-span-1 lg:flex-1 lg:min-w-0">
+                                            <SearchableDropdown
+                                                label="Model"
+                                                placeholder="Model"
+                                                value={heroModelName}
+                                                loading={loadingVehicle}
+                                                disabled={!heroMake}
+                                                options={models.map(m => ({ value: m.modelID, label: m.modelName }))}
+                                                onSelect={(val, lbl) => { setHeroModel(String(val)); setHeroModelName(lbl); }}
+                                            />
+                                        </div>
+
+                                        {/* YEAR */}
+                                        <div className="col-span-1 lg:flex-1 lg:min-w-0">
+                                            <SearchableDropdown
+                                                label="Year"
+                                                placeholder="Year"
+                                                value={heroYear}
+                                                disabled={!heroModel}
+                                                options={years.map(y => ({ value: y, label: y }))}
+                                                onSelect={(val) => setHeroYear(String(val))}
+                                            />
+                                        </div>
+
+                                        {/* PART */}
+                                        <div className="col-span-1 lg:flex-[1.5] lg:min-w-0">
+                                            <SearchableDropdown
+                                                label="Part"
+                                                placeholder="Part"
+                                                value={heroPartName}
+                                                loading={loadingParts}
+                                                disabled={!heroYear || loadingParts}
+                                                options={parts.map(p => ({ value: p.partID, label: p.partName }))}
+                                                onSelect={(val, lbl) => {
+                                                    setHeroPartId(String(val));
+                                                    setHeroPartName(lbl);
+                                                    const found = parts.find(p => String(p.partID) === String(val));
+                                                    if (found) {
+                                                        setPartVariants(found.variants || []);
+                                                        setSelectedOptionTags([]);
+                                                        if (found.variants?.length >= 1) {
+                                                            setHollanderNumber(found.variants[0].hollander_number || '');
+                                                            setOptions(found.variants[0].options || '');
+                                                        } else {
+                                                            setHollanderNumber('');
+                                                            setOptions('');
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </div>
                                     </div>
+
                                     <button type="button" onClick={handleHeroNext}
-                                        className="w-full lg:min-w-0 lg:w-auto bg-blue-600 text-white text-[13px] font-bold rounded-xl lg:rounded-full px-7 py-2.5 hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] flex items-center justify-center gap-2 group shrink-0 mt-1 lg:mt-0">
+                                        className="w-full lg:min-w-0 lg:w-auto bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[15px] font-black rounded-xl lg:rounded-full px-8 py-3.5 hover:from-blue-700 hover:to-blue-600 hover:-translate-y-0.5 transition-all shadow-[0_8px_25px_rgb(37,99,235,0.4)] flex items-center justify-center gap-2 group shrink-0 mt-1 lg:mt-0">
                                         Next Step
-                                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                     </button>
                                 </div>
                             )}

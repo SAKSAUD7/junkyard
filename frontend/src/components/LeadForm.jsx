@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import Captcha from './Captcha'
@@ -14,6 +14,119 @@ const US_STATES = [
     'RI', 'SC', 'SD', 'SK', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT',
     'WA', 'WI', 'WV', 'WY', 'YT'
 ]
+
+// ── Searchable Dropdown (portal-style fixed positioning to escape scroll containers) ──
+function SearchableDropdown({ value, selectedValue, label, placeholder, options, onSelect, disabled, loading }) {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const [dropPos, setDropPos] = useState({ top: 0, left: 0, width: 0 });
+    const btnRef = useRef(null);
+    const dropRef = useRef(null);
+
+    // Close on outside click
+    useEffect(() => {
+        const handler = (e) => {
+            if (
+                btnRef.current && !btnRef.current.contains(e.target) &&
+                dropRef.current && !dropRef.current.contains(e.target)
+            ) setOpen(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    // Recalculate position when opening or on scroll/resize
+    useEffect(() => {
+        if (!open || !btnRef.current) return;
+        const calc = () => {
+            const rect = btnRef.current.getBoundingClientRect();
+            setDropPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+        };
+        calc();
+        window.addEventListener('scroll', calc, true);
+        window.addEventListener('resize', calc);
+        return () => {
+            window.removeEventListener('scroll', calc, true);
+            window.removeEventListener('resize', calc);
+        };
+    }, [open]);
+
+    const filtered = options.filter(o =>
+        (o.label || o).toString().toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 1000);
+
+    return (
+        <div className="relative w-full">
+            <button
+                ref={btnRef}
+                type="button"
+                disabled={disabled}
+                onClick={() => { if (!disabled) { setOpen(v => !v); setQuery(''); } }}
+                className={`w-full flex items-center justify-between gap-1 px-3 py-3 text-[14px] font-semibold transition-all rounded-xl border-2
+                    ${ disabled
+                        ? 'bg-slate-50/50 border-transparent text-slate-400 cursor-not-allowed'
+                        : open
+                            ? 'bg-white border-blue-500 ring-4 ring-blue-500/15 text-slate-900 cursor-pointer'
+                            : 'bg-slate-50 hover:bg-slate-100 border-transparent text-slate-900 cursor-pointer'
+                    }
+                `}
+            >
+                <span className={`truncate ${!value ? 'text-slate-400' : 'text-slate-900'}`}>
+                    {loading ? 'Loading...' : (value || placeholder)}
+                </span>
+                <svg className={`w-3.5 h-3.5 shrink-0 transition-transform ${open ? 'rotate-180' : ''} text-slate-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7"/></svg>
+            </button>
+
+            {open && typeof window !== 'undefined' && (
+                <div
+                    ref={dropRef}
+                    style={{
+                        position: 'fixed',
+                        top: dropPos.top,
+                        left: dropPos.left,
+                        width: dropPos.width,
+                        zIndex: 99999,
+                    }}
+                    className="bg-white rounded-xl shadow-[0_12px_40px_rgba(0,0,0,0.18)] border border-slate-100 overflow-hidden"
+                >
+                    {/* Search */}
+                    <div className="px-3 pt-2.5 pb-2 border-b border-slate-100">
+                        <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
+                            <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input
+                                autoFocus
+                                type="text"
+                                value={query}
+                                onChange={e => setQuery(e.target.value)}
+                                placeholder={`Search ${label}...`}
+                                className="bg-transparent text-[12px] font-semibold text-slate-800 placeholder-slate-400 outline-none w-full"
+                            />
+                        </div>
+                    </div>
+                    {/* List */}
+                    <div className="max-h-48 overflow-y-auto py-1">
+                        {filtered.length === 0 ? (
+                            <p className="px-4 py-3 text-[12px] text-slate-400 text-center">No results for "{query}"</p>
+                        ) : filtered.map((o, i) => {
+                            const val = o.value !== undefined ? o.value : o;
+                            const lbl = o.label !== undefined ? o.label : o;
+                            return (
+                                <button key={i} type="button"
+                                    onMouseDown={() => { onSelect(val, lbl); setOpen(false); setQuery(''); }}
+                                    className={`w-full text-left px-3.5 py-2 text-[13px] font-semibold transition-colors
+                                        ${String(val) === String(selectedValue) ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'}`}
+                                >
+                                    {lbl}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 
 export default function LeadForm({ layout = 'vertical', mode = null, vendorName = null, enableSteps = false, hideHeader = false }) {
     const navigate = useNavigate()
@@ -177,16 +290,8 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         } finally {
             setLoadingMakes(false)
         }
-        setLoadingParts(true)
-        try {
-            const partsData = await api.getParts()
-            setParts((partsData || []).map(p => ({ partID: p.partID || p.part_id, partName: p.partName || p.part_name })))
-        } catch (err) {
-            console.warn("[LeadForm] Parts unavailable")
-        } finally {
-            setLoadingParts(false)
-        }
     }
+
 
     // OPTIMIZED: Bulk fetch all vehicle data when Make changes (SINGLE API CALL)
     useEffect(() => {
@@ -194,7 +299,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setVehicleDataCache(null)
             setModels([])
             setYears([])
-            setParts([])
             return
         }
 
@@ -239,7 +343,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     useEffect(() => {
         if (!vehicleDataCache || !selectedModel) {
             setYears([])
-            setParts([])
             return
         }
 
@@ -249,7 +352,12 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         )
 
         if (model) {
-            setYears(model.years || [])
+            let modelYears = model.years || [];
+            if (modelYears.length === 0) {
+                // Fallback to static years if the database has no years mapped for this model
+                modelYears = Array.from({length: 45}, (_, i) => 2024 - i);
+            }
+            setYears(modelYears)
         } else {
             setYears([])
         }
@@ -257,7 +365,55 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         // Reset downstream
         setSelectedYear('')
         setSelectedPart('')
+        setSelectedPartName('')
+        setParts([])
     }, [selectedModel, vehicleDataCache])
+
+    // Load parts from cache when Year is selected
+    useEffect(() => {
+        if (!vehicleDataCache || !selectedModel || !selectedYear) {
+            setParts([])
+            return
+        }
+        // Always load the full list of parts to ensure nothing is missed.
+        const fetchParts = async () => {
+            setLoadingParts(true)
+            try {
+                const partsData = await api.getParts()
+                // Format the parts
+                let allParts = (partsData || []).map(p => ({ 
+                    partID: p.partID || p.part_id, 
+                    partName: p.partName || p.part_name 
+                }))
+                
+                // If we have cached parts for this specific year, merge them to the top
+                const model = vehicleDataCache.models.find(m => m.model_id == selectedModel)
+                const yearParts = model?.parts?.[selectedYear] || []
+                
+                if (yearParts.length > 0) {
+                    const cachedIds = new Set(yearParts.map(p => String(p.part_id)))
+                    const cachedFormatted = yearParts.map(p => ({ partID: p.part_id, partName: p.part_name }))
+                    const remainingParts = allParts.filter(p => !cachedIds.has(String(p.partID)))
+                    allParts = [...cachedFormatted, ...remainingParts]
+                }
+                
+                setParts(allParts)
+            } catch (err) {
+                console.warn('[LeadForm] Parts fetch failed')
+                // Fallback to cache if API fails
+                const model = vehicleDataCache.models.find(m => m.model_id == selectedModel)
+                const yearParts = model?.parts?.[selectedYear] || []
+                setParts(yearParts.map(p => ({ partID: p.part_id, partName: p.part_name })))
+            } finally {
+                setLoadingParts(false)
+            }
+        }
+        fetchParts()
+        // Reset part selection when year changes
+        setSelectedPart('')
+        setSelectedPartName('')
+    }, [selectedYear, selectedModel, vehicleDataCache])
+
 
 
 
@@ -554,7 +710,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     // Step Visibility Logic
     const showVehicleDetails = !enableSteps || currentStep === 1;
     const showContactInfo = !enableSteps || currentStep === 3;
-    const totalSteps = (leadType === 'quality_auto_parts' && partVariants.length > 1 && allUniqueOptions.length > 0) ? 3 : 2;
+    const totalSteps = (leadType === 'quality_auto_parts' && hasQuestions) ? 3 : 2;
     const displayStep = currentStep > totalSteps ? totalSteps : currentStep; // fallback if step is 3 but total is 2 (handled by logic anyway)
 
     return (
@@ -613,99 +769,97 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         {isHorizontal && <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Vehicle Details</h3>}
 
                         {/* Make */}
-                        <div className="space-y-1.5">
-                            <label className="flex justify-between text-[13px] font-semibold text-slate-700">
-                                Make <span className="text-blue-500">*{loadingMakes && <span className="font-normal text-slate-400 animate-pulse"> loading...</span>}</span>
+                        <div className="space-y-1">
+                            <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                                Vehicle Make {loadingMakes && <span className="text-blue-500 normal-case tracking-normal font-semibold animate-pulse">loading...</span>}
                             </label>
-                            <select value={selectedMake} onChange={e => {
-                                const val = e.target.value;
-                                setSelectedMake(val);
-                                const found = makes.find(m => String(m.makeID) === String(val));
-                                setSelectedMakeName(found ? found.makeName : '');
-                            }}
-                                className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
-                                required>
-                                <option value="">Select Make</option>
-                                {makes?.map(m => <option key={m.makeID} value={m.makeID}>{m.makeName}</option>)}
-                            </select>
+                            <SearchableDropdown
+                                label="make"
+                                placeholder="Search make..."
+                                value={selectedMakeName}
+                                selectedValue={selectedMake}
+                                loading={loadingMakes}
+                                options={makes.map(m => ({ value: m.makeID, label: m.makeName }))}
+                                onSelect={(val, lbl) => {
+                                    if (String(val) !== selectedMake) {
+                                        setSelectedMake(String(val));
+                                        setSelectedMakeName(lbl);
+                                        setSelectedModel(''); setSelectedModelName('');
+                                        setSelectedYear(''); setSelectedPart(''); setSelectedPartName('');
+                                        setPartVariants([]); setHollanderNumber(''); setOptions('');
+                                    }
+                                }}
+                            />
                         </div>
 
                         {/* Model */}
-                        <div className="space-y-1.5">
-                            <label className="flex justify-between text-[13px] font-semibold text-slate-700">
-                                Model <span className="text-blue-500">*{loadingVehicleData && <span className="font-normal text-slate-400 animate-pulse"> loading...</span>}</span>
+                        <div className="space-y-1">
+                            <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                                Vehicle Model {loadingVehicleData && <span className="text-blue-500 normal-case tracking-normal font-semibold animate-pulse">loading...</span>}
                             </label>
-                            <select value={selectedModel} onChange={e => {
-                                const val = e.target.value;
-                                setSelectedModel(val);
-                                const found = models.find(m => String(m.modelID) === String(val));
-                                setSelectedModelName(found ? found.modelName : '');
-                            }}
+                            <SearchableDropdown
+                                label="model"
+                                placeholder={!selectedMake ? 'Select make first' : 'Search model...'}
+                                value={selectedModelName}
+                                selectedValue={selectedModel}
                                 disabled={!selectedMake}
-                                className={`w-full text-[14px] rounded-xl px-4 py-3 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm ${
-                                    !selectedMake ? 'bg-slate-50 text-slate-400 border-slate-100 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-200'
-                                }`}
-                                required>
-                                <option value="">Select Model</option>
-                                {models.map(m => <option key={m.modelID} value={m.modelID}>{m.modelName}</option>)}
-                            </select>
+                                loading={loadingVehicleData}
+                                options={models.map(m => ({ value: m.modelID, label: m.modelName }))}
+                                onSelect={(val, lbl) => {
+                                    if (String(val) !== selectedModel) {
+                                        setSelectedModel(String(val));
+                                        setSelectedModelName(lbl);
+                                        setSelectedYear(''); setSelectedPart(''); setSelectedPartName('');
+                                        setPartVariants([]); setHollanderNumber(''); setOptions('');
+                                    }
+                                }}
+                            />
                         </div>
 
                         {/* Year */}
-                        <div className="space-y-1.5">
-                            <label className="flex justify-between text-[13px] font-semibold text-slate-700">
-                                Year <span className="text-blue-500">*</span>
+                        <div className="space-y-1">
+                            <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                                Vehicle Year
                             </label>
-                            <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)}
+                            <SearchableDropdown
+                                label="year"
+                                placeholder={!selectedModel ? 'Select model first' : 'Search year...'}
+                                value={selectedYear}
+                                selectedValue={selectedYear}
                                 disabled={!selectedModel}
-                                className={`w-full text-[14px] rounded-xl px-4 py-3 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm ${
-                                    !selectedModel ? 'bg-slate-50 text-slate-400 border-slate-100 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-200'
-                                }`}
-                                required>
-                                <option value="">Select Year</option>
-                                {years.map(y => <option key={y} value={y}>{y}</option>)}
-                            </select>
+                                options={years.map(y => ({ value: y, label: y }))}
+                                onSelect={(val) => {
+                                    if (String(val) !== selectedYear) {
+                                        setSelectedYear(String(val));
+                                        setSelectedPart(''); setSelectedPartName('');
+                                        setPartVariants([]); setHollanderNumber(''); setOptions('');
+                                    }
+                                }}
+                            />
                         </div>
 
                         {/* Part (Quality Auto Parts only) */}
                         {leadType === 'quality_auto_parts' && (
-                            <div className="space-y-1.5">
-                                <label className="flex justify-between text-[13px] font-semibold text-slate-700">
-                                    Part <span className="text-blue-500">*{loadingParts && <span className="font-normal text-slate-400 animate-pulse"> loading...</span>}</span>
+                            <div className="space-y-1">
+                                <label className="flex justify-between text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                                    Requested Part {loadingParts && <span className="text-blue-500 normal-case tracking-normal font-semibold animate-pulse">loading...</span>}
                                 </label>
-                                <select value={selectedPart} onChange={e => {
-                                    const val = e.target.value;
-                                    setSelectedPart(val);
-                                    
-                                    // Use partCache or parts array if available, or fallback to parsing the ID
-                                    // Note: parts are stored differently here since it uses vehicleDataCache.
-                                    // But we can extract it cleanly:
-                                    const model = vehicleDataCache?.models?.find(m => m.model_id == selectedModel);
-                                    const yearParts = model?.parts?.[selectedYear] || [];
-                                    const partObj = yearParts.find(p => String(p.part_id) === String(val));
-                                    
-                                    if (partObj) {
-                                        setSelectedPartName(partObj.part_name);
-                                    } else {
-                                        // Fallback if not found in cache for some reason
-                                        const rawName = e.target.options[e.target.selectedIndex]?.text || '';
-                                        setSelectedPartName(rawName.split(' (')[0].trim());
-                                    }
-
-                                    // Reset variant state on every new part selection
-                                    setPartVariants([])
-                                    setSelectedOptionTags([])
-                                    setHollanderNumber('')
-                                    setOptions('')
-                                }}
-                                    disabled={loadingParts}
-                                    className={`w-full truncate text-[14px] rounded-xl px-4 py-3 border focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm ${
-                                        loadingParts ? 'bg-slate-50 text-slate-400 border-slate-100 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-200'
-                                    }`}
-                                    required>
-                                    <option value="">Select Part</option>
-                                    {parts.map(p => <option key={p.partID} value={p.partID}>{p.partName}</option>)}
-                                </select>
+                                <SearchableDropdown
+                                    label="part"
+                                    placeholder={loadingParts ? 'Loading parts...' : !selectedYear ? 'Select year first' : 'Search part...'}
+                                    value={selectedPartName}
+                                    selectedValue={selectedPart}
+                                    disabled={!selectedYear || loadingParts}
+                                    loading={loadingParts}
+                                    options={parts.map(p => ({ value: p.partID, label: p.partName }))}
+                                    onSelect={(val, lbl) => {
+                                        setSelectedPart(String(val));
+                                        setSelectedPartName(lbl);
+                                        setPartVariants([]);
+                                        setHollanderNumber('');
+                                        setOptions('');
+                                    }}
+                                />
                             </div>
                         )}
                                 {/* Options tags for single variant — clean (strip wrapping parens from DB values) */}
@@ -724,9 +878,9 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                         {enableSteps && (
                             <button type="button" onClick={handleNext}
-                                className="w-full bg-[#0099cc] hover:bg-[#0086b3] text-white font-bold text-[14px] py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 group mt-4">
+                                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-black text-[15px] py-4 rounded-2xl shadow-[0_8px_25px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_35px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group mt-6 border border-blue-400/20">
                                 Continue
-                                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </button>
                         )}
                     </div>
@@ -857,11 +1011,29 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                         {/* State + ZIP — improved layout */}
                         <div className="space-y-2">
-                            {/* ZIP first — type to auto-detect state */}
+                            {/* State */}
+                            <div className="space-y-1.5">
+                                <label className="flex items-center justify-between text-[13px] font-semibold text-slate-700">
+                                    <span>State <span className="text-blue-500">*</span></span>
+                                    {loadingZipcodes && <span className="font-normal text-blue-500 animate-pulse text-[11px]">Loading ZIPs...</span>}
+                                </label>
+                                <select
+                                    value={state}
+                                    onChange={e => handleStateChange(e.target.value)}
+                                    className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                                    required
+                                >
+                                    <option value="">Select State</option>
+                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                            </div>
+
+                            {/* ZIP Code */}
                             <div className="space-y-1.5">
                                 <label className="flex items-center justify-between text-[13px] font-semibold text-slate-700">
                                     <span>ZIP Code <span className="text-blue-500">*</span></span>
-                                    {loadingZipcode && <span className="font-normal text-blue-500 animate-pulse">Looking up…</span>}
+                                    {state && zipcodes.length > 0 && !zipcodeCity && <span className="font-normal text-emerald-500 text-[11px]">Suggestions enabled</span>}
+                                    {loadingZipcode && <span className="font-normal text-blue-500 animate-pulse text-[11px]">Looking up...</span>}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -873,6 +1045,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                         spellCheck={false}
                                         inputMode="numeric"
                                         maxLength={10}
+                                        disabled={!state}
                                         onChange={e => {
                                             const val = e.target.value
                                             setZip(val)
@@ -887,8 +1060,8 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                         }}
                                         onFocus={() => { if (zipcodes.length > 0) setShowZipSuggestions(true) }}
                                         onBlur={() => setTimeout(() => setShowZipSuggestions(false), 200)}
-                                        placeholder="e.g. 90210"
-                                        className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400"
+                                        placeholder={!state ? "Select state first" : "e.g. 90210"}
+                                        className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-400"
                                         required
                                     />
                                     {/* Spinner */}
@@ -916,49 +1089,31 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                                 </div>
                                             ))}
                                             {zipcodes.filter(z => z.postal_code.startsWith(zip)).length === 0 && (
-                                                <div className="px-3 py-2.5 text-[11px] text-slate-400 italic text-center">No matches — you can type any ZIP code</div>
+                                                <div className="px-3 py-2.5 text-[11px] text-slate-400 italic text-center">No matches</div>
                                             )}
                                         </div>
                                     )}
                                 </div>
                                 {/* Auto-detected city/state feedback */}
-                                {zipcodeCity ? (
+                                {zipcodeCity && (
                                     <p className="text-[10px] text-emerald-600 font-bold mt-1 flex items-center gap-1">
                                         <span>✓</span> {zipcodeCity}, {state}
                                     </p>
-                                ) : (
-                                    !state && <p className="text-[10px] text-slate-400 mt-1">Type your ZIP and we'll auto-detect your state</p>
                                 )}
-                            </div>
-
-                            {/* State — auto-filled or manual override */}
-                            <div className="space-y-1.5">
-                                <label className="flex items-center justify-between text-[13px] font-semibold text-slate-700">
-                                    <span>State <span className="text-blue-500">*</span></span>
-                                    {state && !zipcodeCity && <span className="font-normal text-slate-400 text-[11px]">ZIP suggestions enabled</span>}
-                                </label>
-                                <select
-                                    value={state}
-                                    onChange={e => handleStateChange(e.target.value)}
-                                    className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
-                                    required
-                                >
-                                    <option value="">Select State</option>
-                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                                {loadingZipcodes && <p className="text-[11px] text-blue-500 animate-pulse">Loading ZIP codes for {state}…</p>}
                             </div>
                         </div>
 
                         {/* CAPTCHA */}
-                        <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl mt-2">
-                            <Captcha 
-                                code={securityCode} 
-                                onRefresh={() => { generateSecurityCode(); setUserSecurityCode('') }} 
-                            />
+                        <div className="flex flex-col gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl mt-2">
+                            <div className="flex justify-center w-full">
+                                <Captcha 
+                                    code={securityCode} 
+                                    onRefresh={() => { generateSecurityCode(); setUserSecurityCode('') }} 
+                                />
+                            </div>
                             <input type="text" value={userSecurityCode} onChange={e => setUserSecurityCode(e.target.value.toUpperCase().slice(0, 4))}
                                 placeholder="Enter code"
-                                className="flex-1 bg-white text-slate-900 text-[14px] rounded-xl px-4 py-2 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400 uppercase text-center font-bold"
+                                className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400 uppercase text-center font-bold tracking-widest"
                                 maxLength={4} required autoComplete="off" />
                         </div>
 

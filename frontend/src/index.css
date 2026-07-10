@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -934,4 +934,83 @@
 }
 .custom-quill .ql-toolbar button.ql-active {
   color: #4f46e5;
+}
+
+/* ── Quill Font Size Picker Labels ──────────────────────────── */
+/* Make the size dropdown wide enough */
+.custom-quill .ql-toolbar .ql-size {
+  width: 90px;
+}
+
+/* Add a scrollbar to the size dropdown since we have many options */
+.custom-quill .ql-snow .ql-picker.ql-size .ql-picker-options {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Label shown in the closed picker button */
+.custom-quill .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.ql-snow .ql-picker.ql-size .ql-picker-label::before {
+  content: 'Size';
+}
+/* Labels for each size option in the dropdown */
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='10px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='10px']::before { content: '10px'; font-size: 10px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='12px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='12px']::before { content: '12px'; font-size: 12px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='14px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='14px']::before { content: '14px'; font-size: 14px; }
+
+/* Default size (no data-value = normal/16px) */
+.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before { content: '16px (default)'; font-size: 14px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='18px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='18px']::before { content: '18px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='20px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='20px']::before { content: '20px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='24px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='24px']::before { content: '24px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='28px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='28px']::before { content: '28px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='32px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='32px']::before { content: '32px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='36px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='36px']::before { content: '36px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='48px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='48px']::before { content: '48px'; font-size: 16px; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='54px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='54px']::before { content: '54px (huge)'; font-size: 16px; font-weight: bold; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='64px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='64px']::before { content: '64px'; font-size: 16px; font-weight: bold; }
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='72px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='72px']::before { content: '72px'; font-size: 16px; font-weight: bold; }
+
+/* Show selected size in the label when a value is chosen */
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before {
+  content: attr(data-value);
+}
+
+/* ── Responsive CMS Rich Text ───────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-responsive-text {
+    word-break: break-word;
+    white-space: normal !important;
+  }
+  .hero-responsive-text [style*="font-size"] {
+    /* Dynamically scale down any inline font-sizes set by Quill so they fit on mobile */
+    font-size: clamp(24px, 8vw, 42px) !important;
+    line-height: 1.15 !important;
+  }
 }
