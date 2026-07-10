@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { vendorProfile } from '../../services/vendorApi';
 import { getLogoUrl } from '../../utils/imageUrl';
 import { useCMS } from '../../hooks/useCMS';
@@ -8,9 +8,12 @@ const VendorProfile = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [logoSaving, setLogoSaving] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const logoInputRef = useRef(null);
+    const [logoPreview, setLogoPreview] = useState(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -52,6 +55,40 @@ const VendorProfile = () => {
         });
     };
 
+    const handleLogoChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        // Show instant preview
+        const objectUrl = URL.createObjectURL(file);
+        setLogoPreview(objectUrl);
+        // Auto-save the logo immediately
+        setLogoSaving(true);
+        setError('');
+        setSuccess('');
+        try {
+            const fd = new FormData();
+            fd.append('logo', file);
+            await vendorProfile.update(fd);
+            setSuccess('Logo updated! Your listing will reflect the new logo shortly.');
+            loadProfile();
+        } catch (err) {
+            console.error("Logo upload error:", err.response?.data);
+            let errMsg = 'Failed to upload logo. Please try again.';
+            if (err.response?.data) {
+                // If DRF returns { name: ['This field is required.'] }
+                const firstError = Object.values(err.response.data)[0];
+                if (Array.isArray(firstError)) {
+                    errMsg = `Validation error: ${firstError[0]}`;
+                } else if (typeof firstError === 'string') {
+                    errMsg = firstError;
+                }
+            }
+            setError(errMsg);
+        } finally {
+            setLogoSaving(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -59,7 +96,13 @@ const VendorProfile = () => {
         setSaving(true);
 
         try {
-            await vendorProfile.update(formData);
+            const fd = new FormData();
+            Object.keys(formData).forEach(key => {
+                if (key === 'logo' && formData[key] === undefined) return;
+                fd.append(key, formData[key]);
+            });
+
+            await vendorProfile.update(fd);
             setSuccess('Profile updated successfully!');
             setIsEditing(false);
             loadProfile();
@@ -83,6 +126,27 @@ const VendorProfile = () => {
         });
     };
 
+    const handleDeleteLogo = async (e) => {
+        e.stopPropagation();
+        if (!window.confirm("Are you sure you want to remove your logo?")) return;
+        setLogoSaving(true);
+        setError('');
+        setSuccess('');
+        try {
+            const fd = new FormData();
+            fd.append('logo', '');
+            await vendorProfile.update(fd);
+            setLogoPreview(null);
+            setSuccess('Logo removed successfully.');
+            loadProfile();
+        } catch (err) {
+            console.error("Logo removal error:", err.response?.data);
+            setError('Failed to remove logo. Please try again.');
+        } finally {
+            setLogoSaving(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
@@ -97,30 +161,55 @@ const VendorProfile = () => {
             <div className="relative bg-white pt-6 md:pt-8 pb-6 md:pb-8 px-6 md:px-8 rounded-b-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 overflow-hidden border-b border-slate-100">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center text-slate-900 relative z-10 w-full gap-4 md:gap-0">
                     <div className="flex items-center gap-4">
-                        {/* Vendor Logo */}
-                        {profile?.logo ? (
-                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden flex-shrink-0">
-                                <img
-                                    src={getLogoUrl(profile.logo)}
-                                    alt={profile.name}
-                                    className="w-full h-full object-contain p-2"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentElement.innerHTML = `
-                                            <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        {/* Vendor Logo - always clickable */}
+                        <div className="flex flex-col items-center gap-1">
+                            <div className="relative group cursor-pointer" onClick={() => logoInputRef.current?.click()} title="Click to change logo">
+                                {logoPreview || profile?.logo ? (
+                                    <div className="relative">
+                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden flex-shrink-0">
+                                            {logoSaving ? (
+                                                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                            ) : (
+                                                <img
+                                                    src={logoPreview || getLogoUrl(profile.logo)}
+                                                    alt={profile?.name}
+                                                    className="w-full h-full object-contain p-2 group-hover:opacity-60 transition-opacity"
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                />
+                                            )}
+                                        </div>
+                                        {/* Delete Logo Button */}
+                                        <button 
+                                            onClick={handleDeleteLogo}
+                                            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm hover:bg-red-600 transition-colors z-20"
+                                            title="Remove logo"
+                                        >
+                                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                                             </svg>
-                                        `;
-                                    }}
-                                />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 flex-shrink-0">
+                                        {logoSaving ? (
+                                            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                        ) : (
+                                            <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            </svg>
+                                        )}
+                                    </div>
+                                )}
+                                {/* Camera badge */}
+                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#1a56ff] rounded-full flex items-center justify-center border-2 border-white shadow-sm group-hover:bg-blue-700 transition-colors">
+                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                </div>
+                                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoChange} />
                             </div>
-                        ) : (
-                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-200 flex-shrink-0">
-                                <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
-                        )}
+                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center leading-tight cursor-pointer hover:text-blue-700 transition-colors" onClick={() => logoInputRef.current?.click()}>
+                                {logoSaving ? 'Uploading...' : logoPreview || profile?.logo ? 'Change Logo' : 'Upload Logo'}
+                            </span>
+                        </div>
                         <div>
                             <div className="flex items-center gap-2.5 mb-1.5">
                                 <h1 className="text-3xl font-extrabold tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{get('profile', 'heading', 'Yard Profile')}</h1>

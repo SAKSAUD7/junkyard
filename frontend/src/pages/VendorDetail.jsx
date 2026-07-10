@@ -78,6 +78,16 @@ const VendorDetail = () => {
 
     const logoUrl = getLogoUrl(vendor.logo);
 
+    const mergedParts = Array.from(new Set([
+        ...(vendor.services ? vendor.services.split(',').map(s => s.trim()).filter(Boolean) : []),
+        ...(vendor.portal_inventory?.parts || [])
+    ]));
+
+    const mergedBrands = Array.from(new Set([
+        ...(vendor.brands ? vendor.brands.split(',').map(b => b.trim()).filter(Boolean) : []),
+        ...(vendor.portal_inventory?.makes || [])
+    ]));
+
     const localBusinessSchema = getLocalBusinessSchema({
         name: vendor.name,
         address: vendor.address,
@@ -208,7 +218,96 @@ const VendorDetail = () => {
                                 </div>
                                 <p className="text-slate-600 text-[13px] font-semibold">{vendor.state}</p>
                             </div>
+                            
+                            {/* Website */}
+                            {vendor.website && (
+                                <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.03)] p-5 col-span-1 sm:col-span-2">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-9 h-9 bg-purple-50 rounded-xl flex items-center justify-center">
+                                            <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" /></svg>
+                                        </div>
+                                        <h3 className="font-black text-slate-800 text-[14px]">Website</h3>
+                                    </div>
+                                    <a href={vendor.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 hover:underline text-[13px] font-semibold break-all">
+                                        {vendor.website}
+                                    </a>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Inventory / Services */}
+                        {(mergedParts.length > 0 || mergedBrands.length > 0) && (
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.03)] p-6">
+                                <h2 className="font-black text-slate-900 text-[16px] mb-4 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                    <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /></svg>
+                                    </div>
+                                    Parts & Services Inventory
+                                </h2>
+                                
+                                {mergedParts.length > 0 && (
+                                    <div className="mb-4">
+                                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-wider mb-2">Parts / Services Offered</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {mergedParts.map((service, idx) => (
+                                                <span key={`srv-${idx}`} className="bg-slate-50 border border-slate-100 text-slate-600 px-3 py-1 rounded-full text-[13px] font-medium">
+                                                    {service}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {mergedBrands.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-wider mb-2">Brands Supported</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {mergedBrands.map((brand, idx) => (
+                                                <span key={`brnd-${idx}`} className="bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1 rounded-full text-[13px] font-bold">
+                                                    {brand}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        
+                        {/* Yard Photos */}
+                        {vendor.images && vendor.images.length > 0 && (() => {
+                            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+                            const resolveImg = (img) => {
+                                if (!img) return null;
+                                const raw = img.url || img;
+                                if (typeof raw !== 'string') return null;
+                                if (raw.startsWith('http')) return raw;
+                                return `${API_BASE}${raw.startsWith('/') ? '' : '/'}${raw}`;
+                            };
+                            return (
+                                <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.03)] p-6">
+                                    <h2 className="font-black text-slate-900 text-[16px] mb-4 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
+                                            <svg className="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                                        </div>
+                                        Yard Photos
+                                    </h2>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        {vendor.images.map((imgItem, idx) => {
+                                            const src = resolveImg(imgItem);
+                                            if (!src) return null;
+                                            return (
+                                                <a key={idx} href={src} target="_blank" rel="noopener noreferrer"
+                                                   className="aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-sm group relative block">
+                                                    <img src={src} alt={`${vendor.name} yard photo ${idx + 1}`}
+                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                         onError={(e) => { e.currentTarget.closest('a').style.display = 'none'; }} />
+                                                </a>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })()}
 
                         {/* Customer Review Snippet */}
                         {vendor.review_snippet && (

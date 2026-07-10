@@ -4,6 +4,7 @@ import Captcha from '../Captcha';
 import PincodeSearch from '../PincodeSearch';
 import PromoBanner from '../PromoBanner';
 
+<<<<<<< HEAD
 // ── Searchable Dropdown Component ───────────────────────────────────────────
 function SearchableDropdown({ value, label, placeholder, options, onSelect, disabled, loading }) {
     const [open, setOpen] = useState(false);
@@ -78,6 +79,9 @@ function SearchableDropdown({ value, label, placeholder, options, onSelect, disa
 }
 
 export default function HeroSection({ get }) {
+=======
+export default function HeroSection({ get, ready = false }) {
+>>>>>>> origin/MRPs
     const leadFormRef = useRef(null);
 
     // ── Hero 2-Step Inline Lead Form State ─────────────────────────────────
@@ -365,22 +369,43 @@ export default function HeroSection({ get }) {
             </div>
 
             <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-2">
-                <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 text-center lg:text-left">
-                    <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
-                        <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                        The #1 Junkyard & Auto Salvage Network in the U.S.
+                    <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 text-center lg:text-left">
+                        <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                            </svg>
+                            The #1 Junkyard & Auto Salvage Network in the U.S.
+                        </div>
+
+                        {/* Heading — hidden until CMS ready to prevent FOUC */}
+                        {!ready ? (
+                            <div className="mb-4 lg:mb-5 space-y-3">
+                                <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-full" />
+                                <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-5/6" />
+                                <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-4/6" />
+                            </div>
+                        ) : (
+                            <div
+                                className="hero-responsive-text text-[22px] sm:text-3xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] transition-opacity duration-300 opacity-100 [&>p]:m-0"
+                                style={{ fontFamily: "'Outfit', sans-serif" }}
+                                dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds') }}
+                            />
+                        )}
+
+                        {/* Subheading — hidden until CMS ready */}
+                        {!ready ? (
+                            <div className="space-y-2 mb-2 lg:mb-8 max-w-[540px] mx-auto lg:mx-0">
+                                <div className="h-5 bg-slate-200/60 rounded-lg animate-pulse w-full" />
+                                <div className="h-5 bg-slate-200/60 rounded-lg animate-pulse w-4/5" />
+                            </div>
+                        ) : (
+                            <div
+                                className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 transition-opacity duration-300 opacity-100 [&>p]:m-0"
+                                dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.') }}
+                            />
+                        )}
                     </div>
 
-                    <div className="hero-responsive-text text-4xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-3 tracking-tight leading-[1.15] [&>p]:m-0" style={{ fontFamily: "'Outfit', sans-serif" }}
-                        dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds') }}
-                    />
-
-                    <div className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-6 lg:mb-6 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 [&>p]:m-0"
-                        dangerouslySetInnerHTML={{ __html: get('hero', 'subheading', 'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.') }}
-                    />
-                </div>
 
                 <div className="w-[100vw] -ml-[calc(50vw-50%)] relative z-0 flex lg:hidden items-center justify-center mix-blend-multiply aspect-video mt-0 mb-2">
                     <video

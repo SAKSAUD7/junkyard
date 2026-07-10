@@ -50,13 +50,16 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [daysRange, setDaysRange] = useState(7);
+    const [dateMenuOpen, setDateMenuOpen] = useState(false);
+
     useEffect(() => {
         const fetchStats = async () => {
             setLoading(true);
             setError(null);
             try {
                 const [data, vendors] = await Promise.all([
-                    api.getAdminStats(token),
+                    api.getAdminStats(token, daysRange),
                     api.getTrustedVendors(5)
                 ]);
                 setStats(data);
@@ -70,7 +73,7 @@ export default function AdminDashboard() {
         };
         if (token) fetchStats();
         else setLoading(false);
-    }, [token]);
+    }, [token, daysRange]);
 
     if (loading) return (
         <div className="flex flex-col justify-center items-center h-96 gap-4">
@@ -118,9 +121,9 @@ export default function AdminDashboard() {
     ];
 
     const today = new Date();
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 6);
-    const dateRange = `${sevenDaysAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    const pastDate = new Date(today);
+    pastDate.setDate(today.getDate() - (daysRange - 1));
+    const formattedDateRange = `${pastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
     return (
         <div className="max-w-[1600px] mx-auto space-y-6">
@@ -132,9 +135,48 @@ export default function AdminDashboard() {
                     </h1>
                     <p className="text-sm text-slate-500 mt-1">Here's what's happening with your marketplace today.</p>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm">
-                    <CalendarIcon className="w-4 h-4 text-slate-400" />
-                    {dateRange}
+                
+                <div className="relative">
+                    <button 
+                        onClick={() => setDateMenuOpen(!dateMenuOpen)}
+                        className={`flex items-center gap-2 px-4 py-2.5 bg-white border rounded-xl text-sm font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/50 ${dateMenuOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200'}`}
+                    >
+                        <CalendarIcon className={`w-4 h-4 ${dateMenuOpen ? 'text-blue-500' : 'text-slate-400'}`} />
+                        <span>{formattedDateRange}</span>
+                        <svg className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${dateMenuOpen ? 'rotate-180 text-blue-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    {dateMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-200 text-sm font-semibold text-slate-700">
+                            {[
+                                { label: 'Last 7 Days', value: 7 },
+                                { label: 'Last 14 Days', value: 14 },
+                                { label: 'Last 30 Days', value: 30 }
+                            ].map((opt) => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => {
+                                        setDaysRange(opt.value);
+                                        setDateMenuOpen(false);
+                                    }}
+                                    className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                                        daysRange === opt.value 
+                                            ? 'bg-blue-50 text-blue-700' 
+                                            : 'hover:bg-slate-50 hover:text-slate-900'
+                                    }`}
+                                >
+                                    {opt.label}
+                                    {daysRange === opt.value && (
+                                        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 

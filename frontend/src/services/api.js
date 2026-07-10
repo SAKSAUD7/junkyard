@@ -130,9 +130,29 @@ export const api = {
     return response.data;
   },
 
-  getCities: async () => {
-    const response = await axiosInstance.get('/common/cities/');
+  getCities: async (state) => {
+    const params = state ? { state } : {};
+    const response = await axiosInstance.get('/common/cities/', { params });
     return response.data;
+  },
+
+  getAllParts: async () => {
+    let allParts = [];
+    let page = 1;
+    while (true) {
+      const response = await axiosInstance.get('/common/parts/', { params: { page } });
+      const data = response.data;
+      allParts = allParts.concat(data.results || []);
+      if (!data.next) break;
+      page++;
+    }
+    return allParts.sort((a, b) => a.partName.localeCompare(b.partName));
+  },
+
+  getAllMakes: async () => {
+    const response = await axiosInstance.get('/common/makes/');
+    const makes = response.data.results || [];
+    return makes.sort((a, b) => a.makeName.localeCompare(b.makeName));
   },
 
   // Hollander / ZipCode Search
@@ -158,9 +178,9 @@ export const api = {
   },
 
   // Admin / Common
-  getAdminStats: async (token) => {
+  getAdminStats: async (token, days = 7) => {
     // Token is handled by interceptor now, but kept argument for compatibility
-    const response = await axiosInstance.get('/common/admin-stats/');
+    const response = await axiosInstance.get(`/common/admin-stats/?days=${days}`);
     return response.data;
   },
 
@@ -180,7 +200,10 @@ export const api = {
   },
 
   submitYard: async (data) => {
-    const response = await axiosInstance.post('/yard-submissions/', data);
+    const isFormData = data instanceof FormData;
+    const response = await axiosInstance.post('/yard-submissions/', data, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : {}
+    });
     return response.data;
   },
 

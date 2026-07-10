@@ -12,16 +12,39 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'yard_id', 'name', 'address', 'city', 'state', 'zip_code', 'zipcode',
             'phone', 'email', 'website',
-            'description', 'review_snippet', 'rating',
+            'description', 'services', 'brands', 'review_snippet', 'rating',
             'rating_stars', 'rating_percentage',
-            'is_top_rated', 'is_featured', 'profile_url', 'logo',
-            'is_trusted', 'trusted_vendor', 'is_active', 'username', 'leads_count', 'ad_plan'
+            'is_top_rated', 'is_featured', 'profile_url', 'logo', 'images',
+            'is_trusted', 'trusted_vendor', 'is_active', 'username', 'leads_count', 'ad_plan',
+            'portal_inventory'
         ]
 
     username = serializers.SerializerMethodField()
     leads_count = serializers.SerializerMethodField()
     ad_plan = serializers.SerializerMethodField()
+    portal_inventory = serializers.SerializerMethodField()
     
+    def get_portal_inventory(self, obj):
+        try:
+            if hasattr(obj, 'inventory_items'):
+                items = obj.inventory_items.filter(is_available=True)
+                makes = set()
+                parts = set()
+                for item in items:
+                    if item.item_type == 'make' and item.make:
+                        makes.add(item.make)
+                    elif item.item_type == 'part' and item.part_name:
+                        parts.add(item.part_name)
+                    elif item.item_type == 'model':
+                        if item.make: makes.add(item.make)
+                return {
+                    'makes': list(makes),
+                    'parts': list(parts)
+                }
+        except Exception:
+            return {'makes': [], 'parts': []}
+        return {'makes': [], 'parts': []}
+
     def get_ad_plan(self, obj):
         try:
             active_ad = getattr(obj, 'ads', None)

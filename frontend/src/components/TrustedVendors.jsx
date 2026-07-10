@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
 import { useCMS } from '../hooks/useCMS';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const PLACEHOLDER =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M20 75 L50 30 L80 75 Z' fill='%23cbd5e1'/%3E%3Ccircle cx='70' cy='28' r='10' fill='%23cbd5e1'/%3E%3C/svg%3E";
@@ -36,6 +37,11 @@ export default function TrustedVendors() {
     const { get } = useCMS('home');
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
+    
+    // Auto-scroll refs
+    const scrollRef = useRef(null);
+    const isInteracting = useRef(false);
+
     useEffect(() => {
         api.getTrustedVendors(20)
             .then(v => {
@@ -46,6 +52,24 @@ export default function TrustedVendors() {
             .catch(() => setVendors([...FALLBACK_VENDORS, ...FALLBACK_VENDORS, ...FALLBACK_VENDORS, ...FALLBACK_VENDORS, ...FALLBACK_VENDORS]))
             .finally(() => setLoading(false));
     }, []);
+
+    // Auto-scroll using setInterval — pauses on hover/touch, resumes on leave
+    useEffect(() => {
+        if (!vendors.length) return;
+        const SPEED = 1.0; // px per tick (16ms interval = ~60px/sec)
+
+        const timer = setInterval(() => {
+            if (!scrollRef.current || isInteracting.current) return;
+            const el = scrollRef.current;
+            el.scrollLeft += SPEED;
+            // Seamlessly loop: when near end, jump back to start
+            if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
+                el.scrollLeft = 0;
+            }
+        }, 16);
+
+        return () => clearInterval(timer);
+    }, [vendors]);
 
     if (loading) {
         return (
@@ -73,7 +97,7 @@ export default function TrustedVendors() {
         >
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4">
                     <div>
                         <h2 className="text-3xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {get('trusted_vendors', 'heading', 'Our Network Of Trusted Vendors')}
@@ -82,22 +106,45 @@ export default function TrustedVendors() {
                             {get('trusted_vendors', 'subheading', 'Trusted by thousands for quality parts and great prices.')}
                         </p>
                     </div>
+                    {/* Navigation Arrows */}
+                    <div className="flex gap-3">
+                        <button 
+                            onClick={() => {
+                                isInteracting.current = true;
+                                if(scrollRef.current) scrollRef.current.scrollBy({ left: -280, behavior: 'smooth' });
+                                setTimeout(() => isInteracting.current = false, 1000);
+                            }}
+                            className="p-2 rounded-full border-2 border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transition-all"
+                        >
+                            <ChevronLeftIcon className="w-6 h-6" />
+                        </button>
+                        <button 
+                            onClick={() => {
+                                isInteracting.current = true;
+                                if(scrollRef.current) scrollRef.current.scrollBy({ left: 280, behavior: 'smooth' });
+                                setTimeout(() => isInteracting.current = false, 1000);
+                            }}
+                            className="p-2 rounded-full border-2 border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transition-all"
+                        >
+                            <ChevronRightIcon className="w-6 h-6" />
+                        </button>
+                    </div>
                 </div>
 
-                {/* Carousel Track (Marquee) */}
+                {/* Carousel Track (Swipeable) */}
+                <style>{`
+                    .no-scrollbar::-webkit-scrollbar { display: none; }
+                `}</style>
                 <div
-                    className="flex gap-5 pb-4 overflow-hidden tv-marquee-container"
+                    ref={scrollRef}
+                    className="flex gap-5 pb-4 overflow-x-auto no-scrollbar scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    onMouseEnter={() => isInteracting.current = true}
+                    onMouseLeave={() => isInteracting.current = false}
+                    onTouchStart={() => isInteracting.current = true}
+                    onTouchEnd={() => isInteracting.current = false}
+                    onTouchCancel={() => isInteracting.current = false}
                 >
-                    <div className="flex gap-5 min-w-max tv-marquee" style={{ animation: 'marquee 150s linear infinite' }}>
-                        <style>{`
-                            @keyframes marquee {
-                                0% { transform: translateX(0); }
-                                100% { transform: translateX(-50%); }
-                            }
-                            .tv-marquee-container:hover .tv-marquee {
-                                animation-play-state: paused !important;
-                            }
-                        `}</style>
                     {vendors.map((vendor, index) => {
                         const theme = THEMES[index % THEMES.length];
                         const logoUrl = vendor.logo ? getLogoUrl(vendor.logo) : PLACEHOLDER;
@@ -160,7 +207,6 @@ export default function TrustedVendors() {
                             </Link>
                         );
                     })}
-                    </div>
                 </div>
 
                 {/* View All CTA */}

@@ -152,18 +152,18 @@ export default function BrowseStates() {
                                     <button
                                         key={state.stateCode}
                                         onClick={() => handleStateSelect(state)}
-                                        className="group flex flex-col md:flex-row items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 hover:shadow-[0_4px_12px_rgb(37,99,235,0.08)] transition-all text-left"
+                                        className="group flex flex-row items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 hover:shadow-[0_4px_12px_rgb(37,99,235,0.08)] transition-all text-left"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[11px] uppercase tracking-wider group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <div className="w-10 h-10 min-w-[40px] rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[11px] uppercase tracking-wider group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                                 {state.stateCode}
                                             </div>
-                                            <div>
-                                                <span className="block font-bold text-slate-900 group-hover:text-blue-600 transition-colors text-[15px]">{state.stateName}</span>
-                                                <span className="block text-[13px] font-medium text-slate-500">{state.junkyardCount} active yards</span>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors text-[15px]">{state.stateName}</span>
+                                                <span className="text-[13px] font-medium text-slate-500">{state.junkyardCount} active yards</span>
                                             </div>
                                         </div>
-                                        <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors mt-2 md:mt-0">
+                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                         </div>
                                     </button>

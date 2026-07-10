@@ -80,3 +80,31 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.email}"
+
+
+class Feedback(models.Model):
+    """Global user feedback submissions"""
+    TOPIC_CHOICES = (
+        ('find_business', 'Can\'t find a business'),
+        ('bug', 'Report a bug or issue'),
+        ('suggestion', 'Feature suggestion'),
+        ('general', 'General feedback'),
+    )
+    STATUS_CHOICES = (
+        ('unread', 'Unread'),
+        ('read', 'Read'),
+        ('resolved', 'Resolved'),
+    )
+    
+    topic = models.CharField(max_length=50, choices=TOPIC_CHOICES)
+    description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unread', db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Feedback'
+        verbose_name_plural = 'Feedback Submissions'
+        
+    def __str__(self):
+        return f"Feedback #{self.id} - {self.get_topic_display()}"

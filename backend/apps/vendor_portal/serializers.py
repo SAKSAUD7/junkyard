@@ -114,7 +114,7 @@ class VendorProfileUpdateSerializer(serializers.ModelSerializer):
     """Vendor profile management"""
     
     business_hours = VendorBusinessHoursSerializer(many=True, read_only=True)
-    zipcode = serializers.CharField(source='zip_code')
+    zipcode = serializers.CharField(source='zip_code', required=False)
     
     class Meta:
         model = Vendor
@@ -138,26 +138,26 @@ class VendorInventorySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     
-    def validate(self, data):
+    def validate(self, attrs):
         """Validate hierarchical structure"""
-        item_type = data.get('item_type')
+        item_type = attrs.get('item_type')
         
         if item_type == 'make':
-            if not data.get('make'):
+            if not attrs.get('make'):
                 raise serializers.ValidationError("Make name is required for make type")
         elif item_type == 'model':
-            if not data.get('make') or not data.get('model'):
+            if not attrs.get('make') or not attrs.get('model'):
                 raise serializers.ValidationError("Make and Model are required for model type")
         elif item_type == 'part':
-            if not data.get('make') or not data.get('model') or not data.get('part_name'):
+            if not attrs.get('make') or not attrs.get('model') or not attrs.get('part_name'):
                 raise serializers.ValidationError("Make, Model, and Part name are required for part type")
         
         # Validate year range
-        if data.get('year_start') and data.get('year_end'):
-            if data['year_start'] > data['year_end']:
+        if attrs.get('year_start') and attrs.get('year_end'):
+            if attrs['year_start'] > attrs['year_end']:
                 raise serializers.ValidationError("Start year cannot be greater than end year")
         
-        return data
+        return attrs
 
 
 

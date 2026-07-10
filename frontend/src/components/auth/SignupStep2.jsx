@@ -94,12 +94,8 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                 user_type: 'customer' // Default user type
             };
 
-            console.log('Submitting registration:', { ...registrationData, password: '***', password2: '***' });
-
             // Call registration API using authService
             const data = await authService.register(registrationData);
-
-            console.log('Registration successful:', data);
 
             // authService handles token storage in 'access_token', 'refresh_token', 'user'
             // We also store 'user_data' to maintain compatibility with this component's expectations

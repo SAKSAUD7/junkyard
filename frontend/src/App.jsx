@@ -16,7 +16,9 @@ const JunkyardDetail = lazy(() => import('./pages/JunkyardDetail'))
 const AllVendors   = lazy(() => import('./pages/AllVendors'))
 const VendorDetail = lazy(() => import('./pages/VendorDetail'))
 const QuoteRequest = lazy(() => import('./pages/QuoteRequest'))
+const AddYardStart = lazy(() => import('./pages/AddYardStart'))
 const AddYardPage  = lazy(() => import('./pages/AddYardPage'))
+const AdminLogin   = lazy(() => import('./pages/AdminLogin'))
 const About        = lazy(() => import('./pages/About'))
 const Contact      = lazy(() => import('./pages/Contact'))
 const Privacy      = lazy(() => import('./pages/Privacy'))
@@ -36,6 +38,7 @@ import { VendorAuthProvider } from './contexts/VendorAuthContext'
 import ProtectedVendorRoute from './components/vendor/ProtectedRoute'
 import VendorLayout from './layouts/VendorLayout'
 const VendorLogin = lazy(() => import('./pages/vendor/Login'))
+const VendorSignUp = lazy(() => import('./pages/vendor/SignUp'))
 const VendorForgotPassword = lazy(() => import('./pages/vendor/ForgotPassword'))
 const VendorDashboard = lazy(() => import('./pages/vendor/Dashboard'))
 const VendorProfile = lazy(() => import('./pages/vendor/Profile'))
@@ -59,6 +62,7 @@ const AdminSettings = lazy(() => import('./pages/admin/Settings'))
 const AdminCMS = lazy(() => import('./pages/admin/CMS'))
 const AdminRoles = lazy(() => import('./pages/admin/Roles'))
 const AdminPartPricing = lazy(() => import('./pages/admin/PartPricing'))
+const AdminFeedback = lazy(() => import('./pages/admin/FeedbackAdmin'))
 
 // Blog imports
 const BlogList = lazy(() => import('./pages/blog/BlogList'))
@@ -66,6 +70,7 @@ const BlogDetail = lazy(() => import('./pages/blog/BlogDetail'))
 const AdminBlogList = lazy(() => import('./pages/admin/blog/BlogList'))
 const AdminBlogEditor = lazy(() => import('./pages/admin/blog/BlogEditor'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+const FeedbackWidget = lazy(() => import('./components/FeedbackWidget'))
 
 // Page load spinner (minimal, no deps)
 function PageSpinner() {
@@ -131,6 +136,7 @@ function App() {
       <ScrollObserver />
       <FloatingLeadWidget />
       <Suspense fallback={<PageSpinner />}>
+        <FeedbackWidget />
         <PageTransition>
           <Routes>
             {/* Public Routes */}
@@ -142,10 +148,11 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/admin/login" element={<SignIn />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
 
             {/* Public Routes */}
-            <Route path="/add-a-yard" element={<AddYardPage />} />
+            <Route path="/add-a-yard" element={<AddYardStart />} />
+            <Route path="/add-a-yard/form" element={<AddYardPage />} />
 
             {/* Protected Routes */}
 
@@ -183,6 +190,11 @@ function App() {
             <Route path="/vendor/login" element={
               <VendorAuthProvider>
                 <VendorLogin />
+              </VendorAuthProvider>
+            } />
+            <Route path="/vendor/signup" element={
+              <VendorAuthProvider>
+                <VendorSignUp />
               </VendorAuthProvider>
             } />
             <Route path="/vendor/forgot-password" element={
@@ -224,6 +236,7 @@ function App() {
               <Route path="blog" element={<AdminBlogList />} />
               <Route path="blog/new" element={<AdminBlogEditor />} />
               <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
+              <Route path="feedback" element={<AdminFeedback />} />
               <Route path="cms" element={<AdminCMS />} />
               <Route path="cms/:page" element={<AdminCMS />} />
               <Route path="roles" element={<AdminRoles />} />

@@ -35,11 +35,8 @@ export default function PincodeSearch() {
             try {
                 // Use centralized API service
                 const data = await api.searchPincodes(pincode)
-                console.log('Pincode API Response:', data)
-                console.log('Number of suggestions:', data.length)
                 setSuggestions(data)
                 setShowDropdown(data.length > 0)
-                console.log('Show dropdown:', data.length > 0)
             } catch (error) {
                 console.error('Error fetching pincodes:', error)
                 setSuggestions([])

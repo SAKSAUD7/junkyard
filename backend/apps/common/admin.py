@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Make, Model, Part, State, City
+from .models import Make, Model, Part, State, City, ContactMessage, Feedback
 
 
 @admin.register(Make)
@@ -37,3 +37,19 @@ class CityAdmin(admin.ModelAdmin):
     list_filter = ['state']
     search_fields = ['city_name', 'state']
     ordering = ['city_name']
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'name', 'email', 'is_read', 'created_at']
+    list_filter = ['is_read', 'created_at']
+    search_fields = ['name', 'email', 'subject', 'message']
+    ordering = ['-created_at']
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ['topic', 'status', 'created_at']
+    list_filter = ['status', 'topic', 'created_at']
+    search_fields = ['description']
+    ordering = ['-created_at']

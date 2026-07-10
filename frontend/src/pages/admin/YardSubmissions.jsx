@@ -44,6 +44,17 @@ export default function YardSubmissions() {
     const [rejectNotes, setRejectNotes] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
+    
+    // Direct Email state
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [emailSubject, setEmailSubject] = useState('');
+    const [emailBody, setEmailBody] = useState('');
+
+    const getMediaUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http')) return url;
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${url.startsWith('/') ? '' : '/'}${url}`;
+    };
 
     useEffect(() => {
         fetchSubmissions();
@@ -149,6 +160,29 @@ export default function YardSubmissions() {
         } catch (err) {
             console.error('Error rejecting submission:', err);
             setToast({ message: 'Failed to reject submission', type: 'error' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleSendEmail = async () => {
+        try {
+            setActionLoading(true);
+            const token = localStorage.getItem('access_token');
+            await axios.post(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/${selectedSubmission.id}/send_email/`,
+                { subject: emailSubject, body: emailBody },
+                {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }
+            );
+            setToast({ message: 'Email sent successfully!', type: 'success' });
+            setShowEmailModal(false);
+            setEmailSubject('');
+            setEmailBody('');
+        } catch (err) {
+            console.error('Error sending email:', err);
+            setToast({ message: 'Failed to send email', type: 'error' });
         } finally {
             setActionLoading(false);
         }
@@ -308,9 +342,12 @@ export default function YardSubmissions() {
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Business Name</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Contact</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Location</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Plan</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Payment</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Created</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Vendor</th>
+                                <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#f3f4f6]">
@@ -350,8 +387,12 @@ export default function YardSubmissions() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-bold shadow-sm">
-                                                        {submission.business_name.charAt(0).toUpperCase()}
+                                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-bold shadow-sm overflow-hidden shrink-0">
+                                                        {submission.logo ? (
+                                                            <img src={getMediaUrl(submission.logo)} alt={submission.business_name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            submission.business_name.charAt(0).toUpperCase()
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-semibold text-[#1f2937]">{submission.business_name}</p>
@@ -368,6 +409,25 @@ export default function YardSubmissions() {
                                                     <MapPinIcon className="h-4 w-4 text-[#6b7280]" />
                                                     <span className="text-sm text-[#1f2937]">{submission.city}, {submission.state}</span>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
+                                                    submission.subscription_plan === 'featured' ? 'bg-amber-100 text-amber-700' :
+                                                    submission.subscription_plan === 'free' ? 'bg-slate-100 text-slate-600' :
+                                                    'bg-blue-100 text-blue-700'
+                                                }`}>
+                                                    {submission.subscription_plan || 'free'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
+                                                    submission.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                                                    submission.payment_status === 'none' ? 'bg-slate-100 text-slate-600' :
+                                                    submission.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
+                                                }`}>
+                                                    {submission.payment_status || 'none'}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg ${statusConfig.bg} ${statusConfig.text} ${statusConfig.glow}`}>
@@ -397,6 +457,15 @@ export default function YardSubmissions() {
                                                     <span className="text-sm text-[#9ca3af]">-</span>
                                                 )}
                                             </td>
+                                            <td className="px-6 py-4">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setSelectedSubmission(submission); }}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm"
+                                                >
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    View
+                                                </button>
+                                            </td>
                                         </tr>
                                     );
                                 })
@@ -415,20 +484,88 @@ export default function YardSubmissions() {
 
             {/* Detail Modal */}
             {selectedSubmission && !showRejectModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                        {/* Modal Header */}
-                        <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-5 flex justify-between items-center rounded-t-2xl">
-                            <div>
-                                <h2 className="text-xl font-bold text-slate-900">Submission Details</h2>
-                                <p className="text-sm text-slate-500 mt-1">ID: #{selectedSubmission.id}</p>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+                    <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+
+                        {/* ── Redesigned Modal Header ── */}
+                        <div className="sticky top-0 z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-t-2xl px-6 py-6">
+                            <div className="flex items-start justify-between gap-4">
+                                {/* Left – business identity */}
+                                <div className="flex items-center gap-4 min-w-0">
+                                    {/* Avatar */}
+                                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-slate-900 text-2xl font-black shadow-lg overflow-hidden border border-white/20">
+                                        {selectedSubmission.logo ? (
+                                            <img src={getMediaUrl(selectedSubmission.logo)} alt={selectedSubmission.business_name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            selectedSubmission.business_name?.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h2 className="text-xl font-black text-white truncate">{selectedSubmission.business_name}</h2>
+                                        <p className="text-slate-400 text-sm mt-0.5">
+                                            ID #{selectedSubmission.id} &nbsp;·&nbsp; {selectedSubmission.city}, {selectedSubmission.state}
+                                        </p>
+                                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                            {/* Status badge */}
+                                            {(() => {
+                                                const sc = getStatusBadge(selectedSubmission.status);
+                                                const SI = sc.icon;
+                                                return (
+                                                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold rounded-full ${sc.bg} ${sc.text}`}>
+                                                        <SI className="h-3 w-3" /> {sc.label}
+                                                    </span>
+                                                );
+                                            })()}
+                                            {/* Plan badge */}
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full capitalize ${
+                                                selectedSubmission.subscription_plan === 'featured' ? 'bg-amber-100 text-amber-700' :
+                                                selectedSubmission.subscription_plan === 'free' ? 'bg-slate-100 text-slate-600' :
+                                                'bg-blue-100 text-blue-700'
+                                            }`}>
+                                                {selectedSubmission.subscription_plan || 'free'} plan
+                                            </span>
+                                            {/* Payment badge */}
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full capitalize ${
+                                                selectedSubmission.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                                                selectedSubmission.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>
+                                                {selectedSubmission.payment_status || 'pending'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right – action buttons + close */}
+                                <div className="flex-shrink-0 flex items-center gap-2">
+                                    {selectedSubmission.created_vendor && (
+                                        <a
+                                            href={`/vendors/${selectedSubmission.created_vendor}`}
+                                            target="_blank" rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-colors border border-white/20"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                            View Listing
+                                        </a>
+                                    )}
+                                    {selectedSubmission.status === 'pending' && (
+                                        <button
+                                            onClick={() => handleApprove(selectedSubmission.id)}
+                                            disabled={actionLoading}
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
+                                        >
+                                            <CheckIcon className="w-3.5 h-3.5" />
+                                            {actionLoading ? '...' : 'Approve'}
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => setSelectedSubmission(null)}
+                                        className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors border border-white/20"
+                                    >
+                                        <XMarkIcon className="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                onClick={() => setSelectedSubmission(null)}
-                                className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-white/10 rounded-lg"
-                            >
-                                <XMarkIcon className="h-6 w-6" />
-                            </button>
                         </div>
 
                         <div className="p-6 space-y-6">
@@ -462,9 +599,18 @@ export default function YardSubmissions() {
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Email</label>
-                                        <a href={`mailto:${selectedSubmission.email}`} className="text-sm font-semibold text-blue-600 hover:underline">
-                                            {selectedSubmission.email}
-                                        </a>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-slate-700">{selectedSubmission.email}</span>
+                                            <button 
+                                                onClick={() => {
+                                                    setEmailSubject(`Regarding your submission: ${selectedSubmission.business_name}`);
+                                                    setShowEmailModal(true);
+                                                }}
+                                                className="px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[11px] font-bold transition-colors"
+                                            >
+                                                Send direct email
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Phone</label>
@@ -511,19 +657,68 @@ export default function YardSubmissions() {
 
                             {/* Services & Description */}
                             <div>
-                                <h3 className="text-lg font-bold text-[#1f2937] mb-4">Services & Description</h3>
+                                <h3 className="text-lg font-bold text-[#1f2937] mb-4">Services, Inventory & Description</h3>
                                 <div className="space-y-4">
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
-                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Services</label>
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Services / Parts</label>
                                         <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.services}</p>
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
-                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Brands</label>
-                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.brands}</p>
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Brands Supported</label>
+                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.brands || 'None specified'}</p>
+                                    </div>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Inventory / Part Categories</label>
+                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.parts_categories || 'None specified'}</p>
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Description</label>
-                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.description}</p>
+                                        <p className="text-sm text-[#1f2937] whitespace-pre-wrap">{selectedSubmission.description || 'No description provided.'}</p>
+                                    </div>
+                                    {selectedSubmission.images && selectedSubmission.images.length > 0 && (
+                                        <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
+                                            <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Yard Photos</label>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {selectedSubmission.images.map((img, idx) => {
+                                                    const mediaUrl = getMediaUrl(img.url || img);
+                                                    return (
+                                                        <a key={idx} href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                                                            <img src={mediaUrl} alt={`Yard Photo ${idx+1}`} className="w-full h-24 object-cover rounded-lg border shadow-sm hover:scale-105 transition-transform" />
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            {/* Subscription Info */}
+                            <div>
+                                <h3 className="text-lg font-bold text-[#1f2937] mb-4 flex items-center gap-2">
+                                    <SparklesIcon className="h-5 w-5 text-indigo-600" />
+                                    Plan & Payment
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100 flex flex-col items-center">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Subscription Plan</label>
+                                        <span className={`px-4 py-1.5 rounded-full text-sm font-bold capitalize ${
+                                            selectedSubmission.subscription_plan === 'free' ? 'bg-slate-100 text-slate-700' :
+                                            selectedSubmission.subscription_plan === 'featured' ? 'bg-amber-100 text-amber-700' :
+                                            'bg-blue-100 text-blue-700'
+                                        }`}>
+                                            {selectedSubmission.subscription_plan || 'free'}
+                                        </span>
+                                    </div>
+                                    <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100 flex flex-col items-center">
+                                        <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Payment Status</label>
+                                        <span className={`px-4 py-1.5 rounded-full text-sm font-bold capitalize ${
+                                            selectedSubmission.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                                            selectedSubmission.payment_status === 'none' ? 'bg-slate-100 text-slate-700' :
+                                            'bg-amber-100 text-amber-700'
+                                        }`}>
+                                            {selectedSubmission.payment_status || 'none'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -622,6 +817,64 @@ export default function YardSubmissions() {
                                     className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-slate-900 rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-sm shadow-red-200 transition-all disabled:opacity-50"
                                 >
                                     {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Direct Email Modal */}
+            {showEmailModal && selectedSubmission && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+                        <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl">
+                            <h3 className="text-xl font-bold text-white">Send Email to {selectedSubmission.business_name}</h3>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <p className="text-[#6b7280] text-sm">
+                                This email will be sent securely via our system directly to <strong>{selectedSubmission.email}</strong>.
+                            </p>
+                            <div>
+                                <label className="block text-sm font-bold text-[#374151] mb-2 uppercase tracking-wide">
+                                    Subject
+                                </label>
+                                <input
+                                    type="text"
+                                    value={emailSubject}
+                                    onChange={(e) => setEmailSubject(e.target.value)}
+                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-semibold text-slate-800"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-[#374151] mb-2 uppercase tracking-wide">
+                                    Message Body
+                                </label>
+                                <textarea
+                                    value={emailBody}
+                                    onChange={(e) => setEmailBody(e.target.value)}
+                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm font-medium text-slate-700"
+                                    rows="6"
+                                    placeholder="Type your message here..."
+                                />
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowEmailModal(false);
+                                        setEmailSubject('');
+                                        setEmailBody('');
+                                    }}
+                                    className="flex-1 px-4 py-2.5 bg-[#f9fafb] text-[#6b7280] rounded-xl hover:bg-[#e5e7eb] font-medium transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSendEmail}
+                                    disabled={actionLoading || !emailSubject || !emailBody}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold shadow-sm shadow-blue-200 transition-all disabled:opacity-50"
+                                >
+                                    {actionLoading ? 'Sending...' : 'Send Message'}
                                 </button>
                             </div>
                         </div>

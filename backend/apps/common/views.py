@@ -2,10 +2,10 @@ from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
-from .models import ContactMessage
+from .models import ContactMessage, Feedback
 from .serializers import (
     MakeSerializer, ModelSerializer, PartSerializer,
-    StateSerializer, ContactMessageSerializer
+    StateSerializer, ContactMessageSerializer, FeedbackSerializer
 )
 
 
@@ -24,7 +24,7 @@ class ModelViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Model.objects.all()  # type: ignore[attr-defined]
         
         # Filter by makeID if provided (frontend uses camelCase)
-        make_id = self.request.query_params.get('makeID', None) or self.request.query_params.get('make_id', None)
+        make_id = self.request.query_params.get('makeID', None) or self.request.query_params.get('make_id', None)  # type: ignore[union-attr]
         if make_id:
             queryset = queryset.filter(make__make_id=make_id)
         
@@ -90,6 +90,26 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
         return Response({'status': f'{deleted_count} messages deleted'})
 
 
+class FeedbackViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for global feedback.
+    POST: Public (AllowAny)
+    GET/PUT/DELETE: Admin only (IsAdminUser)
+    """
+    queryset = Feedback.objects.all()  # type: ignore[attr-defined]
+    serializer_class = FeedbackSerializer
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(status='unread')
+
+
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -153,19 +173,24 @@ class SiteStatsView(APIView):
 class CityListView(APIView):
     """
     Returns a distinct list of cities where active vendors are located.
+    Optionally filter by ?state=XX to get cities in a specific state.
     """
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         from apps.hollander.models import Vendor
+        state = request.query_params.get('state', None)
         cities = (
             Vendor.objects.filter(is_active=True)  # type: ignore[attr-defined]
             .values_list('city', flat=True)
             .exclude(city__isnull=True)
             .exclude(city__exact='')
         )
+        if state:
+            cities = cities.filter(state__iexact=state)
         cities = cities.distinct().order_by('city')
         return Response(list(cities))
+
 
 
 class AdminStatsView(APIView):
@@ -213,10 +238,17 @@ class AdminStatsView(APIView):
             .order_by('-count')[:10]
         )
         
-        # Recent leads (last 7 days) - optimized with indexed created_at
-        seven_days_ago = datetime.now() - timedelta(days=7)
+        # Recent leads trend - dynamic days
+        try:
+            days = int(request.query_params.get('days', 7))
+            if days <= 0 or days > 90:
+                days = 7
+        except ValueError:
+            days = 7
+            
+        start_date = datetime.now() - timedelta(days=days)
         recent_leads_qs = (
-            Lead.objects.filter(created_at__gte=seven_days_ago)  # type: ignore[attr-defined]
+            Lead.objects.filter(created_at__gte=start_date)  # type: ignore[attr-defined]
             .values('created_at__date')
             .annotate(count=Count('id'))
             .order_by('created_at__date')
@@ -224,8 +256,8 @@ class AdminStatsView(APIView):
         
         # Format recent leads for chart — real daily counts
         leads_trend = []
-        for i in range(7):
-            date = (datetime.now() - timedelta(days=6-i)).date()
+        for i in range(days):
+            date = (datetime.now() - timedelta(days=(days - 1)-i)).date()
             count = next((item['count'] for item in recent_leads_qs if item['created_at__date'] == date), 0)
             leads_trend.append({
                 'date': date.strftime('%Y-%m-%d'),

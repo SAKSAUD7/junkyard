@@ -7,7 +7,7 @@ from .models import YardSubmission
 
 @admin.register(YardSubmission)
 class YardSubmissionAdmin(admin.ModelAdmin):
-    list_display = ('business_name', 'contact_name', 'city', 'state', 'status_badge', 'created_at', 'vendor_link')
+    list_display = ('business_name', 'contact_name', 'city', 'state', 'subscription_plan', 'payment_status', 'status_badge', 'created_at', 'vendor_link')
     list_filter = ('status', 'state', 'created_at')
     search_fields = ('business_name', 'contact_name', 'email', 'city')
     readonly_fields = ('created_at', 'updated_at', 'reviewed_at', 'created_vendor')
@@ -30,7 +30,7 @@ class YardSubmissionAdmin(admin.ModelAdmin):
             'fields': ('services', 'brands', 'parts_categories', 'description')
         }),
         ('Subscription Plan', {
-            'fields': ('subscription_plan',)
+            'fields': ('subscription_plan', 'payment_status')
         }),
         ('Media', {
             'fields': ('logo', 'images')
@@ -124,6 +124,19 @@ class YardSubmissionAdmin(admin.ModelAdmin):
                 submission.reviewed_by = request.user.username
                 submission.created_vendor = vendor
                 submission.save()
+                
+                # Send approval email
+                from django.core.mail import send_mail
+                try:
+                    send_mail(
+                        subject='Your Yard Application is Approved!',
+                        message=f'Hello {submission.business_name},\n\nGood news! Your yard marketplace application has been approved and your {submission.get_subscription_plan_display()} is now active.\n\nThank you for joining!',
+                        from_email='no-reply@jynm.com',
+                        recipient_list=[submission.email],
+                        fail_silently=True,
+                    )
+                except Exception:
+                    pass
                 
                 approved_count += 1
                 
