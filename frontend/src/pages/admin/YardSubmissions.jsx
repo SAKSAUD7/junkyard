@@ -44,6 +44,17 @@ export default function YardSubmissions() {
     const [rejectNotes, setRejectNotes] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
+    
+    // Direct Email state
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [emailSubject, setEmailSubject] = useState('');
+    const [emailBody, setEmailBody] = useState('');
+
+    const getMediaUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http')) return url;
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${url.startsWith('/') ? '' : '/'}${url}`;
+    };
 
     useEffect(() => {
         fetchSubmissions();
@@ -149,6 +160,29 @@ export default function YardSubmissions() {
         } catch (err) {
             console.error('Error rejecting submission:', err);
             setToast({ message: 'Failed to reject submission', type: 'error' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleSendEmail = async () => {
+        try {
+            setActionLoading(true);
+            const token = localStorage.getItem('access_token');
+            await axios.post(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/${selectedSubmission.id}/send_email/`,
+                { subject: emailSubject, body: emailBody },
+                {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }
+            );
+            setToast({ message: 'Email sent successfully!', type: 'success' });
+            setShowEmailModal(false);
+            setEmailSubject('');
+            setEmailBody('');
+        } catch (err) {
+            console.error('Error sending email:', err);
+            setToast({ message: 'Failed to send email', type: 'error' });
         } finally {
             setActionLoading(false);
         }
@@ -353,8 +387,12 @@ export default function YardSubmissions() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-bold shadow-sm">
-                                                        {submission.business_name.charAt(0).toUpperCase()}
+                                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-bold shadow-sm overflow-hidden shrink-0">
+                                                        {submission.logo ? (
+                                                            <img src={getMediaUrl(submission.logo)} alt={submission.business_name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            submission.business_name.charAt(0).toUpperCase()
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-semibold text-[#1f2937]">{submission.business_name}</p>
@@ -455,8 +493,12 @@ export default function YardSubmissions() {
                                 {/* Left – business identity */}
                                 <div className="flex items-center gap-4 min-w-0">
                                     {/* Avatar */}
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-2xl font-black shadow-lg">
-                                        {selectedSubmission.business_name?.charAt(0).toUpperCase()}
+                                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-slate-900 text-2xl font-black shadow-lg overflow-hidden border border-white/20">
+                                        {selectedSubmission.logo ? (
+                                            <img src={getMediaUrl(selectedSubmission.logo)} alt={selectedSubmission.business_name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            selectedSubmission.business_name?.charAt(0).toUpperCase()
+                                        )}
                                     </div>
                                     <div className="min-w-0">
                                         <h2 className="text-xl font-black text-white truncate">{selectedSubmission.business_name}</h2>
@@ -557,9 +599,18 @@ export default function YardSubmissions() {
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Email</label>
-                                        <a href={`mailto:${selectedSubmission.email}`} className="text-sm font-semibold text-blue-600 hover:underline">
-                                            {selectedSubmission.email}
-                                        </a>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-slate-700">{selectedSubmission.email}</span>
+                                            <button 
+                                                onClick={() => {
+                                                    setEmailSubject(`Regarding your submission: ${selectedSubmission.business_name}`);
+                                                    setShowEmailModal(true);
+                                                }}
+                                                className="px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-[11px] font-bold transition-colors"
+                                            >
+                                                Send direct email
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                         <label className="block text-xs font-bold text-[#6b7280] mb-1 uppercase tracking-wide">Phone</label>
@@ -628,11 +679,14 @@ export default function YardSubmissions() {
                                         <div className="bg-gradient-to-br from-[#f9fafb] to-white rounded-xl p-4 border border-slate-100">
                                             <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Yard Photos</label>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {selectedSubmission.images.map((img, idx) => (
-                                                    <a key={idx} href={img.url || img} target="_blank" rel="noopener noreferrer">
-                                                        <img src={img.url || img} alt={`Yard Photo ${idx+1}`} className="w-full h-24 object-cover rounded-lg border shadow-sm hover:scale-105 transition-transform" />
-                                                    </a>
-                                                ))}
+                                                {selectedSubmission.images.map((img, idx) => {
+                                                    const mediaUrl = getMediaUrl(img.url || img);
+                                                    return (
+                                                        <a key={idx} href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                                                            <img src={mediaUrl} alt={`Yard Photo ${idx+1}`} className="w-full h-24 object-cover rounded-lg border shadow-sm hover:scale-105 transition-transform" />
+                                                        </a>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -763,6 +817,64 @@ export default function YardSubmissions() {
                                     className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-slate-900 rounded-xl hover:from-red-600 hover:to-rose-600 font-bold shadow-sm shadow-red-200 transition-all disabled:opacity-50"
                                 >
                                     {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Direct Email Modal */}
+            {showEmailModal && selectedSubmission && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+                        <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl">
+                            <h3 className="text-xl font-bold text-white">Send Email to {selectedSubmission.business_name}</h3>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <p className="text-[#6b7280] text-sm">
+                                This email will be sent securely via our system directly to <strong>{selectedSubmission.email}</strong>.
+                            </p>
+                            <div>
+                                <label className="block text-sm font-bold text-[#374151] mb-2 uppercase tracking-wide">
+                                    Subject
+                                </label>
+                                <input
+                                    type="text"
+                                    value={emailSubject}
+                                    onChange={(e) => setEmailSubject(e.target.value)}
+                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-semibold text-slate-800"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-[#374151] mb-2 uppercase tracking-wide">
+                                    Message Body
+                                </label>
+                                <textarea
+                                    value={emailBody}
+                                    onChange={(e) => setEmailBody(e.target.value)}
+                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm font-medium text-slate-700"
+                                    rows="6"
+                                    placeholder="Type your message here..."
+                                />
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowEmailModal(false);
+                                        setEmailSubject('');
+                                        setEmailBody('');
+                                    }}
+                                    className="flex-1 px-4 py-2.5 bg-[#f9fafb] text-[#6b7280] rounded-xl hover:bg-[#e5e7eb] font-medium transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSendEmail}
+                                    disabled={actionLoading || !emailSubject || !emailBody}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-bold shadow-sm shadow-blue-200 transition-all disabled:opacity-50"
+                                >
+                                    {actionLoading ? 'Sending...' : 'Send Message'}
                                 </button>
                             </div>
                         </div>

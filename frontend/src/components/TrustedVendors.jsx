@@ -53,41 +53,22 @@ export default function TrustedVendors() {
             .finally(() => setLoading(false));
     }, []);
 
-    // JS auto-scroll (identical to AdCarousel) to allow pausing on touch
+    // Auto-scroll using setInterval — pauses on hover/touch, resumes on leave
     useEffect(() => {
         if (!vendors.length) return;
-        
-        let animationFrameId;
-        let lastTime = performance.now();
-        const pixelsPerSecond = 30; // Slow, smooth speed
+        const SPEED = 1.0; // px per tick (16ms interval = ~60px/sec)
 
-        const scroll = (time) => {
-            if (scrollRef.current) {
-                const delta = (time - lastTime) / 1000;
-                lastTime = time;
-                
-                // Only advance scroll if the user is not actively swiping or hovering
-                if (!isInteracting.current) {
-                    scrollRef.current.scrollLeft += pixelsPerSecond * delta;
-                    
-                    // If reached the end, smoothly scroll back to start
-                    if (scrollRef.current.scrollLeft >= (scrollRef.current.scrollWidth - scrollRef.current.clientWidth - 1)) {
-                        setTimeout(() => {
-                            if(scrollRef.current && !isInteracting.current) {
-                                scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                            }
-                        }, 1000);
-                    }
-                }
+        const timer = setInterval(() => {
+            if (!scrollRef.current || isInteracting.current) return;
+            const el = scrollRef.current;
+            el.scrollLeft += SPEED;
+            // Seamlessly loop: when near end, jump back to start
+            if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
+                el.scrollLeft = 0;
             }
-            animationFrameId = requestAnimationFrame(scroll);
-        };
+        }, 16);
 
-        animationFrameId = requestAnimationFrame(scroll);
-        
-        return () => {
-            cancelAnimationFrame(animationFrameId);
-        };
+        return () => clearInterval(timer);
     }, [vendors]);
 
     if (loading) {

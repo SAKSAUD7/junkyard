@@ -107,13 +107,25 @@ export default function AddYardPage() {
     const photoInputRef = React.useRef(null);
 
     const [formData, setFormData] = useState({
-        business_name: '', email: '', phone: '', website: '',
+        business_name: '', email: '', phone: '', website: '', description: '',
         city: '', state: '', zip_code: '', country: 'United States',
         parts: [],
         brands: [],
         photos: [],
+        logo: null,
         subscription_plan: 'free'
     });
+
+    const [logoPreview, setLogoPreview] = useState(null);
+    const logoInputRef = React.useRef(null);
+
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData(prev => ({ ...prev, logo: file }));
+            setLogoPreview(URL.createObjectURL(file));
+        }
+    };
 
     // Fetch all parts & makes on mount
     useEffect(() => {
@@ -312,7 +324,7 @@ export default function AddYardPage() {
             fd.append('services', formData.parts?.length ? formData.parts.join(', ') : 'General Auto Parts & Services');
             fd.append('brands', formData.brands?.length ? formData.brands.join(', ') : '');
             fd.append('parts_categories', formData.parts?.length ? formData.parts.join(', ') : '');
-            fd.append('description', '');
+            fd.append('description', formData.description || '');
             fd.append('subscription_plan', formData.subscription_plan);
             fd.append('payment_methods', JSON.stringify([]));
             fd.append('business_hours', JSON.stringify({}));
@@ -324,6 +336,10 @@ export default function AddYardPage() {
                         fd.append('photos', photo.file, photo.file.name);
                     }
                 });
+            }
+
+            if (formData.logo) {
+                fd.append('logo', formData.logo, formData.logo.name);
             }
 
             await api.submitYard(fd);
@@ -470,26 +486,53 @@ export default function AddYardPage() {
                             
                             {/* STEP 1: Profile */}
                             {step === 1 && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                                    <div className={`md:col-span-2 ${inputWrapperClasses}`}>
-                                        <label className={labelClasses}>Business Name <span className="text-red-500">*</span></label>
-                                        <input type="text" name="business_name" value={formData.business_name} onChange={handleChange} onBlur={handleBlur} className={getInputClass('business_name')} placeholder="Enter business name" />
-                                        {getFieldError('business_name') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('business_name')}</p>}
+                                <div className="space-y-6">
+                                    <div className="mb-2">
+                                        <label className="block text-[13px] font-bold text-slate-800 mb-3">Business Logo (Optional)</label>
+                                        <div className="flex items-center gap-4">
+                                            {logoPreview ? (
+                                                <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-75 transition-opacity" onClick={() => logoInputRef.current?.click()}>
+                                                    <img src={logoPreview} alt="Logo" className="w-full h-full object-contain p-2" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-20 h-20 bg-slate-50 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-slate-300 flex-shrink-0 cursor-pointer hover:border-blue-500 hover:text-blue-500 transition-colors group" onClick={() => logoInputRef.current?.click()}>
+                                                    <svg className="w-6 h-6 text-slate-400 group-hover:text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                                    <span className="text-[10px] font-bold text-slate-500 group-hover:text-blue-500">Upload</span>
+                                                </div>
+                                            )}
+                                            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoChange} />
+                                            <div className="text-[12px] text-slate-500">
+                                                <p>Upload your business logo.</p>
+                                                <p>Will be displayed on your vendor profile.</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className={inputWrapperClasses}>
-                                        <label className={labelClasses}>Business Email <span className="text-red-500">*</span></label>
-                                        <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} className={getInputClass('email')} placeholder="Enter email" />
-                                        {getFieldError('email') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('email')}</p>}
-                                    </div>
-                                    <div className={inputWrapperClasses}>
-                                        <label className={labelClasses}>Phone Number <span className="text-red-500">*</span></label>
-                                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} className={getInputClass('phone')} placeholder="(999) 999-9999" />
-                                        {getFieldError('phone') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('phone')}</p>}
-                                    </div>
-                                    <div className={`md:col-span-2 ${inputWrapperClasses}`}>
-                                        <label className={labelClasses}>Website (Optional)</label>
-                                        <input type="url" name="website" value={formData.website} onChange={handleChange} onBlur={handleBlur} className={getInputClass('website')} placeholder="https://yourwebsite.com" />
-                                        {getFieldError('website') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('website')}</p>}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                                        <div className={`md:col-span-2 ${inputWrapperClasses}`}>
+                                            <label className={labelClasses}>Business Name <span className="text-red-500">*</span></label>
+                                            <input type="text" name="business_name" value={formData.business_name} onChange={handleChange} onBlur={handleBlur} className={getInputClass('business_name')} placeholder="Enter business name" />
+                                            {getFieldError('business_name') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('business_name')}</p>}
+                                        </div>
+                                        <div className={inputWrapperClasses}>
+                                            <label className={labelClasses}>Business Email <span className="text-red-500">*</span></label>
+                                            <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} className={getInputClass('email')} placeholder="Enter email" />
+                                            {getFieldError('email') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('email')}</p>}
+                                        </div>
+                                        <div className={inputWrapperClasses}>
+                                            <label className={labelClasses}>Phone Number <span className="text-red-500">*</span></label>
+                                            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} className={getInputClass('phone')} placeholder="(999) 999-9999" />
+                                            {getFieldError('phone') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('phone')}</p>}
+                                        </div>
+                                        <div className={`md:col-span-2 ${inputWrapperClasses}`}>
+                                            <label className={labelClasses}>Website (Optional)</label>
+                                            <input type="url" name="website" value={formData.website} onChange={handleChange} onBlur={handleBlur} className={getInputClass('website')} placeholder="https://yourwebsite.com" />
+                                            {getFieldError('website') && <p className="text-red-500 text-[11px] font-bold mt-1.5">{getFieldError('website')}</p>}
+                                        </div>
+                                        <div className={`md:col-span-2 ${inputWrapperClasses}`}>
+                                            <label className={labelClasses}>About This Yard (Description)</label>
+                                            <textarea name="description" value={formData.description} onChange={handleChange} onBlur={handleBlur} className={`${getInputClass('description')} resize-y`} placeholder="Tell us about your yard, specialties, and inventory..." rows="3"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             )}

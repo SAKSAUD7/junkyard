@@ -106,6 +106,9 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
 
+    def perform_create(self, serializer):
+        serializer.save(status='unread')
+
 
 
 from rest_framework.response import Response
@@ -235,10 +238,17 @@ class AdminStatsView(APIView):
             .order_by('-count')[:10]
         )
         
-        # Recent leads (last 7 days) - optimized with indexed created_at
-        seven_days_ago = datetime.now() - timedelta(days=7)
+        # Recent leads trend - dynamic days
+        try:
+            days = int(request.query_params.get('days', 7))
+            if days <= 0 or days > 90:
+                days = 7
+        except ValueError:
+            days = 7
+            
+        start_date = datetime.now() - timedelta(days=days)
         recent_leads_qs = (
-            Lead.objects.filter(created_at__gte=seven_days_ago)  # type: ignore[attr-defined]
+            Lead.objects.filter(created_at__gte=start_date)  # type: ignore[attr-defined]
             .values('created_at__date')
             .annotate(count=Count('id'))
             .order_by('created_at__date')
@@ -246,8 +256,8 @@ class AdminStatsView(APIView):
         
         # Format recent leads for chart — real daily counts
         leads_trend = []
-        for i in range(7):
-            date = (datetime.now() - timedelta(days=6-i)).date()
+        for i in range(days):
+            date = (datetime.now() - timedelta(days=(days - 1)-i)).date()
             count = next((item['count'] for item in recent_leads_qs if item['created_at__date'] == date), 0)
             leads_trend.append({
                 'date': date.strftime('%Y-%m-%d'),

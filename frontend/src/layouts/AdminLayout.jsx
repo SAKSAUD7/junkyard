@@ -60,6 +60,10 @@ export default function AdminLayout() {
     const [msgLoading, setMsgLoading] = useState(false);
     const msgRef = useRef(null);
 
+    // User Profile Dropdown state
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const userMenuRef = useRef(null);
+
     // Logo fetch
     useEffect(() => {
         const fetchBrand = async () => {
@@ -80,6 +84,7 @@ export default function AdminLayout() {
             if (searchRef.current && !searchRef.current.contains(e.target)) setSearchOpen(false);
             if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
             if (msgRef.current && !msgRef.current.contains(e.target)) setMsgOpen(false);
+            if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
         };
         document.addEventListener('mousedown', handle);
         return () => document.removeEventListener('mousedown', handle);
@@ -201,6 +206,7 @@ export default function AdminLayout() {
         { name: 'Users',            href: '/admin-portal/roles',            icon: ShieldCheckIcon,   permission: 'can_manage_roles' },
         { name: 'Yard Submissions', href: '/admin-portal/yard-submissions', icon: NewspaperIcon,     permission: 'can_manage_yard_submissions' },
         { name: 'Messages',         href: '/admin-portal/messages',         icon: ChatBubbleLeftIcon, permission: 'can_manage_messages' },
+        { name: 'Feedback',         href: '/admin-portal/feedback',         icon: QuestionMarkCircleIcon, permission: 'can_manage_messages' },
         { name: 'Settings',         href: '/admin-portal/settings',         icon: Cog6ToothIcon,     permission: 'can_manage_settings' },
     ];
 
@@ -255,7 +261,7 @@ export default function AdminLayout() {
             <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
                 {/* Top Header */}
-                <header className="bg-white h-20 px-6 flex items-center justify-between flex-shrink-0 border-b border-slate-100 z-10">
+                <header className="bg-white h-20 px-6 flex items-center justify-between flex-shrink-0 border-b border-slate-100 z-30 relative">
                     <div className="flex items-center gap-6 flex-1">
                         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-slate-400 hover:text-slate-600 transition-colors">
                             <Bars3Icon className="w-6 h-6" />
@@ -452,16 +458,69 @@ export default function AdminLayout() {
                         </div>
 
                         {/* User Profile */}
-                        <div className="flex items-center gap-3 cursor-pointer group" onClick={logout} title="Click to logout">
-                            <div className="text-right hidden sm:block">
-                                <p className="text-sm font-bold text-slate-800 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {user?.username || 'Admin'}
-                                </p>
-                                <p className="text-[11px] text-slate-500 font-medium">{roleName || 'Superuser'}</p>
-                            </div>
-                            <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:bg-rose-500 transition-colors">
-                                {(user?.username || 'A').charAt(0).toUpperCase()}
-                            </div>
+                        <div className="relative" ref={userMenuRef}>
+                            <button
+                                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                className={`flex items-center gap-3 p-1.5 pr-3 rounded-full transition-all duration-300 border-2 ${
+                                    userMenuOpen 
+                                        ? 'border-indigo-500 bg-indigo-50/50' 
+                                        : 'border-transparent hover:border-slate-200 hover:bg-slate-50'
+                                }`}
+                                title="Admin Profile"
+                            >
+                                <div className="text-right hidden sm:block ml-2">
+                                    <p className="text-sm font-extrabold text-slate-800 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        {user?.username || 'Admin'}
+                                    </p>
+                                    <p className="text-[11px] text-slate-500 font-bold">{roleName || 'Superuser'}</p>
+                                </div>
+                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-sm ring-2 ring-white">
+                                    {(user?.username || 'A').charAt(0).toUpperCase()}
+                                </div>
+                                <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-300 ${userMenuOpen ? 'rotate-180 text-indigo-500' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            {userMenuOpen && (
+                                <div className="absolute right-0 mt-3 w-64 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-2 z-50 transform origin-top-right transition-all duration-200 animate-in fade-in zoom-in-95">
+                                    <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-indigo-50/30 rounded-xl border border-slate-100 mb-2">
+                                        <p className="text-sm font-black text-slate-900 truncate">{user?.username || 'Admin'}</p>
+                                        <p className="text-xs font-semibold text-slate-500 truncate mt-0.5">{user?.email || 'admin@jynm.com'}</p>
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-1">
+                                        <Link
+                                            to="/admin-portal/settings"
+                                            onClick={() => setUserMenuOpen(false)}
+                                            className="flex items-start gap-3 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-slate-50 text-left w-full focus:outline-none"
+                                        >
+                                            <div className="p-2 rounded-xl flex-shrink-0 bg-slate-50 border border-slate-100 transition-transform duration-300 group-hover:scale-110 shadow-sm">
+                                                <Cog6ToothIcon className="w-5 h-5 text-slate-600 group-hover:text-indigo-600" />
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-indigo-600 transition-colors">Settings</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug">System preferences</span>
+                                            </div>
+                                        </Link>
+                                        
+                                        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
+                                        
+                                        <button
+                                            onClick={() => { setUserMenuOpen(false); logout(); }}
+                                            className="flex items-start gap-3 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-rose-50 text-left w-full focus:outline-none"
+                                        >
+                                            <div className="p-2 rounded-xl flex-shrink-0 bg-rose-50 border border-rose-100 transition-transform duration-300 group-hover:scale-110 shadow-sm">
+                                                <ArrowTopRightOnSquareIcon className="w-5 h-5 text-rose-500" />
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-rose-600 group-hover:text-rose-700 transition-colors">Log out</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug">End administrative session</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </header>

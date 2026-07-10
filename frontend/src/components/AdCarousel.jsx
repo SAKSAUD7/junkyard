@@ -25,40 +25,19 @@ export default function AdCarousel({ slotGroup = 'carousel_1', page = 'all', tit
     }, [slotGroup, page])
 
     useEffect(() => {
-        if (ads.length <= 1) return; // No need to scroll if only 1 ad
-        
-        let animationFrameId;
-        let lastTime = performance.now();
-        const pixelsPerSecond = 30; // Slow, smooth speed
+        if (ads.length <= 1) return;
+        const SPEED = 1.0; // px per 16ms tick
 
-        const scroll = (time) => {
-            if (scrollRef.current) {
-                const delta = (time - lastTime) / 1000;
-                lastTime = time;
-                
-                // Only advance scroll if the user is not actively swiping or hovering
-                if (!isInteracting.current) {
-                    scrollRef.current.scrollLeft += pixelsPerSecond * delta;
-                    
-                    // If reached the end, smoothly scroll back to start
-                    if (scrollRef.current.scrollLeft >= (scrollRef.current.scrollWidth - scrollRef.current.clientWidth - 1)) {
-                        // Small timeout before resetting to start
-                        setTimeout(() => {
-                            if(scrollRef.current && !isInteracting.current) {
-                                scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                            }
-                        }, 1000);
-                    }
-                }
+        const timer = setInterval(() => {
+            if (!scrollRef.current || isInteracting.current) return;
+            const el = scrollRef.current;
+            el.scrollLeft += SPEED;
+            if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
+                el.scrollLeft = 0;
             }
-            animationFrameId = requestAnimationFrame(scroll);
-        };
+        }, 16);
 
-        animationFrameId = requestAnimationFrame(scroll);
-        
-        return () => {
-            cancelAnimationFrame(animationFrameId);
-        };
+        return () => clearInterval(timer);
     }, [ads]);
 
     if (ads.length === 0) return null;

@@ -61,6 +61,7 @@ const AdminSettings = lazy(() => import('./pages/admin/Settings'))
 const AdminCMS = lazy(() => import('./pages/admin/CMS'))
 const AdminRoles = lazy(() => import('./pages/admin/Roles'))
 const AdminPartPricing = lazy(() => import('./pages/admin/PartPricing'))
+const AdminFeedback = lazy(() => import('./pages/admin/FeedbackAdmin'))
 
 // Blog imports
 const BlogList = lazy(() => import('./pages/blog/BlogList'))
@@ -233,6 +234,7 @@ function App() {
               <Route path="blog" element={<AdminBlogList />} />
               <Route path="blog/new" element={<AdminBlogEditor />} />
               <Route path="blog/edit/:id" element={<AdminBlogEditor />} />
+              <Route path="feedback" element={<AdminFeedback />} />
               <Route path="cms" element={<AdminCMS />} />
               <Route path="cms/:page" element={<AdminCMS />} />
               <Route path="roles" element={<AdminRoles />} />

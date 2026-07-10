@@ -117,92 +117,114 @@ export default function Navbar() {
                             <div className="relative" ref={accountDropdownRef}>
                                 <button
                                     onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border-2 ${
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 border-2 ${
                                         accountDropdownOpen 
-                                            ? 'border-blue-600 text-blue-600 bg-blue-50' 
-                                            : 'border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50'
+                                            ? 'border-transparent text-white bg-gradient-to-r from-[#1a56ff] to-indigo-600 shadow-lg shadow-blue-500/25 ring-2 ring-blue-500/20 ring-offset-1' 
+                                            : 'border-slate-200/80 text-slate-700 bg-white hover:border-[#1a56ff]/30 hover:bg-blue-50/50 hover:text-[#1a56ff] shadow-sm'
                                     }`}
                                 >
                                     {isAuthenticated ? (
-                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white bg-blue-600 shadow-sm">
+                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm border border-white/20">
                                             {user?.first_name?.[0] || user?.email?.[0] || 'U'}
                                         </div>
                                     ) : (
-                                        <svg className="w-5 h-5 text-current opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        <svg className="w-4 h-4 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                     )}
                                     <span>Account</span>
-                                    <svg className={`w-4 h-4 opacity-70 transition-transform duration-300 ${accountDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                    </svg>
+                                    <svg className={`w-3.5 h-3.5 opacity-80 transition-transform duration-300 ${accountDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
                                 </button>
 
                                 {accountDropdownOpen && (
-                                    <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 overflow-hidden transform origin-top-right transition-all">
+                                    <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-2 z-50 transform origin-top-right transition-all duration-200">
                                         {isAuthenticated ? (
-                                            <>
-                                                <div className="px-5 py-4 border-b border-slate-50 bg-slate-50/50">
-                                                    <p className="text-sm font-bold text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
-                                                    <p className="text-xs text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                            <div className="flex flex-col gap-1 p-1">
+                                                <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-2">
+                                                    <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
+                                                    <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{user?.email}</p>
                                                 </div>
 
-                                                <div className="py-2">
-                                                    {user?.is_superuser && (
-                                                        <DropdownLink to="/admin-portal/dashboard" icon="⚙️" label="Admin Portal" onClick={() => setAccountDropdownOpen(false)} />
-                                                    )}
+                                                {user?.is_superuser && (
+                                                    <ModernDropdownLink to="/admin-portal/dashboard" icon={<svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>} label="Admin Portal" description="Manage platform settings" onClick={() => setAccountDropdownOpen(false)} gradient={true} />
+                                                )}
 
-                                                    {user?.user_type === 'vendor' ? (
-                                                        <>
-                                                            <DropdownLink to="/vendor/dashboard" icon="📊" label="Dashboard" onClick={() => setAccountDropdownOpen(false)} />
-                                                            <DropdownLink to="/vendor/leads" icon="👥" label="Leads" onClick={() => setAccountDropdownOpen(false)} />
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <DropdownLink to="/profile" icon="👤" label="Profile" onClick={() => setAccountDropdownOpen(false)} />
-                                                            {!user?.is_superuser && (
-                                                                <DropdownLink to="/add-a-yard" icon="➕" label="Manage Yard" onClick={() => setAccountDropdownOpen(false)} />
-                                                            )}
-                                                        </>
-                                                    )}
-                                                </div>
+                                                {user?.user_type === 'vendor' ? (
+                                                    <>
+                                                        <ModernDropdownLink to="/vendor/dashboard" icon={<svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>} label="Dashboard" description="Business metrics & overview" onClick={() => setAccountDropdownOpen(false)} />
+                                                        <ModernDropdownLink to="/vendor/leads" icon={<svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>} label="Leads" description="View customer requests" onClick={() => setAccountDropdownOpen(false)} />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ModernDropdownLink to="/profile" icon={<svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>} label="Profile" description="Your personal settings" onClick={() => setAccountDropdownOpen(false)} />
+                                                        {!user?.is_superuser && (
+                                                            <ModernDropdownLink to="/add-a-yard" icon={<svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>} label="Add Your Yard" description="Become a certified partner" onClick={() => setAccountDropdownOpen(false)} gradient={true} />
+                                                        )}
+                                                    </>
+                                                )}
                                                 
-                                                <div className="border-t border-slate-50" />
-                                                <div className="py-2">
-                                                    <button
-                                                        onClick={handleLogout}
-                                                        className="w-full text-left px-5 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-3 transition-colors"
-                                                    >
-                                                        <span className="text-lg">🚪</span> Log out
-                                                    </button>
-                                                </div>
-                                            </>
+                                                <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
+                                                
+                                                <ModernDropdownButton 
+                                                    onClick={handleLogout}
+                                                    icon={<svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>}
+                                                    label="Log out"
+                                                    danger={true}
+                                                />
+                                            </div>
                                         ) : (
-                                            <>
-                                                <div className="pt-2 pb-1 px-5">
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">For Buyers</span>
+                                            <div className="flex flex-col gap-1 p-1">
+                                                <div className="px-3 pt-2 pb-1.5 flex items-center gap-2">
+                                                    <div className="w-1 h-3.5 rounded-full bg-gradient-to-b from-[#1a56ff] to-indigo-600 shadow-sm"></div>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">For Buyers</span>
                                                 </div>
-                                                <button onClick={() => { setAccountDropdownOpen(false); setLoginModalOpen(true); }} className="w-full text-left px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 flex items-center gap-3 transition-colors">
-                                                    <span className="text-lg">👤</span> Sign In
-                                                </button>
-                                                <button onClick={() => { setAccountDropdownOpen(false); setSignupModalOpen(true); }} className="w-full text-left px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 flex items-center gap-3 transition-colors">
-                                                    <span className="text-lg">🚀</span> Create Free Account
-                                                </button>
                                                 
-                                                <div className="border-t border-slate-50 my-2 mx-3" />
+                                                <ModernDropdownButton 
+                                                    onClick={() => { setAccountDropdownOpen(false); setLoginModalOpen(true); }}
+                                                    icon={<svg className="w-5 h-5 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>}
+                                                    label="Sign In"
+                                                    description="Access your account history"
+                                                />
                                                 
-                                                <div className="pt-2 pb-1 px-5">
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">For Partners</span>
+                                                <ModernDropdownButton 
+                                                    onClick={() => { setAccountDropdownOpen(false); setSignupModalOpen(true); }}
+                                                    icon={<svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+                                                    label="Create Free Account"
+                                                    description="Join thousands of smart buyers"
+                                                    gradient={true}
+                                                />
+                                                
+                                                <div className="h-px bg-gradient-to-r from-transparent via-slate-100 to-transparent my-2" />
+                                                
+                                                <div className="px-3 pt-2 pb-1.5 flex items-center gap-2">
+                                                    <div className="w-1 h-3.5 rounded-full bg-gradient-to-b from-emerald-500 to-teal-500 shadow-sm"></div>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">For Partners</span>
                                                 </div>
-                                                <DropdownLink to="/add-a-yard" icon="➕" label="Add Your Yard" onClick={() => setAccountDropdownOpen(false)} />
-                                                <DropdownLink to="/vendor/login" icon="🏪" label="Vendor Login" onClick={() => setAccountDropdownOpen(false)} />
                                                 
-                                                <div className="border-t border-slate-50 my-2 mx-3" />
+                                                <ModernDropdownLink 
+                                                    to="/add-a-yard" 
+                                                    onClick={() => setAccountDropdownOpen(false)}
+                                                    icon={<svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>}
+                                                    label="Add Your Yard"
+                                                    description="List inventory & get leads"
+                                                    gradient={true}
+                                                />
                                                 
-                                                <div className="py-1">
-                                                    <DropdownLink to="/admin/login" icon="⚙️" label="Admin Login" onClick={() => setAccountDropdownOpen(false)} />
-                                                </div>
-                                            </>
+                                                <ModernDropdownLink 
+                                                    to="/vendor/login" 
+                                                    onClick={() => setAccountDropdownOpen(false)}
+                                                    icon={<svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
+                                                    label="Vendor Login"
+                                                    description="Manage business dashboard"
+                                                />
+                                                
+                                                <ModernDropdownLink 
+                                                    to="/admin/login" 
+                                                    onClick={() => setAccountDropdownOpen(false)}
+                                                    icon={<svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                                                    label="Admin Gateway"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                 )}
@@ -258,15 +280,37 @@ export default function Navbar() {
     )
 }
 
-function DropdownLink({ to, icon, label, onClick }) {
+function ModernDropdownLink({ to, icon, label, description, onClick, gradient }) {
     return (
         <Link
             to={to}
             onClick={onClick}
-            className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 transition-colors w-full text-left"
+            className="flex items-start gap-3.5 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-slate-50 relative overflow-hidden text-left bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
         >
-            <span className="text-lg">{icon}</span>
-            <span>{label}</span>
+            <div className={`p-2 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${gradient ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100/50' : 'bg-slate-50 border border-slate-100'}`}>
+                {icon}
+            </div>
+            <div className="flex flex-col justify-center">
+                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-[#1a56ff] transition-colors">{label}</span>
+                {description && <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-2 max-w-[200px]">{description}</span>}
+            </div>
         </Link>
+    )
+}
+
+function ModernDropdownButton({ onClick, icon, label, description, gradient, danger }) {
+    return (
+        <button
+            onClick={onClick}
+            className={`flex items-start gap-3.5 px-3 py-2.5 rounded-xl group transition-all duration-300 relative overflow-hidden text-left focus:outline-none w-full ${danger ? 'hover:bg-rose-50/50' : 'hover:bg-slate-50'}`}
+        >
+            <div className={`p-2 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${danger ? 'bg-rose-50 border border-rose-100' : gradient ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/50' : 'bg-slate-50 border border-slate-100'}`}>
+                {icon}
+            </div>
+            <div className="flex flex-col justify-center">
+                <span className={`text-[13px] font-extrabold transition-colors ${danger ? 'text-rose-600 group-hover:text-rose-700' : 'text-slate-800 group-hover:text-indigo-600'}`}>{label}</span>
+                {description && <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-2 max-w-[200px]">{description}</span>}
+            </div>
+        </button>
     )
 }

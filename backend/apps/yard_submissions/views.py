@@ -131,6 +131,30 @@ class YardSubmissionViewSet(viewsets.ModelViewSet):
             # Create vendor from submission
             vendor = self.create_vendor_from_submission(submission)
 
+            from apps.vendor_portal.models import VendorInventory
+            
+            if submission.parts_categories:
+                for part in submission.parts_categories.split(','):
+                    p = part.strip()
+                    if p:
+                        VendorInventory.objects.create(
+                            vendor=vendor,
+                            item_type='part',
+                            part_name=p,
+                            is_available=True
+                        )
+            
+            if submission.brands:
+                for make in submission.brands.split(','):
+                    m = make.strip()
+                    if m:
+                        VendorInventory.objects.create(
+                            vendor=vendor,
+                            item_type='make',
+                            make=m,
+                            is_available=True
+                        )
+
             # Mark submission as approved
             submission.mark_as_approved(
                 admin_user=request.user.username if request.user else None
@@ -187,6 +211,44 @@ class YardSubmissionViewSet(viewsets.ModelViewSet):
             'message': 'Submission rejected',
             'submission_id': submission.id
         })
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAdminUser])
+    def send_email(self, request, pk=None):
+        """Send a direct email to the vendor"""
+        submission = self.get_object()
+        subject = request.data.get('subject')
+        body = request.data.get('body')
+        
+        if not subject or not body:
+            return Response({'error': 'Subject and body are required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            from django.core.mail import send_mail
+            import markdown
+            # Optional: Allow the admin to write simple markdown and we format it for them.
+            # Convert text to html for modern email look
+            html_content = markdown.markdown(body) if body else ""
+            
+            # Use our JYNM HTML wrapper for consistent styling!
+            from .emails import _html_wrapper
+            html = _html_wrapper(html_content, preview_text="Message from JYNM")
+            from django.core.mail import EmailMultiAlternatives
+            
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                body=body,
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@jynm.com'),
+                to=[submission.email],
+            )
+            msg.content_subtype = 'plain'
+            msg.attach_alternative(html, "text/html")
+            msg.send(fail_silently=False)
+            
+            # Optionally log this to the submission or create notes later
+            
+            return Response({'message': 'Email sent successfully'})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create_vendor_from_submission(self, submission):
         """Create a Vendor from approved submission"""

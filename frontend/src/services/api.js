@@ -178,9 +178,9 @@ export const api = {
   },
 
   // Admin / Common
-  getAdminStats: async (token) => {
+  getAdminStats: async (token, days = 7) => {
     // Token is handled by interceptor now, but kept argument for compatibility
-    const response = await axiosInstance.get('/common/admin-stats/');
+    const response = await axiosInstance.get(`/common/admin-stats/?days=${days}`);
     return response.data;
   },
 

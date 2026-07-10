@@ -78,6 +78,16 @@ const VendorDetail = () => {
 
     const logoUrl = getLogoUrl(vendor.logo);
 
+    const mergedParts = Array.from(new Set([
+        ...(vendor.services ? vendor.services.split(',').map(s => s.trim()).filter(Boolean) : []),
+        ...(vendor.portal_inventory?.parts || [])
+    ]));
+
+    const mergedBrands = Array.from(new Set([
+        ...(vendor.brands ? vendor.brands.split(',').map(b => b.trim()).filter(Boolean) : []),
+        ...(vendor.portal_inventory?.makes || [])
+    ]));
+
     const localBusinessSchema = getLocalBusinessSchema({
         name: vendor.name,
         address: vendor.address,
@@ -226,7 +236,7 @@ const VendorDetail = () => {
                         </div>
 
                         {/* Inventory / Services */}
-                        {(vendor.services || vendor.brands || (vendor.portal_inventory && (vendor.portal_inventory.makes?.length > 0 || vendor.portal_inventory.parts?.length > 0))) && (
+                        {(mergedParts.length > 0 || mergedBrands.length > 0) && (
                             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.03)] p-6">
                                 <h2 className="font-black text-slate-900 text-[16px] mb-4 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
@@ -235,37 +245,26 @@ const VendorDetail = () => {
                                     Parts & Services Inventory
                                 </h2>
                                 
-                                {(vendor.services || (vendor.portal_inventory?.parts?.length > 0)) && (
+                                {mergedParts.length > 0 && (
                                     <div className="mb-4">
                                         <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-wider mb-2">Parts / Services Offered</h3>
                                         <div className="flex flex-wrap gap-2">
-                                            {vendor.services && vendor.services.split(',').map((service, idx) => (
+                                            {mergedParts.map((service, idx) => (
                                                 <span key={`srv-${idx}`} className="bg-slate-50 border border-slate-100 text-slate-600 px-3 py-1 rounded-full text-[13px] font-medium">
-                                                    {service.trim()}
-                                                </span>
-                                            ))}
-                                            {vendor.portal_inventory?.parts?.map((part, idx) => (
-                                                <span key={`p-inv-${idx}`} className="bg-teal-50 border border-teal-100 text-teal-700 px-3 py-1 rounded-full text-[13px] font-medium">
-                                                    {part}
+                                                    {service}
                                                 </span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
                                 
-                                {(vendor.brands || (vendor.portal_inventory?.makes?.length > 0)) && (
+                                {mergedBrands.length > 0 && (
                                     <div>
                                         <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-wider mb-2">Brands Supported</h3>
                                         <div className="flex flex-wrap gap-2">
-                                            {vendor.brands && vendor.brands.split(',').map((brand, idx) => (
+                                            {mergedBrands.map((brand, idx) => (
                                                 <span key={`brnd-${idx}`} className="bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1 rounded-full text-[13px] font-bold">
-                                                    {brand.trim()}
-                                                </span>
-                                            ))}
-                                            {vendor.portal_inventory?.makes?.map((make, idx) => (
-                                                <span key={`m-inv-${idx}`} className="bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[13px] font-bold flex items-center gap-1">
-                                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                                                    {make}
+                                                    {brand}
                                                 </span>
                                             ))}
                                         </div>

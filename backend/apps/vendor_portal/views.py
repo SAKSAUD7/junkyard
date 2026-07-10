@@ -33,7 +33,7 @@ class VendorDashboardView(APIView):
     
     def get(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
         except:
             return Response({
                 'error': 'No vendor profile found'
@@ -90,7 +90,7 @@ class VendorProfileView(generics.RetrieveUpdateAPIView):
     
     def get_object(self):
         try:
-            return self.request.user.vendor_profile.vendor
+            return getattr(self.request.user, 'vendor_profile').vendor
         except:
             return None
     
@@ -114,7 +114,7 @@ class VendorBusinessHoursView(APIView):
     
     def get(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
             hours = VendorBusinessHours.objects.filter(vendor=vendor)
             serializer = VendorBusinessHoursSerializer(hours, many=True)
             return Response(serializer.data)
@@ -126,7 +126,7 @@ class VendorBusinessHoursView(APIView):
     def post(self, request):
         """Bulk update business hours"""
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
             hours_data = request.data.get('hours', [])
             
             # Delete existing hours
@@ -164,14 +164,14 @@ class VendorInventoryListView(generics.ListCreateAPIView):
     
     def get_queryset(self):
         try:
-            vendor = self.request.user.vendor_profile.vendor
+            vendor = getattr(self.request.user, 'vendor_profile').vendor
             return VendorInventory.objects.filter(vendor=vendor)
         except:
             return VendorInventory.objects.none()
     
     def perform_create(self, serializer):
         try:
-            vendor = self.request.user.vendor_profile.vendor
+            vendor = getattr(self.request.user, 'vendor_profile').vendor
             serializer.save(vendor=vendor)
         except:
             raise Exception("No vendor profile found")
@@ -188,7 +188,7 @@ class VendorInventoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         try:
-            vendor = self.request.user.vendor_profile.vendor
+            vendor = getattr(self.request.user, 'vendor_profile').vendor
             return VendorInventory.objects.filter(vendor=vendor)
         except:
             return VendorInventory.objects.none()
@@ -202,7 +202,7 @@ class VendorLeadListView(APIView):
     
     def get(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
             
             # Get vendor leads matching vendor's state
             # Note: Lead assignment system is disabled
@@ -282,7 +282,7 @@ class VendorNotificationListView(generics.ListAPIView):
     
     def get_queryset(self):
         try:
-            vendor = self.request.user.vendor_profile.vendor
+            vendor = getattr(self.request.user, 'vendor_profile').vendor
             return VendorNotification.objects.filter(vendor=vendor)
         except:
             return VendorNotification.objects.none()
@@ -296,7 +296,7 @@ class VendorNotificationMarkReadView(APIView):
     
     def post(self, request, pk):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
             notification = VendorNotification.objects.get(pk=pk, vendor=vendor)
             
             notification.is_read = True
@@ -321,7 +321,7 @@ class VendorStatsView(APIView):
     
     def get(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
         except:
             return Response({
                 'error': 'No vendor profile found'
@@ -378,7 +378,7 @@ class VendorAdView(APIView):
     
     def get(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
         except:
             return Response({'error': 'No vendor profile found'}, status=status.HTTP_404_NOT_FOUND)
             
@@ -396,7 +396,7 @@ class VendorAdView(APIView):
         
     def post(self, request):
         try:
-            vendor = request.user.vendor_profile.vendor
+            vendor = getattr(request.user, 'vendor_profile').vendor
         except:
             return Response({'error': 'No vendor profile found'}, status=status.HTTP_404_NOT_FOUND)
             

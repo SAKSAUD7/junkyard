@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useLocation } from 'react-router-dom';
+
+const DevRecaptcha = ({ onChange }) => (
+    <div className="border border-[#d3d3d3] bg-[#f9f9f9] p-3 rounded-[3px] flex items-center justify-between w-[304px] h-[78px] shadow-sm">
+        <label className="flex items-center gap-3 cursor-pointer pl-1">
+            <input 
+                type="checkbox" 
+                onChange={(e) => onChange(e.target.checked ? 'dev-mock-token-xyz' : null)} 
+                className="w-7 h-7 rounded-[2px] border-2 border-[#c1c1c1] bg-white cursor-pointer" 
+            />
+            <span className="text-[14px] font-medium text-[#282828]">I'm not a robot</span>
+        </label>
+        <div className="flex flex-col items-center pr-1 text-center">
+            <div className="text-[11px] text-[#555] font-bold">reCAPTCHA</div>
+            <div className="text-[9px] text-[#555] mt-0.5 font-bold uppercase text-red-500">Dev Only</div>
+        </div>
+    </div>
+);
 
 const FeedbackWidget = () => {
+    const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
         topic: 'find_business',
@@ -9,12 +29,14 @@ const FeedbackWidget = () => {
     });
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
+    const recaptchaRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8000/api/common/feedback/', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/common/feedback/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -26,6 +48,8 @@ const FeedbackWidget = () => {
                     setTimeout(() => {
                         setSubmitted(false);
                         setFormData({ topic: 'find_business', description: '' });
+                        setCaptchaToken(null);
+                        if (recaptchaRef.current) recaptchaRef.current.reset();
                     }, 500); // Reset after close animation
                 }, 3000);
             }
@@ -35,6 +59,10 @@ const FeedbackWidget = () => {
             setLoading(false);
         }
     };
+
+    if (location.pathname.startsWith('/admin-portal')) {
+        return null;
+    }
 
     return (
         <>
@@ -73,7 +101,7 @@ const FeedbackWidget = () => {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 20, scale: 0.95 }}
                             transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-                            className="relative w-full max-w-[700px] flex flex-col bg-slate-50/50 rounded-3xl md:rounded-[32px] shadow-2xl my-auto z-10"
+                            className="relative w-full max-w-[700px] max-h-[92vh] overflow-y-auto flex flex-col bg-slate-50/50 rounded-3xl md:rounded-[32px] shadow-2xl my-auto z-10 scrollbar-hide"
                         >
                             {/* The Floating Middle Icon (simulated via absolute positioning on the main white box) */}
                             <div className="relative pt-6">
@@ -123,7 +151,7 @@ const FeedbackWidget = () => {
                                                     We're all ears! Your suggestions and feedback help us serve you better.
                                                 </p>
 
-                                                <div className="bg-slate-50/70 border border-slate-100/50 rounded-2xl p-6 sm:p-7 space-y-6 sm:space-y-7">
+                                                <div className="hidden sm:block bg-slate-50/70 border border-slate-100/50 rounded-2xl p-6 sm:p-7 space-y-6 sm:space-y-7">
                                                     <div className="flex gap-4">
                                                         <div className="w-10 h-10 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center shrink-0">
                                                             <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.8-6.3 4.8 2.3-7.4-6-4.6h7.6z"/></svg>
@@ -204,16 +232,18 @@ const FeedbackWidget = () => {
                                                         </div>
                                                     </div>
 
-                                                    {/* Mock Recaptcha */}
-                                                    <div className="w-[302px] max-w-full bg-[#f9f9f9] border border-[#d3d3d3] rounded-[3px] p-2 pl-3 flex items-center justify-between shadow-sm mt-1 mb-2">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-7 h-7 bg-white border-2 border-[#c1c1c1] rounded-[2px] shrink-0" />
-                                                            <span className="text-[14px] font-medium text-[#282828]">I'm not a robot</span>
-                                                        </div>
-                                                        <div className="text-center flex flex-col items-center justify-center shrink-0 pr-1">
-                                                            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" className="w-[32px]" />
-                                                            <div className="text-[10px] text-slate-500 mt-0.5 whitespace-nowrap">reCAPTCHA<br/>Privacy - Terms</div>
-                                                        </div>
+                                                    {/* Real Recaptcha or Dev Fallback */}
+                                                    <div className="mt-1 mb-2">
+                                                        {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+                                                            <ReCAPTCHA
+                                                                ref={recaptchaRef}
+                                                                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                                                onChange={(token) => setCaptchaToken(token)}
+                                                                onExpired={() => setCaptchaToken(null)}
+                                                            />
+                                                        ) : (
+                                                            <DevRecaptcha onChange={setCaptchaToken} />
+                                                        )}
                                                     </div>
 
                                                     <div className="text-[12px] sm:text-[13px] text-slate-600 mb-1 font-medium">
@@ -223,8 +253,8 @@ const FeedbackWidget = () => {
                                                     <div>
                                                         <button 
                                                             type="submit"
-                                                            disabled={loading || formData.description.length < 5}
-                                                            className={`h-11 px-6 bg-blue-600 text-white text-[14px] font-bold rounded-lg flex items-center gap-2 transition-all ${loading || formData.description.length < 5 ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 shadow-md shadow-blue-600/20 w-fit'}`}
+                                                            disabled={loading || formData.description.length < 5 || !captchaToken}
+                                                            className={`h-11 px-6 bg-blue-600 text-white text-[14px] font-bold rounded-lg flex items-center gap-2 transition-all ${loading || formData.description.length < 5 || !captchaToken ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 shadow-md shadow-blue-600/20 w-fit'}`}
                                                         >
                                                             {loading ? (
                                                                 <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -242,8 +272,8 @@ const FeedbackWidget = () => {
                             </div>
 
                             {/* Bottom Banner inside the modal container matching the screenshot */}
-                            <div className="bg-slate-50 px-6 sm:px-8 py-4 sm:py-5 rounded-b-3xl md:rounded-b-[32px] border-t border-slate-100 flex items-center justify-between z-10 w-full overflow-hidden">
-                                <div className="flex items-center gap-4">
+                            <div className="bg-slate-50 px-5 sm:px-8 py-4 sm:py-5 rounded-b-3xl md:rounded-b-[32px] border-t border-slate-100 flex items-center justify-between z-10 w-full overflow-hidden shrink-0">
+                                <div className="flex items-center gap-3 sm:gap-4">
                                     <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0 shadow-sm">
                                         <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg>
                                     </div>

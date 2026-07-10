@@ -112,21 +112,8 @@ class YardSubmissionCreateSerializer(serializers.ModelSerializer):
         return value
     
     def validate_description(self, value):
-        """Skip description length enforcement — auto-generated if blank"""
+        """Skip description length enforcement"""
         return value
-    
-    def create(self, validated_data):
-        """Auto-fill description if not provided"""
-        if not validated_data.get('description'):
-            name = validated_data.get('business_name', '')
-            city = validated_data.get('city', '')
-            state = validated_data.get('state', '')
-            services = validated_data.get('services', 'auto parts')
-            validated_data['description'] = (
-                f"{name} is a junkyard/auto parts business located in {city}, {state}. "
-                f"We offer {services}. Contact us for availability and pricing."
-            )
-        return super().create(validated_data)
 
 
 class YardSubmissionAdminSerializer(serializers.ModelSerializer):

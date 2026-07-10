@@ -159,7 +159,12 @@ export const vendorDashboard = {
 
 export const vendorProfile = {
     get: () => vendorApi.get('/profile/'),
-    update: (data) => vendorApi.patch('/profile/', data),
+    update: (data) => {
+        const isFormData = data instanceof FormData;
+        return vendorApi.patch('/profile/', data, isFormData ? {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        } : {});
+    },
     getBusinessHours: () => vendorApi.get('/business-hours/'),
     updateBusinessHours: (hours) => vendorApi.post('/business-hours/', { hours }),
 };
