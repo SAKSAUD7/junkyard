@@ -51,6 +51,44 @@
 }
 
 /* ============================================================
+   HERO RESPONSIVE TEXT — Override CMS injected font sizes on mobile
+   ============================================================ */
+
+/* On mobile, force ALL text inside hero heading to be small */
+@media (max-width: 767px) {
+  .hero-responsive-text {
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+  }
+  .hero-responsive-text p,
+  .hero-responsive-text span,
+  .hero-responsive-text strong,
+  .hero-responsive-text em,
+  .hero-responsive-text b,
+  .hero-responsive-text i,
+  .hero-responsive-text u,
+  .hero-responsive-text s,
+  .hero-responsive-text h1,
+  .hero-responsive-text h2,
+  .hero-responsive-text h3,
+  .hero-responsive-text * {
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+    margin-top: 0 !important;
+    margin-bottom: 2px !important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-responsive-text,
+  .hero-responsive-text * {
+    font-size: clamp(20px, 3vw, 32px) !important;
+    line-height: 1.15 !important;
+  }
+}
+
+/* ============================================================
    HERO DEPTH SYSTEM — Cinematic car imagery with CSS animations
    ============================================================ */
 
