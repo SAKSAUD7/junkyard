@@ -1,5 +1,39 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCMS } from '../hooks/useCMS'
+
+// Mobile-only accordion column
+function FooterAccordion({ heading, children }) {
+    const [open, setOpen] = useState(false)
+    return (
+        <div className="border-b border-slate-100 md:border-0">
+            {/* Header — clickable on mobile only */}
+            <button
+                className="w-full flex items-center justify-between py-3.5 md:py-0 md:mb-4 md:cursor-default touch-target"
+                onClick={() => setOpen(v => !v)}
+                aria-expanded={open}
+            >
+                <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">
+                    {heading}
+                </span>
+                {/* Chevron — mobile only */}
+                <svg
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 md:hidden ${open ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            {/* Body: always visible on md+, accordion on mobile */}
+            <div className={`footer-accordion-body md:block ${open ? 'open' : ''}`}>
+                <div className="pb-4 md:pb-0">
+                    {children}
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default function Footer() {
     const currentYear = new Date().getFullYear()
@@ -36,65 +70,82 @@ export default function Footer() {
     ]
 
     return (
-        <footer className="bg-white border-t border-slate-100 pt-10 pb-6">
+        <footer className="bg-white border-t border-slate-100 pt-8 pb-6"
+            style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-10">
 
-                    {/* Brand */}
-                    <div className="col-span-2 md:col-span-4 lg:col-span-1">
-                        <div className="flex items-center gap-2.5 mb-4">
+                {/* Brand — always full width on mobile, 1-col on desktop */}
+                <div className="mb-6 md:mb-0">
+                    <div className="flex items-center justify-between md:block">
+                        <div className="flex items-center gap-2.5 mb-3">
                             <img src={logoUrl || '/logo.png'} alt="JYNM Logo" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                             <div>
                                 <div className="text-base font-black text-slate-900 leading-none">{getGlobal('brand', 'name_short', 'JYNM')}</div>
                                 <div className="text-[8px] font-bold text-slate-400 tracking-widest uppercase">{getGlobal('brand', 'name_long', 'Junkyards Near Me')}</div>
                             </div>
                         </div>
-                        <p className="text-[12px] text-slate-500 leading-relaxed mb-4 max-w-[220px]">
-                            {getFooter('brand', 'description', 'Connecting people to quality used auto parts from trusted junkyards nationwide.')}
-                        </p>
-                        <div className="flex gap-2">
+                        {/* Socials inline on mobile */}
+                        <div className="flex gap-2 md:hidden">
                             {socials.map(s => (
                                 <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
-                                    className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
+                                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
                                     {s.icon}
                                 </a>
                             ))}
                         </div>
                     </div>
+                    <p className="text-[12px] text-slate-500 leading-relaxed mb-4 max-w-[220px] hidden md:block">
+                        {getFooter('brand', 'description', 'Connecting people to quality used auto parts from trusted junkyards nationwide.')}
+                    </p>
+                    {/* Socials desktop */}
+                    <div className="hidden md:flex gap-2">
+                        {socials.map(s => (
+                            <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
+                                className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
+                                {s.icon}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Link columns */}
+                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 md:gap-8 mt-2 md:mt-8">
+                    {/* Brand description — desktop only, pushed into grid */}
+                    <div className="hidden lg:block">
+                        <p className="text-[12px] text-slate-500 leading-relaxed max-w-[220px]">
+                            {getFooter('brand', 'description', 'Connecting people to quality used auto parts from trusted junkyards nationwide.')}
+                        </p>
+                    </div>
 
                     {/* Quick Links */}
-                    <div>
-                        <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4">{getFooter('quick_links', 'heading', 'Quick Links')}</h3>
+                    <FooterAccordion heading={getFooter('quick_links', 'heading', 'Quick Links')}>
                         <ul className="space-y-2.5">
                             {quickLinks.map(item => (
                                 <li key={item.path}><Link to={item.path} className="text-[12px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
                             ))}
                         </ul>
-                    </div>
+                    </FooterAccordion>
 
                     {/* For Buyers */}
-                    <div>
-                        <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4">{getFooter('buyers', 'heading', 'For Buyers')}</h3>
+                    <FooterAccordion heading={getFooter('buyers', 'heading', 'For Buyers')}>
                         <ul className="space-y-2.5">
                             {buyerLinks.map(item => (
                                 <li key={item.path}><Link to={item.path} className="text-[12px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
                             ))}
                         </ul>
-                    </div>
+                    </FooterAccordion>
 
                     {/* For Vendors */}
-                    <div>
-                        <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4">{getFooter('vendors', 'heading', 'For Vendors')}</h3>
+                    <FooterAccordion heading={getFooter('vendors', 'heading', 'For Vendors')}>
                         <ul className="space-y-2.5">
                             {vendorLinks.map(item => (
                                 <li key={item.path}><Link to={item.path} className="text-[12px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
                             ))}
                         </ul>
-                    </div>
+                    </FooterAccordion>
 
-                    {/* Contact — compact inline */}
-                    <div>
-                        <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4">{getFooter('contact', 'heading', 'Contact')}</h3>
+                    {/* Contact */}
+                    <FooterAccordion heading={getFooter('contact', 'heading', 'Contact')}>
                         <ul className="space-y-2.5">
                             <li>
                                 <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-2 text-[12px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
@@ -113,11 +164,11 @@ export default function Footer() {
                                 {getFooter('contact', 'location', 'Nationwide — All 50 States')}
                             </li>
                         </ul>
-                    </div>
+                    </FooterAccordion>
                 </div>
 
                 {/* Bottom bar */}
-                <div className="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="border-t border-slate-100 pt-5 mt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p className="text-[11px] font-medium text-slate-400">
                         © {currentYear} {getFooter('brand', 'copyright_name', 'JYNM')}. {getFooter('brand', 'copyright_text', 'All rights reserved.')}
                     </p>

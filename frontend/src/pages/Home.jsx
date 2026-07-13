@@ -5,7 +5,6 @@ import Footer from '../components/Footer'
 import TrustedVendors from '../components/TrustedVendors'
 import DynamicAd from '../components/DynamicAd'
 import MobileAdBanner from '../components/MobileAdBanner'
-import FloatingActionButtons from '../components/FloatingActionButtons'
 import SEO from '../components/SEO'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 import { useCMS } from '../hooks/useCMS'
@@ -146,9 +145,6 @@ export default function Home() {
 
             {/* Mobile Ad Banner — all ads as swipe carousel */}
             {/* <MobileAdBanner page="home" /> */}
-
-            {/* Floating Action Buttons — WhatsApp, Call, AI Chat */}
-            <FloatingActionButtons />
 
             {/* Conversion Engine Components */}
 

@@ -130,8 +130,20 @@ function SearchableDropdown({
 
 export default function HeroSection({ get, ready = false }) {
   const leadFormRef = useRef(null);
+  const [formInView, setFormInView] = useState(true);
 
-  // ── Hero 2-Step Inline Lead Form State ─────────────────────────────────
+  // Observer for Sticky CTA
+  useEffect(() => {
+    if (!leadFormRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFormInView(entry.isIntersecting);
+      },
+      { threshold: 0.1, rootMargin: "-80px 0px 0px 0px" }
+    );
+    observer.observe(leadFormRef.current);
+    return () => observer.disconnect();
+  }, []);
   const [makes, setMakes] = useState([]);
   const [models, setModels] = useState([]);
   const [years, setYears] = useState([]);
@@ -663,21 +675,7 @@ export default function HeroSection({ get, ready = false }) {
           )}
         </div>
 
-        <div className="w-[100vw] -ml-[calc(50vw-50%)] relative z-0 flex lg:hidden items-center justify-center mix-blend-multiply aspect-video mt-0 mb-2">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover scale-[1.1] origin-[center_70%] opacity-100"
-            style={{ filter: "brightness(1.05) contrast(1.05)" }}
-          >
-            <source
-              src="/Video/hero-models-bg.mp4?nocache=1"
-              type="video/mp4"
-            />
-          </video>
-        </div>
+        {/* MOBILE VIDEO BLOCK REMOVED — Preserves vertical space to keep form above the fold */}
 
         <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
           <div ref={leadFormRef} className="w-full mb-8 relative z-[100]">
@@ -1182,6 +1180,26 @@ export default function HeroSection({ get, ready = false }) {
           <PromoBanner />
         </div>
       </div>
+
+      {/* STICKY MOBILE CTA BAR (Shows when hero form scrolls out of view) */}
+      {!formInView && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] p-3 lg:hidden mobile-cta-bar"
+          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+        >
+          <button
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-full bg-blue-600 text-white font-black text-[15px] py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
+          >
+            Find My Part — Free Quote
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </button>
+        </div>
+      )}
     </section>
   );
 }

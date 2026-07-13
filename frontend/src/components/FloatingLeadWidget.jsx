@@ -6,8 +6,15 @@ import LeadForm from './LeadForm';
 export default function FloatingLeadWidget() {
     const location = useLocation();
 
-    // Hide widget entirely on admin routes
-    if (location.pathname.startsWith('/admin-portal') || location.pathname.startsWith('/admin')) {
+    const EXCLUDED_PREFIXES = [
+        '/admin-portal',
+        '/admin',
+        '/vendor',
+        '/signin',
+        '/signup',
+        '/forgot-password',
+    ];
+    if (EXCLUDED_PREFIXES.some(p => location.pathname.startsWith(p))) {
         return null;
     }
 

@@ -20,7 +20,7 @@ const DevRecaptcha = ({ onChange }) => (
     </div>
 );
 
-const FeedbackWidget = () => {
+const FeedbackWidget = ({ externalOpen = false, onExternalClose }) => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -31,6 +31,16 @@ const FeedbackWidget = () => {
     const [submitted, setSubmitted] = useState(false);
     const [captchaToken, setCaptchaToken] = useState(null);
     const recaptchaRef = useRef(null);
+
+    // Sync with external open trigger from GlobalFAB
+    React.useEffect(() => {
+        if (externalOpen) setIsOpen(true);
+    }, [externalOpen]);
+
+    const handleClose = () => {
+        setIsOpen(false);
+        onExternalClose?.();
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,13 +54,13 @@ const FeedbackWidget = () => {
             if (res.ok) {
                 setSubmitted(true);
                 setTimeout(() => {
-                    setIsOpen(false);
+                    handleClose();
                     setTimeout(() => {
                         setSubmitted(false);
                         setFormData({ topic: 'find_business', description: '' });
                         setCaptchaToken(null);
                         if (recaptchaRef.current) recaptchaRef.current.reset();
-                    }, 500); // Reset after close animation
+                    }, 500);
                 }, 3000);
             }
         } catch (error) {
@@ -60,31 +70,14 @@ const FeedbackWidget = () => {
         }
     };
 
-    if (location.pathname.startsWith('/admin-portal')) {
+    const EXCLUDED_PREFIXES = ['/admin-portal', '/admin', '/vendor', '/signin', '/signup', '/forgot-password'];
+    if (EXCLUDED_PREFIXES.some(p => location.pathname.startsWith(p))) {
         return null;
     }
 
     return (
         <>
-            {/* Floating Action Button */}
-            <motion.button
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsOpen(true)}
-                className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg shadow-blue-600/30 flex items-center justify-center z-50 transition-colors"
-                aria-label="Open Feedback Form"
-            >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.477 2 2 5.582 2 10c0 2.476 1.34 4.686 3.425 6.13-.19.896-.706 2.378-1.572 3.25 1.764.12 3.992-.477 5.753-1.636.757.215 1.564.336 2.394.336 5.523 0 10-3.582 10-8s-4.477-8-10-8z" />
-                    <circle cx="8" cy="10" r="1.5" fill="white" />
-                    <circle cx="12" cy="10" r="1.5" fill="white" />
-                    <circle cx="16" cy="10" r="1.5" fill="white" />
-                </svg>
-            </motion.button>
-
-            {/* Modal Overlay */}
+            {/* Modal Overlay — triggered externally via GlobalFAB */}
             <AnimatePresence>
                 {isOpen && (
                     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 overflow-y-auto w-full h-[100dvh]">
@@ -92,7 +85,7 @@ const FeedbackWidget = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setIsOpen(false)}
+                            onClick={handleClose}
                             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
                         />
 
