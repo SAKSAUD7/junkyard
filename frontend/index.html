@@ -37,6 +37,21 @@
   <style>
     html, body { background-color: #060c14; color: #e8f0fe; }
   </style>
+
+  <!-- Base JSON-LD Structured Data for JYNM Platform -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Junkyards Near Me",
+      "url": "https://junkyardsnearme.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://junkyardsnearme.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
 </head>
 
 <body style="background:#060c14">

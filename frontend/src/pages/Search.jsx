@@ -108,7 +108,7 @@ export default function Search() {
                                     : 'Try adjusting your search criteria or browse all junkyards.'}
                             </p>
                             <div className="flex gap-4 justify-center flex-wrap">
-                                <Link to="/vendors" className="font-bold px-8 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)]">
+                                <Link to="/junkyards" className="font-bold px-8 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)]">
                                     View All Vendors
                                 </Link>
                                 <Link to="/" className="font-bold px-8 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition">

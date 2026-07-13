@@ -22,10 +22,14 @@ const VendorDetail = () => {
         const fetchVendor = async () => {
             try {
                 setLoading(true);
-                let targetId = id;
-                if (!targetId && params.slug) {
-                    const match = params.slug.match(/^(\d+)-/);
-                    if (match && match[1]) targetId = match[1];
+                let targetId = id || params.slug || params.vendorSlug;
+                
+                // If targetId is a full SEO slug (e.g. 5726-sa-recycling), extract just the numeric part
+                if (targetId) {
+                    const match = targetId.match(/^(\d+)/);
+                    if (match && match[1]) {
+                        targetId = match[1];
+                    }
                 }
                 if (targetId) {
                     const data = await api.getVendor(targetId);
@@ -99,7 +103,12 @@ const VendorDetail = () => {
         logo: logoUrl
     });
 
-    const canonicalPath = `https://junkyardsnearme.com/vendors/${vendor.id}`;
+    // Build the SEO-canonical slug URL matching the redirect map format
+    const nameSlug = (vendor.name || 'vendor').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const citySlug = (vendor.city || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const stateSlug = (vendor.state || '').toLowerCase();
+    const vendorSlug = `${vendor.id}-${nameSlug}${citySlug ? '-' + citySlug : ''}${stateSlug ? '-' + stateSlug : ''}`;
+    const canonicalPath = `https://junkyardsnearme.com/vendors/${vendorSlug}`;
 
     return (
         <div className="min-h-screen bg-[#f8fafc]">
@@ -117,8 +126,8 @@ const VendorDetail = () => {
                     <Breadcrumbs
                         items={[
                             { label: 'Home', href: '/' },
-                            { label: 'Junkyards', href: '/vendors' },
-                            { label: vendor.name, href: `/vendors/${vendor.id}` }
+                            { label: 'All Junkyards', href: '/vendors' },
+                            { label: vendor.name, href: `/vendors/${vendorSlug}` }
                         ]}
                     />
                 </div>

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { MotionConfig } from 'framer-motion'
 import PageTransition from './components/PageTransition'
@@ -13,7 +13,6 @@ import GlobalFAB from './components/GlobalFAB'
 const Search       = lazy(() => import('./pages/Search'))
 const BrowseStates = lazy(() => import('./pages/BrowseStates'))
 const BrowseState  = lazy(() => import('./pages/BrowseState'))
-const JunkyardDetail = lazy(() => import('./pages/JunkyardDetail'))
 const AllVendors   = lazy(() => import('./pages/AllVendors'))
 const VendorDetail = lazy(() => import('./pages/VendorDetail'))
 const QuoteRequest = lazy(() => import('./pages/QuoteRequest'))
@@ -100,16 +99,8 @@ function PageSpinner() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Legacy redirect for /junkyards/* URLs (5200+ SEO-preserved routes)
-// ─────────────────────────────────────────────────────────────────────────────
-function JunkyardRedirect() {
-  const location = useLocation()
-  const parts = location.pathname.replace(/^\/junkyards\//, '').split('/')
-  if (parts.length >= 2 && parts[1]) {
-    return <Navigate to={`/vendors/${parts[1]}`} replace />
-  }
-  return <Navigate to={`/browse/${parts[0]}`} replace />
-}
+// Legacy URL Components removed as we now render them natively.
+
 
 function ScrollObserver() {
   const location = useLocation()
@@ -129,6 +120,16 @@ function ScrollObserver() {
   }, [location.pathname])
 
   return null
+}
+
+function RedirectVendorSlug() {
+  const params = useParams();
+  return <Navigate to={`/junkyards/unknown/${params.slug}`} replace />;
+}
+
+function RedirectBrowseState() {
+  const params = useParams();
+  return <Navigate to={`/junkyards/${params.state}`} replace />;
 }
 
 function App() {
@@ -159,12 +160,19 @@ function App() {
 
             {/* Protected Routes */}
 
-            <Route path="/vendors" element={<AllVendors />} />
-            <Route path="/junkyards" element={<Navigate to="/vendors" replace />} />
-            <Route path="/vendors/:id" element={<VendorDetail />} />
-            <Route path="/browse" element={<BrowseStates />} />
-            <Route path="/browse/:state" element={<BrowseState />} />
-            <Route path="/junkyard/:id" element={<JunkyardDetail />} />
+            {/* Legacy SEO Native Routes - these perfectly match final_working_urls.csv */}
+            <Route path="/junkyards" element={<AllVendors />} />
+            <Route path="/junkyards-by-location" element={<BrowseStates />} />
+            <Route path="/junkyards/:state" element={<BrowseState />} />
+            <Route path="/junkyards/:state/:slug" element={<VendorDetail />} />
+            <Route path="/junkyard/:slug" element={<VendorDetail />} />
+
+            {/* Backwards compatibility for paths that temporarily used /vendors or /browse */}
+            <Route path="/vendors" element={<Navigate to="/junkyards" replace />} />
+            <Route path="/vendors/:slug" element={<RedirectVendorSlug />} />
+            <Route path="/browse" element={<Navigate to="/junkyards-by-location" replace />} />
+            <Route path="/browse/:state" element={<RedirectBrowseState />} />
+
             <Route path="/about" element={<About />} />
             <Route path="/about-us" element={<Navigate to="/about" replace />} />
             <Route path="/contact" element={<Contact />} />
@@ -174,9 +182,6 @@ function App() {
             <Route path="/faq" element={<FAQ />} />
 
             {/* Legacy SEO Redirects */}
-            <Route path="/junkyards-by-location" element={<Navigate to="/browse" replace />} />
-            <Route path="/junkyards/:state" element={<JunkyardRedirect />} />
-            <Route path="/junkyards/:state/:vendorSlug" element={<JunkyardRedirect />} />
             <Route path="/terms-and-conditions" element={<Navigate to="/terms" replace />} />
             <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
 

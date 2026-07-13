@@ -28,7 +28,10 @@ export function generateVendorUrl(vendor) {
 
     const slug = `${id}-${namePart}${cityPart ? '-' + cityPart : ''}${statePart ? '-' + statePart : ''}`
 
-    return `/vendors/${slug}`
+    if (!statePart) {
+        return `/junkyards/${slug}`
+    }
+    return `/junkyards/${statePart}/${slug}`
 }
 
 /**
@@ -73,7 +76,7 @@ export function extractVendorIdFromSlug(slug) {
  * Get main vendor listing URL
  */
 export function getVendorsListUrl(page = null) {
-    const baseUrl = '/vendors'
+    const baseUrl = '/junkyards'
     return page ? `${baseUrl}?p=${page}` : baseUrl
 }
 
@@ -81,7 +84,7 @@ export function getVendorsListUrl(page = null) {
  * Get browse by location URL
  */
 export function getBrowseLocationUrl() {
-    return '/browse'
+    return '/junkyards-by-location'
 }
 
 /**

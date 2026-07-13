@@ -2,13 +2,15 @@ import { Link } from 'react-router-dom';
 import Rating from './Rating';
 import VendorBadges from './VendorBadges';
 import { getLogoUrl } from '../utils/imageUrl';
+import { generateVendorUrl } from '../utils/urlHelpers';
 
 export default function VendorCard({ vendor, compact = false, showBadge = true }) {
     const logoUrl = getLogoUrl(vendor.logo);
+    const vendorUrl = generateVendorUrl(vendor);
 
     return (
         <Link
-            to={`/vendors/${vendor.id}`}
+            to={vendorUrl}
             id={`vendor-card-${vendor.id}`}
             className="group relative block h-full"
         >
