@@ -55,8 +55,8 @@ export default function Navbar() {
 
     const navLinks = [
         { path: '/', label: 'Home' },
-        { path: '/vendors', label: 'Junkyards' },
-        { path: '/browse', label: 'Browse States' },
+        { path: '/junkyards', label: 'Junkyards' },
+        { path: '/junkyards-by-location', label: 'Browse States' },
         { path: '/blog', label: 'Blog' },
         { path: '/about', label: 'About' },
         { path: '/contact', label: 'Contact' },

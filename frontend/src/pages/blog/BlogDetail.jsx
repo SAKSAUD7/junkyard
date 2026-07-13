@@ -25,7 +25,7 @@ const SAMPLE_POST = {
       { id: '3', type: 'heading', level: 'h2', text: 'Step 1: Know What Engine You Need' },
       { id: '4', type: 'paragraph', text: 'Before visiting a junkyard, you must know your car\'s requirements.' },
       { id: '5', type: 'list', style: 'bullet', items: ['Year, Make, Model, and Trim (e.g., 2015 Honda Accord EX-L)', 'Engine code (found on the door jamb sticker or VIN decoder)', 'Mileage requirements — aim for under 100,000 miles for best reliability'] },
-      { id: '6', type: 'cta', title: 'Search Our Nationwide Network', description: 'Use the JYNM Browse Tool to search junkyards in your state.', buttonText: 'Browse Now', buttonLink: '/browse' },
+      { id: '6', type: 'cta', title: 'Search Our Nationwide Network', description: 'Use the JYNM Browse Tool to search junkyards in your state.', buttonText: 'Browse Now', buttonLink: '/junkyards-by-location' },
   ],
   cover_image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
   category: { name: 'Buying Guide', slug: 'buying-guide' },

@@ -212,7 +212,7 @@ export default function TrustedVendors() {
                 {/* View All CTA */}
                 <div className="text-center mt-8">
                     <Link
-                        to="/vendors"
+                        to="/junkyards"
                         className="inline-flex items-center gap-2 text-blue-600 font-bold text-[15px] hover:text-blue-700 transition-colors border-b-2 border-blue-100 hover:border-blue-400 pb-0.5"
                     >
                         View All Vendors

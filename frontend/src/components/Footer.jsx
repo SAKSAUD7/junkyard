@@ -10,8 +10,8 @@ export default function Footer() {
     const quickLinks = [
         { name: getFooter('quick_links', 'link_home', 'Home'), path: '/' },
         { name: getFooter('quick_links', 'link_search', 'Search'), path: '/search' },
-        { name: getFooter('quick_links', 'link_browse', 'Browse States'), path: '/browse' },
-        { name: getFooter('quick_links', 'link_junkyards', 'Junkyards'), path: '/vendors' },
+        { name: getFooter('quick_links', 'link_browse', 'Browse States'), path: '/junkyards-by-location' },
+        { name: getFooter('quick_links', 'link_junkyards', 'Junkyards'), path: '/junkyards' },
         { name: getFooter('quick_links', 'link_blog', 'Blog'), path: '/blog' },
         { name: getFooter('quick_links', 'link_about', 'About Us'), path: '/about' },
         { name: getFooter('quick_links', 'link_contact', 'Contact'), path: '/contact' },

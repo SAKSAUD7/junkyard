@@ -108,3 +108,19 @@ class Feedback(models.Model):
         
     def __str__(self):
         return f"Feedback #{self.id} - {self.get_topic_display()}"
+
+
+class CustomRedirect(models.Model):
+    """Stores 301 and 302 redirects for SEO preservation"""
+    old_path = models.CharField(max_length=500, db_index=True, unique=True, help_text="This should be an absolute path, excluding the domain name. Example: '/events/search/'.")
+    new_path = models.CharField(max_length=500, blank=True, help_text="This can be either an absolute path (as above) or a full URL starting with 'http://'.")
+    status_code = models.SmallIntegerField(default=301, choices=[(301, '301 - Permanent'), (302, '302 - Temporary')])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['old_path']
+        verbose_name = 'Redirect'
+        verbose_name_plural = 'Redirects'
+
+    def __str__(self):
+        return f"{self.old_path} ---> {self.new_path} ({self.status_code})"

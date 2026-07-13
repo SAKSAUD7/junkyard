@@ -11,6 +11,7 @@ import MobileAdBanner from '../components/MobileAdBanner';
 import { getLogoUrl } from '../utils/imageUrl';
 import Rating from '../components/Rating';
 import VendorBadges from '../components/VendorBadges';
+import { generateVendorUrl } from '../utils/urlHelpers';
 
 const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100','text-purple-700 bg-purple-50 border-purple-100','text-orange-700 bg-orange-50 border-orange-100','text-emerald-700 bg-emerald-50 border-emerald-100'];
 
@@ -101,8 +102,8 @@ export default function BrowseState() {
             }),
             getBreadcrumbSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Browse States', url: '/browse' },
-                { name: stateName, url: `/browse/${state}` }
+                { name: 'Browse States', url: '/junkyards-by-location' },
+                { name: stateName, url: `/junkyards/${state}` }
             ])
         ]
     };
@@ -189,7 +190,7 @@ export default function BrowseState() {
                                 const logoUrl = vendor.logo ? getLogoUrl(vendor.logo) : null;
                                 const badgeColor = BADGE_COLORS[index % BADGE_COLORS.length];
                                 return (
-                                    <Link to={`/junkyard/${vendor.id}`} key={vendor.id} className="block group focus:outline-none">
+                                    <Link to={generateVendorUrl(vendor)} key={vendor.id} className="block group focus:outline-none">
                                         <div className="bg-white rounded-[16px] md:rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full flex flex-col">
 
                                             {/* Status Badge */}

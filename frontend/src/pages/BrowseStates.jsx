@@ -75,7 +75,7 @@ export default function BrowseStates() {
                 url: typeof window !== 'undefined' ? window.location.href : '',
                 numberOfItems: statesData.length
             }),
-            getBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Browse States', url: '/browse' }])
+            getBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Browse States', url: '/junkyards-by-location' }])
         ]
     };
 

@@ -55,7 +55,7 @@ export default function WhyChooseJynmSection() {
             </div>
 
             <Link
-                to="/vendors"
+                to="/junkyards"
                 className="mt-4 w-full inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all text-[12px] shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:-translate-y-0.5"
             >
                 Browse Junkyards →

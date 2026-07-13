@@ -19,7 +19,7 @@ export default function CTABanner({ get }) {
                         <Link to="/quote" id="cta-get-quote-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold bg-white text-blue-600 transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/10">
                             {get('cta_banner', 'button_text', 'Get Free Quote Now')}
                         </Link>
-                        <Link to="/vendors" id="cta-browse-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10 border border-white/20">
+                        <Link to="/junkyards" id="cta-browse-btn" className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-white transition-all duration-300 hover:bg-white/10 border border-white/20">
                             Browse All Vendors
                         </Link>
                     </div>
