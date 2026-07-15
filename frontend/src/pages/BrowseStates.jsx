@@ -63,7 +63,7 @@ export default function BrowseStates() {
     });
 
     const handleStateSelect = (stateData) => {
-        if (stateData && stateData.stateCode) navigate(`/browse/${stateData.stateCode.toLowerCase()}`);
+        if (stateData && stateData.stateCode) navigate(`/junkyards/${stateData.stateCode.toLowerCase()}`);
     };
 
     const schema = {
@@ -102,7 +102,10 @@ export default function BrowseStates() {
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            {get('hero', 'heading', 'Browse Junkyards')} <span className="text-blue-600">{get('hero', 'heading_accent', 'By State')}</span>
+                            {get('hero', 'heading', null)
+                                ? <span dangerouslySetInnerHTML={{ __html: get('hero', 'heading', '') }} />
+                                : <>Browse Junkyards <span className="text-blue-600">By State</span></>
+                            }
                         </h1>
                         <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
                             {get('hero', 'subheading', 'Explore our interactive map. Find verified junkyards nationwide.')}

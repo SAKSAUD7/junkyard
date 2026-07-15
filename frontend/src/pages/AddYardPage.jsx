@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
+import AcceptJsCheckout from '../components/vendor/AcceptJsCheckout';
 
 // Mock CMS Hook - this makes the strings easy to update without code changes later
 const useAddYardCMS = () => {
@@ -300,15 +301,29 @@ export default function AddYardPage() {
     const nextStep = () => { if (validateStep(step)) { setStep(step + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
     const prevStep = () => { setStep(step - 1); setError(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, nonce = null) => {
         if (e && e.preventDefault) e.preventDefault();
         setLoading(true);
         setError('');
 
         const isFree = formData.subscription_plan === 'free';
-        setPaymentStatusMsg(isFree ? 'Submitting your application...' : 'Processing your submission...');
+        setPaymentStatusMsg(isFree ? 'Submitting your application...' : 'Processing your payment...');
 
         try {
+            let transactionId = null;
+            if (!isFree) {
+                if (!nonce) throw new Error("Payment nonce missing.");
+                const amount = formData.subscription_plan === 'premium' ? 49 : 99;
+                const chargeResponse = await api.chargeCard({
+                    nonce: nonce, 
+                    amount: amount, 
+                    item_type: 'yard_submission', 
+                    item_id: formData.business_name || 'Yard'
+                });
+                transactionId = chargeResponse.transaction_id;
+                setPaymentStatusMsg('Submitting your yard...');
+            }
+
             // Build FormData so photos are uploaded as real files
             const fd = new FormData();
             fd.append('business_name', formData.business_name);
@@ -328,6 +343,11 @@ export default function AddYardPage() {
             fd.append('subscription_plan', formData.subscription_plan);
             fd.append('payment_methods', JSON.stringify([]));
             fd.append('business_hours', JSON.stringify({}));
+            
+            if (transactionId) {
+                fd.append('transaction_id', transactionId);
+                fd.append('payment_status', 'completed');
+            }
 
             // Append actual photo files (not blob URLs)
             if (formData.photos && formData.photos.length > 0) {
@@ -908,6 +928,21 @@ export default function AddYardPage() {
                                             ))}
                                         </div>
                                     </div>
+                                    
+                                    {/* Checkout block for Paid Plans */}
+                                    {formData.subscription_plan !== 'free' && (
+                                        <div className="pt-8 max-w-lg mx-auto">
+                                            <h3 className="text-[15px] font-bold text-slate-900 mb-4 text-center">Secure Payment</h3>
+                                            <div className="bg-white border border-slate-100 shadow-md rounded-2xl p-6">
+                                                <AcceptJsCheckout 
+                                                    amount={formData.subscription_plan === 'premium' ? 49 : formData.subscription_plan === 'featured' ? 99 : 0} 
+                                                    onSuccess={(nonce) => handleSubmit(null, nonce)} 
+                                                    onError={(err) => setError(err)} 
+                                                    buttonText="Pay & Submit Yard"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -944,15 +979,12 @@ export default function AddYardPage() {
                                 <button onClick={nextStep} className="px-6 py-3 bg-blue-600 text-white text-[14px] font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 order-1 sm:order-2">
                                     Save & Continue <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                 </button>
-                            ) : (
+                            ) : formData.subscription_plan === 'free' ? (
                                 <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-blue-600 text-white text-[14px] font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 order-1 sm:order-2">
-                                    {formData.subscription_plan === 'free' ? 'Submit Application' : 'Pay & Submit'} 
-                                    {formData.subscription_plan === 'free'
-                                        ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                                        : <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm9 13H6v-8h12v8z" /></svg>
-                                    }
+                                    Submit Application 
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                 </button>
-                            )}
+                            ) : null}
                         </div>
                     </div>
                         </>

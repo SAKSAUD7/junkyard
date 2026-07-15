@@ -70,7 +70,7 @@ const VendorDetail = () => {
                     </div>
                     <h1 className="text-3xl font-black text-slate-900 mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>Vendor Not Found</h1>
                     <p className="text-slate-500 mb-8">The vendor you're looking for doesn't exist or has been removed.</p>
-                    <button onClick={() => navigate('/vendors')}
+                    <button onClick={() => navigate('/junkyards')}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-[0_8px_20px_rgb(37,99,235,0.25)]">
                         ← Back to All Vendors
                     </button>
@@ -108,7 +108,9 @@ const VendorDetail = () => {
     const citySlug = (vendor.city || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     const stateSlug = (vendor.state || '').toLowerCase();
     const vendorSlug = `${vendor.id}-${nameSlug}${citySlug ? '-' + citySlug : ''}${stateSlug ? '-' + stateSlug : ''}`;
-    const canonicalPath = `https://junkyardsnearme.com/vendors/${vendorSlug}`;
+    const canonicalPath = stateSlug
+        ? `/junkyards/${stateSlug}/${vendorSlug}`
+        : `/junkyards/${vendorSlug}`;
 
     return (
         <div className="min-h-screen bg-[#f8fafc]">
@@ -126,8 +128,8 @@ const VendorDetail = () => {
                     <Breadcrumbs
                         items={[
                             { label: 'Home', href: '/' },
-                            { label: 'All Junkyards', href: '/vendors' },
-                            { label: vendor.name, href: `/vendors/${vendorSlug}` }
+                            { label: 'All Junkyards', href: '/junkyards' },
+                            { label: vendor.name, href: canonicalPath }
                         ]}
                     />
                 </div>
@@ -367,7 +369,7 @@ const VendorDetail = () => {
 
                             {/* Back Button */}
                             <button
-                                onClick={() => navigate('/vendors')}
+                                onClick={() => navigate('/junkyards')}
                                 className="w-full py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
                             >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>

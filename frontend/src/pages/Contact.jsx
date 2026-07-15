@@ -1,207 +1,334 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { api } from '../services/api'
-import { useCMS } from '../hooks/useCMS'
 
+// Floating animated orb background
+function Orb({ className }) {
+    return <div className={`absolute rounded-full blur-[100px] pointer-events-none ${className}`} />
+}
+
+const infoCards = [
+    {
+        icon: (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+        ),
+        label: 'Call Us',
+        value: '1-866-293-3731',
+        sub: 'Mon–Fri: 9AM – 6PM EST',
+        href: 'tel:18662933731',
+        gradient: 'from-blue-500 to-cyan-500',
+        glow: 'shadow-blue-200',
+    },
+    {
+        icon: (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+        ),
+        label: 'Email Us',
+        value: 'info@jynm.com',
+        sub: 'Typical response: 15 mins',
+        href: 'mailto:info@jynm.com',
+        gradient: 'from-violet-500 to-purple-600',
+        glow: 'shadow-purple-200',
+    },
+    {
+        icon: (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        ),
+        label: 'Coverage',
+        value: 'Nationwide',
+        sub: 'All 50 States',
+        href: null,
+        gradient: 'from-emerald-500 to-teal-500',
+        glow: 'shadow-emerald-200',
+    },
+    {
+        icon: (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        ),
+        label: 'Response Time',
+        value: '< 2 Hours',
+        sub: '24/7 Support Team',
+        href: null,
+        gradient: 'from-orange-500 to-rose-500',
+        glow: 'shadow-orange-200',
+    },
+]
+
+const topics = [
+    { id: 'billing', icon: '💳', label: 'Billing & Payments' },
+    { id: 'vendor_support', icon: '🏪', label: 'Vendor Support' },
+    { id: 'parts_orders', icon: '🔧', label: 'Parts & Orders' },
+    { id: 'technical', icon: '🖥️', label: 'Technical Help' },
+    { id: 'feedback', icon: '💬', label: 'Feedback' },
+    { id: 'other', icon: '✦', label: 'Other' },
+]
+
+const stats = [
+    { value: '50+', label: 'States Covered' },
+    { value: '<2h', label: 'Avg Response' },
+    { value: '10K+', label: 'Happy Customers' },
+    { value: '99.9%', label: 'Uptime' },
+]
 
 export default function Contact() {
-    const { get } = useCMS('contact')
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-    })
-    const [isSuccess, setIsSuccess] = useState(false)
-    const [isError, setIsError] = useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+    const [activeTopic, setActiveTopic] = useState('')
+    const [status, setStatus] = useState('idle')
+    const [errorMsg, setErrorMsg] = useState('')
+    const [focused, setFocused] = useState('')
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
-        setIsSuccess(false)
-        setIsError(false)
-    }
+    const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setIsSubmitting(true)
-        setIsSuccess(false)
-        setIsError(false)
-
+        setStatus('loading')
+        setErrorMsg('')
         try {
-            await api.sendContactMessage(formData)
-            setIsSuccess(true)
-            setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
-            setTimeout(() => setIsSuccess(false), 10000)
-        } catch (error) {
-            console.error('Error sending message:', error)
-            setIsError(true)
-            setTimeout(() => setIsError(false), 8000)
-        } finally {
-            setIsSubmitting(false)
+            await api.submitContact({ ...form, subject: activeTopic || form.subject })
+            setStatus('success')
+            setForm({ name: '', email: '', subject: '', message: '' })
+            setActiveTopic('')
+        } catch (err) {
+            setStatus('error')
+            setErrorMsg(err?.response?.data?.detail || 'Something went wrong. Please try again.')
         }
     }
 
-    return (
-        <div className="bg-[#f8faff] min-h-screen font-inter relative overflow-hidden">
-            <SEO
-                title={get('meta', 'title', 'Contact Us - Get Help Finding Auto Parts')}
-                description={get('meta', 'description', "Contact Junkyards Near Me for support. We're here to help connect you with the right salvage yard.")}
-            />
+    const inputClass = (name) =>
+        `w-full px-4 py-3.5 rounded-xl text-[14px] font-medium text-slate-900 placeholder-slate-400 outline-none transition-all border-2 bg-white ${
+            focused === name
+                ? 'border-blue-500 ring-4 ring-blue-100 shadow-sm'
+                : 'border-slate-100 hover:border-slate-200'
+        }`
 
+    return (
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <SEO
+                title="Contact Us — JYNM | Junkyards Near Me"
+                description="Get in touch with the JYNM team. Whether you're a buyer looking for parts or a yard owner wanting to list your business, we're here to help."
+            />
             <Navbar />
 
-            {/* Background Decorations */}
-            <div className="absolute top-20 right-[10%] w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-10 left-[5%] w-[400px] h-[400px] bg-indigo-100/30 rounded-full blur-[80px] pointer-events-none" />
+            {/* Clean Hero Section */}
+            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
 
-            {/* Main Content Area */}
-            <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-                
-                {/* Left Side - Text & Icons */}
-                <div className="flex-1 w-full lg:max-w-md">
-                    <h1 className="text-[44px] font-black text-slate-900 leading-tight mb-4 tracking-tight">
-                        {get('hero', 'heading', 'Get in Touch')}
-                    </h1>
-                    <p className="text-[16px] text-slate-500 font-medium mb-12 max-w-md leading-relaxed">
-                        {get('hero', 'subheading', "We're here to help you find the right part or answer any questions.")}
-                    </p>
-
-                    <div className="space-y-8">
-                        {/* Call */}
-                        <div className="flex gap-5 items-start group">
-                            <div className="w-12 h-12 bg-blue-100/60 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0 border border-blue-200/50 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Call Us</h3>
-                                <p className="text-[#64748b] font-medium text-[14px]">{get('info', 'phone', '+1 (800) 555-1234')}</p>
-                                <p className="text-[#94a3b8] text-[13px]">{get('info', 'phone_subtext', 'Mon - Sun, 8AM - 8PM')}</p>
-                            </div>
+                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                    <div className="text-center max-w-4xl mx-auto">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100 animate-fade-in-up">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">We're Here to Help</span>
                         </div>
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-6 tracking-tight animate-fade-in-up" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.05 }}>
+                            Get In <span className="text-blue-600">Touch</span>
+                        </h1>
+                        <p className="text-[17px] md:text-[20px] text-slate-500 font-medium max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-100">
+                            Whether you're a buyer hunting parts or a yard owner ready to grow — our team responds fast.
+                        </p>
+                    </div>
 
-                        {/* Email */}
-                        <div className="flex gap-5 items-start group">
-                            <div className="w-12 h-12 bg-blue-100/60 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0 border border-blue-200/50 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 animate-fade-in-up delay-200">
+                        {stats.map((stat, index) => (
+                            <div key={index} className="p-8 rounded-2xl text-center bg-white border border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.08)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
+                                <div className="text-4xl md:text-5xl font-black mb-2 text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                                    {stat.value}
+                                </div>
+                                <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">{stat.label}</div>
                             </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Email Us</h3>
-                                <p className="text-[#64748b] font-medium text-[14px]">{get('info', 'email', 'support@jynm.com')}</p>
-                                <p className="text-[#94a3b8] text-[13px]">{get('info', 'email_subtext', 'We reply within 30 mins')}</p>
-                            </div>
-                        </div>
-
-                        {/* Live Chat */}
-                        <div className="flex gap-5 items-start group">
-                            <div className="w-12 h-12 bg-blue-100/60 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0 border border-blue-200/50 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" /></svg>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Live Chat</h3>
-                                <p className="text-[#64748b] font-medium text-[14px]">Available 24/7</p>
-                                <p className="text-[#94a3b8] text-[13px]">Get instant help</p>
-                            </div>
-                        </div>
-
-                        {/* Head Office */}
-                        <div className="flex gap-5 items-start group">
-                            <div className="w-12 h-12 bg-blue-100/60 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0 border border-blue-200/50 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Head Office</h3>
-                                <p className="text-[#64748b] font-medium text-[14px] max-w-[200px]">{get('info', 'address', '123 Auto Drive, Dallas, TX 75201')}</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
+            </section>
 
-                {/* Right Side - Form Card */}
-                <div className="flex-1 w-full max-w-lg">
-                    <div className="bg-white rounded-[24px] p-8 md:p-10 shadow-[0_15px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100 relative z-10 w-full ml-auto">
-                        <h2 className="text-[22px] font-black text-slate-900 mb-8 tracking-tight">
-                            Send us a Message
-                        </h2>
-
-                        {isSuccess && (
-                            <div className="mb-6 bg-emerald-50 text-emerald-600 p-4 rounded-xl text-sm font-bold border border-emerald-100">
-                                Message sent successfully! We'll reply soon.
+            {/* ─── INFO CARDS ─── */}
+            <section className="max-w-5xl mx-auto px-4 sm:px-6 mt-12 relative z-10 mb-12">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {infoCards.map(card => (
+                        card.href ? (
+                            <a key={card.label} href={card.href}
+                                className={`group bg-white rounded-2xl p-5 shadow-lg ${card.glow} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100`}>
+                                <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center text-white mb-4 shadow-sm group-hover:scale-110 transition-transform`}>
+                                    {card.icon}
+                                </div>
+                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-[15px] font-black text-slate-900 mb-0.5 group-hover:text-blue-600 transition-colors">{card.value}</p>
+                                <p className="text-[12px] text-slate-400 font-medium">{card.sub}</p>
+                            </a>
+                        ) : (
+                            <div key={card.label}
+                                className={`bg-white rounded-2xl p-5 shadow-lg ${card.glow} shadow-md border border-slate-100`}>
+                                <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center text-white mb-4 shadow-sm`}>
+                                    {card.icon}
+                                </div>
+                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-[15px] font-black text-slate-900 mb-0.5">{card.value}</p>
+                                <p className="text-[12px] text-slate-400 font-medium">{card.sub}</p>
                             </div>
-                        )}
-                        {isError && (
-                            <div className="mb-6 bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100">
-                                Error sending message. Please try again.
-                            </div>
-                        )}
+                        )
+                    ))}
+                </div>
+            </section>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Full Name</label>
-                                <input
-                                    type="text" name="name" value={formData.name} onChange={handleChange} required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
-                                />
-                            </div>
+            {/* ─── MAIN CONTACT FORM ─── */}
+            <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-24">
+                <div className="bg-white rounded-3xl shadow-[0_20px_80px_rgba(0,0,0,0.08)] overflow-hidden border border-slate-100">
+                    <div className="p-8 md:p-10">
+                            {status === 'success' ? (
+                                <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center animate-fade-in">
+                                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-emerald-200">
+                                        <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-3xl font-black text-slate-900 mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        Message Sent! 🎉
+                                    </h3>
+                                    <p className="text-slate-500 font-medium max-w-sm mb-8">
+                                        Thank you for reaching out. Our team will get back to you within 2 business hours.
+                                    </p>
+                                    <button onClick={() => setStatus('idle')}
+                                        className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-2xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">
+                                        Send Another Message
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="mb-8">
+                                        <h3 className="text-2xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            Send a Message
+                                        </h3>
+                                        <p className="text-slate-400 text-[14px] font-medium">
+                                            Fill in the details below and we'll get back to you fast.
+                                        </p>
+                                    </div>
 
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Email Address</label>
-                                <input
-                                    type="email" name="email" value={formData.email} onChange={handleChange} required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
-                                />
-                            </div>
+                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Full Name *</label>
+                                                <input
+                                                    name="name"
+                                                    value={form.name}
+                                                    onChange={handleChange}
+                                                    onFocus={() => setFocused('name')}
+                                                    onBlur={() => setFocused('')}
+                                                    required
+                                                    placeholder="Your name"
+                                                    className={inputClass('name')}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Email Address *</label>
+                                                <input
+                                                    name="email"
+                                                    type="email"
+                                                    value={form.email}
+                                                    onChange={handleChange}
+                                                    onFocus={() => setFocused('email')}
+                                                    onBlur={() => setFocused('')}
+                                                    required
+                                                    placeholder="you@example.com"
+                                                    className={inputClass('email')}
+                                                />
+                                            </div>
+                                        </div>
 
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Phone Number</label>
-                                <input
-                                    type="tel" name="phone" value={formData.phone} onChange={handleChange} required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors"
-                                />
-                            </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Topic *</label>
+                                                <select
+                                                    value={activeTopic}
+                                                    onChange={(e) => setActiveTopic(e.target.value)}
+                                                    onFocus={() => setFocused('topic')}
+                                                    onBlur={() => setFocused('')}
+                                                    required
+                                                    className={inputClass('topic')}
+                                                >
+                                                    <option value="" disabled>Select a topic</option>
+                                                    {topics.map(t => (
+                                                        <option key={t.id} value={t.id}>{t.label}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject *</label>
+                                                <input
+                                                    name="subject"
+                                                    value={form.subject}
+                                                    onChange={handleChange}
+                                                    onFocus={() => setFocused('subject')}
+                                                    onBlur={() => setFocused('')}
+                                                    required
+                                                    placeholder="Briefly describe your issue"
+                                                    className={inputClass('subject')}
+                                                />
+                                            </div>
+                                        </div>
 
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">What are you looking for?</label>
-                                <select 
-                                    name="subject" 
-                                    value={formData.subject} 
-                                    onChange={handleChange} 
-                                    required
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors appearance-none cursor-pointer"
-                                    style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1.5 1.5L6 6L10.5 1.5\' stroke=\'%2394A3B8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
-                                >
-                                    <option value="" disabled hidden></option>
-                                    <option value="part_inquiry" className="text-slate-900">Part Inquiry</option>
-                                    <option value="vendor_support" className="text-slate-900">Vendor Support</option>
-                                    <option value="general" className="text-slate-900">General Question</option>
-                                </select>
-                            </div>
+                                        <div>
+                                            <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Message *</label>
+                                            <textarea
+                                                name="message"
+                                                value={form.message}
+                                                onChange={handleChange}
+                                                onFocus={() => setFocused('message')}
+                                                onBlur={() => setFocused('')}
+                                                required
+                                                rows={5}
+                                                placeholder="How can we help you?"
+                                                className={inputClass('message') + ' resize-none'}
+                                            />
+                                        </div>
 
-                            <div>
-                                <label className="block text-[12px] font-bold text-slate-600 mb-2">Your Message</label>
-                                <textarea
-                                    name="message" value={formData.message} onChange={handleChange} required rows={4}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-[14px] font-medium transition-colors resize-none"
-                                />
-                            </div>
+                                        {status === 'error' && (
+                                            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                                                <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                </svg>
+                                                <p className="text-red-600 text-[13px] font-semibold">{errorMsg}</p>
+                                            </div>
+                                        )}
 
-                            <button 
-                                type="submit" 
-                                disabled={isSubmitting}
-                                className="w-full bg-[#f97316] text-white font-bold rounded-lg px-4 py-3.5 hover:bg-[#ea580c] transition-colors disabled:opacity-50 mt-4 shadow-sm text-[15px]"
-                            >
-                                {isSubmitting ? 'Sending...' : 'Send Message'}
-                            </button>
-                        </form>
+                                        <button
+                                            type="submit"
+                                            disabled={status === 'loading'}
+                                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-[15px] rounded-2xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+                                            {status === 'loading' ? (
+                                                <>
+                                                    <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                    </svg>
+                                                    Sending your message…
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                    </svg>
+                                                    Send Message
+                                                </>
+                                            )}
+                                        </button>
+                                    </form>
+                                </>
+                            )}
                     </div>
                 </div>
-            </div>
+            </section>
 
             <Footer />
         </div>

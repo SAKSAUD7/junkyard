@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     "apps.blog",           # Blog system
     "apps.cms",            # Website CMS
     "apps.rbac",           # Role-Based Access Control
+    "apps.payments",       # Authorize.net Payments
 ]
 
 
@@ -157,6 +158,7 @@ SITE_URL = os.environ.get('SITE_URL', 'http://localhost:3000')
 
 
 MIDDLEWARE = [
+    "apps.common.middleware.CloudflareIPMiddleware", # Trust CF-Connecting-IP
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Add WhiteNoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # CORS middleware

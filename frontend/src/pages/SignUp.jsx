@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import PasswordInput from '../components/PasswordInput';
+import TurnstileCaptcha from '../components/TurnstileCaptcha';
 
 export default function SignUp() {
     const [searchParams] = useSearchParams();
@@ -23,6 +24,7 @@ export default function SignUp() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     useEffect(() => {
         if (isAuthenticated) { navigate(returnUrl); }
@@ -61,6 +63,11 @@ export default function SignUp() {
             return;
         }
 
+        if (!turnstileToken) {
+            setError('Challenge verification failed. Please try again.');
+            return;
+        }
+
         setLoading(true);
         const completeData = {
             name: formData.name,
@@ -72,7 +79,8 @@ export default function SignUp() {
             password: formData.password,
             password2: formData.password,
             countryCode: '+1',
-            user_type: role // Fixed variable name to match backend RegisterSerializer
+            user_type: role,
+            cf_turnstile_response: turnstileToken || 'mock_fallback'
         };
 
         try {
@@ -226,6 +234,13 @@ export default function SignUp() {
                                 <label htmlFor="agree-terms" className="text-[13px] text-slate-600 font-medium">
                                     I agree to the <Link to="/terms" className="text-blue-600 hover:underline hover:text-blue-700">Terms & Conditions</Link>
                                 </label>
+                            </div>
+
+                            <div className="pt-2">
+                                <TurnstileCaptcha 
+                                    onVerify={(token) => setTurnstileToken(token)}
+                                    onError={(err) => setError(err)}
+                                />
                             </div>
 
                             <button 
