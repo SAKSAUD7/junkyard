@@ -173,22 +173,52 @@ export default function Ads() {
         link: '#'
     };
 
-    // 3-tier plan definitions for the Plan Selector (Step 1)
+    // 4-tier plan definitions for the Plan Selector (Step 1)
     const displayPlans = [
         {
-            id: 'standard',
+            id: 'minimal',
             icon: '🏷️',
-            name: 'STANDARD',
+            name: 'MINIMAL',
+            subtitle: 'Basic marketplace presence',
+            price: 19,
+            color: 'from-slate-300 to-slate-400',
+            btnColor: 'bg-slate-700 hover:bg-slate-600',
+            popular: false,
+            features: [
+                'Basic marketplace visibility',
+                'Standard SEO indexing',
+                'Base catalog linkage',
+            ],
+        },
+        {
+            id: 'compact',
+            icon: '📦',
+            name: 'COMPACT',
             subtitle: 'Great for getting started',
+            price: 29,
+            color: 'from-amber-400 to-orange-500',
+            btnColor: 'bg-amber-500 hover:bg-amber-600',
+            popular: false,
+            features: [
+                'Highlighted layout aesthetic',
+                'Verified badge on profile',
+                'Mobile-optimized profile snippet',
+            ],
+        },
+        {
+            id: 'standard',
+            icon: '⭐',
+            name: 'STANDARD',
+            subtitle: 'Elevated visibility & leads',
             price: 49,
-            color: 'from-slate-700 to-slate-800',
-            btnColor: 'bg-slate-800 hover:bg-slate-700',
+            color: 'from-blue-500 to-indigo-600',
+            btnColor: 'bg-blue-600 hover:bg-blue-700',
             popular: false,
             features: [
                 'Elevated search standing',
                 '"Featured" vendor status badge',
                 'Unlimited profile impressions',
-                'Basic analytics',
+                'Dashboard analytics unlocked',
             ],
         },
         {
@@ -197,8 +227,8 @@ export default function Ads() {
             name: 'PREMIUM',
             subtitle: 'Maximum visibility & leads',
             price: 99,
-            color: 'from-blue-600 to-indigo-600',
-            btnColor: 'bg-blue-600 hover:bg-blue-700',
+            color: 'from-slate-900 to-slate-800',
+            btnColor: 'bg-slate-800 hover:bg-slate-700',
             popular: true,
             features: [
                 'Top placement in search results',
@@ -208,24 +238,8 @@ export default function Ads() {
                 'Advanced analytics',
             ],
         },
-        {
-            id: 'enterprise',
-            icon: '🏢',
-            name: 'ENTERPRISE',
-            subtitle: 'For serious growth',
-            price: 299,
-            color: 'from-purple-600 to-indigo-700',
-            btnColor: 'bg-purple-700 hover:bg-purple-800',
-            popular: false,
-            features: [
-                'All Premium features',
-                'Category page placement',
-                'Geo-targeted advertising',
-                'Dedicated account manager',
-                'Custom analytics & insights',
-            ],
-        },
     ];
+
 
 
     if (fetchingActive) {
@@ -330,7 +344,7 @@ export default function Ads() {
                             <div className="space-y-8">
                                 <div className="text-center">
                                     <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                        Choose Your Campaign Plan
+                                        Choose Your Visibility Tier
                                     </h2>
                                     {/* Billing Toggle */}
                                     <div className="inline-flex items-center bg-slate-100 rounded-full p-1 mt-4">
@@ -346,7 +360,7 @@ export default function Ads() {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {displayPlans.map(plan => {
                                         const discount = billing === 'quarterly' ? 0.15 : 0;
                                         const finalPrice = billing === 'quarterly'
@@ -355,35 +369,44 @@ export default function Ads() {
                                         const perMonth = billing === 'quarterly'
                                             ? Math.round(plan.price * (1 - discount))
                                             : plan.price;
+                                        
+                                        const isSelected = selectedPlan?.id === plan.id;
+                                        const PreviewComponent = plan.Component || subscriptionPlans.find(p => p.id === plan.id)?.Component;
 
                                         return (
                                             <div key={plan.id}
-                                                className={`relative flex flex-col rounded-3xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
-                                                    plan.popular
-                                                        ? 'border-blue-500 shadow-[0_12px_40px_rgba(37,99,235,0.2)] scale-[1.03]'
-                                                        : 'border-slate-200 hover:border-slate-300 hover:shadow-lg'
+                                                onClick={() => {
+                                                    const planData = subscriptionPlans.find(p => p.id === plan.id) || { ...plan, price: perMonth };
+                                                    setSelectedPlan({ ...planData, price: perMonth });
+                                                }}
+                                                className={`relative flex flex-col rounded-3xl border-2 bg-white transition-all duration-300 cursor-pointer overflow-hidden ${
+                                                    isSelected
+                                                        ? 'border-[#1a56ff] ring-4 ring-blue-100 shadow-xl scale-[1.02] z-10'
+                                                        : 'border-slate-200 hover:border-blue-300 hover:shadow-lg'
                                                 }`}>
-                                                {plan.popular && (
-                                                    <div className="bg-blue-600 text-white text-[11px] font-black text-center py-2 tracking-widest uppercase">
-                                                        ⭐ MOST POPULAR
-                                                    </div>
-                                                )}
-                                                <div className="p-7 flex flex-col flex-1 bg-white">
-                                                    {/* Plan Header */}
-                                                    <div className="flex items-center gap-3 mb-5">
-                                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center text-2xl shadow-md`}>
-                                                            {plan.icon}
+                                                
+                                                <div className="p-8 flex flex-col flex-1">
+                                                    {/* Top Row: Pill & Radio */}
+                                                    <div className="flex justify-between items-start mb-6">
+                                                        <div className={`text-[12px] font-black px-3 py-1 rounded-full uppercase tracking-widest text-white ${plan.btnColor.split(' ')[0]}`}>
+                                                            {plan.name}
                                                         </div>
-                                                        <div>
-                                                            <p className="text-[11px] font-black tracking-widest text-slate-400 uppercase">{plan.name}</p>
-                                                            <p className="text-[13px] text-slate-500 font-medium">{plan.subtitle}</p>
+                                                        <div className="flex flex-col items-end">
+                                                            {plan.popular && (
+                                                                <div className="bg-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full tracking-widest uppercase mb-2 shadow-sm">
+                                                                    MOST POPULAR
+                                                                </div>
+                                                            )}
+                                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-blue-600 bg-blue-500' : 'border-slate-300'}`}>
+                                                                {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                                                            </div>
                                                         </div>
                                                     </div>
 
                                                     {/* Price */}
-                                                    <div className="mb-6">
+                                                    <div className="mb-8">
                                                         <div className="flex items-baseline gap-1">
-                                                            <span className="text-5xl font-black text-slate-900 tracking-tighter">${perMonth}</span>
+                                                            <span className="text-[44px] font-black text-slate-900 tracking-tighter leading-none">${perMonth}</span>
                                                             <span className="text-slate-400 font-medium">/mo</span>
                                                         </div>
                                                         {billing === 'quarterly' && (
@@ -391,28 +414,27 @@ export default function Ads() {
                                                         )}
                                                     </div>
 
+                                                    {/* Live Preview Area */}
+                                                    <div className="mb-8">
+                                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-3">Live Preview</p>
+                                                        <div className="bg-[#f8fafc] border border-slate-100 rounded-2xl p-5 flex items-center justify-center min-h-[140px]">
+                                                            <div className="w-full">
+                                                                {PreviewComponent ? <PreviewComponent ad={mockAd} /> : <p className="text-center text-slate-400">Loading Preview...</p>}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     {/* Features */}
                                                     <ul className="space-y-3 flex-1">
                                                         {plan.features.map((f, i) => (
-                                                            <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600 font-medium">
+                                                            <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600 font-medium tracking-tight">
                                                                 <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                                 </svg>
                                                                 {f}
                                                             </li>
                                                         ))}
                                                     </ul>
-
-                                                    {/* CTA */}
-                                                    <button
-                                                        onClick={() => {
-                                                            const planData = subscriptionPlans.find(p => p.id === plan.id) || { ...plan, price: perMonth };
-                                                            setSelectedPlan({ ...planData, price: perMonth });
-                                                            setStep(2);
-                                                        }}
-                                                        className={`mt-8 w-full py-3.5 rounded-2xl text-white font-black text-[15px] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${plan.btnColor}`}>
-                                                        Choose Plan
-                                                    </button>
                                                 </div>
                                             </div>
                                         );

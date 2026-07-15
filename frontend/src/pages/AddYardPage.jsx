@@ -6,6 +6,8 @@ import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
 import AcceptJsCheckout from '../components/vendor/AcceptJsCheckout';
+import { useVendorAuth } from '../contexts/VendorAuthContext';
+import VendorAuthModal from '../components/vendor/VendorAuthModal';
 
 // Mock CMS Hook - this makes the strings easy to update without code changes later
 const useAddYardCMS = () => {
@@ -81,6 +83,7 @@ const CustomSelect = ({ options, value, onChange, placeholder, disabled, name })
 export default function AddYardPage() {
     const navigate = useNavigate();
     const cms = useAddYardCMS();
+    const { isAuthenticated, loading: authLoading } = useVendorAuth();
     
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -88,6 +91,10 @@ export default function AddYardPage() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [paymentStatusMsg, setPaymentStatusMsg] = useState('');
     const [touched, setTouched] = useState({});
+
+    // Custom UI Alert Modal State
+    const [showExitWarning, setShowExitWarning] = useState(false);
+    const [pendingNavRoute, setPendingNavRoute] = useState(null);
     
     // location cascading state
     const [availableZips, setAvailableZips] = useState([]);
@@ -116,6 +123,48 @@ export default function AddYardPage() {
         logo: null,
         subscription_plan: 'free'
     });
+
+    // Prevent accidental navigation
+    const hasUnsavedChanges = !isSubmitted && (
+        formData.business_name || formData.email || formData.phone || formData.city || step > 1
+    );
+
+    useEffect(() => {
+        // Handle tab closing / browser reload
+        const handleBeforeUnload = (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        
+        // Handle internal SPA navigation clicks (Navbar links, Footer links)
+        const handleClickCapture = (e) => {
+            if (!hasUnsavedChanges) return;
+            
+            // Find if click was on a link
+            const link = e.target.closest('a');
+            if (!link || !link.href || link.target === '_blank') return;
+            
+            // Check if it's an internal route that navigates away from the form
+            if (link.href.startsWith(window.location.origin) && !link.href.includes('/add-a-yard/form')) {
+                e.preventDefault();
+                e.stopPropagation();
+                setPendingNavRoute(link.href.replace(window.location.origin, '')); // store relative path
+                setShowExitWarning(true); // display custom modal
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        document.addEventListener('click', handleClickCapture, { capture: true });
+        
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            document.removeEventListener('click', handleClickCapture, { capture: true });
+        };
+    }, [hasUnsavedChanges]);
+
+
 
     const [logoPreview, setLogoPreview] = useState(null);
     const logoInputRef = React.useRef(null);
@@ -387,9 +436,47 @@ export default function AddYardPage() {
     const inputClasses = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-sm appearance-none";
     const dropdownIcon = <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>;
 
+    // Render a blocking modal instead of redirecting if completely unauthenticated
+    if (!authLoading && !isAuthenticated()) {
+        return (
+            <div className="bg-[#f8fafc] min-h-screen flex flex-col font-inter">
+                <SEO title="Create Junkyard Profile" noindex={true} />
+                <VendorAuthModal isOpen={true} />
+            </div>
+        );
+    }
+
     return (
         <div className="bg-[#f8fafc] min-h-screen flex flex-col font-inter">
             <SEO title="Create Junkyard Profile" noindex={true} />
+
+            {/* CUSTOM EXIT WARNING MODAL */}
+            {showExitWarning && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-[360px] w-full p-6 animate-fade-in-up border border-slate-100">
+                        <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 mx-auto ring-4 ring-white shadow-sm border border-red-100">
+                            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </div>
+                        <h3 className="text-[20px] font-black text-center text-slate-900 mb-2 font-outfit" style={{ fontFamily: "'Outfit', sans-serif" }}>Leave This Page?</h3>
+                        <p className="text-slate-500 text-[13.5px] text-center mb-6 leading-relaxed">
+                            You have unsaved information waiting. <br/>Are you sure you want to leave? Your progress will be permanently lost.
+                        </p>
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={() => setShowExitWarning(false)} 
+                                className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-600 font-bold text-[14px] rounded-xl hover:bg-slate-100 transition-colors">
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={() => { setShowExitWarning(false); navigate(pendingNavRoute); }} 
+                                className="flex-1 px-4 py-2.5 bg-red-600 text-white font-bold text-[14px] rounded-xl hover:bg-red-700 transition-all shadow-[0_4px_12px_rgba(220,38,38,0.25)] hover:shadow-[0_6px_16px_rgba(220,38,38,0.35)] hover:-translate-y-0.5">
+                                Yes, Leave
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Navbar />
 
             <div className="flex-grow flex items-start justify-center pt-24 pb-20 px-4">

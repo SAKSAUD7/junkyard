@@ -152,11 +152,17 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-
-            {/* Public Routes */}
-            <Route path="/add-a-yard" element={<AddYardStart />} />
-            <Route path="/add-a-yard/form" element={<AddYardPage />} />
+            {/* Protected Public Routes (Uses Modal for auth instead of redirect) */}
+            <Route path="/add-a-yard" element={
+              <VendorAuthProvider>
+                <AddYardStart />
+              </VendorAuthProvider>
+            } />
+            <Route path="/add-a-yard/form" element={
+              <VendorAuthProvider>
+                <AddYardPage />
+              </VendorAuthProvider>
+            } />
 
             {/* Protected Routes */}
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { useCMS } from '../../hooks/useCMS';
 import PasswordInput from '../../components/PasswordInput';
@@ -23,9 +23,10 @@ const VendorSignUp = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Assuming we have a register method, otherwise we use signup logic from auth context
     const { register, login } = useVendorAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const redirectAfter = searchParams.get('redirect') || '/vendor/dashboard';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -61,7 +62,7 @@ const VendorSignUp = () => {
                 };
                 const result = await register(completeData);
                 if (result.success) {
-                    navigate('/vendor/dashboard');
+                    navigate(decodeURIComponent(redirectAfter));
                 } else {
                     setError(result.error || 'Failed to create account.');
                 }

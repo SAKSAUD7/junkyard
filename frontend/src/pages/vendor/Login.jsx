@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { useCMS } from '../../hooks/useCMS';
 import PasswordInput from '../../components/PasswordInput';
@@ -23,6 +23,8 @@ const VendorLogin = () => {
 
     const { login } = useVendorAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const redirectAfter = searchParams.get('redirect') || '/vendor/dashboard';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,13 +32,14 @@ const VendorLogin = () => {
         setError(''); setLoading(true);
         const result = await login(email, password);
         if (result.success) {
-            navigate('/vendor/dashboard');
+            navigate(decodeURIComponent(redirectAfter));
         } else {
             setFailCount(c => c + 1);
             setError('Invalid credentials. Please check your email and password.');
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-[#f0fff4] flex flex-col font-inter">
@@ -136,10 +139,10 @@ const VendorLogin = () => {
                             </form>
                         ) : (
                             <div className="text-center py-8">
-                                <p className="text-slate-500 text-sm mb-4">List your yard and start receiving leads from buyers.</p>
-                                <Link to="/add-a-yard"
+                                <p className="text-slate-500 text-sm mb-4">Don't have an account? Create one to start managing your yard.</p>
+                                <Link to={`/vendor/signup?redirect=${encodeURIComponent(redirectAfter)}`}
                                     className="inline-block px-8 py-3.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-[0_4px_12px_rgba(22,163,74,0.3)]">
-                                    Register Your Yard
+                                    Create Vendor Account
                                 </Link>
                             </div>
                         )}
