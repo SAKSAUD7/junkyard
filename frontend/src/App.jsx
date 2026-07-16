@@ -234,6 +234,7 @@ function App() {
             </Route>
 
             {/* Admin Portal Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin-portal/*" element={
               <AdminProtectedRoute>
                 <AdminLayout />
