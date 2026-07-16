@@ -223,6 +223,17 @@ export const api = {
     return response.data;
   },
 
+  submitContact: async (data) => {
+    const response = await axiosInstance.post('/common/messages/', data);
+    return response.data;
+  },
+
+  // Payments
+  chargeCard: async (data) => {
+    const response = await axiosInstance.post('/payments/charge/', data);
+    return response.data;
+  },
+
   // Ads
   getAds: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();

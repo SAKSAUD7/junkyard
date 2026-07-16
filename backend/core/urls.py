@@ -106,6 +106,7 @@ urlpatterns = [
     path("api/ads/", include("apps.ads.urls")),
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
     path("api/vendor/", include("apps.vendor_portal.urls")),  # Vendor portal API
+    path("api/payments/", include("apps.payments.urls")),     # Payments API
     
     # Hollander endpoints
     path("api/hollander/lookup/", hollander_lookup, name="hollander_lookup"),

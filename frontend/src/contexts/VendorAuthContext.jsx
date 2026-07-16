@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { vendorAuth } from '../services/vendorApi';
+import { vendorAuth, vendorProfile as vendorProfileApi } from '../services/vendorApi';
 import { useNavigate } from 'react-router-dom';
 
 const VendorAuthContext = createContext(null);
@@ -19,16 +19,25 @@ export const VendorAuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if user is already logged in
-        const currentUser = vendorAuth.getCurrentUser();
-        const currentProfile = vendorAuth.getVendorProfile();
+        const initAuth = async () => {
+            const currentUser = vendorAuth.getCurrentUser();
+            const currentProfile = vendorAuth.getVendorProfile();
 
-        if (currentUser && currentProfile) {
-            setUser(currentUser);
-            setVendorProfile(currentProfile);
-        }
-
-        setLoading(false);
+            if (currentUser && currentProfile && vendorAuth.isAuthenticated()) {
+                try {
+                    // Force a fast backend check. If token is dead, interceptor logs out and cleans up.
+                    await vendorProfileApi.get();
+                    setUser(currentUser);
+                    setVendorProfile(currentProfile);
+                } catch (error) {
+                    // Axios interceptor already handles token removal and redirect if 401
+                    console.log('Stale token detected and removed.');
+                }
+            }
+            setLoading(false);
+        };
+        
+        initAuth();
     }, []);
 
     const register = async (userData) => {

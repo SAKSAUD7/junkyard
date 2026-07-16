@@ -7,6 +7,7 @@ const AD_CLICK_URL = (id) => {
 
 // Resolve image URL safely
 const resolveImg = (ad) => {
+    if (!ad) return null;
     const src = ad.resolved_image_url || ad.image_url || ad.image;
     if (!src) return null;
     if (src.startsWith('http') || src.startsWith('/media')) return src;

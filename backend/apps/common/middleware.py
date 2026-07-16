@@ -41,3 +41,14 @@ class CustomRedirectMiddleware(MiddlewareMixin):
                 return HttpResponseRedirect(new_path)
                 
         return response
+
+class CloudflareIPMiddleware(MiddlewareMixin):
+    """
+    Since the app will be behind Cloudflare, request.META['REMOTE_ADDR']
+    will be Cloudflare's IP. This middleware sets it to the actual client IP
+    provided by CF-Connecting-IP.
+    """
+    def process_request(self, request):
+        cf_ip = request.META.get('HTTP_CF_CONNECTING_IP')
+        if cf_ip:
+            request.META['REMOTE_ADDR'] = cf_ip

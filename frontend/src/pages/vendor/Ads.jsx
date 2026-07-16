@@ -10,6 +10,7 @@ import {
     CompactTemplate, 
     MinimalTemplate 
 } from '../../components/AdTemplates';
+import AcceptJsCheckout from '../../components/vendor/AcceptJsCheckout';
 
 const DEFAULT_PLANS = [
     {
@@ -82,6 +83,7 @@ export default function Ads() {
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [duration, setDuration] = useState(30);
     const [placement, setPlacement] = useState('featured');
+    const [billing, setBilling] = useState('monthly');
     
     // CMS Data
     const [cmsData, setCmsData] = useState({});
@@ -132,21 +134,31 @@ export default function Ads() {
         fetchCurrentAd();
     }, []);
 
-    const handleCheckout = async () => {
+    const handleCheckout = async (nonce) => {
         setLoading(true);
         try {
-            await new Promise(r => setTimeout(r, 1500)); // Mock delay
+            const amount = selectedPlan.price * (duration / 30);
+            
+            // 1. Process payment via Authorize.net
+            const chargeResponse = await api.chargeCard({
+                nonce: nonce,
+                amount: amount,
+                item_type: 'ad_plan',
+                item_id: selectedPlan.id
+            });
+
+            // 2. Provision the Ad
             await vendorAdApi.purchaseAd({
                 plan_type: selectedPlan.id,
                 duration: duration,
                 placement: placement,
                 payment_status: 'completed',
-                transaction_id: 'txn_' + Math.random().toString(36).substr(2, 9)
+                transaction_id: chargeResponse.transaction_id || ('txn_' + Math.random().toString(36).substr(2, 9))
             });
             window.location.reload();
         } catch (err) {
             console.error('Checkout failed', err);
-            alert(err.response?.data?.error || 'Payment failed');
+            alert(err.response?.data?.error || err.message || 'Payment failed');
         } finally {
             setLoading(false);
         }
@@ -160,6 +172,75 @@ export default function Ads() {
         image_url: vendorProfile?.vendor?.logo || null,
         link: '#'
     };
+
+    // 4-tier plan definitions for the Plan Selector (Step 1)
+    const displayPlans = [
+        {
+            id: 'minimal',
+            icon: '🏷️',
+            name: 'MINIMAL',
+            subtitle: 'Basic marketplace presence',
+            price: 19,
+            color: 'from-slate-300 to-slate-400',
+            btnColor: 'bg-slate-700 hover:bg-slate-600',
+            popular: false,
+            features: [
+                'Basic marketplace visibility',
+                'Standard SEO indexing',
+                'Base catalog linkage',
+            ],
+        },
+        {
+            id: 'compact',
+            icon: '📦',
+            name: 'COMPACT',
+            subtitle: 'Great for getting started',
+            price: 29,
+            color: 'from-amber-400 to-orange-500',
+            btnColor: 'bg-amber-500 hover:bg-amber-600',
+            popular: false,
+            features: [
+                'Highlighted layout aesthetic',
+                'Verified badge on profile',
+                'Mobile-optimized profile snippet',
+            ],
+        },
+        {
+            id: 'standard',
+            icon: '⭐',
+            name: 'STANDARD',
+            subtitle: 'Elevated visibility & leads',
+            price: 49,
+            color: 'from-blue-500 to-indigo-600',
+            btnColor: 'bg-blue-600 hover:bg-blue-700',
+            popular: false,
+            features: [
+                'Elevated search standing',
+                '"Featured" vendor status badge',
+                'Unlimited profile impressions',
+                'Dashboard analytics unlocked',
+            ],
+        },
+        {
+            id: 'premium',
+            icon: '⚡',
+            name: 'PREMIUM',
+            subtitle: 'Maximum visibility & leads',
+            price: 99,
+            color: 'from-slate-900 to-slate-800',
+            btnColor: 'bg-slate-800 hover:bg-slate-700',
+            popular: true,
+            features: [
+                'Top placement in search results',
+                'Homepage rotating banner',
+                'Priority lead generation mapping',
+                '"Top Rated" trusted vendor badge',
+                'Advanced analytics',
+            ],
+        },
+    ];
+
+
 
     if (fetchingActive) {
         return (
@@ -258,67 +339,106 @@ export default function Ads() {
                         transition={{ duration: 0.3, ease: "easeOut" }}
                     >
                         {/* ── STEP 1: Select Plan ─────────────────────────────────── */}
+                        {/* ── STEP 1: Select Plan ─────────────────────────────────── */}
                         {step === 1 && (
                             <div className="space-y-8">
-                                <h2 className="text-2xl font-black text-slate-800 text-center tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Choose Your Visibility Tier</h2>
-                                
-                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8">
-                                    {subscriptionPlans.map(plan => (
-                                        <div 
-                                            key={plan.id}
-                                            onClick={() => { setSelectedPlan(plan); setStep(2); }}
-                                            className={`relative cursor-pointer rounded-3xl p-6 md:p-8 border-2 transition-all duration-300 group flex flex-col h-full bg-white ${
-                                                selectedPlan?.id === plan.id 
-                                                    ? 'border-[#1a56ff] shadow-[0_8px_30px_rgba(26,86,255,0.12)] ring-4 ring-blue-50' 
-                                                    : 'border-slate-100 shadow-sm hover:border-blue-200 hover:shadow-md'
-                                            }`}
-                                        >
-                                            {plan.popular && (
-                                                <div className="absolute top-0 right-8 -translate-y-1/2">
-                                                    <span className="bg-gradient-to-r from-orange-400 to-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
-                                                        Most Popular
-                                                    </span>
-                                                </div>
-                                            )}
-                                            
-                                            <div className="flex justify-between items-start mb-6">
-                                                <div>
-                                                    <span className={`inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider mb-2 bg-gradient-to-r ${plan.color} ${plan.textColor}`}>
-                                                        {plan.name}
-                                                    </span>
-                                                    <div className="flex items-baseline gap-1">
-                                                        <span className="text-4xl font-black text-slate-900 tracking-tighter">${plan.price}</span>
-                                                        <span className="text-slate-500 font-medium">/mo</span>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                                    selectedPlan?.id === plan.id ? 'border-[#1a56ff] bg-[#1a56ff]' : 'border-slate-200 group-hover:border-blue-300'
+                                <div className="text-center">
+                                    <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        Choose Your Visibility Tier
+                                    </h2>
+                                    {/* Billing Toggle */}
+                                    <div className="inline-flex items-center bg-slate-100 rounded-full p-1 mt-4">
+                                        <button onClick={() => setBilling('monthly')}
+                                            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${billing === 'monthly' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>
+                                            Monthly
+                                        </button>
+                                        <button onClick={() => setBilling('quarterly')}
+                                            className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${billing === 'quarterly' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>
+                                            Quarterly
+                                            <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-full">Save 15%</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {displayPlans.map(plan => {
+                                        const discount = billing === 'quarterly' ? 0.15 : 0;
+                                        const finalPrice = billing === 'quarterly'
+                                            ? Math.round(plan.price * 3 * (1 - discount))
+                                            : plan.price;
+                                        const perMonth = billing === 'quarterly'
+                                            ? Math.round(plan.price * (1 - discount))
+                                            : plan.price;
+                                        
+                                        const isSelected = selectedPlan?.id === plan.id;
+                                        const PreviewComponent = plan.Component || subscriptionPlans.find(p => p.id === plan.id)?.Component;
+
+                                        return (
+                                            <div key={plan.id}
+                                                onClick={() => {
+                                                    const planData = subscriptionPlans.find(p => p.id === plan.id) || { ...plan, price: perMonth };
+                                                    setSelectedPlan({ ...planData, price: perMonth });
+                                                }}
+                                                className={`relative flex flex-col rounded-3xl border-2 bg-white transition-all duration-300 cursor-pointer overflow-hidden ${
+                                                    isSelected
+                                                        ? 'border-[#1a56ff] ring-4 ring-blue-100 shadow-xl scale-[1.02] z-10'
+                                                        : 'border-slate-200 hover:border-blue-300 hover:shadow-lg'
                                                 }`}>
-                                                    {selectedPlan?.id === plan.id && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                                
+                                                <div className="p-8 flex flex-col flex-1">
+                                                    {/* Top Row: Pill & Radio */}
+                                                    <div className="flex justify-between items-start mb-6">
+                                                        <div className={`text-[12px] font-black px-3 py-1 rounded-full uppercase tracking-widest text-white ${plan.btnColor.split(' ')[0]}`}>
+                                                            {plan.name}
+                                                        </div>
+                                                        <div className="flex flex-col items-end">
+                                                            {plan.popular && (
+                                                                <div className="bg-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full tracking-widest uppercase mb-2 shadow-sm">
+                                                                    MOST POPULAR
+                                                                </div>
+                                                            )}
+                                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-blue-600 bg-blue-500' : 'border-slate-300'}`}>
+                                                                {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Price */}
+                                                    <div className="mb-8">
+                                                        <div className="flex items-baseline gap-1">
+                                                            <span className="text-[44px] font-black text-slate-900 tracking-tighter leading-none">${perMonth}</span>
+                                                            <span className="text-slate-400 font-medium">/mo</span>
+                                                        </div>
+                                                        {billing === 'quarterly' && (
+                                                            <p className="text-emerald-600 text-[12px] font-bold mt-1">${finalPrice} billed quarterly</p>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Live Preview Area */}
+                                                    <div className="mb-8">
+                                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-3">Live Preview</p>
+                                                        <div className="bg-[#f8fafc] border border-slate-100 rounded-2xl p-5 flex items-center justify-center min-h-[140px]">
+                                                            <div className="w-full">
+                                                                {PreviewComponent ? <PreviewComponent ad={mockAd} /> : <p className="text-center text-slate-400">Loading Preview...</p>}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Features */}
+                                                    <ul className="space-y-3 flex-1">
+                                                        {plan.features.map((f, i) => (
+                                                            <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600 font-medium tracking-tight">
+                                                                <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                                {f}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
                                             </div>
-
-                                            {/* Live Preview */}
-                                            <div className="mb-6 rounded-2xl bg-slate-50 p-4 border border-slate-100 flex-1 flex flex-col justify-center overflow-hidden">
-                                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-3">Live Preview</p>
-                                                <div className="pointer-events-none transform origin-top-left scale-90 w-[111%]">
-                                                    {plan.Component && <plan.Component ad={mockAd} />}
-                                                </div>
-                                            </div>
-
-                                            <ul className="space-y-3 mt-auto">
-                                                {plan.features.map((feature, i) => (
-                                                    <li key={i} className="flex gap-3 text-slate-600 text-sm font-medium items-start">
-                                                        <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                        {feature}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
@@ -425,28 +545,13 @@ export default function Ads() {
                                     </div>
                                 </div>
                                 
-                                <div className="text-center rounded-2xl overflow-hidden shadow-lg border border-slate-800">
-                                    {/* Mock Credit Card UI representation */}
-                                    <div className="bg-slate-900 p-8 text-left relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl"></div>
-                                        <div className="flex justify-between items-center mb-8 relative z-10">
-                                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Payment Method</p>
-                                            <svg className="w-8 h-8 text-white opacity-90" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
-                                        <div className="font-mono text-white text-xl tracking-[0.2em] mb-6 relative z-10">**** **** **** 4242</div>
-                                        <div className="flex justify-between text-slate-300 text-sm font-medium w-3/4 max-w-[200px] relative z-10">
-                                            <div className="flex flex-col">
-                                                <span className="text-[9px] text-slate-500 uppercase tracking-widest mb-0.5">Expires</span>
-                                                <span>12/28</span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[9px] text-slate-500 uppercase tracking-widest mb-0.5">CVC</span>
-                                                <span>***</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="text-center rounded-2xl overflow-hidden shadow-lg border border-slate-100 p-8 bg-white max-w-md mx-auto">
+                                    <AcceptJsCheckout 
+                                        amount={selectedPlan.price * (duration / 30)} 
+                                        onSuccess={handleCheckout} 
+                                        onError={(err) => alert(err)} 
+                                        buttonText="Secure Checkout"
+                                    />
                                 </div>
                             </div>
                         )}
@@ -473,13 +578,7 @@ export default function Ads() {
                             Continue to {step === 1 ? 'Duration' : step === 2 ? 'Placement' : 'Checkout'}
                         </button>
                     ) : (
-                        <LoadingButton 
-                            isLoading={loading} 
-                            onClick={handleCheckout} 
-                            className="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-[0_4px_14px_rgba(5,150,105,0.3)] transition-all"
-                        >
-                            Pay & Activate Securely
-                        </LoadingButton>
+                        <div className="w-[150px]"></div>
                     )}
                 </div>
             </div>

@@ -124,7 +124,7 @@ export default function BrowseState() {
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
                         <div className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-6">
-                            <Link to="/browse" className="hover:text-blue-600 transition-colors">Browse States</Link>
+                            <Link to="/junkyards-by-location" className="hover:text-blue-600 transition-colors">Browse States</Link>
                             <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
                             <span className="text-slate-900">{stateName}</span>
                         </div>

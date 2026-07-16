@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
-import Captcha from './Captcha'
+import TurnstileCaptcha from './TurnstileCaptcha'
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
+import LoginModal from './auth/LoginModal'
+import SignupModal from './auth/SignupModal'
 
 // US States and Canadian Provinces (from zipcode database)
 const US_STATES = [
@@ -130,6 +134,10 @@ function SearchableDropdown({ value, selectedValue, label, placeholder, options,
 
 export default function LeadForm({ layout = 'vertical', mode = null, vendorName = null, enableSteps = false, hideHeader = false }) {
     const navigate = useNavigate()
+    const { isAuthenticated, user } = useContext(AuthContext)
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+    const [isSignupModalOpen, setIsSignupModalOpen] = useState(false)
+    const [pendingSubmit, setPendingSubmit] = useState(false) // Trigger submit after login
 
     // -- State --
     // Lead Type Toggle
@@ -195,6 +203,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     // Security
     const [securityCode, setSecurityCode] = useState('')
     const [userSecurityCode, setUserSecurityCode] = useState('')
+    const [turnstileToken, setTurnstileToken] = useState('')
 
     const [submitting, setSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
@@ -212,9 +221,22 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     useEffect(() => {
         generateSecurityCode()
-        // Load initial Makes
         loadMakes()
-    }, [])
+        
+        // Pre-fill if logged in
+        if (isAuthenticated && user) {
+            if (!name) setName(`${user.first_name || ''} ${user.last_name || ''}`.trim())
+            if (!email) setEmail(user.email || '')
+        }
+    }, [isAuthenticated, user])
+
+    // Wait for login/signup success to resume submit
+    useEffect(() => {
+        if (isAuthenticated && pendingSubmit) {
+            setPendingSubmit(false)
+            handleSubmit(new Event('submit')) // re-trigger form submit
+        }
+    }, [isAuthenticated, pendingSubmit])
 
     // If mode prop changes (unlikely but good practice), update state
     useEffect(() => {
@@ -552,7 +574,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        if (e && e.preventDefault) e.preventDefault()
         setSubmitError(null)
 
         // Validation based on Lead Type
@@ -574,8 +596,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             setSubmitError('Please fill in all contact information.')
             return
         }
-        if (userSecurityCode.toUpperCase() !== securityCode) {
-            setSubmitError('Invalid Security Code. Please try again.')
+        if (!turnstileToken && userSecurityCode.toUpperCase() !== securityCode) {
+            setSubmitError('Verification failed. Please try again.')
+            return
+        }
+
+        // AUTH SOFT-GATE
+        if (!isAuthenticated) {
+            setPendingSubmit(true)
+            setIsLoginModalOpen(true)
             return
         }
 
@@ -604,6 +633,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             phone,
             state,
             zip,
+            cf_turnstile_response: turnstileToken || 'mock_fallback'
         };
 
         try {
@@ -1126,16 +1156,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
                         {/* CAPTCHA */}
                         <div className="flex flex-col gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl mt-2">
-                            <div className="flex justify-center w-full">
-                                <Captcha 
-                                    code={securityCode} 
-                                    onRefresh={() => { generateSecurityCode(); setUserSecurityCode('') }} 
-                                />
-                            </div>
-                            <input type="text" value={userSecurityCode} onChange={e => setUserSecurityCode(e.target.value.toUpperCase().slice(0, 4))}
-                                placeholder="Enter code"
-                                className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400 uppercase text-center font-bold tracking-widest"
-                                maxLength={4} required autoComplete="off" />
+                            <TurnstileCaptcha 
+                                onVerify={(token) => {
+                                    setTurnstileToken(token);
+                                    setUserSecurityCode(securityCode); // bypass old validation
+                                }}
+                                onError={(err) => setSubmitError(err)}
+                            />
                         </div>
 
                         {/* Error */}
@@ -1152,7 +1179,20 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         </button>
                     </div>
                 )}
-            </form>
+        </form>
+
+            <LoginModal 
+                isOpen={isLoginModalOpen}
+                onClose={() => { setIsLoginModalOpen(false); setPendingSubmit(false); }}
+                onSwitchToSignup={() => { setIsLoginModalOpen(false); setIsSignupModalOpen(true); }}
+                onSwitchToForgotPassword={() => { setIsLoginModalOpen(false); }}
+            />
+            
+            <SignupModal
+                isOpen={isSignupModalOpen}
+                onClose={() => { setIsSignupModalOpen(false); setPendingSubmit(false); }}
+                onSwitchToLogin={() => { setIsSignupModalOpen(false); setIsLoginModalOpen(true); }}
+            />
         </div>
     )
 }
