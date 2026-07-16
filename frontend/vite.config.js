@@ -30,12 +30,7 @@ export default defineConfig({
     excludeLargeImageDirs(),
   ],
   server: {
-    port: 3000,
-    strictPort: true,
     host: true,
-    hmr: {
-      clientPort: 3000,
-    },
     watch: {
       usePolling: true,
     }
