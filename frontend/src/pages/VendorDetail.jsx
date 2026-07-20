@@ -286,7 +286,7 @@ const VendorDetail = () => {
                         
                         {/* Yard Photos */}
                         {vendor.images && vendor.images.length > 0 && (() => {
-                            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+                            const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000');
                             const resolveImg = (img) => {
                                 if (!img) return null;
                                 const raw = img.url || img;

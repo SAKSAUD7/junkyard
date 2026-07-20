@@ -135,7 +135,7 @@ function MapGeometry({ onStateSelect }) {
   useEffect(() => {
     // 1. Load TopoJSON and Data
     const topoPromise = fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(res => res.json());
-    const dataPromise = fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendors/state_counts/`).then(res => res.json());
+    const dataPromise = fetch(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/vendors/state_counts/`).then(res => res.json());
 
     Promise.all([topoPromise, dataPromise])
       .then(([topology, countsResponse]) => {

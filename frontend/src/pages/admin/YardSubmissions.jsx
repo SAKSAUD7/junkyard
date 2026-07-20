@@ -53,7 +53,7 @@ export default function YardSubmissions() {
     const getMediaUrl = (url) => {
         if (!url) return '';
         if (url.startsWith('http')) return url;
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${url.startsWith('/') ? '' : '/'}${url}`;
+        return `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}${url.startsWith('/') ? '' : '/'}${url}`;
     };
 
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function YardSubmissions() {
             setLoading(true);
             const token = localStorage.getItem('access_token');
             const response = await axios.get(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/`,
+                `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/yard-submissions/`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -120,7 +120,7 @@ export default function YardSubmissions() {
             setActionLoading(true);
             const token = localStorage.getItem('access_token');
             await axios.post(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/${submissionId}/approve/`,
+                `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/yard-submissions/${submissionId}/approve/`,
                 {},
                 {
                     headers: {
@@ -144,7 +144,7 @@ export default function YardSubmissions() {
             setActionLoading(true);
             const token = localStorage.getItem('access_token');
             await axios.post(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/${submissionId}/reject/`,
+                `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/yard-submissions/${submissionId}/reject/`,
                 { notes: rejectNotes },
                 {
                     headers: {
@@ -170,7 +170,7 @@ export default function YardSubmissions() {
             setActionLoading(true);
             const token = localStorage.getItem('access_token');
             await axios.post(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/yard-submissions/${selectedSubmission.id}/send_email/`,
+                `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/yard-submissions/${selectedSubmission.id}/send_email/`,
                 { subject: emailSubject, body: emailBody },
                 {
                     headers: { 'Authorization': `Bearer ${token}` }

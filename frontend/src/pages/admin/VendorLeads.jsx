@@ -38,7 +38,7 @@ export default function AdminVendorLeads() {
 
     const fetchVendorLeads = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendor-leads/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/vendor-leads/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -65,7 +65,7 @@ export default function AdminVendorLeads() {
             if (searchTerm) params.append('search', searchTerm);
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendor-leads/export_csv/?${params}`,
+                `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/vendor-leads/export_csv/?${params}`,
                 {
                     headers: { 'Authorization': `Bearer ${token}` }
                 }
@@ -95,7 +95,7 @@ export default function AdminVendorLeads() {
     const handleStatusUpdate = async (leadId, newStatus) => {
         setUpdatingStatus(true);
         try {
-            await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/vendor-leads/${leadId}/`, {
+            await fetch(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/vendor-leads/${leadId}/`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
