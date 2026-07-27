@@ -7,8 +7,6 @@ import fs from 'fs'
 // Keeps essential UI images (logo-placeholder.png, og-default.png etc.)
 // Removes only large vendor/association uploaded content subdirectories
 function excludeLargeImageDirs() {
-  // These subdirectories contain vendor-uploaded images (too large for SWA free tier)
-  // Essential UI images at root of /images are kept
   const subdirsToRemove = ['vendors', 'associations', 'temp', 'ads', 'yard_submissions']
   return {
     name: 'exclude-large-image-dirs',
@@ -36,6 +34,61 @@ export default defineConfig({
     }
   },
   esbuild: {
-    keepNames: true
-  }
+    keepNames: true,
+    // Remove console.log and debugger statements in production
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+  },
+  build: {
+    // Don't generate sourcemaps in production (reduces bundle size)
+    sourcemap: false,
+    // Split CSS per chunk for better caching
+    cssCodeSplit: true,
+    // Warn if any single chunk exceeds 600KB
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        // ── Manual Chunk Splitting ─────────────────────────────────────────
+        // Split large vendor libraries into their own cached files.
+        // Benefit: if we update app code, users only re-download the app chunk,
+        // not React or animation libraries (which never change).
+        manualChunks(id) {
+          // React core — very stable, cache forever
+          if (id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react-is/')) {
+            return 'vendor-react'
+          }
+          // React Router — changes infrequently
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router'
+          }
+          // Framer Motion — large animation library
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion'
+          }
+          // Three.js + 3D libs — heaviest chunk, load only when needed
+          if (id.includes('node_modules/three') ||
+              id.includes('node_modules/@react-three')) {
+            return 'vendor-three'
+          }
+          // Charts + maps — only used on dashboard/browse pages
+          if (id.includes('node_modules/recharts') ||
+              id.includes('node_modules/d3') ||
+              id.includes('node_modules/react-simple-maps') ||
+              id.includes('node_modules/topojson') ||
+              id.includes('node_modules/us-atlas')) {
+            return 'vendor-charts'
+          }
+          // Sentry error tracking — separate so it doesn't block app
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry'
+          }
+          // All other node_modules go into a generic vendor chunk
+          if (id.includes('node_modules')) {
+            return 'vendor-misc'
+          }
+        },
+      },
+    },
+  },
 })

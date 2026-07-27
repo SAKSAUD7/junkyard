@@ -14,12 +14,11 @@
 
   <!-- ============================================================ -->
   <!-- WEBMASTER VERIFICATION TAGS                                   -->
-  <!-- Paste your codes from Google Search Console & Bing here      -->
+  <!-- Get your code from https://search.google.com/search-console -->
+  <!-- and paste it below, then redeploy the site.                 -->
   <!-- ============================================================ -->
-  <!-- Google Search Console: Replace YOUR_GOOGLE_VERIFICATION_CODE -->
-  <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
-  <!-- Bing Webmaster Tools: Replace YOUR_BING_VERIFICATION_CODE    -->
-  <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />
+  <!-- <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" /> -->
+  <!-- <meta name="msvalidate.01" content="PASTE_YOUR_BING_CODE_HERE" /> -->
 
   <!-- Canonical domain (fallback before React loads) -->
   <link rel="canonical" href="https://junkyardsnearme.com/" />
@@ -36,10 +35,18 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://junkyardsnearme.com/images/og-default.jpg" />
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts — preconnect reduces DNS/TLS handshake time -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- Preload the primary font (Outfit) so text appears faster on first paint -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" />
+  <!-- Full font stack with display=swap: shows fallback text instantly, swaps when loaded -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  </noscript>
 
 
   <!-- Dark background before JS loads -->
