@@ -16,10 +16,26 @@ const VendorAuthModal = ({ isOpen }) => {
     const [lastName, setLastName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [agreeTerms, setAgreeTerms] = useState(false);
+
+    // Inline validation errors
+    const [fieldErrors, setFieldErrors] = useState({});
     
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+
+    const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+    const isStrongPassword = (p) => p.length >= 8 && /\d/.test(p);
+
+    const validateField = (name, value) => {
+        let msg = '';
+        if (name === 'email' && value && !isValidEmail(value)) msg = 'Enter a valid email address.';
+        if (name === 'password' && value && !isStrongPassword(value)) msg = 'Min 8 characters with at least 1 number.';
+        if (name === 'confirmPassword' && value && value !== password) msg = 'Passwords do not match.';
+        setFieldErrors(prev => ({ ...prev, [name]: msg }));
+    };
+
+    const switchToLogin = () => { setMode('login'); setError(''); setFieldErrors({}); };
 
     if (!isOpen) return null;
 
@@ -39,12 +55,17 @@ const VendorAuthModal = ({ isOpen }) => {
         e.preventDefault();
         setError('');
 
-        if (password.length < 8) {
-            setError('Password must be at least 8 characters.');
+        // Client-side validation
+        if (!isValidEmail(email)) {
+            setFieldErrors(prev => ({ ...prev, email: 'Enter a valid email address.' }));
+            return;
+        }
+        if (!isStrongPassword(password)) {
+            setFieldErrors(prev => ({ ...prev, password: 'Min 8 characters with at least 1 number.' }));
             return;
         }
         if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+            setFieldErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match.' }));
             return;
         }
         if (!agreeTerms) {
@@ -65,11 +86,17 @@ const VendorAuthModal = ({ isOpen }) => {
             };
             const result = await register(completeData);
             if (!result.success) {
-                setError(result.error || 'Failed to create account.');
+                const errMsg = result.error || 'Failed to create account.';
+                // If email already exists, nudge the user to sign in instead
+                if (errMsg.toLowerCase().includes('already exists') || errMsg.toLowerCase().includes('email')) {
+                    setError('');
+                    setFieldErrors(prev => ({ ...prev, email: 'This email is already registered. Sign in instead.' }));
+                } else {
+                    setError(errMsg);
+                }
                 setLoading(false);
             } else {
                 setSuccessMessage('Registration successful! Welcome to JYNM Vendor Network.');
-                // Wait briefly before unmounting to show success msg
                 setTimeout(() => {
                     // Context updates automatically, unmounting modal
                 }, 1500);
@@ -199,23 +226,39 @@ const VendorAuthModal = ({ isOpen }) => {
 
                             <div>
                                 <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Email Address</label>
-                                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all shadow-sm"
+                                <input type="email" required value={email}
+                                    onChange={e => { setEmail(e.target.value); validateField('email', e.target.value); }}
+                                    onBlur={e => validateField('email', e.target.value)}
+                                    className={`w-full bg-slate-50 border rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all shadow-sm ${fieldErrors.email ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-blue-500 focus:ring-blue-500/10'}`}
                                     placeholder="you@company.com" />
+                                {fieldErrors.email && (
+                                    <p className="text-red-500 text-[11px] font-bold mt-1 ml-1 flex items-center gap-1">
+                                        <span>⚠</span> {fieldErrors.email}
+                                        {fieldErrors.email.includes('already registered') && (
+                                            <button type="button" onClick={switchToLogin} className="underline text-blue-600 ml-1">Sign in →</button>
+                                        )}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Password</label>
-                                    <PasswordInput required value={password} onChange={e => setPassword(e.target.value)}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all shadow-sm"
-                                        placeholder="Strong password" />
+                                    <PasswordInput required value={password}
+                                        onChange={e => { setPassword(e.target.value); validateField('password', e.target.value); }}
+                                        onBlur={e => validateField('password', e.target.value)}
+                                        className={`w-full bg-slate-50 border rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all shadow-sm ${fieldErrors.password ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-blue-500 focus:ring-blue-500/10'}`}
+                                        placeholder="Min 8 chars + 1 number" />
+                                    {fieldErrors.password && <p className="text-red-500 text-[11px] font-bold mt-1 ml-1">⚠ {fieldErrors.password}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Confirm Password</label>
-                                    <PasswordInput required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all shadow-sm"
+                                    <PasswordInput required value={confirmPassword}
+                                        onChange={e => { setConfirmPassword(e.target.value); validateField('confirmPassword', e.target.value); }}
+                                        onBlur={e => validateField('confirmPassword', e.target.value)}
+                                        className={`w-full bg-slate-50 border rounded-xl px-4 py-3 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all shadow-sm ${fieldErrors.confirmPassword ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-blue-500 focus:ring-blue-500/10'}`}
                                         placeholder="Type it again" />
+                                    {fieldErrors.confirmPassword && <p className="text-red-500 text-[11px] font-bold mt-1 ml-1">⚠ {fieldErrors.confirmPassword}</p>}
                                 </div>
                             </div>
 
