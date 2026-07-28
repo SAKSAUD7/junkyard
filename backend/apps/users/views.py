@@ -60,7 +60,7 @@ class LoginView(APIView):
         
         # Authenticate user
         print(f"Login attempt for: {email}")
-        user = authenticate(username=email, password=password)
+        user = authenticate(request=request, email=email, password=password)
         print(f"Auth result: {user}")
         
         if not user:

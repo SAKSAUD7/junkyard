@@ -94,7 +94,7 @@ export const VendorAuthProvider = ({ children }) => {
     };
 
     const isAuthenticated = () => {
-        return vendorAuth.isAuthenticated() && user && vendorProfile;
+        return vendorAuth.isAuthenticated() && user;
     };
 
     const value = {
