@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import { vendorAdApi } from '../../services/vendorApi';
-import { api } from '../../services/api';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { LoadingButton } from '../../components/vendor/UIElements';
 import { 
@@ -11,6 +11,18 @@ import {
     MinimalTemplate 
 } from '../../components/AdTemplates';
 import AcceptJsCheckout from '../../components/vendor/AcceptJsCheckout';
+import { useNotifications } from '../../components/common/EnterpriseNotifications';
+
+// Dedicated payments API instance — uses vendor_access_token (NOT the customer token).
+// This is intentionally separate from vendorApi (which has baseURL=/api/vendor)
+// to correctly hit /api/payments/ without a broken relative path.
+const _BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000');
+const paymentsApi = axios.create({ baseURL: `${_BASE}/api/payments` });
+paymentsApi.interceptors.request.use(cfg => {
+    const token = localStorage.getItem('vendor_access_token');
+    if (token) cfg.headers.Authorization = `Bearer ${token}`;
+    return cfg;
+});
 
 const DEFAULT_PLANS = [
     {
@@ -75,6 +87,7 @@ const DEFAULT_PLANS = [
 
 export default function Ads() {
     const { vendorProfile } = useVendorAuth();
+    const { showToast, showPaymentProgress, updatePaymentStage, hidePaymentProgress } = useNotifications();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [activeAd, setActiveAd] = useState(null);
@@ -135,30 +148,69 @@ export default function Ads() {
     }, []);
 
     const handleCheckout = async (nonce) => {
+        const amount = selectedPlan.price * (duration / 30);
+        // Generate idempotency key to prevent double-charges on retry
+        const idempotencyKey = `vendor_ad_${vendorProfile?.vendor?.yard_id || 'unknown'}_${selectedPlan.id}_${Date.now()}`;
+
         setLoading(true);
+        showPaymentProgress(amount.toFixed(2));
+
         try {
-            const amount = selectedPlan.price * (duration / 30);
-            
-            // 1. Process payment via Authorize.net
-            const chargeResponse = await api.chargeCard({
-                nonce: nonce,
-                amount: amount,
+            updatePaymentStage('sending');
+
+            // ── CRITICAL FIX: use paymentsApi (vendor JWT) not the customer api ──
+            // This resolves the "No refresh token" 401 error that crashed the checkout.
+            // paymentsApi injects vendor_access_token and hits /api/payments/charge/
+            const chargeResponse = await paymentsApi.post('/charge/', {
+                nonce,
+                amount,
                 item_type: 'ad_plan',
-                item_id: selectedPlan.id
+                item_id: selectedPlan.id,
+                source_module: 'vendor_ads',
+                idempotency_key: idempotencyKey,
+                description: `${selectedPlan.name || selectedPlan.id} Ad Plan — ${duration / 30} month(s)`,
             });
 
-            // 2. Provision the Ad
+            updatePaymentStage('authorized');
+
+            // Provision the Ad
+            updatePaymentStage('provisioning');
             await vendorAdApi.purchaseAd({
                 plan_type: selectedPlan.id,
                 duration: duration,
                 placement: placement,
                 payment_status: 'completed',
-                transaction_id: chargeResponse.transaction_id || ('txn_' + Math.random().toString(36).substr(2, 9))
+                transaction_id: chargeResponse.data.transaction_id || chargeResponse.data.internal_id,
             });
-            window.location.reload();
+
+            updatePaymentStage('complete');
+            await new Promise(r => setTimeout(r, 1200)); // brief celebration pause
+            hidePaymentProgress();
+
+            showToast({
+                type: 'success',
+                title: 'Payment Successful! 🎉',
+                message: `Your ${selectedPlan.name || selectedPlan.id} plan is now active.`,
+                duration: 8000,
+            });
+
+            // Refresh active ad state without full page reload
+            const response = await vendorAdApi.getCurrentAd();
+            if (response.data?.active_plan?.status === 'active') {
+                setActiveAd(response.data.active_plan);
+            }
+
         } catch (err) {
             console.error('Checkout failed', err);
-            alert(err.response?.data?.error || err.message || 'Payment failed');
+            hidePaymentProgress();
+            const errMsg = err.response?.data?.error || err.message || 'Payment failed. Please try again.';
+            showToast({
+                type: 'error',
+                title: 'Payment Failed',
+                message: errMsg,
+                duration: 10000,
+                onRetry: () => handleCheckout(nonce),
+            });
         } finally {
             setLoading(false);
         }
@@ -549,7 +601,7 @@ export default function Ads() {
                                     <AcceptJsCheckout 
                                         amount={selectedPlan.price * (duration / 30)} 
                                         onSuccess={handleCheckout} 
-                                        onError={(err) => alert(err)} 
+                                        onError={(err) => showToast({ type: 'error', title: 'Card Error', message: err, duration: 8000 })} 
                                         buttonText="Secure Checkout"
                                     />
                                 </div>

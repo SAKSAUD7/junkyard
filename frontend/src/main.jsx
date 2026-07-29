@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
 import { CMSProvider } from './contexts/CMSContext'
 import { PermissionProvider } from './contexts/PermissionContext'
+import { NotificationProvider } from './components/common/EnterpriseNotifications'
 import App from './App.jsx'
 import './index.css'
 
@@ -41,13 +42,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <CMSProvider>
-            <PermissionProvider>
-              <App />
-            </PermissionProvider>
-          </CMSProvider>
-        </AuthProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <CMSProvider>
+              <PermissionProvider>
+                <App />
+              </PermissionProvider>
+            </CMSProvider>
+          </AuthProvider>
+        </NotificationProvider>
       </BrowserRouter>
     </HelmetProvider>
   </React.StrictMode>,
