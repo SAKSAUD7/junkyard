@@ -8,7 +8,7 @@ import {
     ChatBubbleLeftIcon, Cog6ToothIcon, DocumentTextIcon, ShieldCheckIcon,
     NewspaperIcon, ArrowTopRightOnSquareIcon, Bars3Icon, BookOpenIcon,
     MagnifyingGlassIcon, BellIcon, EnvelopeIcon, QuestionMarkCircleIcon,
-    TruckIcon, XMarkIcon, UserIcon, ClockIcon
+    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon
 } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 
@@ -201,6 +201,7 @@ export default function AdminLayout() {
         { name: 'Leads',            href: '/admin-portal/leads',           icon: ListBulletIcon,    permission: 'can_manage_leads' },
         { name: 'Vendor Leads',     href: '/admin-portal/vendor-leads',    icon: TruckIcon,         permission: 'can_manage_leads' },
         { name: 'Ads',              href: '/admin-portal/ads',              icon: MegaphoneIcon,     permission: 'can_manage_ads' },
+        { name: 'Payments',         href: '/admin-portal/payments',         icon: CreditCardIcon,    permission: null },
         { name: 'Website Pages',    href: '/admin-portal/cms',              icon: DocumentTextIcon,  permission: 'can_manage_cms' },
         { name: 'Knowledge Center', href: '/admin-portal/blog',             icon: BookOpenIcon,      permission: 'can_manage_cms' },
         { name: 'Users',            href: '/admin-portal/roles',            icon: ShieldCheckIcon,   permission: 'can_manage_roles' },

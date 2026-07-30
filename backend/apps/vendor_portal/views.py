@@ -82,11 +82,17 @@ class VendorDashboardView(APIView):
 
 class VendorProfileView(generics.RetrieveUpdateAPIView):
     """
-    GET: Get vendor profile
+    GET: Get vendor profile (returns {} with 200 if no linked profile yet — for new vendors)
     PUT/PATCH: Update vendor profile
     """
-    permission_classes = [IsAuthenticated, IsVendorUser, IsVendorOwner]
     serializer_class = VendorProfileUpdateSerializer
+
+    def get_permissions(self):
+        # GET: any authenticated vendor user can check their profile (even if not linked yet)
+        # PATCH/PUT: requires full ownership check
+        if self.request.method in ('PATCH', 'PUT'):
+            return [IsAuthenticated(), IsVendorUser(), IsVendorOwner()]
+        return [IsAuthenticated(), IsVendorUser()]
     
     def get_object(self):
         try:
@@ -97,9 +103,9 @@ class VendorProfileView(generics.RetrieveUpdateAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance is None:
-            return Response({
-                'error': 'No vendor profile found'
-            }, status=status.HTTP_404_NOT_FOUND)
+            # New vendor user has not been linked to a Vendor record yet.
+            # Return an empty profile — this is NOT an auth failure.
+            return Response({}, status=status.HTTP_200_OK)
         
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

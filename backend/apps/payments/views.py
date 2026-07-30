@@ -8,6 +8,8 @@ import uuid
 import logging
 from decimal import Decimal
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
 
@@ -21,17 +23,17 @@ _provider = AuthorizeNetProvider()
 
 
 def _generate_invoice_number(txn: Transaction) -> str:
-    return f"INV-{timezone.now().strftime('%Y%m')}-{txn.id:06d}"
+    return f"INV-{timezone.now().strftime('%Y%m')}-{txn.id:06d}"  # type: ignore
 
 
 def _create_invoice(txn: Transaction) -> PaymentInvoice:
     """Generate an immutable invoice after successful payment."""
     invoice_number = _generate_invoice_number(txn)
     user = txn.user
-    customer_name  = f"{user.first_name} {user.last_name}".strip() if user else ''
-    customer_email = user.email if user else ''
+    customer_name  = f"{user.first_name} {user.last_name}".strip() if user else ''  # type: ignore
+    customer_email = user.email if user else ''  # type: ignore
 
-    inv = PaymentInvoice.objects.create(
+    inv = PaymentInvoice.objects.create(  # type: ignore
         transaction=txn,
         invoice_number=invoice_number,
         customer_name=customer_name,
@@ -47,7 +49,7 @@ def _create_invoice(txn: Transaction) -> PaymentInvoice:
         total=txn.amount,
     )
     # Update the transaction's invoice_number field for quick look-ups
-    txn.invoice_number = invoice_number
+    txn.invoice_number = invoice_number  # type: ignore
     txn.save(update_fields=['invoice_number'])
     return inv
 
@@ -94,15 +96,22 @@ class ChargeCardView(views.APIView):
 
         # ── Idempotency Check ────────────────────────────────────────
         if idempotency_key:
-            existing = Transaction.objects.filter(idempotency_key=idempotency_key).first()
-            if existing and existing.status == 'completed':
-                logger.info("Idempotency hit: returning existing completed txn %s", existing.id)
-                return Response({
-                    'success': True,
-                    'transaction_id': existing.transaction_id,
-                    'internal_id': existing.id,
-                    'idempotent': True,
-                }, status=status.HTTP_200_OK)
+            existing = Transaction.objects.filter(idempotency_key=idempotency_key).first()  # type: ignore
+            if existing:
+                if existing.status == 'completed':
+                    logger.info("Idempotency hit: returning existing completed txn %s", existing.id)
+                    return Response({
+                        'success': True,
+                        'transaction_id': existing.transaction_id,
+                        'internal_id': existing.id,
+                        'idempotent': True,
+                    }, status=status.HTTP_200_OK)
+                elif existing.status in ['draft', 'pending', 'gateway_request_sent', 'processing']:
+                    logger.warning("Duplicate request blocked for in-progress key %s", idempotency_key)
+                    return Response({
+                        'error': 'Payment is already processing. Please wait.'
+                    }, status=status.HTTP_409_CONFLICT)
+                # If transaction failed previously, we will allow creating a new one (although ideally with a new key).
 
         # ── Resolve vendor FK if possible ────────────────────────────
         vendor = None
@@ -112,7 +121,7 @@ class ChargeCardView(views.APIView):
             pass  # Customer payment — no vendor FK needed
 
         # ── Create Draft Transaction ─────────────────────────────────
-        txn = Transaction.objects.create(
+        txn = Transaction.objects.create(  # type: ignore
             user=request.user,
             vendor=vendor,
             amount=amount,
@@ -164,6 +173,19 @@ class ChargeCardView(views.APIView):
                 "Payment SUCCESS: TXN#%s | $%s | gateway_txn=%s | user=%s",
                 txn.id, amount, result.transaction_id, request.user.email
             )
+            
+            # Send Success Email
+            try:
+                send_mail(
+                    subject=f"JYNM - Payment Receipt for {txn.item_type}",
+                    message=f"Hello,\n\nYour payment of ${amount} has been successfully processed.\nInvoice Number: {txn.invoice_number}\nTransaction ID: {result.transaction_id}\n\nThank you for choosing JYNM!",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[request.user.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                logger.error("Failed to send success email for TXN#%s: %s", txn.id, e)
+
             return Response({
                 'success': True,
                 'transaction_id': result.transaction_id,
@@ -178,6 +200,19 @@ class ChargeCardView(views.APIView):
                 "Payment FAILED: TXN#%s | $%s | error=%s | user=%s",
                 txn.id, amount, result.error, request.user.email
             )
+            
+            # Send Failure Email
+            try:
+                send_mail(
+                    subject=f"JYNM - Payment Failed",
+                    message=f"Hello,\n\nUnfortunately, your payment of ${amount} could not be processed.\nReason: {result.error}\n\nPlease try again or contact support.",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[request.user.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                logger.error("Failed to send failure email for TXN#%s: %s", txn.id, e)
+
             return Response({
                 'error': result.error or 'Payment was declined.',
                 'internal_id': txn.id,
@@ -194,8 +229,8 @@ class RefundView(views.APIView):
 
     def post(self, request, pk):
         try:
-            txn = Transaction.objects.get(pk=pk, status='completed')
-        except Transaction.DoesNotExist:
+            txn = Transaction.objects.get(pk=pk, status='completed')  # type: ignore
+        except Transaction.DoesNotExist:  # type: ignore
             return Response({'error': 'Completed transaction not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         amount_raw = request.data.get('amount', txn.amount)
@@ -205,7 +240,7 @@ class RefundView(views.APIView):
             return Response({'error': 'Invalid refund amount.'}, status=status.HTTP_400_BAD_REQUEST)
 
         result = _provider.refund(
-            transaction_id=txn.transaction_id,
+            transaction_id=txn.transaction_id,  # type: ignore
             amount=refund_amount,
         )
 
@@ -239,15 +274,15 @@ class WebhookView(views.APIView):
         event_type   = payload_data.get('eventType', 'unknown')
 
         # ── Deduplication ────────────────────────────────────────────
-        if WebhookEvent.objects.filter(event_id=event_id).exists():
+        if WebhookEvent.objects.filter(event_id=event_id).exists():  # type: ignore
             logger.info("Duplicate webhook received and ignored: event_id=%s", event_id)
-            WebhookEvent.objects.filter(event_id=event_id).update(status='duplicate')
+            WebhookEvent.objects.filter(event_id=event_id).update(status='duplicate')  # type: ignore
             return Response({'status': 'duplicate'}, status=status.HTTP_200_OK)
 
         # ── Signature Verification ───────────────────────────────────
         is_valid = _provider.verify_webhook_signature(raw_body, http_headers)
 
-        event = WebhookEvent.objects.create(
+        event = WebhookEvent.objects.create(  # type: ignore
             event_id=event_id,
             gateway=_provider.GATEWAY_NAME,
             event_type=event_type,
@@ -285,7 +320,7 @@ class WebhookView(views.APIView):
         if not gateway_txn_id:
             return
 
-        txn = Transaction.objects.filter(transaction_id=gateway_txn_id).first()
+        txn = Transaction.objects.filter(transaction_id=gateway_txn_id).first()  # type: ignore
         if not txn:
             logger.warning("Webhook event %s references unknown gateway_txn=%s", event_type, gateway_txn_id)
             return
@@ -317,18 +352,18 @@ class TransactionDetailView(views.APIView):
     def get(self, request, pk):
         try:
             if request.user.is_staff:
-                txn = Transaction.objects.get(pk=pk)
+                txn = Transaction.objects.get(pk=pk)  # type: ignore
             else:
-                txn = Transaction.objects.get(pk=pk, user=request.user)
-        except Transaction.DoesNotExist:
+                txn = Transaction.objects.get(pk=pk, user=request.user)  # type: ignore
+        except Transaction.DoesNotExist:  # type: ignore
             return Response({'error': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         invoice = None
         try:
             invoice = {
-                'invoice_number': txn.invoice.invoice_number,
-                'total': str(txn.invoice.total),
-                'issued_at': txn.invoice.issued_at,
+                'invoice_number': txn.invoice.invoice_number,  # type: ignore
+                'total': str(txn.invoice.total),  # type: ignore
+                'issued_at': txn.invoice.issued_at,  # type: ignore
             }
         except Exception:
             pass
@@ -357,7 +392,7 @@ class TransactionDetailView(views.APIView):
                     'actor': log.actor_email,
                     'at':   log.timestamp,
                 }
-                for log in txn.lifecycle_logs.all()
+                for log in txn.lifecycle_logs.all()  # type: ignore
             ],
         })
 
@@ -368,3 +403,226 @@ def _get_client_ip(request) -> str:
     if x_forwarded:
         return x_forwarded.split(',')[0].strip()
     return request.META.get('REMOTE_ADDR', '')
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADMIN VIEWS — Staff/IsAdminUser required for all below
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TransactionListView(views.APIView):
+    """
+    GET /api/payments/admin/transactions/
+
+    Staff-only paginated transaction list with rich filtering.
+    Query params:
+        status, source_module, gateway — exact match
+        user_email                      — icontains search on user.email
+        transaction_id                  — exact match on gateway txn ID
+        invoice_number                  — exact match
+        start_date, end_date            — ISO date strings (created_at range)
+        page, page_size                 — pagination (default page_size=25)
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from .serializers import TransactionListSerializer
+        qs = Transaction.objects.select_related('user', 'vendor').order_by('-created_at')  # type: ignore
+
+        # Filters
+        status_f = request.query_params.get('status')
+        if status_f:
+            qs = qs.filter(status=status_f)
+
+        source_f = request.query_params.get('source_module')
+        if source_f:
+            qs = qs.filter(source_module=source_f)
+
+        gateway_f = request.query_params.get('gateway')
+        if gateway_f:
+            qs = qs.filter(gateway=gateway_f)
+
+        email_f = request.query_params.get('user_email')
+        if email_f:
+            qs = qs.filter(user__email__icontains=email_f)
+
+        txn_id_f = request.query_params.get('transaction_id')
+        if txn_id_f:
+            qs = qs.filter(transaction_id=txn_id_f)
+
+        inv_f = request.query_params.get('invoice_number')
+        if inv_f:
+            qs = qs.filter(invoice_number=inv_f)
+
+        start_f = request.query_params.get('start_date')
+        if start_f:
+            qs = qs.filter(created_at__date__gte=start_f)
+
+        end_f = request.query_params.get('end_date')
+        if end_f:
+            qs = qs.filter(created_at__date__lte=end_f)
+
+        # Pagination
+        page_size = min(int(request.query_params.get('page_size', 25)), 200)
+        page = max(int(request.query_params.get('page', 1)), 1)
+        total = qs.count()
+        offset = (page - 1) * page_size
+        qs = qs[offset: offset + page_size]
+
+        serializer = TransactionListSerializer(qs, many=True)
+        return Response({
+            'count': total,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (total + page_size - 1) // page_size if page_size else 1,
+            'results': serializer.data,
+        })
+
+
+class TransactionDetailAdminView(views.APIView):
+    """
+    GET /api/payments/admin/transactions/<pk>/
+    Full transaction detail including lifecycle logs and invoice.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, pk):
+        from .serializers import TransactionDetailSerializer
+        try:
+            txn = Transaction.objects.select_related('user', 'vendor').prefetch_related(  # type: ignore
+                'lifecycle_logs', 'invoice'
+            ).get(pk=pk)
+        except Transaction.DoesNotExist:  # type: ignore
+            return Response({'error': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(TransactionDetailSerializer(txn).data)
+
+
+class TransactionStatsView(views.APIView):
+    """
+    GET /api/payments/admin/stats/
+
+    Aggregated KPIs for the admin financial dashboard.
+    Returns revenue totals, counts by status, breakdown by source module,
+    and this-month figures.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from django.db.models import Sum, Count, Avg, Q
+        from decimal import Decimal
+
+        now = timezone.now()
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+        all_txns = Transaction.objects.all()  # type: ignore
+
+        # Overall
+        completed_qs = all_txns.filter(status='completed')
+        totals = completed_qs.aggregate(
+            total_revenue=Sum('amount'),
+            avg_transaction=Avg('amount'),
+        )
+
+        # This month
+        this_month = completed_qs.filter(created_at__gte=month_start).aggregate(
+            revenue=Sum('amount'),
+            count=Count('id'),
+        )
+
+        # Count by status
+        by_status_raw = all_txns.values('status').annotate(count=Count('id')).order_by('-count')
+        by_status = {row['status']: row['count'] for row in by_status_raw}
+
+        # Count by source module (completed only)
+        by_source_raw = completed_qs.values('source_module').annotate(
+            count=Count('id'), revenue=Sum('amount')
+        ).order_by('-revenue')
+        by_source = [
+            {'module': r['source_module'] or 'unknown', 'count': r['count'], 'revenue': str(r['revenue'] or 0)}
+            for r in by_source_raw
+        ]
+
+        return Response({
+            'total_revenue': str(totals['total_revenue'] or Decimal('0.00')),
+            'completed_count': completed_qs.count(),
+            'pending_count': by_status.get('pending', 0) + by_status.get('gateway_request_sent', 0),
+            'failed_count': by_status.get('failed', 0),
+            'refunded_count': by_status.get('refunded', 0) + by_status.get('partial_refund', 0),
+            'this_month_revenue': str(this_month['revenue'] or Decimal('0.00')),
+            'this_month_count': this_month['count'] or 0,
+            'avg_transaction': str(totals['avg_transaction'] or Decimal('0.00')),
+            'by_source_module': by_source,
+            'by_status': by_status,
+        })
+
+
+class WebhookEventListView(views.APIView):
+    """
+    GET /api/payments/admin/webhooks/
+
+    Staff-only paginated webhook event list.
+    Query params: status, gateway, page, page_size
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from .serializers import WebhookEventSerializer
+        qs = WebhookEvent.objects.select_related('transaction').order_by('-received_at')  # type: ignore
+
+        status_f = request.query_params.get('status')
+        if status_f:
+            qs = qs.filter(status=status_f)
+
+        gateway_f = request.query_params.get('gateway')
+        if gateway_f:
+            qs = qs.filter(gateway=gateway_f)
+
+        page_size = min(int(request.query_params.get('page_size', 25)), 200)
+        page = max(int(request.query_params.get('page', 1)), 1)
+        total = qs.count()
+        offset = (page - 1) * page_size
+        qs = qs[offset: offset + page_size]
+
+        serializer = WebhookEventSerializer(qs, many=True)
+        return Response({
+            'count': total,
+            'page': page,
+            'page_size': page_size,
+            'results': serializer.data,
+        })
+
+
+class InvoiceListView(views.APIView):
+    """
+    GET /api/payments/admin/invoices/
+
+    Staff-only paginated invoice list.
+    Query params: email (customer_email icontains), invoice_number, page, page_size
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from .serializers import InvoiceSerializer
+        qs = PaymentInvoice.objects.select_related('transaction').order_by('-issued_at')  # type: ignore
+
+        email_f = request.query_params.get('email')
+        if email_f:
+            qs = qs.filter(customer_email__icontains=email_f)
+
+        inv_f = request.query_params.get('invoice_number')
+        if inv_f:
+            qs = qs.filter(invoice_number__icontains=inv_f)
+
+        page_size = min(int(request.query_params.get('page_size', 25)), 200)
+        page = max(int(request.query_params.get('page', 1)), 1)
+        total = qs.count()
+        offset = (page - 1) * page_size
+        qs = qs[offset: offset + page_size]
+
+        serializer = InvoiceSerializer(qs, many=True)
+        return Response({
+            'count': total,
+            'page': page,
+            'page_size': page_size,
+            'results': serializer.data,
+        })
+

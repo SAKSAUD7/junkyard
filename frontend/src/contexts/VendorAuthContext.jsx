@@ -22,16 +22,37 @@ export const VendorAuthProvider = ({ children }) => {
         const initAuth = async () => {
             const currentUser = vendorAuth.getCurrentUser();
             const currentProfile = vendorAuth.getVendorProfile();
+            const hasToken = vendorAuth.isAuthenticated()
+                || !!localStorage.getItem('access_token');
 
-            if (currentUser && currentProfile && vendorAuth.isAuthenticated()) {
+            if (hasToken && currentUser) {
+                // 1. Trust the stored user/session immediately — don't wait for the network.
+                //    This prevents the login modal from flashing on every page load.
+                setUser(currentUser);
+                setVendorProfile(currentProfile || {});
+
+                // 2. Optionally refresh the vendor profile from the backend in the background.
+                //    A 403 here means "no linked vendor profile yet" (new user) — NOT "not authenticated".
+                //    A 401 means the token is genuinely expired; interceptor will handle refresh or logout.
                 try {
-                    // Force a fast backend check. If token is dead, interceptor logs out and cleans up.
-                    await vendorProfileApi.get();
-                    setUser(currentUser);
-                    setVendorProfile(currentProfile);
+                    const res = await vendorProfileApi.get();
+                    const freshProfile = res.data || {};
+                    setVendorProfile(freshProfile);
+                    // Keep localStorage in sync
+                    localStorage.setItem('vendor_profile', JSON.stringify(freshProfile));
                 } catch (error) {
-                    // Axios interceptor already handles token removal and redirect if 401
-                    console.log('Stale token detected and removed.');
+                    const httpStatus = error.response?.status;
+                    if (httpStatus === 403 || httpStatus === 404) {
+                        // No linked vendor profile yet — session is still valid.
+                        // Keep the state as-is (user is authenticated, just no profile record).
+                        console.info('[VendorAuth] No vendor profile linked yet. Session preserved.');
+                    } else if (httpStatus === 401) {
+                        // Genuinely expired / bad token. The Axios interceptor already attempted
+                        // a token refresh. If we're here the refresh also failed — clear state.
+                        setUser(null);
+                        setVendorProfile(null);
+                    }
+                    // For network errors (offline etc.), keep the session alive.
                 }
             }
             setLoading(false);
@@ -94,7 +115,10 @@ export const VendorAuthProvider = ({ children }) => {
     };
 
     const isAuthenticated = () => {
-        return vendorAuth.isAuthenticated() && user && vendorProfile;
+        // Accept either vendor-specific token OR the general auth token.
+        // This covers users who logged in via VendorAuthModal AND users who
+        // authenticated via the general login flow (authService.js).
+        return (vendorAuth.isAuthenticated() || !!localStorage.getItem('access_token')) && !!user;
     };
 
     const value = {

@@ -146,13 +146,13 @@ export const api = {
       if (!data.next) break;
       page++;
     }
-    return allParts.sort((a, b) => a.partName.localeCompare(b.partName));
+    return allParts.sort((a, b) => (a.partName || '').localeCompare(b.partName || ''));
   },
 
   getAllMakes: async () => {
     const response = await axiosInstance.get('/common/makes/');
     const makes = response.data.results || [];
-    return makes.sort((a, b) => a.makeName.localeCompare(b.makeName));
+    return makes.sort((a, b) => (a.makeName || '').localeCompare(b.makeName || ''));
   },
 
   // Hollander / ZipCode Search
@@ -505,6 +505,42 @@ export const api = {
     },
     deleteStaff: async (id) => {
       await axiosInstance.delete(`/rbac/staff/${id}/`);
+    },
+  },
+  // ── Admin Payments ─────────────────────────────────────────────────────────
+  adminPayments: {
+    // KPI dashboard stats
+    getStats: async () => {
+      const response = await axiosInstance.get('/payments/admin/stats/');
+      return response.data;
+    },
+    // Paginated transaction list with filters
+    listTransactions: async (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      const response = await axiosInstance.get(`/payments/admin/transactions/${qs ? `?${qs}` : ''}`);
+      return response.data;
+    },
+    // Single transaction detail (with lifecycle + invoice)
+    getTransaction: async (id) => {
+      const response = await axiosInstance.get(`/payments/admin/transactions/${id}/`);
+      return response.data;
+    },
+    // Issue a refund (admin only)
+    issueRefund: async (id, amount) => {
+      const response = await axiosInstance.post(`/payments/${id}/refund/`, { amount });
+      return response.data;
+    },
+    // Paginated webhook event list
+    listWebhooks: async (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      const response = await axiosInstance.get(`/payments/admin/webhooks/${qs ? `?${qs}` : ''}`);
+      return response.data;
+    },
+    // Paginated invoice list
+    listInvoices: async (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      const response = await axiosInstance.get(`/payments/admin/invoices/${qs ? `?${qs}` : ''}`);
+      return response.data;
     },
   },
 };

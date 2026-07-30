@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -8,6 +8,7 @@ import { api } from '../services/api';
 import AcceptJsCheckout from '../components/vendor/AcceptJsCheckout';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
 import VendorAuthModal from '../components/vendor/VendorAuthModal';
+import { useNotifications } from '../components/common/EnterpriseNotifications';
 
 // Mock CMS Hook - this makes the strings easy to update without code changes later
 const useAddYardCMS = () => {
@@ -39,6 +40,12 @@ const STEPS_NAV = [
 ];
 
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+const CA_PROVINCES = ['AB','BC','MB','NB','NL','NS','NT','NU','ON','PE','QC','SK','YT'];
+const getStateOptions = (country) => {
+    if (country === 'Canada') return CA_PROVINCES.map(s => ({ label: s, value: s }));
+    return US_STATES.map(s => ({ label: s, value: s }));
+};
+
 
 const CustomSelect = ({ options, value, onChange, placeholder, disabled, name }) => {
     const [open, setOpen] = React.useState(false);
@@ -84,13 +91,17 @@ export default function AddYardPage() {
     const navigate = useNavigate();
     const cms = useAddYardCMS();
     const { isAuthenticated, loading: authLoading } = useVendorAuth();
+    const { showToast, showPaymentProgress, updatePaymentStage, hidePaymentProgress } = useNotifications();
     
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [paymentStatusMsg, setPaymentStatusMsg] = useState('');
     const [touched, setTouched] = useState({});
+    
+    // Stable idempotency key for this instance to prevent duplicate charges
+    const idempotencyKeyRef = useRef(crypto.randomUUID());
+
 
     // Custom UI Alert Modal State
     const [showExitWarning, setShowExitWarning] = useState(false);
@@ -254,9 +265,19 @@ export default function AddYardPage() {
             value = raw.length > 6 ? `(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}` : 
                     raw.length > 3 ? `(${raw.slice(0,3)}) ${raw.slice(3)}` : raw;
         }
+        // When country changes, reset dependent location fields
+        if (name === 'country') {
+            setFormData(prev => ({ ...prev, country: value, state: '', city: '', zip_code: '' }));
+            setAvailableCities([]);
+            setAvailableZips([]);
+            setFilteredZips([]);
+            setError('');
+            return;
+        }
         setFormData(prev => ({ ...prev, [name]: value }));
         setError('');
     };
+
 
     const handleBlur = (e) => {
         setTouched(prev => ({ ...prev, [e.target.name]: true }));
@@ -356,21 +377,31 @@ export default function AddYardPage() {
         setError('');
 
         const isFree = formData.subscription_plan === 'free';
-        setPaymentStatusMsg(isFree ? 'Submitting your application...' : 'Processing your payment...');
+        
+        if (!isFree) {
+            showPaymentProgress(formData.subscription_plan === 'premium' ? '49.00' : '99.00');
+        } else {
+            showToast({ type: 'info', title: 'Submitting', message: 'Creating your junkyard profile...' });
+        }
 
         try {
             let transactionId = null;
             if (!isFree) {
                 if (!nonce) throw new Error("Payment nonce missing.");
                 const amount = formData.subscription_plan === 'premium' ? 49 : 99;
+                
+                updatePaymentStage('sending');
                 const chargeResponse = await api.chargeCard({
                     nonce: nonce, 
                     amount: amount, 
                     item_type: 'yard_submission', 
-                    item_id: formData.business_name || 'Yard'
+                    item_id: formData.business_name || 'Yard',
+                    idempotency_key: idempotencyKeyRef.current
                 });
+                updatePaymentStage('authorized');
                 transactionId = chargeResponse.transaction_id;
-                setPaymentStatusMsg('Submitting your yard...');
+                
+                updatePaymentStage('provisioning');
             }
 
             // Build FormData so photos are uploaded as real files
@@ -412,19 +443,33 @@ export default function AddYardPage() {
             }
 
             await api.submitYard(fd);
+            
+            if (!isFree) {
+                updatePaymentStage('complete');
+                setTimeout(() => {
+                    hidePaymentProgress();
+                    setIsSubmitted(true);
+                }, 1500);
+            } else {
+                showToast({ type: 'success', title: 'Success', message: 'Your junkyard profile has been created!' });
+                setIsSubmitted(true);
+            }
 
             setLoading(false);
-            setIsSubmitted(true);
         } catch (err) {
             setLoading(false);
+            if (!isFree) hidePaymentProgress();
+            
             const data = err.response?.data;
+            let errorMessage = err.message || 'Submission failed. Please try again.';
             if (data && typeof data === 'object') {
                 // Surface first validation error from the serializer
                 const firstKey = Object.keys(data)[0];
-                setError(`${firstKey}: ${Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]}`);
-            } else {
-                setError(err.message || 'Submission failed. Please try again.');
+                errorMessage = `${firstKey}: ${Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]}`;
             }
+            
+            setError(errorMessage);
+            showToast({ type: 'error', title: 'Submission Failed', message: errorMessage });
         }
     };
 
@@ -436,8 +481,36 @@ export default function AddYardPage() {
     const inputClasses = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-sm appearance-none";
     const dropdownIcon = <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>;
 
-    // Render a blocking modal instead of redirecting if completely unauthenticated
-    if (!authLoading && !isAuthenticated()) {
+    // While auth is initialising, show a skeleton instead of flashing the login modal.
+    // This prevents the race condition where VendorAuthContext hasn't resolved yet.
+    if (authLoading) {
+        return (
+            <div className="bg-[#f8fafc] min-h-screen flex flex-col font-inter">
+                <SEO title="Create Junkyard Profile" noindex={true} />
+                <Navbar />
+                <div className="flex-1 flex pt-24 justify-center">
+                    <div className="w-full max-w-3xl px-4 animate-pulse">
+                        <div className="h-8 bg-slate-200 rounded-xl w-1/2 mb-4" />
+                        <div className="h-4 bg-slate-100 rounded-lg w-1/3 mb-10" />
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 space-y-5">
+                            <div className="h-5 bg-slate-200 rounded w-1/4" />
+                            <div className="h-12 bg-slate-100 rounded-xl" />
+                            <div className="h-12 bg-slate-100 rounded-xl" />
+                            <div className="h-12 bg-slate-100 rounded-xl" />
+                        </div>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    // Check both vendor token and general token — users who log in via the main auth
+    // flow use 'access_token', while vendors who log in via VendorAuthModal use
+    // 'vendor_access_token'. Either one is valid for this form.
+    const hasValidSession = isAuthenticated() || !!localStorage.getItem('access_token');
+
+    if (!hasValidSession) {
         return (
             <div className="bg-[#f8fafc] min-h-screen flex flex-col font-inter">
                 <SEO title="Create Junkyard Profile" noindex={true} />
@@ -655,9 +728,10 @@ export default function AddYardPage() {
                                                 value={formData.state}
                                                 onChange={handleChange}
                                                 placeholder="Select state"
-                                                options={US_STATES.map(s => ({ label: s, value: s }))}
+                                                options={getStateOptions(formData.country)}
                                             />
                                         </div>
+
                                         <div className={inputWrapperClasses}>
                                             <label className={labelClasses}>City <span className="text-red-500">*</span></label>
                                             <CustomSelect 

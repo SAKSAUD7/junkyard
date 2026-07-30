@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { vendorAdApi } from '../../services/vendorApi';
@@ -88,6 +88,8 @@ const DEFAULT_PLANS = [
 export default function Ads() {
     const { vendorProfile } = useVendorAuth();
     const { showToast, showPaymentProgress, updatePaymentStage, hidePaymentProgress } = useNotifications();
+    const idempotencyKeyRef = useRef(crypto.randomUUID());
+
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [activeAd, setActiveAd] = useState(null);
@@ -149,8 +151,9 @@ export default function Ads() {
 
     const handleCheckout = async (nonce) => {
         const amount = selectedPlan.price * (duration / 30);
-        // Generate idempotency key to prevent double-charges on retry
-        const idempotencyKey = `vendor_ad_${vendorProfile?.vendor?.yard_id || 'unknown'}_${selectedPlan.id}_${Date.now()}`;
+        // Use stable idempotency key to prevent double-charges on retry
+        const idempotencyKey = idempotencyKeyRef.current;
+
 
         setLoading(true);
         showPaymentProgress(amount.toFixed(2));

@@ -11,9 +11,13 @@ const vendorApi = axios.create({
 });
 
 // Request interceptor to add auth token
+// Falls back to the general access_token if vendor_access_token is not set.
+// This bridges the dual-token-store gap: users who log in via the general
+// auth flow (authService.js) still have a valid JWT, just under 'access_token'.
 vendorApi.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('vendor_access_token');
+        const token = localStorage.getItem('vendor_access_token')
+            || localStorage.getItem('access_token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -94,16 +98,16 @@ export const vendorAuth = {
             throw new Error('Access denied. Vendor account required.');
         }
 
-        // Check if vendor is active
+        // Check if vendor is active (only when profile exists)
         if (response.data.vendor_profile?.vendor?.is_active === false) {
             throw new Error('Your account is inactive. Please contact support.');
         }
 
-        // Store tokens and user data
+        // Store tokens and user data — vendor_profile may be null if not yet linked
         localStorage.setItem('vendor_access_token', response.data.tokens.access);
         localStorage.setItem('vendor_refresh_token', response.data.tokens.refresh);
         localStorage.setItem('vendor_user', JSON.stringify(response.data.user));
-        localStorage.setItem('vendor_profile', JSON.stringify(response.data.vendor_profile));
+        localStorage.setItem('vendor_profile', JSON.stringify(response.data.vendor_profile || {}));
 
         return response.data;
     },
