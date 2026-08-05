@@ -71,13 +71,16 @@ export default defineConfig({
               id.includes('node_modules/@react-three')) {
             return 'vendor-three'
           }
-          // Charts + maps — only used on dashboard/browse pages
-          if (id.includes('node_modules/recharts') ||
-              id.includes('node_modules/d3') ||
+          // Charts — recharts has known minification conflicts with simple-maps when bundled together
+          if (id.includes('node_modules/recharts')) {
+            return 'vendor-recharts'
+          }
+          // Maps — d3, simple-maps, topojson
+          if (id.includes('node_modules/d3') ||
               id.includes('node_modules/react-simple-maps') ||
               id.includes('node_modules/topojson') ||
               id.includes('node_modules/us-atlas')) {
-            return 'vendor-charts'
+            return 'vendor-maps'
           }
           // Sentry error tracking — separate so it doesn't block app
           if (id.includes('node_modules/@sentry')) {
