@@ -34,7 +34,6 @@ export default defineConfig({
     }
   },
   esbuild: {
-    keepNames: true,
     // Remove console.log and debugger statements in production
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
@@ -71,17 +70,7 @@ export default defineConfig({
               id.includes('node_modules/@react-three')) {
             return 'vendor-three'
           }
-          // Charts — recharts has known minification conflicts with simple-maps when bundled together
-          if (id.includes('node_modules/recharts')) {
-            return 'vendor-recharts'
-          }
-          // Maps — d3, simple-maps, topojson
-          if (id.includes('node_modules/d3') ||
-              id.includes('node_modules/react-simple-maps') ||
-              id.includes('node_modules/topojson') ||
-              id.includes('node_modules/us-atlas')) {
-            return 'vendor-maps'
-          }
+          // Let Vite handle d3, recharts, and maps automatically to prevent Rollup minification bugs
           // Sentry error tracking — separate so it doesn't block app
           if (id.includes('node_modules/@sentry')) {
             return 'vendor-sentry'
