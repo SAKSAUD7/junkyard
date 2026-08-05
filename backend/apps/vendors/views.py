@@ -7,6 +7,8 @@ from apps.hollander.models import Vendor
 from .serializers import VendorSerializer
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Count
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 import logging
 
 logger = logging.getLogger(__name__)
@@ -83,6 +85,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
         
         return queryset
 
+    @method_decorator(cache_page(60 * 60 * 24))
     @action(detail=False, methods=['get'])
     def suggest_zipcodes(self, request):
         """
@@ -115,6 +118,7 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
             
         return Response(results)
 
+    @method_decorator(cache_page(60 * 60 * 24))
     @action(detail=False, methods=['get'])
     def state_counts(self, request):
         """
