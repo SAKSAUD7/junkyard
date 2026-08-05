@@ -116,6 +116,7 @@ export default function MobileAdBanner({ page = 'all' }) {
                             <img
                                 src={ad.image}
                                 alt={ad.title}
+                                loading="lazy"
                                 className="w-full h-full object-cover"
                                 onError={(e) => { e.target.closest('div').style.display = 'none'; }}
                             />

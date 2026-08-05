@@ -176,7 +176,7 @@ export default function TrustedVendors() {
                                                 {vendor.name.charAt(0)}
                                             </div>
                                         ) : (
-                                            <img src={logoUrl} alt={vendor.name} className="h-16 object-contain rounded-lg" />
+                                            <img src={logoUrl} alt={vendor.name} loading="lazy" className="h-16 object-contain rounded-lg" />
                                         )}
                                     </div>
 

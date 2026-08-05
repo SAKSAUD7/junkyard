@@ -43,8 +43,8 @@ export default defineConfig({
     sourcemap: false,
     // Split CSS per chunk for better caching
     cssCodeSplit: true,
-    // Warn if any single chunk exceeds 600KB
-    chunkSizeWarningLimit: 600,
+    // Warn if any single chunk exceeds 1000KB (Three.js and Charts are unavoidably large)
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // ── Manual Chunk Splitting ─────────────────────────────────────────

@@ -151,7 +151,7 @@ function AdCard({ ad }) {
                 {imageUrl && (
                     <div className="absolute right-0 top-0 w-2/5 h-full overflow-hidden pointer-events-none">
                         <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a3a] via-[#0c1a3a]/60 to-transparent z-10" />
-                        <img src={imageUrl} alt="" className="w-full h-full object-cover opacity-35 group-hover/card:opacity-50 group-hover/card:scale-105 transition-all duration-700" onError={e => e.target.parentElement.style.display='none'} />
+                        <img src={imageUrl} alt="" loading="lazy" className="w-full h-full object-cover opacity-35 group-hover/card:opacity-50 group-hover/card:scale-105 transition-all duration-700" onError={e => e.target.parentElement.style.display='none'} />
                     </div>
                 )}
 
@@ -189,7 +189,7 @@ function AdCard({ ad }) {
                 <div className="relative mt-1">
                     {imageUrl ? (
                         <div className="w-14 h-14 rounded-full overflow-hidden border-4 border-slate-50 shadow-sm group-hover/card:scale-105 transition-transform duration-300">
-                            <img src={imageUrl} alt={ad.title} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                            <img src={imageUrl} alt={ad.title} loading="lazy" className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
                         </div>
                     ) : (
                         <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${palette.bg} flex items-center justify-center font-black text-lg text-white shadow-sm group-hover/card:scale-105 transition-transform duration-300`}>
@@ -233,7 +233,7 @@ function AdCard({ ad }) {
             <div className="flex items-center gap-3">
                 {imageUrl ? (
                     <div className="w-11 h-11 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-50 group-hover/card:scale-105 transition-transform duration-300">
-                        <img src={imageUrl} alt={ad.title} className="w-full h-full object-contain p-1" onError={e => e.target.style.display='none'} />
+                        <img src={imageUrl} alt={ad.title} loading="lazy" className="w-full h-full object-contain p-1" onError={e => e.target.style.display='none'} />
                     </div>
                 ) : (
                     <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${palette.bg} flex items-center justify-center font-black text-sm text-white flex-shrink-0 group-hover/card:scale-105 transition-transform duration-300`}>

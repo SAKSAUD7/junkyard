@@ -78,6 +78,7 @@ export const StandardTemplate = ({ ad }) => {
                         <img
                             src={img}
                             alt={ad.title}
+                            loading="lazy"
                             className="w-12 h-12 object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
                             onError={e => e.target.style.display = 'none'}
                         />
@@ -123,7 +124,7 @@ export const MinimalTemplate = ({ ad }) => {
             {/* Thumbnail */}
             {img ? (
                 <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
-                    <img src={img} alt={ad.title} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" onError={e => e.target.style.display='none'} />
+                    <img src={img} alt={ad.title} loading="lazy" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" onError={e => e.target.style.display='none'} />
                 </div>
             ) : (
                 <InitialsAvatar name={ad.title} size="sm" gradient="dark" />
@@ -175,7 +176,7 @@ export const PremiumTemplate = ({ ad }) => {
                 {img && (
                     <div className="absolute right-0 top-0 w-2/5 h-full overflow-hidden pointer-events-none">
                         <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a3a] to-transparent z-10" />
-                        <img src={img} alt="" className="w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500 group-hover:scale-105 transition-transform duration-700" onError={e => e.target.parentElement.style.display='none'} />
+                        <img src={img} alt="" loading="lazy" className="w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500 group-hover:scale-105 transition-transform duration-700" onError={e => e.target.parentElement.style.display='none'} />
                     </div>
                 )}
 
@@ -232,7 +233,7 @@ export const CompactTemplate = ({ ad }) => {
             <div className={`relative mb-3 ring-4 ${cls.ring} rounded-full transition-all group-hover:ring-8`}>
                 {img ? (
                     <div className="w-14 h-14 rounded-full overflow-hidden">
-                        <img src={img} alt={ad.title} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                        <img src={img} alt={ad.title} loading="lazy" className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
                     </div>
                 ) : (
                     <InitialsAvatar name={ad.title} size="md" gradient={accent} />
@@ -269,7 +270,7 @@ export const MicroTemplate = ({ ad }) => {
             aria-label={`Sponsored: ${ad.title}`}
         >
             {img ? (
-                <img src={img} alt={ad.title} className="w-5 h-5 rounded-full object-cover flex-shrink-0" onError={e => e.target.style.display='none'} />
+                <img src={img} alt={ad.title} loading="lazy" className="w-5 h-5 rounded-full object-cover flex-shrink-0" onError={e => e.target.style.display='none'} />
             ) : (
                 <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
                     <span className="text-[7px] font-black text-white">{ad.title?.[0]}</span>

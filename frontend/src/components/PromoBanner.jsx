@@ -29,7 +29,7 @@ export default function PromoBanner({ className = '' }) {
             {/* Left Section: Logo & Name */}
             <div className="flex items-center gap-4 shrink-0">
                 {logoUrl ? (
-                    <img src={logoUrl} alt="Quality Auto Parts" className="h-16 w-16 object-contain drop-shadow-sm" />
+                    <img src={logoUrl} alt="Quality Auto Parts" loading="lazy" className="h-16 w-16 object-contain drop-shadow-sm" />
                 ) : (
                     <div className="relative flex items-center justify-center w-16 h-16 shrink-0">
                         <svg className="w-16 h-16 text-blue-600 absolute opacity-10" viewBox="0 0 24 24" fill="currentColor">
