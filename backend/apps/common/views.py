@@ -500,7 +500,8 @@ class SitemapView(APIView):
 
         # ── Static pages ──────────────────────────────────────────────────────
         add_url('/', priority='1.0', changefreq='daily')
-        add_url('/browse', priority='0.9', changefreq='daily')
+        add_url('/junkyards', priority='0.9', changefreq='daily')
+        add_url('/junkyards-by-location', priority='0.9', changefreq='daily')
         add_url('/search', priority='0.8', changefreq='weekly')
         add_url('/faq', priority='0.7', changefreq='monthly')
         add_url('/about', priority='0.6', changefreq='monthly')
@@ -521,7 +522,7 @@ class SitemapView(APIView):
             'dc'
         ]
         for state in US_STATES:
-            add_url(f'/browse/{state}', priority='0.9', changefreq='weekly')
+            add_url(f'/junkyards/{state}', priority='0.9', changefreq='weekly')
 
         # ── Active Vendor / Junkyard profile pages ────────────────────────────
         try:

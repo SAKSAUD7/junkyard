@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://junkyardnearme.com/sitemap.xml
+Sitemap: https://junkyardsnearme.com/sitemap.xml
