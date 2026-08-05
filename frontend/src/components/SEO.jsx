@@ -36,8 +36,11 @@ export default function SEO({
     // Use provided description or default
     const metaDescription = description || defaultDescription;
 
-    // Construct canonical URL
-    const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href.split('?')[0] : siteUrl);
+    // Construct canonical URL (ensure it is absolute)
+    let canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href.split('?')[0] : siteUrl);
+    if (canonicalUrl.startsWith('/')) {
+        canonicalUrl = `${siteUrl}${canonicalUrl}`;
+    }
 
     // Construct full OG image URL
     const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
