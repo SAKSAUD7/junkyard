@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import TurnstileCaptcha from './TurnstileCaptcha'
@@ -81,7 +82,7 @@ function SearchableDropdown({ value, selectedValue, label, placeholder, options,
                 <svg className={`w-3.5 h-3.5 shrink-0 transition-transform ${open ? 'rotate-180' : ''} text-slate-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7"/></svg>
             </button>
 
-            {open && typeof window !== 'undefined' && (
+            {open && typeof window !== 'undefined' && createPortal(
                 <div
                     ref={dropRef}
                     style={{
@@ -125,7 +126,8 @@ function SearchableDropdown({ value, selectedValue, label, placeholder, options,
                             );
                         })}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
@@ -137,7 +139,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const { isAuthenticated, user } = useContext(AuthContext)
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     const [isSignupModalOpen, setIsSignupModalOpen] = useState(false)
-    const [pendingSubmit, setPendingSubmit] = useState(false) // Trigger submit after login
 
     // -- State --
     // Lead Type Toggle
@@ -230,13 +231,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         }
     }, [isAuthenticated, user])
 
-    // Wait for login/signup success to resume submit
-    useEffect(() => {
-        if (isAuthenticated && pendingSubmit) {
-            setPendingSubmit(false)
-            handleSubmit(new Event('submit')) // re-trigger form submit
-        }
-    }, [isAuthenticated, pendingSubmit])
 
     // If mode prop changes (unlikely but good practice), update state
     useEffect(() => {
@@ -601,12 +595,6 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             return
         }
 
-        // AUTH SOFT-GATE
-        if (!isAuthenticated) {
-            setPendingSubmit(true)
-            setIsLoginModalOpen(true)
-            return
-        }
 
         setSubmitting(true)
 
