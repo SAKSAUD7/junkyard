@@ -47,7 +47,10 @@ export default function SEO({
             {/* Basic Meta Tags */}
             <title>{fullTitle}</title>
             <meta name="description" content={metaDescription} />
-            {noindex && <meta name="robots" content="noindex,nofollow" />}
+            {noindex
+                ? <meta name="robots" content="noindex, nofollow" />
+                : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+            }
 
             {/* Canonical URL */}
             <link rel="canonical" href={canonicalUrl} />
@@ -58,13 +61,19 @@ export default function SEO({
             <meta property="og:description" content={metaDescription} />
             <meta property="og:url" content={canonicalUrl} />
             <meta property="og:image" content={fullOgImage} />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content={title || defaultTitle} />
             <meta property="og:site_name" content={siteName} />
+            <meta property="og:locale" content="en_US" />
 
             {/* Twitter Card Tags */}
             <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:site" content="@JunkyardsNearMe" />
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={metaDescription} />
             <meta name="twitter:image" content={fullOgImage} />
+            <meta name="twitter:image:alt" content={title || defaultTitle} />
 
             {/* Structured Data (JSON-LD) */}
             {schema && (

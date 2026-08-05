@@ -526,11 +526,13 @@ class SitemapView(APIView):
 
         # ── Active Vendor / Junkyard profile pages ────────────────────────────
         try:
-            active_vendors = Vendor.objects.filter(is_active=True).values('id', 'updated_at')  # type: ignore[attr-defined]
+            active_vendors = Vendor.objects.filter(is_active=True).values('id', 'state', 'updated_at')  # type: ignore[attr-defined]
             for vendor in active_vendors:
                 lastmod = vendor.get('updated_at')
                 lastmod_str = lastmod.strftime('%Y-%m-%d') if lastmod else today
-                add_url(f"/junkyard/{vendor['id']}", priority='0.7', changefreq='monthly', lastmod=lastmod_str)
+                # Canonical frontend route: /junkyards/{state_lower}/{id}
+                state_slug = (vendor.get('state') or 'us').lower().strip()
+                add_url(f"/junkyards/{state_slug}/{vendor['id']}", priority='0.7', changefreq='monthly', lastmod=lastmod_str)
         except Exception as e:
             print(f"Sitemap vendor resolution error: {e}")
 

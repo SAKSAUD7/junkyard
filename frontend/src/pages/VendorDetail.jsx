@@ -143,6 +143,8 @@ const VendorDetail = () => {
                         <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-center">
                             {logoUrl ? (
                                 <img src={logoUrl} alt={vendor.name} className="max-w-full max-h-full object-contain"
+                                    loading="eager"
+                                    fetchpriority="high"
                                     onError={e => { e.target.onerror = null; e.target.style.display = 'none'; }} />
                             ) : (
                                 <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-black text-2xl flex items-center justify-center">

@@ -47,7 +47,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS',
-    'localhost,127.0.0.1,.azurewebsites.net,junkyardnearme.azurewebsites.net,junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net'
+    'localhost,127.0.0.1,junkyardsnearme.com,www.junkyardsnearme.com,.azurewebsites.net,junkyardnearme.azurewebsites.net,junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net'
 ).split(',')
 
 # Trust Azure's load balancer HTTPS forwarding
@@ -94,6 +94,8 @@ if _cors_env:
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_env.split(',') if origin.strip()]
 else:
     CORS_ALLOWED_ORIGINS = [
+        'https://junkyardsnearme.com',
+        'https://www.junkyardsnearme.com',
         'https://nice-pebble-067605800.7.azurestaticapps.net',
         'https://witty-field-015b59200.6.azurestaticapps.net',
         'https://junkyard-web-dev.azurestaticapps.net',
@@ -129,6 +131,8 @@ if _csrf_env:
     CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in _csrf_env.split(',') if origin.strip()]
 else:
     CSRF_TRUSTED_ORIGINS = [
+        'https://junkyardsnearme.com',
+        'https://www.junkyardsnearme.com',
         'https://junkyard-api-dev.azurewebsites.net',
         'https://junkyardnearme.azurewebsites.net',
         'https://junkyardnearme-g6ghdqf5g8gvd2eq.centralindia-01.azurewebsites.net',
@@ -169,6 +173,27 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.common.middleware.CustomRedirectMiddleware",
 ]
+
+# ── Production Security Hardening (only active when DEBUG=False) ──────────────
+# These settings are safe to leave here — Django ignores them in dev (DEBUG=True)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Trust Nginx/CF
+    SECURE_HSTS_SECONDS = 31536000          # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = False  # Must be False — JavaScript reads CSRF token
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    # NOTE: CSP is handled at Nginx level for performance and caching
+    # Add CSP here only if you are not using Nginx-level headers.
 
 ROOT_URLCONF = "core.urls"
 
@@ -216,7 +241,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
-        } if os.environ.get('DB_HOST') and 'localhost' not in os.environ.get('DB_HOST') and '127.0.0.1' not in os.environ.get('DB_HOST') else {},
+        } if (os.environ.get('DB_HOST') or '') and 'localhost' not in (os.environ.get('DB_HOST') or '') and '127.0.0.1' not in (os.environ.get('DB_HOST') or '') else {},
     }
 }
 
