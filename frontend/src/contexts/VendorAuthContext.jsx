@@ -57,7 +57,7 @@ export const VendorAuthProvider = ({ children }) => {
             }
             setLoading(false);
         };
-        
+
         initAuth();
     }, []);
 
@@ -69,7 +69,7 @@ export const VendorAuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.error('Registration error:', error);
-            
+
             let errorMessage = 'Registration failed';
             if (error.response?.data) {
                 const data = error.response.data;

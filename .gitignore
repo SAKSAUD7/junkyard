@@ -132,6 +132,5 @@ backend/media/logo-placeholder.png
 
 # Frontend local .env has localhost URL — never commit it
 frontend/.env
-
 # Auto-generated Django staticfiles
 backend/staticfiles/

@@ -12,14 +12,14 @@ import { useCMS } from '../hooks/useCMS';
 import VendorCard from '../components/VendorCard';
 import PromoBanner from '../components/PromoBanner';
 
-const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+const US_STATES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
 
 const STATE_NAMES = {
-    AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'
+    AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming'
 };
 
-const PRICE_TIERS = ['Up to 60% Off','Up to 70% Off','Up to 75% Off','Up to 80% Off'];
-const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100','text-purple-700 bg-purple-50 border-purple-100','text-orange-700 bg-orange-50 border-orange-100','text-emerald-700 bg-emerald-50 border-emerald-100'];
+const PRICE_TIERS = ['Up to 60% Off', 'Up to 70% Off', 'Up to 75% Off', 'Up to 80% Off'];
+const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100', 'text-purple-700 bg-purple-50 border-purple-100', 'text-orange-700 bg-orange-50 border-orange-100', 'text-emerald-700 bg-emerald-50 border-emerald-100'];
 
 const AllVendors = () => {
     const { get } = useCMS('vendors');
@@ -78,8 +78,8 @@ const AllVendors = () => {
             <SEO
                 title={get('seo', 'meta_title', `All Junkyards - Browse ${totalCount} Auto Salvage Yards Nationwide`)}
                 description={get('seo', 'meta_desc', `Browse our complete directory of ${totalCount} verified auto salvage yards. Find used auto parts, compare prices, and connect with local junkyards.`)}
-                canonicalUrl={`/vendors${currentPage > 1 ? `?page=${currentPage}` : ''}`}
-                structuredData={[collectionSchema]}
+                canonical={`/junkyards${currentPage > 1 ? `?page=${currentPage}` : ''}`}
+                schema={collectionSchema}
             />
             <Navbar />
 
@@ -112,7 +112,7 @@ const AllVendors = () => {
                                 {/* Name/ZIP input */}
                                 <div className="flex-[2] relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                     </div>
                                     <input
                                         id="vendor-search"
@@ -126,7 +126,7 @@ const AllVendors = () => {
                                 {/* State dropdown */}
                                 <div className="flex-1 relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
+                                        <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
                                     </div>
                                     <select
                                         id="state-filter"
@@ -138,7 +138,7 @@ const AllVendors = () => {
                                         {US_STATES.map(s => <option key={s} value={s}>{STATE_NAMES[s] || s}</option>)}
                                     </select>
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
+                                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                     </div>
                                 </div>
                                 {/* Search Button */}
@@ -232,7 +232,7 @@ const AllVendors = () => {
                 {!loading && !error && vendors.length === 0 && (
                     <div className="text-center py-24 bg-white rounded-2xl border border-slate-100">
                         <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
                         <h3 className="text-xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>No vendors found</h3>
                         <p className="text-slate-500 mb-6">Try adjusting your search or clearing filters</p>
