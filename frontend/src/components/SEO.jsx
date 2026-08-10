@@ -24,7 +24,9 @@ export default function SEO({
 }) {
     // Site-wide defaults
     const siteName = 'Junkyards Near Me';
-    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://junkyardsnearme.com';
+    // Always use the canonical production domain — never the current window origin
+    // (prevents IP-address canonicals when running on staging/local)
+    const siteUrl = import.meta.env.VITE_SITE_URL || 'https://junkyardsnearme.com';
 
     // Default SEO values
     const defaultTitle = 'Find Auto Salvage Yards & Used Auto Parts';
@@ -36,8 +38,12 @@ export default function SEO({
     // Use provided description or default
     const metaDescription = description || defaultDescription;
 
-    // Construct canonical URL
-    const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href.split('?')[0] : siteUrl);
+    // Construct canonical URL — always rooted at production domain
+    const canonicalUrl = canonical
+        ? (canonical.startsWith('http') ? canonical : `${siteUrl}${canonical}`)
+        : (typeof window !== 'undefined'
+            ? `${siteUrl}${window.location.pathname}`
+            : siteUrl);
 
     // Construct full OG image URL
     const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;

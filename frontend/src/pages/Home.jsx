@@ -84,7 +84,7 @@ export default function Home() {
     return (
         <div style={{ background: 'var(--bg-base)', minHeight: '100vh' }}>
             <SEO
-                title="Find Auto Salvage Yards & Used Auto Parts Near You"
+                title="Find Junkyards & Used Auto Parts Near You"
                 description="Search 1,000+ verified junkyards nationwide. Find quality used auto parts by make, model, or location. Free quotes, nationwide shipping. Save up to 80% on OEM parts."
                 schema={combinedSchema}
             />
