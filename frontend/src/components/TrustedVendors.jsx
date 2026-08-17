@@ -114,6 +114,7 @@ export default function TrustedVendors() {
                                 if(scrollRef.current) scrollRef.current.scrollBy({ left: -280, behavior: 'smooth' });
                                 setTimeout(() => isInteracting.current = false, 1000);
                             }}
+                            aria-label="Previous vendor"
                             className="p-2 rounded-full border-2 border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transition-all"
                         >
                             <ChevronLeftIcon className="w-6 h-6" />
@@ -124,6 +125,7 @@ export default function TrustedVendors() {
                                 if(scrollRef.current) scrollRef.current.scrollBy({ left: 280, behavior: 'smooth' });
                                 setTimeout(() => isInteracting.current = false, 1000);
                             }}
+                            aria-label="Next vendor"
                             className="p-2 rounded-full border-2 border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transition-all"
                         >
                             <ChevronRightIcon className="w-6 h-6" />
@@ -176,7 +178,7 @@ export default function TrustedVendors() {
                                                 {vendor.name.charAt(0)}
                                             </div>
                                         ) : (
-                                            <img src={logoUrl} alt={vendor.name} loading="lazy" className="h-16 object-contain rounded-lg" />
+                                            <img src={logoUrl} alt={vendor.name} loading="lazy" width="64" height="64" className="h-16 object-contain rounded-lg" />
                                         )}
                                     </div>
 

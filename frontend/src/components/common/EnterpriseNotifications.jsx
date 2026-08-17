@@ -238,6 +238,7 @@ export function NotificationProvider({ children }) {
             {/* Toast Container */}
             {createPortal(
                 <div
+                    role="region"
                     aria-label="Notifications"
                     className="fixed bottom-6 right-6 z-[9998] flex flex-col gap-3 items-end pointer-events-none"
                 >

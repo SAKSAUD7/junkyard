@@ -38,12 +38,17 @@ export default defineConfig({
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
   build: {
+    // Target modern browsers — eliminates large legacy polyfills (saves ~39 KiB)
+    target: 'es2017',
     // Don't generate sourcemaps in production (reduces bundle size)
     sourcemap: false,
+    // Use esbuild minifier (built-in, fastest, no extra dependency)
+    minify: 'esbuild',
     // Split CSS per chunk for better caching
     cssCodeSplit: true,
-    // Warn if any single chunk exceeds 1000KB (Three.js and Charts are unavoidably large)
-    chunkSizeWarningLimit: 1000,
+    cssMinify: true,
+    // Warn if any single chunk exceeds 800KB
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         // ── Manual Chunk Splitting ─────────────────────────────────────────
@@ -65,12 +70,26 @@ export default defineConfig({
           if (id.includes('node_modules/framer-motion')) {
             return 'vendor-motion'
           }
-          // Three.js + 3D libs — heaviest chunk, load only when needed
+          // Three.js + 3D libs — heaviest chunk, only needed on 3D pages
           if (id.includes('node_modules/three') ||
               id.includes('node_modules/@react-three')) {
             return 'vendor-three'
           }
-          // Let Vite handle d3, recharts, and maps automatically to prevent Rollup minification bugs
+          // D3 — data visualization, large but only used in charts
+          if (id.includes('node_modules/d3') ||
+              id.includes('node_modules/d3-')) {
+            return 'vendor-d3'
+          }
+          // Recharts — charting library (split from vendor-misc)
+          if (id.includes('node_modules/recharts') ||
+              id.includes('node_modules/victory-')) {
+            return 'vendor-charts'
+          }
+          // Leaflet / maps (split from vendor-misc)
+          if (id.includes('node_modules/leaflet') ||
+              id.includes('node_modules/react-leaflet')) {
+            return 'vendor-maps'
+          }
           // Sentry error tracking — separate so it doesn't block app
           if (id.includes('node_modules/@sentry')) {
             return 'vendor-sentry'

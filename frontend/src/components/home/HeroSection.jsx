@@ -603,11 +603,13 @@ export default function HeroSection({ get, ready = false }) {
           muted
           loop
           playsInline
+          preload="none"
+          aria-label="Background video of luxury cars"
           className="w-full h-full object-cover mix-blend-multiply opacity-90"
           style={{ filter: "brightness(1.05) contrast(1.1)" }}
         >
           <source
-            src="/Video/hero-models-bg-v2.mp4?nocache=1"
+            src="/Video/hero-models-bg.mp4"
             type="video/mp4"
           />
         </video>
@@ -682,6 +684,8 @@ export default function HeroSection({ get, ready = false }) {
             muted
             loop
             playsInline
+            preload="none"
+            aria-label="Background video of cars at a junkyard"
             className="w-full h-full object-cover object-center scale-[1.05]"
             style={{ filter: "brightness(1.05) contrast(1.05)" }}
           >

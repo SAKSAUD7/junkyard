@@ -35,6 +35,8 @@ export default function CTABanner({ get }) {
                     <img
                         src="/heroes/junkyard-aerial.png"
                         alt="Aerial view of a large auto salvage junkyard"
+                        width="800"
+                        height="380"
                         className="absolute inset-0 w-full h-full object-cover opacity-70"
                         loading="lazy"
                     />

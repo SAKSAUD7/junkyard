@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import { useCMS } from '../hooks/useCMS'
 
 // Mobile-only accordion column
-function FooterAccordion({ heading, children }) {
+function FooterAccordion({ heading, children, id }) {
     const [open, setOpen] = useState(false)
+    const panelId = `footer-panel-${id || heading?.toLowerCase().replace(/\s+/g, '-')}`
     return (
         <div className="border-b border-slate-100 md:border-0">
             {/* Header — clickable on mobile only */}
@@ -12,6 +13,8 @@ function FooterAccordion({ heading, children }) {
                 className="w-full flex items-center justify-between py-3.5 md:py-0 md:mb-4 md:cursor-default touch-target"
                 onClick={() => setOpen(v => !v)}
                 aria-expanded={open}
+                aria-controls={panelId}
+                aria-label={`${heading} links`}
             >
                 <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">
                     {heading}
@@ -26,7 +29,7 @@ function FooterAccordion({ heading, children }) {
             </button>
 
             {/* Body: always visible on md+, accordion on mobile */}
-            <div className={`footer-accordion-body md:block ${open ? 'open' : ''}`}>
+            <div id={panelId} className={`footer-accordion-body md:block ${open ? 'open' : ''}`}>
                 <div className="pb-4 md:pb-0">
                     {children}
                 </div>
@@ -78,7 +81,7 @@ export default function Footer() {
                     <div className="lg:col-span-1 mb-6 lg:mb-0 lg:pt-8">
                         <div className="flex items-center justify-between lg:block">
                             <div className="flex items-center gap-2.5 mb-5 mt-2">
-                                <img src={logoUrl || '/logo.png'} alt="JYNM Logo" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                                <img src={logoUrl || '/logo.png'} alt="JYNM Logo" width="28" height="28" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                                 <div>
                                     <div className="text-base font-black text-slate-900 leading-none">{getGlobal('brand', 'name_short', 'JYNM')}</div>
                                     <div className="text-[8px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">{getGlobal('brand', 'name_long', 'Junkyards Near Me')}</div>
@@ -88,6 +91,7 @@ export default function Footer() {
                             <div className="flex gap-2.5 lg:hidden">
                                 {socials.map(s => (
                                     <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
+                                        aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
                                         className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
                                         {s.icon}
                                     </a>
@@ -101,6 +105,7 @@ export default function Footer() {
                         <div className="hidden lg:flex gap-2.5 mt-6">
                             {socials.map(s => (
                                 <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
+                                    aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
                                     className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
                                     {s.icon}
                                 </a>

@@ -55,6 +55,7 @@ export default function AdCarousel({ slotGroup = 'carousel_1', page = 'all', tit
                                 if(scrollRef.current) scrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
                                 setTimeout(() => isInteracting.current = false, 1000);
                             }}
+                            aria-label="Previous ad"
                             className="p-1.5 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all"
                         >
                             <ChevronLeftIcon className="w-5 h-5" />
@@ -65,6 +66,7 @@ export default function AdCarousel({ slotGroup = 'carousel_1', page = 'all', tit
                                 if(scrollRef.current) scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
                                 setTimeout(() => isInteracting.current = false, 1000);
                             }}
+                            aria-label="Next ad"
                             className="p-1.5 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all"
                         >
                             <ChevronRightIcon className="w-5 h-5" />

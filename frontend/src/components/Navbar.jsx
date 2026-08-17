@@ -79,6 +79,9 @@ export default function Navbar() {
                             <img
                                 src={getGlobal('brand', 'logo') || '/logo.png'}
                                 alt="JYNM Logo"
+                                width="44"
+                                height="44"
+                                fetchPriority="high"
                                 className="h-9 md:h-11 w-auto object-contain"
                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
@@ -121,6 +124,9 @@ export default function Navbar() {
                             <div className="relative" ref={accountDropdownRef}>
                                 <button
                                     onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                                    aria-label={isAuthenticated ? `Account menu for ${user?.first_name || user?.email || 'user'}` : 'Account menu'}
+                                    aria-haspopup="true"
+                                    aria-expanded={accountDropdownOpen}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 border-2 ${
                                         accountDropdownOpen 
                                             ? 'border-transparent text-white bg-gradient-to-r from-[#1a56ff] to-indigo-600 shadow-lg shadow-blue-500/25 ring-2 ring-blue-500/20 ring-offset-1' 
