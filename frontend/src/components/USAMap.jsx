@@ -6,32 +6,6 @@ import { geoAlbersUsa, geoPath } from 'd3-geo';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
 import { Html, Center, Bounds, MapControls } from '@react-three/drei';
 
-class WebGLFallbackErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error("WebGL Error caught:", error);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', flexDirection: 'column', padding: '20px', textAlign: 'center' }}>
-          <svg style={{ width: '64px', height: '64px', color: '#cbd5e1', marginBottom: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#334155', fontFamily: 'Inter, sans-serif' }}>Interactive Map Unavailable</h3>
-          <p style={{ fontSize: '14px', color: '#64748b', marginTop: '8px', maxWidth: '300px', fontFamily: 'Inter, sans-serif' }}>Your device or browser doesn't support 3D Graphics (WebGL). Please use the state list on the left to browse junkyards.</p>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-
 const FIPS_TO_CODE = {
   '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA',
   '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL',
@@ -325,30 +299,28 @@ const USAMap = forwardRef(function USAMap({ onStateSelect }, ref) {
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
       {/* Canvas with white background */}
-      <WebGLFallbackErrorBoundary>
-        <Canvas camera={{ position: [0, 0, 1100], fov: 45, far: 5000 }} style={{ background: '#ffffff' }}
-          gl={{ clearColor: '#ffffff' }}
-          onCreated={({ gl }) => gl.setClearColor('#ffffff', 1)}
-        >
-          <ambientLight intensity={1.5} />
-          <MapControls 
-            ref={setControlsRef} 
-            enableRotate={false} 
-            enableDamping={true} 
-            minDistance={100} 
-            maxDistance={4000} 
-            zoomSpeed={1.2} 
-            panSpeed={1.2} 
-          />
-          
-          {/* Bounds automatically computes perfect camera distance to wrap the Center element seamlessly */}
-          <Bounds fit clip observe margin={1.1}>
-            <Center>
-              <MapGeometry onStateSelect={onStateSelect} />
-            </Center>
-          </Bounds>
-        </Canvas>
-      </WebGLFallbackErrorBoundary>
+      <Canvas camera={{ position: [0, 0, 1100], fov: 45, far: 5000 }} style={{ background: '#ffffff' }}
+        gl={{ clearColor: '#ffffff' }}
+        onCreated={({ gl }) => gl.setClearColor('#ffffff', 1)}
+      >
+        <ambientLight intensity={1.5} />
+        <MapControls 
+          ref={setControlsRef} 
+          enableRotate={false} 
+          enableDamping={true} 
+          minDistance={100} 
+          maxDistance={4000} 
+          zoomSpeed={1.2} 
+          panSpeed={1.2} 
+        />
+        
+        {/* Bounds automatically computes perfect camera distance to wrap the Center element seamlessly */}
+        <Bounds fit clip observe margin={1.1}>
+          <Center>
+            <MapGeometry onStateSelect={onStateSelect} />
+          </Center>
+        </Bounds>
+      </Canvas>
 
       {/* Zoom Controls removed — rendered by parent (BrowseStates) to avoid overflow clipping */}
     </div>
