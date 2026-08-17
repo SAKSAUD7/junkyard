@@ -38,6 +38,9 @@ export default defineConfig({
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
   build: {
+    // Disable module preloading to stop Vite from injecting <link rel="modulepreload"> 
+    // for huge lazy chunks like vendor-three.js on the home page.
+    modulePreload: false,
     // Target modern browsers — eliminates large legacy polyfills (saves ~39 KiB)
     target: 'es2017',
     // Don't generate sourcemaps in production (reduces bundle size)
