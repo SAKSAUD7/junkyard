@@ -130,7 +130,8 @@ function SearchableDropdown({
 
 export default function HeroSection({ get, ready = false }) {
   const leadFormRef = useRef(null);
-  const [formInView, setFormInView] = useState(true);
+  const desktopVideoRef = useRef(null);
+  const mobileVideoRef = useRef(null);
 
   // Observer for Sticky CTA
   useEffect(() => {
@@ -143,6 +144,15 @@ export default function HeroSection({ get, ready = false }) {
     );
     observer.observe(leadFormRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  // Defer video playback to avoid massive network blocking on initial load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (desktopVideoRef.current) desktopVideoRef.current.play().catch(()=>{});
+      if (mobileVideoRef.current) mobileVideoRef.current.play().catch(()=>{});
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
   const [makes, setMakes] = useState([]);
   const [models, setModels] = useState([]);
@@ -599,7 +609,7 @@ export default function HeroSection({ get, ready = false }) {
       {/* Full-bleed cinematic background video - DESKTOP ONLY */}
       <div className="absolute inset-0 z-0 bg-white hidden lg:block">
         <video
-          autoPlay
+          ref={desktopVideoRef}
           muted
           loop
           playsInline
@@ -680,7 +690,7 @@ export default function HeroSection({ get, ready = false }) {
         {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}
         <div className="w-[100vw] -ml-[calc(50vw-50%)] relative flex lg:hidden items-center justify-center overflow-hidden mt-1 mb-2" style={{ height: '200px' }}>
           <video
-            autoPlay
+            ref={mobileVideoRef}
             muted
             loop
             playsInline
