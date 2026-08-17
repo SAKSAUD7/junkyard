@@ -99,8 +99,17 @@ export default defineConfig({
             return 'vendor-maps'
           }
           // Sentry error tracking — separate so it doesn't block app
-          if (id.includes('node_modules/@sentry')) {
+          if (id.includes('node_modules/@sentry') ||
+              id.includes('node_modules/@sentry/react') ||
+              id.includes('node_modules/@sentry/core') ||
+              id.includes('node_modules/@sentry/hub') ||
+              id.includes('node_modules/@sentry/browser')) {
             return 'vendor-sentry'
+          }
+          // Rich text editor — only needed on vendor/admin pages
+          if (id.includes('node_modules/react-quill') ||
+              id.includes('node_modules/quill')) {
+            return 'vendor-quill'
           }
           // All other node_modules go into a generic vendor chunk
           if (id.includes('node_modules')) {
