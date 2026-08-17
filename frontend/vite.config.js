@@ -41,8 +41,8 @@ export default defineConfig({
     // Disable module preloading to stop Vite from injecting <link rel="modulepreload"> 
     // for huge lazy chunks like vendor-three.js on the home page.
     modulePreload: false,
-    // Target modern browsers — eliminates large legacy polyfills (saves ~39 KiB)
-    target: 'es2017',
+    // Target modern browsers — eliminates large legacy polyfills
+    target: 'es2020',
     // Don't generate sourcemaps in production (reduces bundle size)
     sourcemap: false,
     // Use esbuild minifier (built-in, fastest, no extra dependency)
@@ -88,8 +88,13 @@ export default defineConfig({
               id.includes('node_modules/victory-')) {
             return 'vendor-charts'
           }
-          // Leaflet / maps (split from vendor-misc)
-          if (id.includes('node_modules/leaflet') ||
+          // Maps: react-simple-maps, topojson — only used on Browse States
+          if (id.includes('node_modules/react-simple-maps') ||
+              id.includes('node_modules/topojson') ||
+              id.includes('node_modules/d3-geo') ||
+              id.includes('node_modules/d3-scale') ||
+              id.includes('node_modules/us-atlas') ||
+              id.includes('node_modules/leaflet') ||
               id.includes('node_modules/react-leaflet')) {
             return 'vendor-maps'
           }
