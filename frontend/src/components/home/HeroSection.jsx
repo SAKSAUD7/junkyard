@@ -130,6 +130,7 @@ function SearchableDropdown({
 
 export default function HeroSection({ get, ready = false }) {
   const leadFormRef = useRef(null);
+  const [formInView, setFormInView] = useState(true);
   const desktopVideoRef = useRef(null);
   const mobileVideoRef = useRef(null);
 
