@@ -32,14 +32,17 @@ export default function CTABanner({ get }) {
                 </div>
                 {/* Right — image */}
                 <div className="hidden lg:block relative min-h-[380px]">
-                    <img
-                        src="/heroes/junkyard-aerial.png"
-                        alt="Aerial view of a large auto salvage junkyard"
-                        width="800"
-                        height="380"
-                        className="absolute inset-0 w-full h-full object-cover opacity-70"
-                        loading="lazy"
-                    />
+                    <picture>
+                        <source srcSet="/heroes/junkyard-aerial.webp" type="image/webp" />
+                        <img
+                            src="/heroes/junkyard-aerial.png"
+                            alt="Aerial view of a large auto salvage junkyard"
+                            width="800"
+                            height="380"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
+                            loading="lazy"
+                        />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-transparent" />
                     <div className="absolute bottom-8 left-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
                         <p className="text-white font-black text-2xl">1M+</p>

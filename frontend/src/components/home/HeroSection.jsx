@@ -647,45 +647,30 @@ export default function HeroSection({ get, ready = false }) {
             The #1 Junkyard & Auto Salvage Network in the U.S.
           </div>
 
-          {/* Heading — hidden until CMS ready to prevent FOUC */}
-          {!ready ? (
-            <div className="mb-4 lg:mb-5 space-y-3">
-              <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-full" />
-              <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-5/6" />
-              <div className="h-12 lg:h-14 bg-slate-200/60 rounded-xl animate-pulse w-4/6" />
-            </div>
-          ) : (
-            <div
-              className="hero-responsive-text text-[22px] sm:text-3xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] transition-opacity duration-300 opacity-100 [&>p]:m-0"
-              style={{ fontFamily: "'Outfit', sans-serif" }}
-              dangerouslySetInnerHTML={{
-                __html: get(
-                  "hero",
-                  "heading",
-                  'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds',
-                ),
-              }}
-            />
-          )}
+          {/* Heading — always visible immediately, updates when CMS loads */}
+          <div
+            className="hero-responsive-text text-[22px] sm:text-3xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] [&>p]:m-0"
+            style={{ fontFamily: "'Outfit', sans-serif" }}
+            dangerouslySetInnerHTML={{
+              __html: get(
+                "hero",
+                "heading",
+                'Find Verified Auto Parts <br /> From <span class="text-blue-600">6,500+</span> Junkyards <br /> In Under <span class="text-emerald-600">60</span> Seconds',
+              ),
+            }}
+          />
 
-          {/* Subheading — hidden until CMS ready */}
-          {!ready ? (
-            <div className="space-y-2 mb-2 lg:mb-8 max-w-[540px] mx-auto lg:mx-0">
-              <div className="h-5 bg-slate-200/60 rounded-lg animate-pulse w-full" />
-              <div className="h-5 bg-slate-200/60 rounded-lg animate-pulse w-4/5" />
-            </div>
-          ) : (
-            <div
-              className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 transition-opacity duration-300 opacity-100 [&>p]:m-0"
-              dangerouslySetInnerHTML={{
-                __html: get(
-                  "hero",
-                  "subheading",
-                  'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.',
-                ),
-              }}
-            />
-          )}
+          {/* Subheading — always visible immediately, updates when CMS loads */}
+          <div
+            className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 [&>p]:m-0"
+            dangerouslySetInnerHTML={{
+              __html: get(
+                "hero",
+                "subheading",
+                'Compare prices from licensed salvage yards nationwide <br class="hidden sm:block" /> and save up to 80% compared to dealership pricing.',
+              ),
+            }}
+          />
         </div>
 
         {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}

@@ -76,15 +76,18 @@ export default function Navbar() {
                     <div className="flex justify-between items-center h-14 md:h-[72px]">
 
                         <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="JYNM Home">
-                            <img
-                                src={getGlobal('brand', 'logo') || '/logo.png'}
-                                alt="JYNM Logo"
-                                width="44"
-                                height="44"
-                                fetchPriority="high"
-                                className="h-9 md:h-11 w-auto object-contain"
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
+                            <picture>
+                                <source srcSet="/logo.webp" type="image/webp" />
+                                <img
+                                    src={getGlobal('brand', 'logo') || '/logo.png'}
+                                    alt="JYNM Logo"
+                                    width="44"
+                                    height="44"
+                                    fetchPriority="high"
+                                    className="h-9 md:h-11 w-auto object-contain"
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
+                            </picture>
                             <div className="hidden sm:flex flex-col leading-none">
                                 <span className="text-xl md:text-2xl font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {get('brand', 'name_short', 'JYNM')}
