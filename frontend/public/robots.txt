@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /admin-portal/
+Disallow: /vendor/dashboard
+Disallow: /vendor/profile
+Disallow: /vendor/inventory
+Disallow: /vendor/leads
+Disallow: /vendor/notifications
+Disallow: /vendor/ads
+Disallow: /signin
+Disallow: /signup
+Disallow: /forgot-password
 
 Sitemap: https://junkyardsnearme.com/sitemap.xml
