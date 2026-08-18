@@ -49,6 +49,9 @@
   </noscript>
 
 
+  <!-- Preload LCP hero image on mobile — critical for Core Web Vitals -->
+  <link rel="preload" as="image" href="/hero-bg.webp" fetchpriority="high" media="(max-width: 1023px)" />
+
   <!-- Dark background before JS loads -->
   <style>
     html, body { background-color: #060c14; color: #e8f0fe; }

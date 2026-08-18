@@ -673,20 +673,18 @@ export default function HeroSection({ get, ready = false }) {
           />
         </div>
 
-        {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}
+        {/* MOBILE HERO BLOCK — static image for instant LCP, no video loading on slow 4G */}
         <div className="w-[100vw] -ml-[calc(50vw-50%)] relative flex lg:hidden items-center justify-center overflow-hidden mt-1 mb-2" style={{ height: '200px' }}>
-          <video
-            ref={mobileVideoRef}
-            muted
-            loop
-            playsInline
-            preload="none"
-            aria-label="Background video of cars at a junkyard"
+          <img
+            src="/hero-bg.webp"
+            alt="Auto salvage yard with cars"
             className="w-full h-full object-cover object-center scale-[1.05]"
             style={{ filter: "brightness(1.05) contrast(1.05)" }}
-          >
-            <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
-          </video>
+            fetchpriority="high"
+            decoding="async"
+            width="800"
+            height="200"
+          />
           {/* subtle gradient overlay at bottom to blend into content */}
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
         </div>
