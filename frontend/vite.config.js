@@ -3,6 +3,39 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import fs from 'fs'
 
+// ── Critical CSS Inliner Plugin ───────────────────────────────────────────────
+// This plugin post-processes index.html after build to:
+//  1. Find the <link rel="stylesheet"> Vite injected for the main CSS bundle
+//  2. Convert it to load asynchronously (non-render-blocking)
+//  3. Inline minimal critical CSS directly in <head> so the page is usable immediately
+function deferNonCriticalCSS() {
+  return {
+    name: 'defer-non-critical-css',
+    apply: 'build',
+    transformIndexHtml(html) {
+      // Critical CSS — only what hero + body needs before JS loads
+      const criticalCSS = `
+        *,*::before,*::after{box-sizing:border-box}
+        html,body{margin:0;padding:0;background:#060c14;color:#e8f0fe;font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}
+        #root{min-height:100vh;background:#060c14}
+        .spinner-glow{width:52px;height:52px;border-radius:50%;border:2px solid rgba(37,99,235,.15);border-top-color:#2563eb;animation:spin .85s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+      `
+      // Convert Vite's injected stylesheet to non-blocking + add onload fallback
+      html = html.replace(
+        /(<link rel="stylesheet" crossorigin href="\/assets\/index-[^"]+\.css">)/,
+        (match, linkTag) => {
+          const href = linkTag.match(/href="([^"]+)"/)[1]
+          return `<style id="critical-css">${criticalCSS}</style>
+    <link rel="preload" as="style" href="${href}" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>${linkTag}</noscript>`
+        }
+      )
+      return html
+    }
+  }
+}
+
 // Plugin to exclude large uploaded image subdirectories from build
 // Keeps essential UI images (logo-placeholder.png, og-default.png etc.)
 // Removes only large vendor/association uploaded content subdirectories
@@ -25,6 +58,7 @@ function excludeLargeImageDirs() {
 export default defineConfig({
   plugins: [
     react(),
+    deferNonCriticalCSS(),
     excludeLargeImageDirs(),
   ],
   server: {
@@ -111,7 +145,29 @@ export default defineConfig({
               id.includes('node_modules/quill')) {
             return 'vendor-quill'
           }
-          // All other node_modules go into a generic vendor chunk
+          // Axios + query utils — used everywhere but small, isolate for caching
+          if (id.includes('node_modules/axios')) {
+            return 'vendor-axios'
+          }
+          // Google reCAPTCHA — only loaded on forms
+          if (id.includes('node_modules/react-google-recaptcha') ||
+              id.includes('node_modules/react-async-script')) {
+            return 'vendor-recaptcha'
+          }
+          // Heroicons — icon library, cache separately
+          if (id.includes('node_modules/@heroicons')) {
+            return 'vendor-icons'
+          }
+          // Sentry — async error tracking, keep isolated
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry'
+          }
+          // Windowing / intersection observer utils  
+          if (id.includes('node_modules/react-window') ||
+              id.includes('node_modules/react-intersection-observer')) {
+            return 'vendor-ui-utils'
+          }
+          // All remaining node_modules
           if (id.includes('node_modules')) {
             return 'vendor-misc'
           }
