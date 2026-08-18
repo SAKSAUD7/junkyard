@@ -88,7 +88,7 @@ const DEFAULT_PLANS = [
 export default function Ads() {
     const { vendorProfile } = useVendorAuth();
     const { showToast, showPaymentProgress, updatePaymentStage, hidePaymentProgress } = useNotifications();
-    const idempotencyKeyRef = useRef(crypto.randomUUID());
+    const idempotencyKeyRef = useRef((typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : (Math.random().toString(36).substring(2) + Date.now().toString(36)));
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);

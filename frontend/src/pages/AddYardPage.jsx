@@ -100,7 +100,7 @@ export default function AddYardPage() {
     const [touched, setTouched] = useState({});
     
     // Stable idempotency key for this instance to prevent duplicate charges
-    const idempotencyKeyRef = useRef(crypto.randomUUID());
+    const idempotencyKeyRef = useRef((typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : (Math.random().toString(36).substring(2) + Date.now().toString(36)));
 
 
     // Custom UI Alert Modal State

@@ -1,20 +1,21 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Suspense } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import TrustedVendors from '../components/TrustedVendors'
-import DynamicAd from '../components/DynamicAd'
-import MobileAdBanner from '../components/MobileAdBanner'
 import SEO from '../components/SEO'
 import { getOrganizationSchema, getWebsiteSchema } from '../utils/structuredData'
 import { useCMS } from '../hooks/useCMS'
-import AdCarousel from '../components/AdCarousel'
-import VendorCTASection from '../components/VendorCTASection'
-import WhyChooseJynmSection from '../components/WhyChooseJynmSection'
 import HeroSection from '../components/home/HeroSection'
-import CTABanner from '../components/home/CTABanner'
-import StatsSection from '../components/home/StatsSection'
-import HowItWorksSection from '../components/home/HowItWorksSection'
+
+// Lazy load below-the-fold components
+const Footer = React.lazy(() => import('../components/Footer'))
+const TrustedVendors = React.lazy(() => import('../components/TrustedVendors'))
+const DynamicAd = React.lazy(() => import('../components/DynamicAd'))
+const AdCarousel = React.lazy(() => import('../components/AdCarousel'))
+const VendorCTASection = React.lazy(() => import('../components/VendorCTASection'))
+const WhyChooseJynmSection = React.lazy(() => import('../components/WhyChooseJynmSection'))
+const CTABanner = React.lazy(() => import('../components/home/CTABanner'))
+const StatsSection = React.lazy(() => import('../components/home/StatsSection'))
+const HowItWorksSection = React.lazy(() => import('../components/home/HowItWorksSection'))
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -96,64 +97,61 @@ export default function Home() {
             ============================================================ */}
             <HeroSection get={get} ready={ready} />
 
-            {/* AD SLIDER 1 */}
-            <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />
+            <Suspense fallback={<div className="h-32 bg-slate-50 animate-pulse"></div>}>
+                {/* AD SLIDER 1 */}
+                <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />
 
-            {/* 5-Card Stats Block */}
-            <StatsSection get={get} />
+                {/* 5-Card Stats Block */}
+                <StatsSection get={get} />
 
-            {/* ============================================================
-                3-COLUMN FEATURE PANELS (How It Works, Vendor CTA, Why JYNM)
-            ============================================================ */}
-            <section className="py-16 bg-white border-t border-b border-slate-100">
-                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid xl:grid-cols-3 gap-6">
-                        <HowItWorksSection get={get} />
-                        {/* 2. Vendor CTA — compact card */}
-                        <VendorCTASection />
-                        {/* 3. Why Choose JYNM — compact card */}
-                        <WhyChooseJynmSection />
+                {/* ============================================================
+                    3-COLUMN FEATURE PANELS (How It Works, Vendor CTA, Why JYNM)
+                ============================================================ */}
+                <section className="py-16 bg-white border-t border-b border-slate-100">
+                    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid xl:grid-cols-3 gap-6">
+                            <HowItWorksSection get={get} />
+                            {/* 2. Vendor CTA — compact card */}
+                            <VendorCTASection />
+                            {/* 3. Why Choose JYNM — compact card */}
+                            <WhyChooseJynmSection />
+                        </div>
+                    </div>
+                </section>
+
+                {/* AD SLIDER 2 */}
+                <AdCarousel slotGroup="carousel_2" page="home" title="Recommended Yards" />
+
+                {/* ============================================================
+                    AD STRIP — Backend-connected ads (slot: strip_home_mid)
+                ============================================================ */}
+                <div className="w-full py-6 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-100">
+                    <div className="max-w-[1400px] mx-auto">
+                        <DynamicAd slot="strip_home_mid" page="home" />
                     </div>
                 </div>
-            </section>
 
-            {/* AD SLIDER 2 */}
-            <AdCarousel slotGroup="carousel_2" page="home" title="Recommended Yards" />
+                {/* ============================================================
+                    TRUSTED VENDORS — self-contained section
+                ============================================================ */}
+                <TrustedVendors />
 
-            {/* ============================================================
-                AD STRIP — Backend-connected ads (slot: strip_home_mid)
-            ============================================================ */}
-            <div className="w-full py-6 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-100">
-                <div className="max-w-[1400px] mx-auto">
-                    <DynamicAd slot="strip_home_mid" page="home" />
+                {/* AD SLIDER 3 */}
+                <AdCarousel slotGroup="carousel_3" page="home" title="Featured Sellers" />
+
+                {/* AD SLIDER 4 */}
+                <AdCarousel slotGroup="carousel_4" page="home" title="Premium Inventory" />
+
+                {/* CTA BANNER — blue gradient section with image panel */}
+                <CTABanner get={get} />
+
+                {/* AD SLIDER 5 */}
+                <div className="bg-white pt-8">
+                    <AdCarousel slotGroup="carousel_5" page="home" title="Promoted Partners" />
                 </div>
-            </div>
 
-            {/* ============================================================
-                TRUSTED VENDORS — self-contained section
-            ============================================================ */}
-            <TrustedVendors />
-
-            {/* AD SLIDER 3 */}
-            <AdCarousel slotGroup="carousel_3" page="home" title="Featured Sellers" />
-
-            {/* AD SLIDER 4 */}
-            <AdCarousel slotGroup="carousel_4" page="home" title="Premium Inventory" />
-
-            {/* CTA BANNER — blue gradient section with image panel */}
-            <CTABanner get={get} />
-
-            {/* Mobile Ad Banner — all ads as swipe carousel */}
-            {/* <MobileAdBanner page="home" /> */}
-
-            {/* Conversion Engine Components */}
-
-            {/* AD SLIDER 5 */}
-            <div className="bg-white pt-8">
-                <AdCarousel slotGroup="carousel_5" page="home" title="Promoted Partners" />
-            </div>
-
-            <Footer />
+                <Footer />
+            </Suspense>
         </div>
     )
 }

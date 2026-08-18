@@ -6,6 +6,9 @@ const CMSContext = createContext({})
 // Page-level cache to avoid refetching on re-renders
 const contentCache = new Map()
 
+// Global promise cache to deduplicate simultaneous requests
+const promiseCache = new Map()
+
 export function CMSProvider({ children }) {
     const [pageContents, setPageContents] = useState({})
     const [loading, setLoading] = useState(false)
@@ -15,12 +18,25 @@ export function CMSProvider({ children }) {
             setPageContents(prev => ({ ...prev, [page]: contentCache.get(page) }))
             return
         }
+        
+        if (promiseCache.has(page)) {
+            const data = await promiseCache.get(page)
+            setPageContents(prev => ({ ...prev, [page]: data }))
+            return
+        }
+        
         try {
-            const data = await api.cms.getPageContent(page)
+            const fetchPromise = api.cms.getPageContent(page)
+            promiseCache.set(page, fetchPromise)
+            const data = await fetchPromise
             contentCache.set(page, data)
             setPageContents(prev => ({ ...prev, [page]: data }))
         } catch (e) {
             // Silently fail — fallback content will be used
+        } finally {
+            // Do not delete from promiseCache immediately if we want to deduplicate strictly, or delete after 
+            // since it's already in contentCache.
+            promiseCache.delete(page)
         }
     }, [])
 

@@ -24,7 +24,7 @@ export default function FeedbackAdmin() {
         setLoading(true);
         try {
             const token = localStorage.getItem('access_token');
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/common/feedback/`, {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/common/feedback/`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             // Support both paginated and unpaginated responses
@@ -43,7 +43,7 @@ export default function FeedbackAdmin() {
     const updateStatus = async (id, status) => {
         try {
             const token = localStorage.getItem('access_token');
-            await axios.patch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/common/feedback/${id}/`, 
+            await axios.patch(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/common/feedback/${id}/`, 
                 { status },
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
@@ -57,7 +57,7 @@ export default function FeedbackAdmin() {
         if (!window.confirm('Delete this feedback?')) return;
         try {
             const token = localStorage.getItem('access_token');
-            await axios.delete(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/common/feedback/${id}/`, 
+            await axios.delete(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/common/feedback/${id}/`, 
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
             fetchFeedbacks();
