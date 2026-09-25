@@ -136,11 +136,6 @@ export default function Home() {
                 ============================================================ */}
                 <TrustedVendors />
 
-                {/* AD SLIDER 3 */}
-                <AdCarousel slotGroup="carousel_3" page="home" title="Featured Sellers" />
-
-                {/* AD SLIDER 4 */}
-                <AdCarousel slotGroup="carousel_4" page="home" title="Premium Inventory" />
 
                 {/* CTA BANNER — blue gradient section with image panel */}
                 <CTABanner get={get} />
