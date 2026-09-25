@@ -8,7 +8,6 @@ import HeroSection from '../components/home/HeroSection'
 
 // Lazy load below-the-fold components
 const Footer = React.lazy(() => import('../components/Footer'))
-const TrustedVendors = React.lazy(() => import('../components/TrustedVendors'))
 const DynamicAd = React.lazy(() => import('../components/DynamicAd'))
 const AdCarousel = React.lazy(() => import('../components/AdCarousel'))
 const VendorCTASection = React.lazy(() => import('../components/VendorCTASection'))
@@ -131,10 +130,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* ============================================================
-                    TRUSTED VENDORS — self-contained section
-                ============================================================ */}
-                <TrustedVendors />
+
 
 
                 {/* CTA BANNER — blue gradient section with image panel */}
