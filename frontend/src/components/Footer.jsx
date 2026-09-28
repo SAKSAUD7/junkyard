@@ -171,7 +171,9 @@ export default function Footer() {
                     <p className="text-[11px] font-medium text-slate-400">
                         © {currentYear} {getFooter('brand', 'copyright_name', 'JYNM')}. {getFooter('brand', 'copyright_text', 'All rights reserved.')}
                     </p>
-                    <div className="flex gap-5">
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <span className="text-[11px] font-medium text-slate-400">Sponsored by <a href="https://www.qualityautoparts.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-500 hover:text-blue-600 transition-colors">Quality Auto Parts</a></span>
+                        <span className="hidden sm:inline text-slate-300">|</span>
                         <Link to="/privacy" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Privacy Policy</Link>
                         <Link to="/terms" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Terms &amp; Conditions</Link>
                         <Link to="/admin/login" className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">Admin</Link>
