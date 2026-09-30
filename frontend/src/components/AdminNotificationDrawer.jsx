@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Modern slide-out drawer for Admin System Notifications
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 export default function AdminNotificationDrawer({ isOpen, onClose }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch notifications when drawer opens
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function AdminNotificationDrawer({ isOpen, onClose }) {
       // Close drawer if clicking through
       if (link) {
         onClose();
+        navigate(link);
       }
     } catch (err) {
       console.error("Failed to mark as read", err);
@@ -120,7 +122,7 @@ export default function AdminNotificationDrawer({ isOpen, onClose }) {
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center px-6">
                   <div className="text-4xl mb-3 opacity-50">📭</div>
-                  <h3 className="text-sm font-bold text-slate-700">All caught up!</h3>
+                  <h3 className="text-sm font-bold text-slate-700">No new notification yet</h3>
                   <p className="text-[12px] text-slate-400 font-medium mt-1">Check back later for new notifications.</p>
                 </div>
               ) : (
@@ -155,13 +157,12 @@ export default function AdminNotificationDrawer({ isOpen, onClose }) {
                           
                           <div className="flex gap-2">
                             {notif.link && (
-                              <Link 
-                                to={notif.link}
+                              <button 
                                 onClick={() => markAsRead(notif.id, notif.link)}
                                 className="text-[11px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-widest bg-blue-100/50 hover:bg-blue-100 px-3 py-1 rounded"
                               >
                                 View
-                              </Link>
+                              </button>
                             )}
                             {!notif.is_read && !notif.link && (
                               <button 
