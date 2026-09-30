@@ -55,8 +55,8 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
         """
         Export vendor leads to CSV file.
         """
-        # Get filtered queryset
-        queryset = self.get_queryset()
+        # Get filtered queryset and sort first-to-last (ascending)
+        queryset = self.get_queryset().order_by('created_at')
         
         # Apply search filter if provided
         search = request.query_params.get('search')
@@ -325,8 +325,8 @@ class LeadViewSet(viewsets.ModelViewSet):
         """
         Export leads to CSV file.
         """
-        # Get filtered queryset
-        queryset = self.get_queryset()
+        # Get filtered queryset and sort first-to-last (ascending)
+        queryset = self.get_queryset().order_by('created_at')
         
         # Apply search filter if provided
         search = request.query_params.get('search')
@@ -699,7 +699,7 @@ class VehicleSubmissionViewSet(viewsets.ModelViewSet):
         import csv
         from django.http import HttpResponse
 
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.filter_queryset(self.get_queryset()).order_by('created_at')
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="sell_vehicle_leads.csv"'
 

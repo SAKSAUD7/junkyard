@@ -314,6 +314,7 @@ export default function AdminLayout() {
                             <div className="relative">
                                 <button
                                     onClick={() => setNotifOpen(true)}
+                                    title="System Notifications"
                                     className={`relative text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg ${notifOpen ? 'bg-blue-50 text-blue-600' : ''}`}
                                 >
                                     <BellIcon className="w-6 h-6" />
@@ -329,6 +330,7 @@ export default function AdminLayout() {
                             <div className="relative" ref={msgRef}>
                                 <button
                                     onClick={handleMsgOpen}
+                                    title="Messages"
                                     className={`relative text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg ${msgOpen ? 'bg-blue-50 text-blue-600' : ''}`}
                                 >
                                     <EnvelopeIcon className="w-6 h-6" />
@@ -395,7 +397,7 @@ export default function AdminLayout() {
                                 )}
                             </div>
 
-                            <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg">
+                            <button title="Help / Support" className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg">
                                 <QuestionMarkCircleIcon className="w-6 h-6" />
                             </button>
                         </div>

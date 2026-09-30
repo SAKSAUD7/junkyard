@@ -31,6 +31,7 @@ import { Link } from 'react-router-dom';
 import ImportVendorsModal from '../../components/admin/ImportVendorsModal';
 import ImportHistoryModal from '../../components/admin/ImportHistoryModal';
 import CopyButton from '../../components/common/CopyButton';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 // Enhanced Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -203,28 +204,45 @@ export default function AdminVendors() {
 
     const toggleStatus = async (vendor) => {
         const action = vendor.is_active ? 'deactivate' : 'activate';
-        if (vendor.is_active && !window.confirm(`Are you sure you want to deactivate ${vendor.name}? This will revoke their portal access.`)) return;
 
-        try {
-            setVendors(prev => prev.map(v => v.id === vendor.id ? { ...v, is_active: !v.is_active } : v));
+        const executeToggle = async () => {
+            setConfirmConfig({ isOpen: false });
+            try {
+                setVendors(prev => prev.map(v => v.id === vendor.id ? { ...v, is_active: !v.is_active } : v));
 
-            const response = await api.updateVendor(token, vendor.id, { is_active: !vendor.is_active });
+                const response = await api.updateVendor(token, vendor.id, { is_active: !vendor.is_active });
 
-            if (!vendor.is_active && response.credentials) {
-                setResetCredentials({ vendorName: vendor.name, ...response.credentials });
-                showToast(`Vendor activated! Credentials generated for ${response.credentials.username}`, 'success');
-            } else if (!vendor.is_active) {
-                showToast('Vendor activated successfully!', 'success');
-            } else {
-                showToast('Vendor deactivated.', 'info');
+                if (!vendor.is_active && response.credentials) {
+                    setResetCredentials({ vendorName: vendor.name, ...response.credentials });
+                    showToast(`Vendor activated! Credentials generated for ${response.credentials.username}`, 'success');
+                } else if (!vendor.is_active) {
+                    showToast('Vendor activated successfully!', 'success');
+                } else {
+                    showToast('Vendor deactivated.', 'info');
+                }
+
+                fetchVendors(page);
+            } catch (error) {
+                console.error(error);
+                showToast(`Failed to ${action} vendor: ${error.message || 'Unknown error'}`, 'error');
+                fetchVendors(page);
             }
+        };
 
-            fetchVendors(page);
-        } catch (error) {
-            console.error(error);
-            showToast(`Failed to ${action} vendor: ${error.message || 'Unknown error'}`, 'error');
-            fetchVendors(page);
+        if (vendor.is_active) {
+            setConfirmConfig({
+                isOpen: true,
+                title: 'Deactivate Vendor',
+                message: `Are you sure you want to deactivate ${vendor.name}? This will revoke their portal access.`,
+                confirmText: 'Deactivate',
+                type: 'danger',
+                onConfirm: executeToggle,
+                onCancel: () => setConfirmConfig({ isOpen: false })
+            });
+            return;
         }
+        
+        executeToggle();
     };
 
     const handleResetPassword = async (vendor) => {
@@ -234,30 +252,39 @@ export default function AdminVendors() {
             return;
         }
 
-        if (!window.confirm(`Reset password for ${vendor.name}? This will generate a new temporary password.`)) return;
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Reset Password',
+            message: `Reset password for ${vendor.name}? This will generate a new temporary password.`,
+            confirmText: 'Reset Password',
+            type: 'warning',
+            onConfirm: async () => {
+                setConfirmConfig({ isOpen: false });
+                try {
+                    const response = await api.resetVendorPassword(token, vendor.id);
+                    setResetCredentials({
+                        vendorName: vendor.name,
+                        username: response.username,
+                        email: response.email,
+                        temp_password: response.temp_password
+                    });
+                    showToast('Password reset successful', 'success');
+                } catch (error) {
+                    console.error(error);
+                    const backendError = error.response?.data?.error || error.message || '';
+                    let errorMessage = 'Failed to reset password';
 
-        try {
-            const response = await api.resetVendorPassword(token, vendor.id);
-            setResetCredentials({
-                vendorName: vendor.name,
-                username: response.username,
-                email: response.email,
-                temp_password: response.temp_password
-            });
-            showToast('Password reset successful', 'success');
-        } catch (error) {
-            console.error(error);
-            const backendError = error.response?.data?.error || error.message || '';
-            let errorMessage = 'Failed to reset password';
+                    if (backendError.includes('No user account found') || backendError.includes('activate')) {
+                        errorMessage = 'Vendor account not found. Please activate the vendor first, then try resetting the password.';
+                    } else {
+                        errorMessage = backendError;
+                    }
 
-            if (backendError.includes('No user account found') || backendError.includes('activate')) {
-                errorMessage = 'Vendor account not found. Please activate the vendor first, then try resetting the password.';
-            } else {
-                errorMessage = backendError;
-            }
-
-            showToast(errorMessage, 'error');
-        }
+                    showToast(errorMessage, 'error');
+                }
+            },
+            onCancel: () => setConfirmConfig({ isOpen: false })
+        });
     };
 
     const handleCreateClick = () => {
@@ -1170,6 +1197,8 @@ export default function AdminVendors() {
                 onClose={() => setShowHistoryModal(false)}
                 onRollbackComplete={handleRollbackComplete}
             />
+
+            <ConfirmModal {...confirmConfig} />
         </div>
     );
 }
