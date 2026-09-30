@@ -13,6 +13,7 @@ import {
     HeartIcon as HeartIconOutline 
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { useClipboard } from '../../hooks/useClipboard';
 
 const SAMPLE_POST = {
   id: 1,
@@ -74,6 +75,7 @@ export default function BlogDetail() {
   const [likesCount, setLikesCount] = useState(0);
   const [commentForm, setCommentForm] = useState({ name: '', email: '', content: '' });
   const [commentStatus, setCommentStatus] = useState('');
+  const { copied: linkCopied, copyToClipboard: copyShareUrl } = useClipboard();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -345,9 +347,11 @@ export default function BlogDetail() {
                   className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-[#1da1f2] hover:text-white hover:border-transparent transition-all shadow-sm">
                   <span className="font-bold text-sm">𝕏</span>
                 </a>
-                <button onClick={() => navigator.clipboard?.writeText(shareUrl)}
-                  className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-900 hover:text-white hover:border-transparent transition-all shadow-sm">
-                  <ShareIcon className="w-4 h-4" />
+                <button onClick={() => copyShareUrl(shareUrl)}
+                  className={`w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center transition-all shadow-sm ${linkCopied ? 'text-emerald-600 border-emerald-200 bg-emerald-50' : 'text-slate-600 hover:bg-slate-900 hover:text-white hover:border-transparent'}`}
+                  title={linkCopied ? "Copied!" : "Copy Link"}
+                >
+                  {linkCopied ? <CheckCircleIcon className="w-5 h-5"/> : <ShareIcon className="w-4 h-4" />}
                 </button>
               </div>
             </div>

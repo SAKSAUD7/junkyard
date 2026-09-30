@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
 import {
@@ -85,7 +86,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-sm w-full max-w-4xl overflow-hidden transform transition-all scale-100 flex flex-col max-h-[85vh]">
                 {/* Header */}
@@ -214,6 +215,7 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                     </div>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
