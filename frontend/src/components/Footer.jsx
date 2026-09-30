@@ -57,6 +57,7 @@ export default function Footer() {
         { name: getFooter('buyers', 'link_how', 'How It Works'), path: '/how-it-works' },
         { name: getFooter('buyers', 'link_faq', 'FAQ'), path: '/faq' },
         { name: getFooter('buyers', 'link_quote', 'Get a Quote'), path: '/quote' },
+        { name: 'Sell Your Vehicle', path: '/sell-your-car' },
     ]
 
     const vendorLinks = [
