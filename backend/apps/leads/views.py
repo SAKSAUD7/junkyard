@@ -2,9 +2,9 @@ import csv
 from django.http import HttpResponse  # type: ignore
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, permissions
-from .models import Lead, VendorLead
-from .serializers import LeadSerializer, VendorLeadSerializer
+from rest_framework import viewsets, permissions, status as drf_status
+from .models import Lead, VendorLead, VehicleSubmission
+from .serializers import LeadSerializer, VendorLeadSerializer, VehicleSubmissionSerializer
 
 
 import logging
@@ -612,3 +612,84 @@ def hollander_lookup(request):
             'message': 'Error looking up Hollander number'
         })
 
+
+class VehicleSubmissionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for 'Sell Your Car' submissions.
+    - POST (create): Public. Anyone can submit a sell-your-car lead.
+    - GET, PUT, PATCH, DELETE: Admin only.
+    """
+    queryset = VehicleSubmission.objects.all().order_by('-created_at')  # type: ignore
+    serializer_class = VehicleSubmissionSerializer
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def get_throttles(self):
+        if self.action == 'create':
+            return [ScopedRateThrottle()]
+        return []
+
+    def perform_create(self, serializer):
+        submission = serializer.save()
+        logger.info(f"New VehicleSubmission #{submission.id}: {submission.year} {submission.make} {submission.model} from {submission.name}")
+
+        # Email notification
+        try:
+            from django.core.mail import send_mail
+            from django.conf import settings
+            sender = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.net')
+            admin = getattr(settings, 'LEAD_NOTIFICATION_EMAIL', 'leads@junkyardsnearme.net')
+
+            send_mail(
+                subject=f"NEW SELL YOUR CAR: {submission.year} {submission.make} {submission.model} (#{submission.id})",
+                message=(
+                    f"New Sell Your Car submission received!\n\n"
+                    f"Vehicle: {submission.year} {submission.make} {submission.model} {submission.trim}\n"
+                    f"VIN: {submission.vin or 'Not provided'}\n"
+                    f"Mileage: {submission.mileage}\n"
+                    f"Condition Details:\n"
+                    f" - Drivable: {'Yes' if submission.drivable else 'No'}\n"
+                    f" - Starts: {'Yes' if submission.starts else 'No'}\n"
+                    f" - Has Title: {'Yes' if submission.has_title else 'No'}\n"
+                    f" - Needs Transport: {'Yes' if submission.transportation_required else 'No'}\n\n"
+                    f"Seller: {submission.name}\n"
+                    f"Phone: {submission.phone}\n"
+                    f"Email: {submission.email}\n"
+                    f"Location: {submission.city}, {submission.state} {submission.zip_code}\n"
+                    f"Description: {submission.description}\n"
+                ),
+                from_email=sender,
+                recipient_list=[admin],
+                fail_silently=True,
+            )
+            if submission.email:
+                send_mail(
+                    subject=f"We received your submission - {submission.year} {submission.make} {submission.model}",
+                    message=(
+                        f"Hi {submission.name},\n\n"
+                        f"Thanks for submitting your {submission.year} {submission.make} {submission.model} to Junkyards Near Me.\n"
+                        f"Our team will evaluate your vehicle and get back to you shortly with an offer.\n\n"
+                        f"Best Regards,\nThe JYNM Team"
+                    ),
+                    from_email=sender,
+                    recipient_list=[submission.email],
+                    fail_silently=True,
+                )
+        except Exception as e:
+            logger.error(f"Email error for VehicleSubmission #{submission.id}: {e}")
+
+        # Notification system persistence
+        try:
+            from apps.common.models import AdminNotification
+            AdminNotification.objects.create(
+                notification_type='lead',
+                title=f"New Vehicle Lead: {submission.year} {submission.make}",
+                message=f"{submission.name} submitted a {submission.year} {submission.make} {submission.model} in {submission.city}, {submission.state}.",
+                link='/admin-portal/sell-vehicle-leads'
+            )
+        except Exception as e:
+            logger.error(f"Failed to create AdminNotification for VehicleSubmission #{submission.id}: {e}")

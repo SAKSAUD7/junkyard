@@ -124,3 +124,29 @@ class CustomRedirect(models.Model):
 
     def __str__(self):
         return f"{self.old_path} ---> {self.new_path} ({self.status_code})"
+
+
+class AdminNotification(models.Model):
+    """Stores system-wide notifications for administrators, shown in the top right drawer."""
+    NOTIFICATION_TYPES = (
+        ('lead', 'New Lead'),
+        ('payment', 'New Payment'),
+        ('feedback', 'New Feedback'),
+        ('system', 'System Alert'),
+    )
+    
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES, default='system')
+    link = models.CharField(max_length=255, null=True, blank=True, help_text="Optional Admin URL to redirect to")
+    
+    is_read = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Admin Notification'
+        verbose_name_plural = 'Admin Notifications'
+
+    def __str__(self):
+        return f"[{self.get_notification_type_display()}] {self.title}"

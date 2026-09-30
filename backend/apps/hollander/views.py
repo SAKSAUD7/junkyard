@@ -485,6 +485,63 @@ def zipcode_lookup(request):
 
 
 @api_view(['GET'])
+def get_states(request):
+    """
+    Get distinct states from Zipcode table.
+    GET /api/locations/states/
+    """
+    try:
+        states = Zipcode.objects.values_list('state_abbr', flat=True).distinct().order_by('state_abbr')
+        states_list = [s for s in states if s]
+        return Response({'states': states_list})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+@api_view(['GET'])
+def get_cities(request):
+    """
+    Get distinct cities for a given state.
+    GET /api/locations/cities/?state=FL
+    """
+    state_code = request.GET.get('state', '').strip().upper()
+    if not state_code:
+        return Response({'error': 'State code is required'}, status=400)
+    try:
+        cities = Zipcode.objects.filter(state_abbr__iexact=state_code).values_list('city_name', flat=True).distinct().order_by('city_name')
+        cities_list = [c for c in cities if c]
+        return Response({'state': state_code, 'cities': cities_list})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+@api_view(['GET'])
+def vehicle_lookup(request):
+    """
+    Lookup matching vehicle specs/VINs by Year/Make/Model in JYNM DB.
+    GET /api/vehicles/lookup/?year=X&make=Y&model=Z
+    """
+    year = request.GET.get('year', '')
+    make = request.GET.get('make', '')
+    model = request.GET.get('model', '')
+    
+    if not (year and make and model):
+        return Response({'error': 'year, make, model required'}, status=400)
+    
+    # We do not have a YMM -> VIN static database table to pull from,
+    # so we return not found which is the expected fallback flow.
+    return Response({
+        'found': False,
+        'message': 'No matching VIN record was found for this vehicle.',
+        'vehicle': {
+            'year': year,
+            'make': make,
+            'model': model
+        }
+    })
+
+
+@api_view(['GET'])
 def get_zipcodes_by_state(request):
     """
     Get all zipcodes for a given state.

@@ -95,3 +95,56 @@ class VendorLead(models.Model):
 
     def __str__(self):
         return f"Vendor Inquiry: {self.year} {self.make} {self.model} - {self.name}"
+
+class VehicleSubmission(models.Model):
+    """
+    Model for the multi-step "Sell Your Car" form.
+    Captures highly detailed vehicle status including VIN, Condition, Drivable status, etc.
+    """
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('evaluating', 'Evaluating'),
+        ('offer_sent', 'Offer Sent'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    ]
+
+    # Vehicle Identification
+    vin = models.CharField(max_length=17, blank=True, default='')
+    year = models.IntegerField()
+    make = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    trim = models.CharField(max_length=100, blank=True, default='')
+    
+    # Vehicle Condition (from multi-step form)
+    mileage = models.CharField(max_length=50, blank=True, default='') # Can be exact or range
+    drivable = models.BooleanField(default=False)
+    starts = models.BooleanField(default=True)
+    transportation_required = models.BooleanField(default=False)
+    has_title = models.BooleanField(default=False)
+    has_keys = models.BooleanField(default=False)
+    has_all_tires = models.BooleanField(default=False)
+    body_damage = models.CharField(max_length=100, blank=True, default='None')
+    engine_issue = models.BooleanField(default=False)
+    transmission_issue = models.BooleanField(default=False)
+    
+    # Seller / Contact Information
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone = models.CharField(max_length=20)
+    zip_code = models.CharField(max_length=15)
+    state = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Vehicle Submission"
+        verbose_name_plural = "Vehicle Submissions"
+
+    def __str__(self):
+        return f"Sell Car: {self.year} {self.make} {self.model} - {self.name}"

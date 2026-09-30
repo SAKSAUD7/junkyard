@@ -21,7 +21,7 @@ from rest_framework.routers import DefaultRouter
 from apps.hollander.views import hollander_lookup, PartPricingViewSet
 from apps.leads.views import resolve_hollander_questions
 from apps.hollander.import_views import VendorImportViewSet
-from apps.leads.urls import vendor_leads_urlpatterns
+from apps.leads.urls import vendor_leads_urlpatterns, sell_car_urlpatterns
 from apps.ads.views import AdClickView  # Import ad click view
 
 # Create router for Part Pricing and Vendor Import
@@ -102,8 +102,10 @@ urlpatterns = [
     path("api/vendors/", include(vendors_router.urls)),  # Import endpoints
     path("api/leads/", include("apps.leads.urls")),
     path("api/vendor-leads/", include(vendor_leads_urlpatterns)),  # Vendor leads endpoint
+    path("api/sell-your-car/", include(sell_car_urlpatterns)),    # Sell Your Car API endpoint
     path("api/common/", include("apps.common.urls")),
     path("api/ads/", include("apps.ads.urls")),
+    path("api/vin/", include("apps.vpic.urls")),  # VIN Decoder functionality
     path("api/", include("apps.yard_submissions.urls")),  # Yard submissions API
     path("api/vendor/", include("apps.vendor_portal.urls")),  # Vendor portal API
     path("api/payments/", include("apps.payments.urls")),     # Payments API

@@ -28,7 +28,8 @@ const FAQ          = lazy(() => import('./pages/FAQ'))
 const SignIn       = lazy(() => import('./pages/SignIn'))
 const SignUp       = lazy(() => import('./pages/SignUp'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
-const Profile      = lazy(() => import('./pages/Profile'))
+const SellYourCar    = lazy(() => import('./pages/SellYourCar'))
+const Profile        = lazy(() => import('./pages/Profile'))
 
 // Auth Components
 import ProtectedRoute from './components/ProtectedRoute'
@@ -55,6 +56,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminMessages = lazy(() => import('./pages/admin/Messages'))
 const AdminLeads = lazy(() => import('./pages/admin/Leads'))
 const AdminVendorLeads = lazy(() => import('./pages/admin/VendorLeads'))
+const AdminSellVehicleLeads = lazy(() => import('./pages/admin/SellVehicleLeads'))
 const AdminYardSubmissions = lazy(() => import('./pages/admin/YardSubmissions'))
 const AdminVendors = lazy(() => import('./pages/admin/Vendors'))
 const AdminAds = lazy(() => import('./pages/admin/Ads'))
@@ -148,6 +150,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/quote" element={<QuoteRequest />} />
+            <Route path="/sell-your-car" element={<SellYourCar />} />
 
             {/* Auth Routes */}
             <Route path="/signin" element={<SignIn />} />
@@ -245,6 +248,7 @@ function App() {
               <Route path="messages" element={<AdminMessages />} />
               <Route path="leads" element={<AdminLeads />} />
               <Route path="vendor-leads" element={<AdminVendorLeads />} />
+              <Route path="sell-vehicle-leads" element={<AdminSellVehicleLeads />} />
               <Route path="yard-submissions" element={<AdminYardSubmissions />} />
               <Route path="vendors" element={<AdminVendors />} />
               <Route path="ads" element={<AdminAds />} />

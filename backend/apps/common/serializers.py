@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.hollander.models import Make, Model, PartType, State
-from .models import ContactMessage, Feedback
+from .models import ContactMessage, Feedback, AdminNotification
 
 
 class MakeSerializer(serializers.ModelSerializer):
@@ -51,4 +51,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
         fields = ['id', 'topic', 'description', 'status', 'created_at']
+        read_only_fields = ['created_at']
+
+
+class AdminNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminNotification
+        fields = ['id', 'title', 'message', 'notification_type', 'link', 'is_read', 'created_at']
         read_only_fields = ['created_at']

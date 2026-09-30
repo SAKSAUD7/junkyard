@@ -5,6 +5,17 @@ import LeadForm from './LeadForm';
 
 export default function FloatingLeadWidget() {
     const location = useLocation();
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Prevent body scroll when open on mobile
+    useEffect(() => {
+        if (isOpen && window.innerWidth < 1024) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
 
     const EXCLUDED_PREFIXES = [
         '/admin-portal',
@@ -17,18 +28,6 @@ export default function FloatingLeadWidget() {
     if (EXCLUDED_PREFIXES.some(p => location.pathname.startsWith(p))) {
         return null;
     }
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    // Prevent body scroll when open on mobile
-    useEffect(() => {
-        if (isOpen && window.innerWidth < 1024) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => { document.body.style.overflow = 'unset'; };
-    }, [isOpen]);
 
     return (
         <>
