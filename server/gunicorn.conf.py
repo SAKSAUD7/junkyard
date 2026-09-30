@@ -23,8 +23,7 @@ max_requests = 1000
 max_requests_jitter = 100   # random offset so workers don't all restart at once
 
 # --- Binding ---
-bind = "unix:/run/junkyard.sock"   # use socket, faster than TCP
-# bind = "127.0.0.1:8000"         # fallback if socket doesn't work
+bind = "127.0.0.1:8000"   # TCP — matches existing nginx proxy config
 
 # --- Logging ---
 accesslog = "/var/log/jynm_gunicorn_access.log"

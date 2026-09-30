@@ -15,38 +15,22 @@ echo "🚀 JYNM Server Setup Starting..."
 echo "📋 Installing gunicorn config..."
 cp "$SERVER_DIR/gunicorn.conf.py" "$REPO/backend/gunicorn.conf.py"
 
-# ---- 2. Update systemd service to use gunicorn.conf.py ----
-echo "🔧 Updating junkyard.service..."
-# Read current ExecStart and update it
+# ---- 2. Update ExecStart in systemd service to use gunicorn.conf.py ----
+echo "🔧 Updating ExecStart in junkyard.service..."
 CURRENT_EXEC=$(grep "ExecStart" "$SERVICE_FILE" | head -1)
 echo "Current: $CURRENT_EXEC"
 
-# Write new systemd service
-cat > "$SERVICE_FILE" << 'SYSTEMD_EOF'
-[Unit]
-Description=Junkyard Gunicorn
-After=network.target postgresql-16.service
-Requires=postgresql-16.service
+# Extract the gunicorn binary path from the existing ExecStart
+GUNICORN_BIN=$(echo "$CURRENT_EXEC" | grep -oP '/\S+/gunicorn')
 
-[Service]
-User=junkyard
-Group=junkyard
-WorkingDirectory=/home/junkyard/backend
-EnvironmentFile=/home/junkyard/backend/.env
-ExecStart=/home/junkyard/backend/venv/bin/gunicorn \
-    --config /home/junkyard/backend/gunicorn.conf.py \
-    core.wsgi:application
-ExecReload=/bin/kill -s HUP $MAINPID
-Restart=always
-RestartSec=5
-StandardOutput=journal
-StandardError=journal
-
-[Install]
-WantedBy=multi-user.target
-SYSTEMD_EOF
-
-echo "✅ Service file updated."
+if [ -z "$GUNICORN_BIN" ]; then
+    echo "⚠️  Could not detect gunicorn path. Skipping ExecStart update."
+    echo "   Manually update ExecStart to add: --config /home/junkyard/backend/gunicorn.conf.py"
+else
+    # Replace ExecStart line only, preserve rest of service file
+    sed -i "s|^ExecStart=.*|ExecStart=$GUNICORN_BIN --config /home/junkyard/backend/gunicorn.conf.py core.wsgi:application|" "$SERVICE_FILE"
+    echo "✅ Service ExecStart updated to use gunicorn.conf.py"
+fi
 
 # ---- 3. Install healthcheck script ----
 echo "📦 Installing healthcheck.sh..."
