@@ -389,13 +389,33 @@ export default function AdminSellVehicleLeads() {
 
             {/* Enhanced Lead Details Modal */}
             {selectedLead && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in overflow-y-auto">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[100000] animate-fade-in overflow-y-auto">
                     <div className="bg-white rounded-xl max-w-4xl w-full my-8 shadow-2xl relative">
                         {/* Modal Header */}
                         <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-5 flex justify-between items-center rounded-t-2xl z-10">
-                            <div>
-                                <h2 className="text-xl font-bold text-slate-900">Vehicle Lead Details</h2>
-                                <p className="text-sm text-slate-500 mt-1">Lead ID: #{selectedLead.id} • Submitted: {new Date(selectedLead.created_at).toLocaleString()}</p>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                <div>
+                                    <h2 className="text-xl font-bold text-slate-900">Vehicle Lead Details</h2>
+                                    <p className="text-sm text-slate-500 mt-1">Lead ID: #{selectedLead.id} • Submitted: {new Date(selectedLead.created_at).toLocaleString()}</p>
+                                </div>
+                                {selectedLead.vin && (
+                                    <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 pl-3 pr-1 py-1 rounded-lg">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">VIN</span>
+                                            <span className="text-sm font-mono font-bold text-slate-800">{selectedLead.vin}</span>
+                                        </div>
+                                        <button 
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(selectedLead.vin);
+                                                showToast('VIN copied to clipboard');
+                                            }}
+                                            className="p-1.5 hover:bg-white border border-transparent hover:border-slate-200 rounded text-slate-500 hover:text-blue-600 transition-all"
+                                            title="Copy VIN"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                             <button
                                 onClick={() => setSelectedLead(null)}

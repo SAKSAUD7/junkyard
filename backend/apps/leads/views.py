@@ -693,3 +693,48 @@ class VehicleSubmissionViewSet(viewsets.ModelViewSet):
             )
         except Exception as e:
             logger.error(f"Failed to create AdminNotification for VehicleSubmission #{submission.id}: {e}")
+
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        import csv
+        from django.http import HttpResponse
+
+        queryset = self.filter_queryset(self.get_queryset())
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="sell_vehicle_leads.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            'ID', 'Created At', 'Status', 'Name', 'Email', 'Phone', 
+            'State', 'City', 'ZIP', 
+            'Year', 'Make', 'Model', 'Trim', 'VIN', 'Mileage', 
+            'Drivable', 'Starts', 'Title', 'Transport Needed', 'Body Damage',
+            'Description'
+        ])
+
+        for lead in queryset:
+            writer.writerow([
+                lead.id,
+                lead.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                lead.status,
+                lead.name,
+                lead.email,
+                lead.phone,
+                lead.state,
+                lead.city,
+                lead.zip_code,
+                lead.year,
+                lead.make,
+                lead.model,
+                lead.trim,
+                lead.vin,
+                lead.mileage,
+                'Yes' if lead.drivable else 'No',
+                'Yes' if lead.starts else 'No',
+                'Yes' if lead.has_title else 'No',
+                'Yes' if lead.transportation_required else 'No',
+                lead.body_damage,
+                lead.description
+            ])
+
+        return response

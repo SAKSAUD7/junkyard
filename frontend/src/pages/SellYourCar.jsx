@@ -325,28 +325,29 @@ function StepCondition({ data, setData, onBack, onNext, dbStates, dbCities }) {
 
       {/* Location Row (State and City) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-        <div className="relative">
+        <div className="relative z-30">
           <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-2">State *</label>
-          <div className="relative group">
-            <select className="w-full bg-slate-50 border border-slate-200 rounded-xl h-[52px] px-4 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all appearance-none shadow-sm cursor-pointer" value={data.state} onChange={(e) => setData(d => ({ ...d, state: e.target.value, city: "" }))}>
-               <option value="">Select State</option>
-               {dbStates.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-            </div>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl transition-all shadow-sm focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50">
+            <SearchableDropdown
+              label="State"
+              placeholder="Select State"
+              value={data.state}
+              options={dbStates.map(s => ({ value: s, label: s }))}
+              onSelect={(val) => setData(d => ({ ...d, state: String(val), city: "" }))}
+            />
           </div>
         </div>
-        <div className="relative">
+        <div className="relative z-20">
           <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-2">City *</label>
-          <div className="relative group">
-            <select className="w-full bg-slate-50 border border-slate-200 rounded-xl h-[52px] px-4 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all appearance-none shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" value={data.city} onChange={(e) => setData(d => ({ ...d, city: e.target.value }))} disabled={!data.state}>
-               <option value="">Select City</option>
-               {dbCities.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-            </div>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl transition-all shadow-sm focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50">
+            <SearchableDropdown
+              label="City"
+              placeholder="Select City"
+              value={data.city}
+              disabled={!data.state}
+              options={dbCities.map(c => ({ value: c, label: c }))}
+              onSelect={(val) => setData(d => ({ ...d, city: String(val) }))}
+            />
           </div>
         </div>
       </div>
