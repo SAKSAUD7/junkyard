@@ -8,6 +8,8 @@ import { AuthContext } from '../contexts/AuthContext'
 import LoginModal from './auth/LoginModal'
 import SignupModal from './auth/SignupModal'
 
+import SecurityQuestionnaireModal from './auth/SecurityQuestionnaireModal'
+
 // US States and Canadian Provinces (from zipcode database)
 const US_STATES = [
     'AA', 'AB', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'BC',
@@ -139,6 +141,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const { isAuthenticated, user } = useContext(AuthContext)
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     const [isSignupModalOpen, setIsSignupModalOpen] = useState(false)
+    const [isSecurityCheckOpen, setIsSecurityCheckOpen] = useState(false)
 
     // -- State --
     // Lead Type Toggle
@@ -571,6 +574,11 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         if (e && e.preventDefault) e.preventDefault()
         setSubmitError(null)
 
+        if (!isAuthenticated && !user) {
+            setIsSecurityCheckOpen(true)
+            return
+        }
+
         // Validation based on Lead Type
         if (leadType === 'quality_auto_parts') {
             if (!selectedMake || !selectedModel || !selectedPart || !selectedYear) {
@@ -643,6 +651,10 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
             setSubmitting(false)
             setIsSuccess(true)
+            
+            setTimeout(() => {
+                handleReset()
+            }, 7000)
         } catch (error) {
             console.error(error)
             setSubmitError('Network failure. Please try again.')
@@ -732,9 +744,9 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h2 className="text-2xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Request Sent!</h2>
+                <h2 className="text-2xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Request Submitted</h2>
                 <p className="text-slate-500 text-[14px] mb-6 leading-relaxed">
-                    We've received your request.<br />A specialist will contact you shortly.
+                    Got it! Your request has been sent.<br />You'll hear back shortly with quotes.
                 </p>
                 <button onClick={handleReset} className="text-blue-600 font-bold text-[13px] hover:text-blue-800 transition-colors underline underline-offset-2">
                     Submit Another Request
@@ -1169,16 +1181,26 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                 )}
         </form>
 
+            <SecurityQuestionnaireModal
+                isOpen={isSecurityCheckOpen}
+                onClose={() => setIsSecurityCheckOpen(false)}
+                onComplete={(answers) => {
+                    localStorage.setItem('temp_security_answers', JSON.stringify(answers));
+                    setIsSecurityCheckOpen(false);
+                    setIsSignupModalOpen(true);
+                }}
+            />
+
             <LoginModal 
                 isOpen={isLoginModalOpen}
-                onClose={() => { setIsLoginModalOpen(false); setPendingSubmit(false); }}
+                onClose={() => { setIsLoginModalOpen(false); }}
                 onSwitchToSignup={() => { setIsLoginModalOpen(false); setIsSignupModalOpen(true); }}
                 onSwitchToForgotPassword={() => { setIsLoginModalOpen(false); }}
             />
             
             <SignupModal
                 isOpen={isSignupModalOpen}
-                onClose={() => { setIsSignupModalOpen(false); setPendingSubmit(false); }}
+                onClose={() => { setIsSignupModalOpen(false); }}
                 onSwitchToLogin={() => { setIsSignupModalOpen(false); setIsLoginModalOpen(true); }}
             />
         </div>

@@ -48,3 +48,19 @@ class VendorProfile(models.Model):
     
     def __str__(self):
         return f"{self.user.email} - {self.vendor.name}"
+
+
+class CustomerProfile(models.Model):
+    """Profile for regular users (buyers/consumers) storing their security questionnaire answers"""
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer_profile')
+    security_user_type = models.CharField(max_length=50, blank=True, help_text="Security Question: individual or business")
+    security_purpose = models.CharField(max_length=50, blank=True, help_text="Security Question: buy_parts, sell_car, or browse")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'customer_profiles'
+        
+    def __str__(self):
+        return f"{self.user.email} - {self.security_user_type}"

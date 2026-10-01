@@ -22,8 +22,7 @@ export const VendorAuthProvider = ({ children }) => {
         const initAuth = async () => {
             const currentUser = vendorAuth.getCurrentUser();
             const currentProfile = vendorAuth.getVendorProfile();
-            const hasToken = vendorAuth.isAuthenticated()
-                || !!localStorage.getItem('access_token');
+            const hasToken = vendorAuth.isAuthenticated();
 
             if (hasToken && currentUser) {
                 // 1. Trust the stored user/session immediately — don't wait for the network.
@@ -115,10 +114,7 @@ export const VendorAuthProvider = ({ children }) => {
     };
 
     const isAuthenticated = () => {
-        // Accept either vendor-specific token OR the general auth token.
-        // This covers users who logged in via VendorAuthModal AND users who
-        // authenticated via the general login flow (authService.js).
-        return (vendorAuth.isAuthenticated() || !!localStorage.getItem('access_token')) && !!user;
+        return vendorAuth.isAuthenticated() && !!user;
     };
 
     const value = {

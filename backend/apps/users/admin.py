@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, VendorProfile
+from .models import User, VendorProfile, CustomerProfile
 
 
 @admin.register(User)
@@ -38,4 +38,15 @@ class VendorProfileAdmin(admin.ModelAdmin):
     list_filter = ['is_owner', 'can_edit', 'can_respond_reviews']
     search_fields = ['user__email', 'vendor__name']
     raw_id_fields = ['user', 'vendor']
+    readonly_fields = ['created_at']
+
+
+@admin.register(CustomerProfile)
+class CustomerProfileAdmin(admin.ModelAdmin):
+    """Customer profile admin for Buyers/Consumers"""
+    
+    list_display = ['user', 'security_user_type', 'security_purpose', 'created_at']
+    list_filter = ['security_user_type', 'security_purpose']
+    search_fields = ['user__email', 'user__first_name', 'user__last_name']
+    raw_id_fields = ['user']
     readonly_fields = ['created_at']

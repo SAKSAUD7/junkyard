@@ -9,14 +9,25 @@ import SEO from '../components/SEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { getLocalBusinessSchema } from '../utils/structuredData';
 import { getLogoUrl } from '../utils/imageUrl';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal';
+import SignupModal from '../components/auth/SignupModal';
+import LoginModal from '../components/auth/LoginModal';
 
 const VendorDetail = () => {
     const params = useParams();
     const { id } = params;
     const navigate = useNavigate();
     const [vendor, setVendor] = useState(null);
+    const [vendor, setVendor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { isAuthenticated } = useContext(AuthContext);
+    const [showSecurityCheck, setShowSecurityCheck] = useState(false);
+    const [showSignup, setShowSignup] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const fetchVendor = async () => {
@@ -46,6 +57,17 @@ const VendorDetail = () => {
         };
         fetchVendor();
     }, [id, params.slug]);
+
+    // Enforce Auth Wall
+    useEffect(() => {
+        if (!loading && !error && vendor && !isAuthenticated) {
+            setShowSecurityCheck(true);
+        } else {
+            setShowSecurityCheck(false);
+            setShowSignup(false);
+            setShowLogin(false);
+        }
+    }, [loading, error, vendor, isAuthenticated]);
 
     if (loading) {
         return (
@@ -383,6 +405,40 @@ const VendorDetail = () => {
             </div>
 
             <Footer />
+
+            {/* Auth Wall Modals */}
+            <SecurityQuestionnaireModal 
+                isOpen={showSecurityCheck}
+                onClose={() => navigate('/junkyards')}
+                onComplete={(answers) => {
+                    localStorage.setItem('temp_security_answers', JSON.stringify(answers));
+                    setShowSecurityCheck(false);
+                    setShowSignup(true);
+                }}
+            />
+            <SignupModal
+                isOpen={showSignup}
+                onClose={() => {
+                    if (!isAuthenticated) navigate('/junkyards');
+                    setShowSignup(false);
+                }}
+                onSwitchToLogin={() => {
+                    setShowSignup(false);
+                    setShowLogin(true);
+                }}
+            />
+            <LoginModal
+                isOpen={showLogin}
+                onClose={() => {
+                    if (!isAuthenticated) navigate('/junkyards');
+                    setShowLogin(false);
+                }}
+                onSwitchToSignup={() => {
+                    setShowLogin(false);
+                    setShowSignup(true);
+                }}
+                onSwitchToForgotPassword={() => navigate('/forgot-password')}
+            />
         </div>
     );
 };

@@ -16,8 +16,7 @@ const vendorApi = axios.create({
 // auth flow (authService.js) still have a valid JWT, just under 'access_token'.
 vendorApi.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('vendor_access_token')
-            || localStorage.getItem('access_token');
+        const token = localStorage.getItem('vendor_access_token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '../services/api'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
+import { AuthContext } from '../contexts/AuthContext'
+import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal'
+import LoginModal from '../components/auth/LoginModal'
+import SignupModal from '../components/auth/SignupModal'
 
 const US_STATES = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
 
@@ -43,6 +47,11 @@ export default function QuoteRequest() {
         state: '',
         zip: ''
     })
+
+    const { isAuthenticated, user } = useContext(AuthContext)
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+    const [isSignupModalOpen, setIsSignupModalOpen] = useState(false)
+    const [isSecurityCheckOpen, setIsSecurityCheckOpen] = useState(false)
 
     const [currentStep, setCurrentStep] = useState(1)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -135,6 +144,11 @@ export default function QuoteRequest() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if (!isAuthenticated && !user) {
+            setIsSecurityCheckOpen(true)
+            return
+        }
+
         if (!formData.name || !formData.phone || !formData.email || !formData.state || !formData.zip) {
             setFormError('Please fill in all required fields')
             return
@@ -164,6 +178,14 @@ export default function QuoteRequest() {
                 lead_type: 'quality_auto_parts',
             })
             setSubmitSuccess(true)
+            
+            // Auto-reset form after 7 seconds
+            setTimeout(() => {
+                setSubmitSuccess(false)
+                setCurrentStep(1)
+                setFormData({ name: '', phone: '', email: '', state: '', zip: '' })
+            }, 7000)
+            
         } catch (err) {
             setFormError('Submission failed. Please try again.')
             console.error(err)
@@ -224,9 +246,9 @@ export default function QuoteRequest() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <h2 className="text-2xl font-black text-slate-900 mb-2">Quote Request Sent!</h2>
+                                <h2 className="text-2xl font-black text-slate-900 mb-2">Request Submitted</h2>
                                 <p className="text-slate-500 font-medium mb-8">
-                                    We've broadcasted your request to our network of verified salvage yards. You'll receive quotes shortly.
+                                    Got it! Your request has been sent to our verified salvage yards. You'll hear back shortly with quotes.
                                 </p>
                                 <Link to="/" className="inline-flex items-center justify-center bg-blue-600 text-white font-bold py-3.5 px-8 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
                                     Return to Home
@@ -448,6 +470,28 @@ export default function QuoteRequest() {
 
                 </div>
             </div>
+
+            {/* Auth Wall Modals */}
+            <SecurityQuestionnaireModal
+                isOpen={isSecurityCheckOpen}
+                onClose={() => setIsSecurityCheckOpen(false)}
+                onComplete={(answers) => {
+                    localStorage.setItem('temp_security_answers', JSON.stringify(answers));
+                    setIsSecurityCheckOpen(false);
+                    setIsSignupModalOpen(true);
+                }}
+            />
+            <LoginModal 
+                isOpen={isLoginModalOpen}
+                onClose={() => { setIsLoginModalOpen(false); }}
+                onSwitchToSignup={() => { setIsLoginModalOpen(false); setIsSignupModalOpen(true); }}
+                onSwitchToForgotPassword={() => { setIsLoginModalOpen(false); }}
+            />
+            <SignupModal
+                isOpen={isSignupModalOpen}
+                onClose={() => { setIsSignupModalOpen(false); }}
+                onSwitchToLogin={() => { setIsSignupModalOpen(false); setIsLoginModalOpen(true); }}
+            />
 
             <Footer />
         </div>

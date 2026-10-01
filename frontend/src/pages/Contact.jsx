@@ -97,8 +97,14 @@ export default function Contact() {
         try {
             await api.submitContact({ ...form, phone: form.phone, subject: activeTopic })
             setStatus('success')
-            setForm({ name: '', email: '', phone: '', message: '' })
-            setActiveTopic('')
+            
+            // Auto-reset form after 7 seconds
+            setTimeout(() => {
+                setStatus('idle')
+                setForm({ name: '', email: '', phone: '', message: '' })
+                setActiveTopic('')
+            }, 7000)
+            
         } catch (err) {
             setStatus('error')
             setErrorMsg(err?.response?.data?.detail || 'Something went wrong. Please try again.')
@@ -183,10 +189,10 @@ export default function Contact() {
                                         </svg>
                                     </div>
                                     <h3 className="text-3xl font-black text-slate-900 mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                        Message Sent! 🎉
+                                        Message Received
                                     </h3>
                                     <p className="text-slate-500 font-medium max-w-sm mb-8">
-                                        Thank you for reaching out. Our team will get back to you within 2 business hours.
+                                        Thanks for reaching out! We've got your message and our team will get back to you shortly.
                                     </p>
                                     <button onClick={() => setStatus('idle')}
                                         className="px-8 py-3 bg-[#2b5aeb] hover:bg-[#1a44c9] text-white font-black rounded-2xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">

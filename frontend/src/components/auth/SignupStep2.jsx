@@ -83,6 +83,11 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
             // Generate username from email (before @ symbol)
             const username = email.split('@')[0];
 
+            let securityAnswers = {};
+            try {
+                securityAnswers = JSON.parse(localStorage.getItem('temp_security_answers') || '{}');
+            } catch (e) {}
+
             const registrationData = {
                 username: username,  // REQUIRED by backend
                 email: email,
@@ -91,7 +96,9 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
                 first_name: firstName,
                 last_name: lastName,
                 phone: formData.countryCode + formData.phone,
-                user_type: 'customer' // Default user type
+                user_type: 'customer', // Default user type
+                security_user_type: securityAnswers.userType || '',
+                security_purpose: securityAnswers.purpose || ''
             };
 
             // Call registration API using authService
@@ -108,6 +115,7 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
             onClose();
 
             // Reload to update auth state
+            localStorage.removeItem('temp_security_answers');
             window.location.reload();
 
         } catch (error) {

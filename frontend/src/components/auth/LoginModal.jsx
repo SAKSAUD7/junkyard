@@ -120,7 +120,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
             onClick={handleClose}
         >
             <div
-                className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+                className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close Button */}
@@ -134,26 +134,9 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                     </svg>
                 </button>
 
-                <div className="flex flex-col md:flex-row">
-                    {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-10 flex-col justify-center items-center">
-                        <div className="text-center">
-                            {/* Logo white card */}
-                            <div className="bg-white rounded-2xl shadow-xl px-8 py-6 mb-8 inline-flex items-center justify-center">
-                                <img
-                                    src={logoUrl || '/logo.png'}
-                                    alt="JYNM"
-                                    className="h-16 w-auto object-contain"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                />
-                            </div>
-                            <p className="text-xl font-bold text-white mb-2">Welcome Back!</p>
-                            <p className="text-blue-100 text-sm">Sign in to access your account</p>
-                        </div>
-                    </div>
-
+                <div className="flex flex-col">
                     {/* Right Panel - Login Form */}
-                    <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto max-h-[90vh]">
+                    <div className="w-full p-8 md:p-10 overflow-y-auto max-h-[90vh]">
                         <div className="text-center mb-8">
                             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                                 Welcome <span className="text-blue-600">Back</span>

@@ -79,6 +79,11 @@ api.interceptors.response.use(
 
             // Mark API as globally down so components can skip calls
             sessionStorage.setItem('__api_down', '1');
+            
+            // For public non-critical endpoints, return a graceful fallback to prevent uncaught exceptions
+            if (originalRequest?.url?.includes('/cms/content/') || originalRequest?.url?.includes('/ads/')) {
+                 return Promise.resolve({ data: { results: [], content: {} } });
+            }
         }
 
         return Promise.reject(error);

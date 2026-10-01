@@ -141,10 +141,10 @@ const FAQ = () => {
                         <div key={categoryIdx}>
                             {/* Category Header */}
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="p-3 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600">
+                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 shadow-sm border border-blue-100">
                                     {category.icon}
                                 </div>
-                                <h2 className="font-bold text-2xl text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                <h2 className="font-extrabold text-3xl text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {category.name}
                                 </h2>
                             </div>
@@ -158,28 +158,28 @@ const FAQ = () => {
                                     return (
                                         <div
                                             key={questionIdx}
-                                            className="group rounded-2xl overflow-hidden transition-all duration-300 bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200"
+                                            className="group border-b border-slate-100 last:border-0"
                                         >
                                             <button
                                                 onClick={() => toggleQuestion(categoryIdx, questionIdx)}
-                                                className={`w-full flex items-center justify-between text-left p-6 transition-colors ${isOpen ? 'bg-blue-50/50' : 'bg-transparent'}`}
+                                                className="w-full flex items-center justify-between text-left py-6 transition-all"
                                             >
-                                                <h3 className={`font-bold pr-8 transition-colors text-lg ${isOpen ? 'text-blue-600' : 'text-slate-900'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                                <h3 className={`font-semibold pr-8 text-lg ${isOpen ? 'text-blue-600' : 'text-slate-900 hover:text-blue-600'} transition-colors duration-300`}>
                                                     {item.q}
                                                 </h3>
-                                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180 bg-blue-100' : 'bg-slate-100'}`}>
-                                                    <svg className={`w-5 h-5 transition-colors ${isOpen ? 'text-blue-600' : 'text-slate-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-blue-600 shadow-md rotate-180' : 'bg-slate-50 group-hover:bg-blue-50'}`}>
+                                                    <svg className={`w-4 h-4 transition-colors ${isOpen ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                                                     </svg>
                                                 </div>
                                             </button>
 
-                                            <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-                                                <div className="p-6 pt-0 border-t border-slate-100 bg-white">
-                                                    <p className="leading-relaxed text-slate-600 font-medium whitespace-pre-wrap mt-4">
-                                                        {item.a}
-                                                    </p>
-                                                </div>
+                                            <div 
+                                                className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}
+                                            >
+                                                <p className="leading-relaxed text-slate-600 font-medium text-[15px] whitespace-pre-wrap pr-12">
+                                                    {item.a}
+                                                </p>
                                             </div>
                                         </div>
                                     );

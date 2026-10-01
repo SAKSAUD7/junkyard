@@ -54,7 +54,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
             onClick={handleClose}
         >
             <div
-                className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+                className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close Button */}
@@ -68,25 +68,9 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     </svg>
                 </button>
 
-                <div className="flex flex-col md:flex-row">
-                    {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-10 flex-col justify-center items-center">
-                        <div className="text-center">
-                            <div className="bg-white rounded-2xl shadow-xl px-8 py-6 mb-8 inline-flex items-center justify-center">
-                                <img
-                                    src={logoUrl || '/logo.png'}
-                                    alt="JYNM"
-                                    className="h-16 w-auto object-contain"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                />
-                            </div>
-                            <p className="text-xl font-bold text-white mb-2">Find Auto Parts</p>
-                            <p className="text-blue-100 text-sm">Connect with trusted junkyards nationwide</p>
-                        </div>
-                    </div>
-
+                <div className="flex flex-col">
                     {/* Right Panel - Form */}
-                    <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto max-h-[90vh]">
+                    <div className="w-full p-8 md:p-10 overflow-y-auto max-h-[90vh]">
                         {step === 1 ? (
                             <SignupStep1
                                 formData={formData}

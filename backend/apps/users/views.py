@@ -4,6 +4,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User, VendorProfile
 from .serializers import (
     UserSerializer, 
@@ -28,6 +30,21 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        
+        # Send Welcome Email
+        if user.user_type == 'customer':
+            try:
+                subject = "Welcome to Junkyards Near Me!"
+                message = f"Hi {user.first_name or user.username},\n\nWelcome to Junkyards Near Me! Your buyer account has been successfully created.\nYou can now connect with our verified auto salvage yards nationwide.\n\nBest regards,\nThe JYNM Team"
+                send_mail(
+                    subject,
+                    message,
+                    getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.com'),
+                    [user.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print(f"Failed to send welcome email to {user.email}: {e}")
         
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
