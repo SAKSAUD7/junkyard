@@ -3,7 +3,7 @@ import { useState } from 'react';
 const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
     const [name, setName] = useState(formData.name || '');
     const [phone, setPhone] = useState(formData.phone || '');
-    const [countryCode, setCountryCode] = useState(formData.countryCode || '+91');
+    const [countryCode, setCountryCode] = useState(formData.countryCode || '+1');
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
 
@@ -18,8 +18,8 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
         if (!value) {
             return 'Please fill in this field';
         }
-        if (countryCode === '+91' && !/^\d{10}$/.test(value)) {
-            return 'Please enter a valid 10-digit phone number';
+        if (countryCode === '+1' && !/^\d{10}$/.test(value)) {
+            return 'Please enter a valid 10-digit US/CA phone number';
         }
         return '';
     };
@@ -98,11 +98,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
                             className="w-24 px-2 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             style={{ maxWidth: '90px' }}
                         >
-                            <option value="+91">🇮🇳 +91</option>
                             <option value="+1">🇺🇸 +1</option>
-                            <option value="+44">🇬🇧 +44</option>
-                            <option value="+61">🇦🇺 +61</option>
-                            <option value="+971">🇦🇪 +971</option>
                         </select>
 
                         {/* Phone Input */}

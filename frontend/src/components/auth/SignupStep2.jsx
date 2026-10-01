@@ -11,6 +11,7 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
     const [touched, setTouched] = useState({});
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState('');
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
     const validateEmail = (value) => {
         if (!value) {
@@ -111,12 +112,12 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
             }
 
             // Success message
-            alert('Registration successful! Welcome to JYNM!');
-            onClose();
-
-            // Reload to update auth state
-            localStorage.removeItem('temp_security_answers');
-            window.location.reload();
+            setRegistrationSuccess(true);
+            setTimeout(() => {
+                onClose();
+                localStorage.removeItem('temp_security_answers');
+                window.location.reload();
+            }, 3000);
 
         } catch (error) {
             console.error('Registration error:', error);
@@ -151,6 +152,21 @@ const SignupStep2 = ({ formData, onBack, onClose, onSwitchToLogin }) => {
     };
 
     const isValid = !validateEmail(email) && !validatePassword(password) && !validateConfirmPassword(confirmPassword);
+
+    if (registrationSuccess) {
+        return (
+            <div className="text-center py-8">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
+                <p className="text-gray-600 mb-6">Welcome to JYNM. We are logging you in...</p>
+                <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div>

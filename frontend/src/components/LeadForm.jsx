@@ -1055,7 +1055,12 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                         {/* Phone */}
                         <div className="space-y-1.5">
                             <label className="text-[13px] font-semibold text-slate-700">Phone Number <span className="text-blue-500">*</span></label>
-                            <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 555-5555"
+                            <input type="tel" value={phone} onChange={e => {
+                                const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                const formatted = raw.length > 6 ? `(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}` : 
+                                                  raw.length > 3 ? `(${raw.slice(0,3)}) ${raw.slice(3)}` : raw;
+                                setPhone(formatted);
+                            }} placeholder="(555) 555-5555"
                                 className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400"
                                 required />
                         </div>

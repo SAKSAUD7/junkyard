@@ -109,68 +109,33 @@ const VendorAuthModal = ({ isOpen }) => {
 
     return (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in font-inter">
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col md:flex-row border border-slate-200/50" onClick={(e) => e.stopPropagation()}>
+            <div className="relative bg-white rounded-3xl shadow-2xl max-w-[450px] w-full max-h-[95vh] overflow-y-auto flex flex-col border border-slate-200/50" onClick={(e) => e.stopPropagation()}>
                 
-                {/* Left Panel - Blue Visual (Using similar design to Screenshot 2) */}
-                <div className="hidden md:flex md:w-[42%] bg-gradient-to-br from-blue-700 to-indigo-800 p-10 flex-col justify-center items-center relative overflow-hidden">
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+                <div className="p-8 sm:p-10 relative">
                     
-                    <div className="text-center relative z-10 w-full max-w-[280px]">
-                        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.15)] px-6 py-5 mb-8 mx-auto inline-flex items-center justify-center border border-white/20">
-                            <img
-                                src={getGlobal('brand', 'logo') || '/logo.png'}
-                                alt="JYNM"
-                                className="h-16 w-auto object-contain"
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
+                    {/* Header with Logo */}
+                    <div className="mb-8 text-center flex flex-col items-center">
+                        <div className="mb-6 flex justify-center">
+                            <picture>
+                                <source srcSet="/logo.webp" type="image/webp" />
+                                <img
+                                    src={getGlobal('brand', 'logo') || '/logo.png'}
+                                    alt="JYNM Logo"
+                                    className="h-10 sm:h-12 w-auto object-contain"
+                                />
+                            </picture>
                         </div>
-                        <h2 className="text-2xl font-black text-white mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>Join Vendor Network</h2>
-                        <p className="text-blue-100 text-[14px] leading-relaxed">
-                            List your junkyard, manage inventory, and connect with thousands of serious buyers nationwide.
-                        </p>
-
-                        <div className="mt-10 space-y-4 text-left">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-blue-600/50 flex items-center justify-center border border-blue-400/30">
-                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                </div>
-                                <span className="text-blue-50 text-sm font-semibold">Free directory listing</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-blue-600/50 flex items-center justify-center border border-blue-400/30">
-                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                </div>
-                                <span className="text-blue-50 text-sm font-semibold">Real-time buyer leads</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-blue-600/50 flex items-center justify-center border border-blue-400/30">
-                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                </div>
-                                <span className="text-blue-50 text-sm font-semibold">Business dashboard</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Panel - Form (Matches the layout from Screenshot 2 exactly) */}
-                <div className="w-full md:w-[58%] p-6 sm:p-10 md:p-12 overflow-y-auto max-h-[90vh] bg-white relative">
-                    
-                    {/* Header showing Mode */}
-                    <div className="mb-8">
-                        <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-[26px] font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {mode === 'login' ? 'Vendor Sign In' : 'Vendor Registration'}
-                            </h2>
-                            {/* Instead of a close button, since this intercepts required login, we don't allow closing it unless they click a link to go home. */}
-                            <a href="/" className="text-slate-400 hover:text-slate-600 transition p-2 rounded-full hover:bg-slate-100" title="Go Home">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                            </a>
-                        </div>
-                        <p className="text-slate-500 text-[14px] font-medium">
-                            {mode === 'login' ? 'Sign in to access your yard listing tools.' : 'Step 1 of 1 — Create your partner account'}
+                        <h2 className="text-[26px] font-black tracking-tight text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            {mode === 'login' ? 'Vendor Sign In' : 'Vendor Registration'}
+                        </h2>
+                        <p className="text-slate-500 text-[14px] font-medium max-w-[280px]">
+                            {mode === 'login' ? 'Sign in to access your yard listing tools.' : 'Create your partner account to manage your junkyard.'}
                         </p>
                     </div>
+
+                    <a href="/" className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition p-2 rounded-full hover:bg-slate-100" title="Go Home">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </a>
 
                     {/* Notification Alerts (Copied exactly from Screen 2 style) */}
                     {error && (
