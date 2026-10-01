@@ -20,7 +20,6 @@ const VendorDetail = () => {
     const { id } = params;
     const navigate = useNavigate();
     const [vendor, setVendor] = useState(null);
-    const [vendor, setVendor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
