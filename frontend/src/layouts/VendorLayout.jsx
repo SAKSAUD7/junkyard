@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
-import AdminNotificationDrawer from '../components/AdminNotificationDrawer';
+import NotificationBell from '../components/vendor/NotificationBell';
 
 // Icons
 const Icon = ({ path, path2, className = 'w-5 h-5' }) => (
@@ -43,23 +43,6 @@ const VendorLayout = () => {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [logo, setLogo] = useState('');
-    // Notification bell state
-    const [notifOpen, setNotifOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
-
-    // Fetch unread notification count — poll every 60s
-    const fetchUnreadCount = useCallback(async () => {
-        try {
-            const res = await api.getUnreadNotificationsCount();
-            setUnreadCount(res.unread_count || 0);
-        } catch {}
-    }, []);
-
-    useEffect(() => {
-        fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 60000);
-        return () => clearInterval(interval);
-    }, [fetchUnreadCount]);
 
     useEffect(() => {
         (async () => {
@@ -207,22 +190,7 @@ const VendorLayout = () => {
 
                     <div className="flex items-center gap-3">
                         {/* Notification Bell */}
-                        <div className="relative">
-                            <button
-                                onClick={() => setNotifOpen(true)}
-                                className={`relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all ${notifOpen ? 'bg-blue-50 text-blue-600 border-blue-100' : ''}`}
-                                title="Notifications"
-                            >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                {unreadCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white flex items-center justify-center">
-                                        {unreadCount > 99 ? '99+' : unreadCount}
-                                    </span>
-                                )}
-                            </button>
-                        </div>
+                        <NotificationBell />
                         {/* Yard name pill */}
                         <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5">
                             <div className="w-5 h-5 rounded-full bg-[#1a56ff] flex items-center justify-center flex-shrink-0">
@@ -276,11 +244,7 @@ const VendorLayout = () => {
                 ))}
             </nav>
 
-            {/* Notification Drawer */}
-            <AdminNotificationDrawer
-                isOpen={notifOpen}
-                onClose={() => setNotifOpen(false)}
-            />
+
         </div>
     );
 };

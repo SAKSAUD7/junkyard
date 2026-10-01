@@ -137,7 +137,11 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                 <div className="flex flex-col">
                     {/* Right Panel - Login Form */}
                     <div className="w-full p-8 md:p-10 overflow-y-auto max-h-[90vh]">
-                        <div className="text-center mb-8">
+                        <div className="text-center mb-8 flex flex-col items-center">
+                            <picture>
+                                <source srcSet="/logo.webp" type="image/webp" />
+                                <img src="/logo.png" alt="JYNM Logo" className="h-12 sm:h-14 w-auto object-contain mb-4" />
+                            </picture>
                             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                                 Welcome <span className="text-blue-600">Back</span>
                             </h1>
@@ -165,14 +169,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                                     onChange={(e) => setEmail(e.target.value)}
                                     onBlur={() => handleBlur('email')}
                                     placeholder="your.email@example.com"
-                                    style={{
-                                        padding: '1.5rem 1.75rem',
-                                        fontSize: '1.125rem',
-                                        minHeight: '4rem',
-                                        borderRadius: '0.875rem',
-                                        lineHeight: '1.5'
-                                    }}
-                                    className={`w-full border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                 />
                                 {touched.email && errors.email && (
@@ -190,14 +187,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    style={{
-                                        padding: '1.5rem 1.75rem',
-                                        fontSize: '1.125rem',
-                                        minHeight: '4rem',
-                                        borderRadius: '0.875rem',
-                                        lineHeight: '1.5'
-                                    }}
-                                    className={`w-full border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                 />
                                 {touched.password && errors.password && (
@@ -224,13 +214,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
                             <button
                                 type="submit"
                                 disabled={!isValid || loading}
-                                style={{
-                                    padding: '1.25rem 2.25rem',
-                                    fontSize: '1.125rem',
-                                    minHeight: '3.5rem',
-                                    borderRadius: '0.75rem'
-                                }}
-                                className={`w-full font-semibold text-slate-800 transition-all ${isValid && !loading
+                                className={`w-full py-3 px-4 rounded-lg font-semibold text-slate-800 transition-all ${isValid && !loading
                                     ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
                                     : 'bg-gray-300 cursor-not-allowed'
                                     }`}

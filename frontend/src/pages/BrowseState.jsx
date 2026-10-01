@@ -195,11 +195,12 @@ export default function BrowseState() {
 
                                             {/* Status Badge */}
                                             <div className="flex items-center gap-1 justify-between px-3 md:px-4 pt-3 md:pt-4">
-                                                <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-wider px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-full border ${badgeColor}`}>
-                                                    ✓ {vendor.is_featured ? 'Featured' : vendor.is_top_rated ? 'Top Rated' : 'Verified'}
-                                                </span>
-                                                {(vendor.is_top_rated || vendor.is_featured) && (
+                                                {(vendor.is_top_rated || vendor.is_featured) ? (
                                                     <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} compact={true} />
+                                                ) : (
+                                                    <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-wider px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-full border ${badgeColor}`}>
+                                                        ✓ Verified
+                                                    </span>
                                                 )}
                                             </div>
 

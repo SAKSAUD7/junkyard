@@ -9,7 +9,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
-        countryCode: '+91',
+        countryCode: '+1',
         email: '',
         password: '',
         confirmPassword: ''
@@ -29,7 +29,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         setFormData({
             name: '',
             phone: '',
-            countryCode: '+91',
+            countryCode: '+1',
             email: '',
             password: '',
             confirmPassword: ''

@@ -57,7 +57,11 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
 
     return (
         <div>
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 flex flex-col items-center">
+                <picture>
+                    <source srcSet="/logo.webp" type="image/webp" />
+                    <img src="/logo.png" alt="JYNM Logo" className="h-12 sm:h-14 w-auto object-contain mb-4" />
+                </picture>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                     Welcome to <span className="text-blue-600">JYNM</span>!
                 </h1>
@@ -77,7 +81,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
                         onChange={(e) => setName(e.target.value)}
                         onBlur={() => handleBlur('name')}
                         placeholder="eg. Arun"
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'
                             }`}
                     />
                     {touched.name && errors.name && (
@@ -95,7 +99,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
                         <select
                             value={countryCode}
                             onChange={(e) => setCountryCode(e.target.value)}
-                            className="w-24 px-2 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
+                            className="w-24 px-2 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             style={{ maxWidth: '90px' }}
                         >
                             <option value="+1">🇺🇸 +1</option>
@@ -108,7 +112,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
                             value={phone}
                             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                             onBlur={() => handleBlur('phone')}
-                            className={`flex-1 px-3 py-3 border-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                            className={`flex-1 px-3 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                             placeholder="eg. 9999999999"
                             maxLength={10}
                             style={{

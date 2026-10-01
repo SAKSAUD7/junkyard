@@ -665,20 +665,29 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const handleReset = () => {
         setIsSuccess(false)
         setCurrentStep(1)
-        // Keep selected tab? Or reset? Usually keep tab. 
-        // Reset fields only.
         setSelectedMake('')
+        setSelectedMakeName('')
         setSelectedModel('')
+        setSelectedModelName('')
         setSelectedPart('')
+        setSelectedPartName('')
         setSelectedYear('')
         setName('')
         setEmail('')
         setPhone('')
         setState('')
         setZip('')
+        setZipcodeCity('')
         setOptions('')
         setHollanderNumber('')
+        setQuestionAnswers([])
+        setCurrentQuestion(null)
+        setCandidatesCount(0)
+        setTotalVariants(0)
+        setHollanderResolved(false)
         setUserSecurityCode('')
+        setTurnstileToken('')
+        setSubmitError(null)
         generateSecurityCode()
     }
 
