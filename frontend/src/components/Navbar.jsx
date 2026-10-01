@@ -83,7 +83,7 @@ export default function Navbar() {
                                     alt="JYNM Logo"
                                     width="44"
                                     height="44"
-                                    fetchPriority="high"
+                                    fetchpriority="high"
                                     className="h-9 md:h-11 w-auto object-contain"
                                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />

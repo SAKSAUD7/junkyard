@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 import Captcha from "../Captcha";
 import PincodeSearch from "../PincodeSearch";
@@ -859,6 +860,16 @@ export default function HeroSection({ get, ready = false }) {
                   </button>
                 </div>
               )}
+
+              {/* HOW CAN WE HELP YOU DEEP LINKS */}
+              <div className="absolute -bottom-[52px] left-0 right-0 flex justify-center items-center gap-2 sm:gap-4 scale-90 sm:scale-100 w-full animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+                <span className="hidden sm:inline-flex text-[10px] font-black text-slate-400 bg-white/70 backdrop-blur-sm uppercase tracking-widest px-3 py-1 rounded-full border border-slate-200">
+                  More Services
+                </span>
+                <Link to="/sell-your-car" className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700 uppercase tracking-wider px-4 py-2 rounded-full hover:border-blue-300 hover:text-blue-600 transition-all hover:bg-white z-50 pointer-events-auto">
+                  🚗 Sell Your Vehicle
+                </Link>
+              </div>
 
               {!heroSuccess &&
                 heroStep === 1 &&

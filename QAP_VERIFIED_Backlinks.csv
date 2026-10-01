@@ -1,0 +1,362 @@
+Domain,Category,Estimated DA,Strategy,Target URL,Live Check,HTTP Status,Live Check,HTTP Status
+cars.com,Automotive Directory,85+,List business / content placement,https://cars.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+autotrader.com,Automotive Marketplace,84+,Dealer listing,https://autotrader.com,LIVE,200,LIVE,200
+kbb.com,Automotive Directory,85+,Content/resource link,https://kbb.com,LIVE,200,LIVE,200
+edmunds.com,Automotive Directory,86+,Resource/guide link,https://edmunds.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+cargurus.com,Automotive Directory,80+,Dealer listing,https://cargurus.com,CHECK MANUALLY,406,CHECK MANUALLY,406
+carfax.com,Automotive Resource,82+,Resource link,https://carfax.com,LIVE,200,LIVE,200
+truecar.com,Automotive Marketplace,79+,Resource/dealer link,https://truecar.com,LIVE,200,LIVE,200
+motortrend.com,Automotive Magazine,89+,Guest post / editorial,https://motortrend.com,LIVE,200,LIVE,200
+caranddriver.com,Automotive Magazine,88+,Guest post / editorial,https://caranddriver.com,LIVE,200,LIVE,200
+roadandtrack.com,Automotive Magazine,87+,Guest post / editorial,https://roadandtrack.com,LIVE,200,LIVE,200
+popularmechanics.com,Automotive Magazine,90+,Guest post / editorial,https://popularmechanics.com,LIVE,200,LIVE,200
+consumerreports.org,Review/Research,91+,Resource mention,https://consumerreports.org,LIVE,200,LIVE,200
+autoweek.com,Automotive Magazine,83+,Guest post,https://autoweek.com,LIVE,200,LIVE,200
+autoblog.com,Automotive Blog,87+,Guest post / editorial,https://autoblog.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+motor1.com,Automotive Blog,80+,Guest post,https://motor1.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+thecarconnection.com,Resource/Blog,80+,Guest post,https://thecarconnection.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+autoevolution.com,Automotive Blog,80+,Guest post,https://autoevolution.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+hemmings.com,Automotive Marketplace,75+,Listing / article,https://hemmings.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+repairpal.com,Auto Repair Directory,70+,Business listing,https://repairpal.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+carcomplaints.com,Auto Resource,65+,Resource mention,https://carcomplaints.com,LIVE,200,LIVE,200
+partsgeek.com,Parts Directory,68+,Link outreach,https://partsgeek.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+rockauto.com,Parts Marketplace,72+,Resource link,https://rockauto.com,LIVE,200,LIVE,200
+autozone.com,Parts Retailer,76+,Resource mention,https://autozone.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+oreillyauto.com,Parts Retailer,75+,Resource mention,https://oreillyauto.com,LIVE,200,LIVE,200
+napaonline.com,Parts Retailer,74+,Resource mention,https://napaonline.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+1aauto.com,Parts/How-To,63+,Guest post / how-to,https://1aauto.com,LIVE,200,LIVE,200
+dormanproducts.com,Auto Parts,67+,Resource link,https://dormanproducts.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+advanceautoparts.com,Parts Retailer,74+,Resource mention,https://advanceautoparts.com,LIVE,200,LIVE,200
+motorcar.com,Auto Parts Directory,60+,Directory listing,https://motorcar.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+car-part.com,Salvage Parts Directory,65+,Directory listing,https://car-part.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+yelp.com,Local Business Directory,93+,Business listing,https://yelp.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+yellowpages.com,Business Directory,89+,Business listing,https://yellowpages.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+bbb.org,Business Directory,91+,Business listing,https://bbb.org,LIVE,200,LIVE,200
+manta.com,Business Directory,84+,Business listing,https://manta.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+angi.com,Local Services,87+,Business listing,https://angi.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+thumbtack.com,Local Services,85+,Business listing,https://thumbtack.com,LIVE,202,LIVE,202
+chamberofcommerce.com,Business Directory,82+,Business listing,https://chamberofcommerce.com,LIVE,200,LIVE,200
+merchantcircle.com,Business Directory,78+,Business listing,https://merchantcircle.com,LIVE,200,LIVE,200
+foursquare.com,Business Directory,90+,Business listing,https://foursquare.com,LIVE,200,LIVE,200
+hotfrog.com,Business Directory,75+,Business listing,https://hotfrog.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+cylex-usa.com,Business Directory,72+,Business listing,https://cylex-usa.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+businessfinder.com,Business Directory,65+,Business listing,https://businessfinder.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+brownbook.net,Business Directory,68+,Business listing,https://brownbook.net,CHECK MANUALLY,403,CHECK MANUALLY,403
+local.com,Business Directory,72+,Business listing,https://local.com,LIVE,200,LIVE,200
+superpages.com,Business Directory,82+,Business listing,https://superpages.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+whitepages.com,Business Directory,85+,Business listing,https://whitepages.com,LIVE,200,LIVE,200
+citysearch.com,Business Directory,80+,Business listing,https://citysearch.com,LIVE,200,LIVE,200
+bizapedia.com,Business Directory,63+,Business listing,https://bizapedia.com,LIVE,200,LIVE,200
+opendius.com,Business Directory,62+,Business listing,https://opendius.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+infobel.com,Business Directory,65+,Business listing,https://infobel.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+corvetteforum.com,Automotive Forum,65+,Community post / signature link,https://corvetteforum.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vwvortex.com,Automotive Forum,75+,Community post / signature link,https://vwvortex.com,LIVE,202,LIVE,202
+bimmerpost.com,Automotive Forum,70+,Community post / signature link,https://bimmerpost.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+clublexus.com,Automotive Forum,65+,Community post / signature link,https://clublexus.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+rennlist.com,Automotive Forum,68+,Community post / signature link,https://rennlist.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+ford-trucks.com,Automotive Forum,68+,Community post / signature link,https://ford-trucks.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+f150forum.com,Automotive Forum,65+,Community post / signature link,https://f150forum.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+tacomaworld.com,Automotive Forum,65+,Community post / signature link,https://tacomaworld.com,LIVE,200,LIVE,200
+tacoma.net,Automotive Forum,55+,Community post / signature link,https://tacoma.net,CHECK MANUALLY,0,CHECK MANUALLY,0
+jeepforum.com,Automotive Forum,60+,Community post / signature link,https://jeepforum.com,LIVE,202,LIVE,202
+jlranglerforums.com,Automotive Forum,60+,Community post / signature link,https://jlranglerforums.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+jeeppatriots.com,Automotive Forum,55+,Community post / signature link,https://jeeppatriots.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+camaro6.com,Automotive Forum,55+,Community post / signature link,https://camaro6.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+mustang6g.com,Automotive Forum,55+,Community post / signature link,https://mustang6g.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+challengertalk.com,Automotive Forum,55+,Community post / signature link,https://challengertalk.com,LIVE,202,LIVE,202
+chargerforums.com,Automotive Forum,55+,Community post / signature link,https://chargerforums.com,LIVE,202,LIVE,202
+dodgetalk.com,Automotive Forum,58+,Community post / signature link,https://dodgetalk.com,LIVE,202,LIVE,202
+ramforum.com,Automotive Forum,55+,Community post / signature link,https://ramforum.com,LIVE,200,LIVE,200
+silveradosierra.com,Automotive Forum,62+,Community post / signature link,https://silveradosierra.com,LIVE,202,LIVE,202
+gm-trucks.com,Automotive Forum,60+,Community post / signature link,https://gm-trucks.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+tundrasolutions.com,Automotive Forum,55+,Community post / signature link,https://tundrasolutions.com,LIVE,202,LIVE,202
+titantalk.com,Automotive Forum,55+,Community post / signature link,https://titantalk.com,LIVE,202,LIVE,202
+clubfrontier.org,Automotive Forum,55+,Community post / signature link,https://clubfrontier.org,LIVE,202,LIVE,202
+nissanclub.com,Automotive Forum,58+,Community post / signature link,https://nissanclub.com,LIVE,202,LIVE,202
+teamintegra.net,Automotive Forum,55+,Community post / signature link,https://teamintegra.net,CHECK MANUALLY,0,CHECK MANUALLY,0
+s2ki.com,Automotive Forum (Honda),60+,Community post / signature link,https://s2ki.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+miata.net,Automotive Forum,60+,Community post / signature link,https://miata.net,CHECK MANUALLY,403,CHECK MANUALLY,403
+audizine.com,Automotive Forum,60+,Community post / signature link,https://audizine.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+mbworld.org,Automotive Forum,65+,Community post / signature link,https://mbworld.org,CHECK MANUALLY,403,CHECK MANUALLY,403
+yellowbullet.com,Automotive Forum,55+,Community post / signature link,https://yellowbullet.com,LIVE,202,LIVE,202
+supraforums.com,Automotive Forum,55+,Community post / signature link,https://supraforums.com,LIVE,202,LIVE,202
+rx7club.com,Automotive Forum,55+,Community post / signature link,https://rx7club.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+nasioc.com,Subaru Forum,65+,Community post / signature link,https://nasioc.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+clubwrx.net,Subaru Forum,55+,Community post / signature link,https://clubwrx.net,LIVE,202,LIVE,202
+cars.net,Automotive Forum,65+,Community post / signature link,https://cars.net,CHECK MANUALLY,503,CHECK MANUALLY,503
+ls1tech.com,GM Automotive Forum,60+,Community post / signature link,https://ls1tech.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+ft86club.com,Toyota 86 Forum,60+,Community post / signature link,https://ft86club.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+scionlife.com,Scion Forum,57+,Community post / signature link,https://scionlife.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+priuschat.com,Toyota Prius Forum,60+,Community post / signature link,https://priuschat.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+verdad-tr.com,Hispanic Auto Forum,50+,Community post / signature link,https://verdad-tr.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+motoringtalk.com,Automotive Forum,52+,Community post / signature link,https://motoringtalk.com,LIVE,200,LIVE,200
+automotiveforums.com,Automotive Forum,65+,Community post / signature link,https://automotiveforums.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vetteweb.com,Corvette Forum,55+,Community post / signature link,https://vetteweb.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+stangnet.com,Mustang Forum,58+,Community post / signature link,https://stangnet.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+cobaltss.net,Chevy Cobalt Forum,52+,Community post / signature link,https://cobaltss.net,CHECK MANUALLY,403,CHECK MANUALLY,403
+carguide.net,Automotive Forum,55+,Community post / signature link,https://carguide.net,CHECK MANUALLY,0,CHECK MANUALLY,0
+cardomain.com,Automotive Forum,72+,Community post / garage listing,https://cardomain.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+carstuff.com,Automotive Forum,60+,Community post / signature link,https://carstuff.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+performancetrucks.net,Truck Forum,55+,Community post / signature link,https://performancetrucks.net,CHECK MANUALLY,403,CHECK MANUALLY,403
+car-revs-daily.com,Auto Blog/Forum,55+,Guest post / community,https://car-revs-daily.com,LIVE,200,LIVE,200
+carlovers.in,Auto Forum,50+,Community post,https://carlovers.in,CHECK MANUALLY,0,CHECK MANUALLY,0
+u-pull-it.com,Salvage Directory,55+,Business listing / link,https://u-pull-it.com,LIVE,200,LIVE,200
+part-locator.com,Parts Locator,58+,Business listing,https://part-locator.com,LIVE,200,LIVE,200
+pullmoreparts.com,Salvage Directory,52+,Business listing,https://pullmoreparts.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+lkqcorp.com,Auto Parts / Salvage,68+,Resource link,https://lkqcorp.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+picknsave.com,Salvage Yards,50+,Business listing,https://picknsave.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+usedpartcentral.com,Used Parts Directory,52+,Business listing,https://usedpartcentral.com,LIVE,200,LIVE,200
+autopartslocator24.com,Parts Locator,50+,Business listing,https://autopartslocator24.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+find-auto-parts.com,Parts Directory,50+,Business listing,https://find-auto-parts.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+usedcarparts.com,Used Parts Directory,55+,Business listing,https://usedcarparts.com,LIVE,200,LIVE,200
+caryardlocator.com,Junkyard Directory,50+,Business listing,https://caryardlocator.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+junk-yards.com,Junkyard Directory,60+,Business listing,https://junk-yards.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+autopartlocator.com,Parts Locator,53+,Business listing,https://autopartlocator.com,LIVE,200,LIVE,200
+localautosalvage.com,Junkyard Directory,51+,Business listing,https://localautosalvage.com,LIVE,200,LIVE,200
+interstatejunkyard.com,Salvage Network,54+,Business listing,https://interstatejunkyard.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+usedparts.net,Used Parts Directory,50+,Business listing,https://usedparts.net,LIVE,200,LIVE,200
+thetruthaboutcars.com,Automotive Blog,75+,Guest post,https://thetruthaboutcars.com,LIVE,200,LIVE,200
+speedhunters.com,Automotive Blog,72+,Guest post,https://speedhunters.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+jalopyjournal.com,Automotive Blog,60+,Guest post,https://jalopyjournal.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+motorlogy.com,Automotive Blog,55+,Guest post,https://motorlogy.com,LIVE,200,LIVE,200
+topspeed.com,Automotive Blog,72+,Guest post,https://topspeed.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+driving.ca,Automotive Blog,60+,Guest post,https://driving.ca,LIVE,200,LIVE,200
+autoguide.com,Automotive Blog,70+,Guest post,https://autoguide.com,LIVE,200,LIVE,200
+carbuzz.com,Automotive Blog,73+,Guest post / editorial,https://carbuzz.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+caradvice.com.au,Automotive Blog,70+,Guest post,https://caradvice.com.au,CHECK MANUALLY,0,CHECK MANUALLY,0
+drivingeldorado.com,Automotive Blog,40+,Guest post,https://drivingeldorado.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+usedcarblog.com,Automotive Blog,42+,Guest post,https://usedcarblog.com,LIVE,200,LIVE,200
+mechanicbase.com,Auto Repair Blog,55+,Guest post,https://mechanicbase.com,LIVE,200,LIVE,200
+repairsmith.com,Auto Repair Blog,62+,Resource/guest post,https://repairsmith.com,LIVE,200,LIVE,200
+yourmechanic.com,Auto Repair Blog,67+,Guest post / resource,https://yourmechanic.com,LIVE,200,LIVE,200
+fiix.io,Auto Repair Blog,55+,Guest post,https://fiix.io,CHECK MANUALLY,0,CHECK MANUALLY,0
+drivemag.com,Automotive Blog,60+,Guest post,https://drivemag.com,LIVE,200,LIVE,200
+carbibles.com,Automotive Resource,58+,Guest post,https://carbibles.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+wikimotors.us,Automotive Resource,48+,Guest post,https://wikimotors.us,CHECK MANUALLY,0,CHECK MANUALLY,0
+enginepatrol.com,Automotive Blog,50+,Guest post,https://enginepatrol.com,LIVE,200,LIVE,200
+theautomobilist.com,Automotive Blog,48+,Guest post,https://theautomobilist.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+cartechnews.com,Automotive News,55+,Guest post / editorial,https://cartechnews.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+driverseat.ca,Automotive Blog,50+,Guest post,https://driverseat.ca,CHECK MANUALLY,0,CHECK MANUALLY,0
+mymotorscoop.com,Automotive Blog,45+,Guest post,https://mymotorscoop.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+autoweek.com,Automotive Magazine,80+,Guest post,https://autoweek.com,LIVE,200,LIVE,200
+wheelsage.org,Automotive Blog,52+,Guest post,https://wheelsage.org,LIVE,200,LIVE,200
+autocar.co.uk,Automotive Magazine,82+,Guest post,https://autocar.co.uk,LIVE,202,LIVE,202
+whatcar.com,Automotive Magazine,78+,Guest post,https://whatcar.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+parkers.co.uk,Automotive Resource,70+,Guest post,https://parkers.co.uk,LIVE,200,LIVE,200
+greencarguide.co.uk,Automotive Blog,55+,Guest post,https://greencarguide.co.uk,LIVE,200,LIVE,200
+cleanfleetreport.com,EV/Green Automotive Blog,55+,Guest post,https://cleanfleetreport.com,CHECK MANUALLY,406,CHECK MANUALLY,406
+evobsession.com,EV Blog,55+,Guest post,https://evobsession.com,LIVE,200,LIVE,200
+plugincars.com,EV Blog,58+,Guest post,https://plugincars.com,LIVE,200,LIVE,200
+electrek.co,EV Blog,82+,Guest post / editorial,https://electrek.co,LIVE,200,LIVE,200
+insideevs.com,EV News,80+,Guest post,https://insideevs.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+greenauto.com,EV/Green Auto Blog,50+,Guest post,https://greenauto.com,LIVE,200,LIVE,200
+automotiveit.com,Auto Tech Blog,50+,Guest post,https://automotiveit.com,LIVE,200,LIVE,200
+carscoops.com,Auto News Blog,75+,Guest post,https://carscoops.com,LIVE,200,LIVE,200
+driving.ca,Canadian Auto Blog,62+,Guest post,https://driving.ca,LIVE,200,LIVE,200
+motoringfile.com,MINI Blog,55+,Guest post,https://motoringfile.com,LIVE,200,LIVE,200
+motormouth.ca,Canadian Auto Blog,55+,Guest post,https://motormouth.ca,CHECK MANUALLY,0,CHECK MANUALLY,0
+quora.com,Q&A Platform,92+,Expert Answer with link,https://quora.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/AskMechanics,Forum/Q&A,95+,Community post / expert reply,https://reddit.com/r/AskMechanics,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/AutoMechanics,Forum/Q&A,95+,Community post,https://reddit.com/r/AutoMechanics,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/cars,Forum/Q&A,95+,Community post,https://reddit.com/r/cars,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/UsedCars,Forum/Q&A,95+,Community post,https://reddit.com/r/UsedCars,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/Justrolledintotheshop,Forum/Q&A,95+,Community post,https://reddit.com/r/Justrolledintotheshop,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/autoparts,Forum/Q&A,95+,Community post,https://reddit.com/r/autoparts,CHECK MANUALLY,403,CHECK MANUALLY,403
+reddit.com/r/CarProblems,Forum/Q&A,95+,Community post,https://reddit.com/r/CarProblems,CHECK MANUALLY,403,CHECK MANUALLY,403
+answers.yahoo.com,Q&A Platform,82+,Expert Answer,https://answers.yahoo.com,CHECK MANUALLY,500,CHECK MANUALLY,500
+producthunt.com,Product/App Directory,90+,Product listing,https://producthunt.com,LIVE,200,LIVE,200
+medium.com,Publishing Platform,95+,Article with link,https://medium.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+linkedin.com,Professional Network,98+,Article / posts with link,https://linkedin.com,LIVE,200,LIVE,200
+facebook.com,Social,100+,Business page / group posts,https://facebook.com,LIVE,200,LIVE,200
+twitter.com,Social,94+,Profile link + mentions,https://twitter.com,LIVE,200,LIVE,200
+instagram.com,Social,93+,Bio link,https://instagram.com,LIVE,200,LIVE,200
+youtube.com,Video Platform,100+,Video description link,https://youtube.com,LIVE,200,LIVE,200
+pinterest.com,Visual Platform,94+,Pins with links,https://pinterest.com,LIVE,200,LIVE,200
+tumblr.com,Blogging Platform,85+,Blog post with link,https://tumblr.com,LIVE,200,LIVE,200
+wordpress.com,Blogging Platform,92+,Blog post with link,https://wordpress.com,LIVE,200,LIVE,200
+blogspot.com,Blogging Platform,97+,Blog post with link,https://blogspot.com,LIVE,200,LIVE,200
+blogger.com,Blogging Platform,97+,Blog post with link,https://blogger.com,LIVE,200,LIVE,200
+wix.com,Website Builder,93+,Free site with link,https://wix.com,LIVE,200,LIVE,200
+weebly.com,Website Builder,87+,Free site with link,https://weebly.com,LIVE,200,LIVE,200
+sites.google.com,Google Sites,100+,Free page with link,https://sites.google.com,LIVE,200,LIVE,200
+hub.docker.com,Tech Platform,89+,Profile link,https://hub.docker.com,LIVE,200,LIVE,200
+github.com,Tech Platform,96+,Repo / profile link,https://github.com,LIVE,200,LIVE,200
+nytimes.com,National News,96+,HARO/resource mention,https://nytimes.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+usatoday.com,National News,94+,HARO/resource mention,https://usatoday.com,LIVE,200,LIVE,200
+wsj.com,National News,97+,HARO/resource mention,https://wsj.com,CHECK MANUALLY,401,CHECK MANUALLY,401
+forbes.com,Business/Finance News,95+,Contributor article,https://forbes.com,LIVE,200,LIVE,200
+businessinsider.com,News,93+,HARO/resource mention,https://businessinsider.com,LIVE,200,LIVE,200
+huffpost.com,News/Blog,91+,Contributor article,https://huffpost.com,LIVE,200,LIVE,200
+thebalance.com,Finance/Resource,88+,Resource mention,https://thebalance.com,CHECK MANUALLY,402,CHECK MANUALLY,402
+usnews.com/cars,News/Automotive,91+,Resource mention,https://usnews.com/cars,LIVE,200,LIVE,200
+time.com,News Magazine,95+,HARO,https://time.com,LIVE,200,LIVE,200
+cnet.com/roadshow,Tech/Automotive,93+,Resource mention,https://cnet.com/roadshow,LIVE,200,LIVE,200
+motorauthority.com,Auto News,75+,Guest post,https://motorauthority.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+wheels.ca,Canadian Auto News,60+,Guest post,https://wheels.ca,CHECK MANUALLY,403,CHECK MANUALLY,403
+driving.co.uk,UK Auto News,65+,Guest post,https://driving.co.uk,LIVE,200,LIVE,200
+motoringresearch.com,UK Auto Research,60+,Guest post,https://motoringresearch.com,LIVE,200,LIVE,200
+driving.com,Automotive,62+,Guest post,https://driving.com,LIVE,200,LIVE,200
+autonews.com,Automotive Trade News,80+,Resource / editorial,https://autonews.com,LIVE,200,LIVE,200
+wardsauto.com,Automotive Trade,72+,Resource / editorial,https://wardsauto.com,LIVE,200,LIVE,200
+fleetowner.com,Fleet/Commercial,65+,Guest post / resource,https://fleetowner.com,LIVE,200,LIVE,200
+truckinginfo.com,Trucking Industry,62+,Guest post / resource,https://truckinginfo.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+ccjdigital.com,Commercial Vehicle,60+,Guest post / resource,https://ccjdigital.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+mapquest.com,Local Citation,88+,Business listing,https://mapquest.com,LIVE,202,LIVE,202
+bing.com/places,Local Citation,97+,Business listing,https://bing.com/places,CHECK MANUALLY,404,CHECK MANUALLY,404
+yahoo.com/local,Local Citation,97+,Business listing,https://yahoo.com/local,LIVE,200,LIVE,200
+apple.com/maps,Local Citation,100+,Business listing,https://apple.com/maps,LIVE,200,LIVE,200
+here.com,Local Citation,85+,Business listing,https://here.com,LIVE,200,LIVE,200
+tomtom.com,Local Citation,80+,Business listing,https://tomtom.com,LIVE,200,LIVE,200
+waze.com,Local Citation,88+,Business listing,https://waze.com,LIVE,200,LIVE,200
+ezlocal.com,Local Citation,70+,Business listing,https://ezlocal.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+n49.com,Local Citation,65+,Business listing,https://n49.com,LIVE,200,LIVE,200
+getfave.com,Local Citation,68+,Business listing,https://getfave.com,LIVE,200,LIVE,200
+angieslist.com,Local Services,87+,Business listing,https://angieslist.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+houzz.com,Local Services,90+,Business listing,https://houzz.com,LIVE,200,LIVE,200
+trustpilot.com,Reviews,92+,Business listing,https://trustpilot.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+g2.com,Reviews,88+,Business listing,https://g2.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+capterra.com,Reviews,85+,Business listing,https://capterra.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+glassdoor.com,Reviews,91+,Business listing,https://glassdoor.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+indeed.com,Business,92+,Company listing,https://indeed.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+alignable.com,Small Business Network,72+,Business listing,https://alignable.com,LIVE,200,LIVE,200
+nextdoor.com,Local Community,88+,Business listing,https://nextdoor.com,LIVE,200,LIVE,200
+expertise.com,Local Services,70+,Business listing,https://expertise.com,LIVE,200,LIVE,200
+bark.com,Local Services,78+,Business listing,https://bark.com,LIVE,200,LIVE,200
+homeadvisor.com,Local Services,87+,Business listing,https://homeadvisor.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+porch.com,Local Services,72+,Business listing,https://porch.com,LIVE,200,LIVE,200
+nearbynow.com,Local Services,62+,Business listing,https://nearbynow.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+ase.com,Auto Tech Association,68+,Resource / partner link,https://ase.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+aaia.org,Auto Industry Association,62+,Member link,https://aaia.org,CHECK MANUALLY,0,CHECK MANUALLY,0
+sema.org,Specialty Equipment,72+,Member link,https://sema.org,LIVE,200,LIVE,200
+nada.org,Dealer Association,70+,Resource link,https://nada.org,LIVE,200,LIVE,200
+aaaa.org,Aftermarket Association,62+,Member link,https://aaaa.org,LIVE,200,LIVE,200
+automotiveserviceassociation.org,Auto Service Assoc,60+,Member link,https://automotiveserviceassociation.org,CHECK MANUALLY,0,CHECK MANUALLY,0
+aapexshow.com,Auto Parts Trade Show,60+,Exhibitor link,https://aapexshow.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+motorist.org,AAA Motorist,78+,Resource link,https://motorist.org,CHECK MANUALLY,0,CHECK MANUALLY,0
+aaa.com,Auto Club,90+,Resource / partner link,https://aaa.com,LIVE,200,LIVE,200
+carcare.org,Car Care Council,65+,Resource mention,https://carcare.org,LIVE,200,LIVE,200
+goodwillcardonation.com,Auto Charity,60+,Partner link,https://goodwillcardonation.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+automotivetechnology.org,Auto Tech Education,55+,Resource link,https://automotivetechnology.org,LIVE,200,LIVE,200
+icar.com,Auto Repair Training,62+,Resource link,https://icar.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+collision.org,Collision Repair,60+,Resource link,https://collision.org,LIVE,200,LIVE,200
+aiag.org,Automotive Industry Action Group,68+,Resource link,https://aiag.org,LIVE,200,LIVE,200
+epa.gov/greenvehicles,Govt/Environment,95+,Resource mention,https://epa.gov/greenvehicles,LIVE,200,LIVE,200
+fueleconomy.gov,Govt Reference,92+,Resource mention,https://fueleconomy.gov,LIVE,200,LIVE,200
+vehiclesandenvironment.com,Environment Auto Blog,52+,Guest post,https://vehiclesandenvironment.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+greencarreports.com,Green Auto News,78+,Guest post,https://greencarreports.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+hybridcars.com,Hybrid/EV Blog,70+,Guest post / resource,https://hybridcars.com,LIVE,200,LIVE,200
+pluginamerica.org,EV Association,62+,Resource link,https://pluginamerica.org,CHECK MANUALLY,403,CHECK MANUALLY,403
+electricdriving.net,EV Blog,52+,Guest post,https://electricdriving.net,LIVE,200,LIVE,200
+mynissanleaf.com,EV Forum,60+,Community post,https://mynissanleaf.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+teslamotorsclub.com,Tesla Forum,72+,Community post,https://teslamotorsclub.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+electrifyamerica.com,EV Charging,68+,Resource link,https://electrifyamerica.com,LIVE,200,LIVE,200
+2carpros.com,Auto Repair Q&A,60+,Expert answer / resource link,https://2carpros.com,LIVE,200,LIVE,200
+justanswer.com,Expert Q&A,82+,Expert answer,https://justanswer.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+fixya.com,Tech Q&A,72+,Expert answer / resource link,https://fixya.com,LIVE,202,LIVE,202
+automd.com,Auto Repair Resource,60+,Resource link,https://automd.com,LIVE,200,LIVE,200
+mechaniclibrary.com,Auto Repair Guide,55+,Guest post,https://mechaniclibrary.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+automotivehandbook.com,Auto Guides,50+,Guest post,https://automotivehandbook.com,LIVE,200,LIVE,200
+chrisfix.com,DIY Auto Blog/YT,55+,Community / resource link,https://chrisfix.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+doityourself.com,DIY Blog,78+,Guest post / resource,https://doityourself.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+wikiauto.org,Auto Wiki,58+,Resource mention,https://wikiauto.org,LIVE,200,LIVE,200
+autohausaz.com,Parts + Guides,55+,Resource link,https://autohausaz.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+carindigo.com,Auto Research,52+,Guest post,https://carindigo.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+itstillruns.com,Auto DIY,68+,Guest post,https://itstillruns.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+axleaddict.com,Auto DIY Blog,60+,Guest post,https://axleaddict.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+cashcarsbuyer.com,Junk Car Buyer Blog,55+,Guest post,https://cashcarsbuyer.com,LIVE,200,LIVE,200
+carandtruckparts.com,Parts Resource,50+,Resource link,https://carandtruckparts.com,LIVE,200,LIVE,200
+cartreatments.com,Car Care Blog,52+,Guest post,https://cartreatments.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+obdadvisor.com,OBD2 resource Blog,50+,Guest post,https://obdadvisor.com,LIVE,200,LIVE,200
+scannerreviewer.com,OBD2 Blog,48+,Guest post,https://scannerreviewer.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+completecarreviews.com,Auto Review Blog,50+,Guest post,https://completecarreviews.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+motorbiscuit.com,Auto Blog,62+,Guest post / editorial,https://motorbiscuit.com,LIVE,200,LIVE,200
+progressive.com,Insurance,85+,Resource mention,https://progressive.com,LIVE,200,LIVE,200
+geico.com,Insurance,87+,Resource mention,https://geico.com,LIVE,200,LIVE,200
+statefarm.com,Insurance,88+,Resource mention,https://statefarm.com,LIVE,200,LIVE,200
+insurancequotes.com,Insurance Resource,72+,Resource mention,https://insurancequotes.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+thezebracom,Insurance Comparison,75+,Resource mention,https://thezebracom,CHECK MANUALLY,0,CHECK MANUALLY,0
+policygenius.com,Insurance Resource,78+,Resource mention,https://policygenius.com,LIVE,200,LIVE,200
+bankrate.com/insurance/car-insurance,Finance Resource,90+,Resource mention,https://bankrate.com/insurance/car-insurance,CHECK MANUALLY,405,CHECK MANUALLY,405
+nerdwallet.com/auto-insurance,Finance Resource,92+,Resource mention,https://nerdwallet.com/auto-insurance,CHECK MANUALLY,404,CHECK MANUALLY,404
+creditkarma.com,Finance Resource,90+,Resource mention,https://creditkarma.com,LIVE,200,LIVE,200
+autoloanguide.com,Auto Finance Blog,52+,Guest post,https://autoloanguide.com,LIVE,200,LIVE,200
+carchex.com,Extended Warranty,60+,Resource link,https://carchex.com,LIVE,200,LIVE,200
+enduranceinc.com,Extended Warranty,62+,Resource link,https://enduranceinc.com,LIVE,200,LIVE,200
+offerpad.com,Car Valuation,70+,Resource link,https://offerpad.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vroom.com,Online Car Sales,68+,Resource link,https://vroom.com,CHECK MANUALLY,404,CHECK MANUALLY,404
+carvana.com,Online Car Sales,75+,Resource link,https://carvana.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+carmax.com,Used Car Retailer,84+,Resource mention,https://carmax.com,LIVE,200,LIVE,200
+shift.com,Used Car Platform,68+,Resource link,https://shift.com,LIVE,200,LIVE,200
+autonation.com,Dealer Network,80+,Resource link,https://autonation.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+iloveclassics.com,Classic Car Marketplace,55+,Business listing,https://iloveclassics.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+hClassicCars.com,Classic Car Marketplace,65+,Business listing,https://hClassicCars.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+motorcar.com,Classic Car Marketplace,60+,Business listing,https://motorcar.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+oldcarsonline.com,Classic Car Directory,55+,Business listing,https://oldcarsonline.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+classiccars.com,Classic Car Marketplace,68+,Business listing,https://classiccars.com,LIVE,200,LIVE,200
+carsforsale.com,Car Marketplace,70+,Business listing,https://carsforsale.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+usedcars.com,Car Marketplace,72+,Business listing,https://usedcars.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+rydell.com,Auto Dealer Blog,50+,Guest post,https://rydell.com,LIVE,200,LIVE,200
+carlistings.org,Car Listings,55+,Business listing,https://carlistings.org,CHECK MANUALLY,0,CHECK MANUALLY,0
+sellmycar.com,Car Selling Resource,55+,Resource link,https://sellmycar.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vehicledynamicsinternational.com,Auto Engineering,55+,Guest post,https://vehicledynamicsinternational.com,LIVE,200,LIVE,200
+automotivetestdriving.com,Auto Test Blog,40+,Guest post,https://automotivetestdriving.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+carsalesbase.com,Auto Sales Data,55+,Resource link,https://carsalesbase.com,LIVE,200,LIVE,200
+jdpower.com,Customer Satisfaction,82+,Resource mention,https://jdpower.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+car-accidents.com,Auto Safety Resource,52+,Resource link,https://car-accidents.com,LIVE,200,LIVE,200
+crashstats.nhtsa.dot.gov,Govt Safety Data,90+,Resource mention,https://crashstats.nhtsa.dot.gov,LIVE,200,LIVE,200
+safercar.gov,Govt Safety Resource,92+,Resource mention,https://safercar.gov,CHECK MANUALLY,403,CHECK MANUALLY,403
+iihs.org,Safety Institute,85+,Resource mention,https://iihs.org,LIVE,200,LIVE,200
+nhtsa.gov,Govt Auto Safety,92+,Resource mention,https://nhtsa.gov,CHECK MANUALLY,403,CHECK MANUALLY,403
+tfhrc.gov,Transportation Research,85+,Resource mention,https://tfhrc.gov,CHECK MANUALLY,0,CHECK MANUALLY,0
+autoinsurancecenter.com,Insurance Resource,62+,Resource link,https://autoinsurancecenter.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+carinsurance.com,Insurance Comparison,70+,Resource link,https://carinsurance.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vehiclehistory.com,Vehicle History,60+,Resource link,https://vehiclehistory.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+vincheck.com,VIN Check Resource,58+,Resource link,https://vincheck.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+vincheckfree.com,VIN Check,55+,Resource link,https://vincheckfree.com,LIVE,200,LIVE,200
+epicvin.com,VIN Decoder,60+,Resource link,https://epicvin.com,LIVE,200,LIVE,200
+faxvin.com,VIN Report,58+,Resource link,https://faxvin.com,LIVE,200,LIVE,200
+vindecoderz.com,VIN Decoder,52+,Resource link,https://vindecoderz.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vinfreecheck.com,VIN Check,50+,Resource link,https://vinfreecheck.com,LIVE,200,LIVE,200
+bumper.com,Vehicle History,62+,Resource link,https://bumper.com,LIVE,200,LIVE,200
+autorevo.com,Auto Dealer Software,55+,Resource link,https://autorevo.com,LIVE,200,LIVE,200
+dealersocket.com,Dealer Software,65+,Resource link,https://dealersocket.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+vauto.com,Dealer Analytics,65+,Resource link,https://vauto.com,LIVE,200,LIVE,200
+autodata.net,Auto Data Resource,60+,Resource link,https://autodata.net,CHECK MANUALLY,403,CHECK MANUALLY,403
+ihs.com/automotive,Auto Data/Research,78+,Resource mention,https://ihs.com/automotive,LIVE,200,LIVE,200
+motorintelligence.com,Auto Sales Analytics,58+,Resource link,https://motorintelligence.com,LIVE,200,LIVE,200
+auto.com,Auto Resource,68+,Guest post / resource,https://auto.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+autobytel.com,Auto Research Resource,72+,Guest post / resource,https://autobytel.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+drivetime.com,Used Car Dealership Blog,60+,Resource link,https://drivetime.com,LIVE,200,LIVE,200
+autonation.com/blog,Dealer Blog,78+,Resource link,https://autonation.com/blog,CHECK MANUALLY,403,CHECK MANUALLY,403
+dealerinspire.com,Dealer Marketing Blog,55+,Guest post,https://dealerinspire.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+digitaldealer.com,Dealer Industry Blog,60+,Guest post,https://digitaldealer.com,LIVE,200,LIVE,200
+autodealermonthly.com,Trade Publication,55+,Guest post,https://autodealermonthly.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+cbtnews.com,Dealer Industry News,58+,Guest post,https://cbtnews.com,LIVE,200,LIVE,200
+wrenchingwisdom.com,Auto Podcast/Blog,45+,Guest interview / link,https://wrenchingwisdom.com,LIVE,200,LIVE,200
+carsandcalories.com,Auto/Fitness Podcast,40+,Guest interview,https://carsandcalories.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+automotivepodcasts.com,Podcast Directory,42+,Listing,https://automotivepodcasts.com,LIVE,200,LIVE,200
+podcast.com,Podcast Directory,75+,Listing with link,https://podcast.com,LIVE,200,LIVE,200
+podchaser.com,Podcast Directory,72+,Listing with link,https://podchaser.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+listennotes.com,Podcast Directory,78+,Listing with link,https://listennotes.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+podbay.fm,Podcast Directory,68+,Listing with link,https://podbay.fm,CHECK MANUALLY,403,CHECK MANUALLY,403
+boostability.com,SEO/Biz Blog,68+,Resource mention,https://boostability.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+brightlocal.com,Local SEO Blog,72+,Resource mention,https://brightlocal.com,LIVE,200,LIVE,200
+learningq.net,Education Resource,42+,Guest post,https://learningq.net,CHECK MANUALLY,0,CHECK MANUALLY,0
+dzone.com,Tech Publishing,82+,Tech/Auto Article,https://dzone.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+hackernoon.com,Tech Publishing,85+,Tech article with link,https://hackernoon.com,LIVE,200,LIVE,200
+dev.to,Tech Publishing,85+,Tech article with link,https://dev.to,LIVE,200,LIVE,200
+techcrunch.com,Tech News,94+,HARO resource mention,https://techcrunch.com,LIVE,200,LIVE,200
+venturebeat.com,Tech News,90+,HARO resource mention,https://venturebeat.com,CHECK MANUALLY,429,CHECK MANUALLY,429
+digitaltrends.com,Tech/Auto,88+,Resource mention,https://digitaltrends.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+mashable.com,Tech/Culture,92+,Resource mention,https://mashable.com,LIVE,200,LIVE,200
+wired.com,Tech Magazine,94+,Resource mention,https://wired.com,LIVE,200,LIVE,200
+thehill.com,Policy/News,91+,Resource mention,https://thehill.com,CHECK MANUALLY,403,CHECK MANUALLY,403
+nationalmotorclub.com,Motor Club,60+,Member link,https://nationalmotorclub.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+motorclubs.org,Motor Club Directory,55+,Member link,https://motorclubs.org,LIVE,200,LIVE,200
+acarplace.com,Auto Directory,50+,Business listing,https://acarplace.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+automotive.com,Auto Resource,72+,Resource / guest post,https://automotive.com,CHECK MANUALLY,0,CHECK MANUALLY,0
+thecarexpert.co.uk,UK Auto Expert Blog,60+,Guest post,https://thecarexpert.co.uk,LIVE,200,LIVE,200
+honestjohn.co.uk,UK Auto Resource,68+,Resource link,https://honestjohn.co.uk,CHECK MANUALLY,403,CHECK MANUALLY,403
+autoblog.it,Italian Auto Blog,68+,Guest post,https://autoblog.it,LIVE,200,LIVE,200
+motor.es,Spanish Auto Blog,62+,Guest post,https://motor.es,LIVE,200,LIVE,200
+auto-motor-und-sport.de,German Auto Magazine,78+,Resource mention,https://auto-motor-und-sport.de,LIVE,200,LIVE,200

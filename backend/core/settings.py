@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     # Custom apps
     "apps.users",
     "apps.vendors",
-    "apps.leads",
+    "apps.leads.apps.LeadsConfig",
     "apps.hollander",  # NEW: Hollander interchange database
     "apps.common",
     "apps.ads",
@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "apps.cms",            # Website CMS
     "apps.rbac",           # Role-Based Access Control
     "apps.payments",       # Authorize.net Payments
+    "apps.vpic",           # Local standalone vPIC VIN Decoder
 ]
 
 
@@ -242,8 +243,18 @@ DATABASES = {
         'OPTIONS': {
             'sslmode': 'require',
         } if (os.environ.get('DB_HOST') or '') and 'localhost' not in (os.environ.get('DB_HOST') or '') and '127.0.0.1' not in (os.environ.get('DB_HOST') or '') else {},
+    },
+    'vpic_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('VPIC_DB_NAME', 'jynm_vpic'),
+        'USER': os.environ.get('VPIC_DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('VPIC_DB_PASSWORD', 'admin'),
+        'HOST': os.environ.get('VPIC_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('VPIC_DB_PORT', '5434'),
     }
 }
+
+DATABASE_ROUTERS = ['core.routers.VPICRouter']
 
 
 # Password validation

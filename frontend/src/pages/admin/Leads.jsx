@@ -12,10 +12,12 @@ import {
     CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import Toast from '../../components/Toast';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function AdminLeads() {
     const { token } = useContext(AuthContext);
     const [leads, setLeads] = useState([]);
+    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLead, setSelectedLead] = useState(null);
@@ -174,16 +176,26 @@ export default function AdminLeads() {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
     };
 
-    const handleBulkDelete = async () => {
-        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} leads?`)) return;
-        try {
-            await Promise.all(selectedIds.map(id => api.deleteLead(token, id)));
-            setSelectedIds([]);
-            fetchLeads();
-            showToast(`Deleted ${selectedIds.length} leads successfully`, 'success');
-        } catch (error) {
-            showToast('Failed to delete some leads', 'error');
-        }
+    const handleBulkDelete = () => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Leads',
+            message: `Are you sure you want to delete ${selectedIds.length} leads?`,
+            confirmText: 'Delete Leads',
+            type: 'danger',
+            onConfirm: async () => {
+                setConfirmConfig({ isOpen: false });
+                try {
+                    await Promise.all(selectedIds.map(id => api.deleteLead(token, id)));
+                    setSelectedIds([]);
+                    fetchLeads();
+                    showToast(`Deleted ${selectedIds.length} leads successfully`, 'success');
+                } catch (error) {
+                    showToast('Failed to delete some leads', 'error');
+                }
+            },
+            onCancel: () => setConfirmConfig({ isOpen: false })
+        });
     };
 
     const handleOpenAssignModal = async () => {
@@ -590,6 +602,8 @@ export default function AdminLeads() {
             )}
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+            
+            <ConfirmModal {...confirmConfig} />
         </div>
     );
 }

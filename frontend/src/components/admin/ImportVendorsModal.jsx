@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
 import {
@@ -142,7 +143,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
         }
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-sm w-full max-w-3xl overflow-hidden transform transition-all scale-100">
                 {/* Header */}
@@ -320,6 +321,7 @@ export default function ImportVendorsModal({ isOpen, onClose, onImportComplete }
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

@@ -15,10 +15,12 @@ import {
     CursorArrowRaysIcon,
     FunnelIcon
 } from '@heroicons/react/24/outline';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function AdminAds() {
     const { token } = useContext(AuthContext);
     const [ads, setAds] = useState([]);
+    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
     const [searchTerm, setSearchTerm] = useState('');
     const [slotFilter, setSlotFilter] = useState('all');
     const [planFilter, setPlanFilter] = useState('all');
@@ -258,14 +260,24 @@ export default function AdminAds() {
         setShowModal(true);
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Delete this ad?')) return;
-        try {
-            await api.deleteAd(token, id);
-            fetchAds();
-        } catch (error) {
-            alert('Failed to delete ad');
-        }
+    const handleDelete = (id) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Ad',
+            message: 'Are you sure you want to delete this ad?',
+            confirmText: 'Delete',
+            type: 'danger',
+            onConfirm: async () => {
+                setConfirmConfig({ isOpen: false });
+                try {
+                    await api.deleteAd(token, id);
+                    fetchAds();
+                } catch (error) {
+                    alert('Failed to delete ad');
+                }
+            },
+            onCancel: () => setConfirmConfig({ isOpen: false })
+        });
     };
 
     const getPositionBadge = (page, slot) => {
@@ -844,6 +856,7 @@ export default function AdminAds() {
                     </div>
                 </div>
             )}
+            <ConfirmModal {...confirmConfig} />
         </div>
     );
 }

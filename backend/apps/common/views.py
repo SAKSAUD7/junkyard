@@ -2,10 +2,11 @@ from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
-from .models import ContactMessage, Feedback
+from .models import ContactMessage, Feedback, AdminNotification
 from .serializers import (
     MakeSerializer, ModelSerializer, PartSerializer,
-    StateSerializer, ContactMessageSerializer, FeedbackSerializer
+    StateSerializer, ContactMessageSerializer, FeedbackSerializer,
+    AdminNotificationSerializer
 )
 
 
@@ -108,6 +109,37 @@ class FeedbackViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(status='unread')
+
+
+class AdminNotificationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for admin notifications.
+    Access restricted to admin users.
+    """
+    queryset = AdminNotification.objects.all()  # type: ignore[attr-defined]
+    serializer_class = AdminNotificationSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=False, methods=['get'])
+    def unread_count(self, request):
+        """Get the count of unread notifications"""
+        count = self.get_queryset().filter(is_read=False).count()
+        return Response({'unread_count': count})
+        
+    @action(detail=True, methods=['post'])
+    def mark_as_read(self, request, pk=None):
+        """Mark a notification as read"""
+        notification = self.get_object()
+        notification.is_read = True
+        notification.save()
+        return Response({'status': 'marked as read'})
+
+    @action(detail=False, methods=['post'])
+    def mark_all_as_read(self, request):
+        """Mark all unread notifications as read"""
+        self.get_queryset().filter(is_read=False).update(is_read=True)
+        return Response({'status': 'all marked as read'})
+
 
 
 

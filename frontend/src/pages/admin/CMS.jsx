@@ -1006,11 +1006,12 @@ function MediaLibrary({ onToast }) {
         finally { setDeleting(null); }
     };
 
+    const { copyToClipboard } = useClipboard();
+
     const copyUrl = (url) => {
-        navigator.clipboard.writeText(url).then(() => {
-            setCopied(url);
-            setTimeout(() => setCopied(null), 2000);
-        });
+        copyToClipboard(url);
+        setCopied(url);
+        setTimeout(() => setCopied(null), 2000);
     };
 
     return (

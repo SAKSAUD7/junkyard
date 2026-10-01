@@ -543,5 +543,77 @@ export const api = {
       return response.data;
     },
   },
-};
+  // ── Sell Your Vehicle ────────────────────────────────────────────────────────
+  sellVehicle: async (data) => {
+    const response = await axiosInstance.post('/sell-your-car/', data);
+    return response.data;
+  },
+  
+  getAdminSellLeads: async (token, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const response = await axiosInstance.get(`/sell-your-car/${qs ? `?${qs}` : ''}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
 
+  updateSellLead: async (token, id, data) => {
+    const response = await axiosInstance.patch(`/sell-your-car/${id}/`, data, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  
+  exportSellLeads: async (token, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const response = await axiosInstance.get(`/sell-your-car/export_csv/${qs ? `?${qs}` : ''}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+
+  // ── VIN Decoder ─────────────────────────────────────────────────────────────
+  decodeVin: async (vin) => {
+    const response = await axiosInstance.post('/vin/decode/', { vin });
+    return response.data;
+  },
+
+  // ── Vehicle Match Lookup ────────────────────────────────────────────────────
+  vehicleLookup: async (year, make, model) => {
+    const response = await axiosInstance.get('/hollander/vehicles/lookup/', { params: { year, make, model }});
+    return response.data;
+  },
+
+  getZipcodeStates: async () => {
+    const response = await axiosInstance.get('/hollander/locations/states/');
+    return response.data;
+  },
+
+  getZipcodeCities: async (state) => {
+    const response = await axiosInstance.get('/hollander/locations/cities/', { params: { state }});
+    return response.data;
+  },
+
+  // ── Admin Notifications ───────────────────────────────────────────────────
+  getNotifications: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const response = await axiosInstance.get(`/common/notifications/${qs ? `?${qs}` : ''}`);
+    return response.data;
+  },
+  
+  getUnreadNotificationsCount: async () => {
+    const response = await axiosInstance.get('/common/notifications/unread_count/');
+    return response.data;
+  },
+  
+  markNotificationAsRead: async (id) => {
+    const response = await axiosInstance.post(`/common/notifications/${id}/mark_as_read/`);
+    return response.data;
+  },
+  
+  markAllNotificationsAsRead: async () => {
+    const response = await axiosInstance.post('/common/notifications/mark_all_as_read/');
+    return response.data;
+  },
+};

@@ -77,6 +77,23 @@ export default function MobileDrawer({ isOpen, onClose, navLinks, isAuthenticate
                         ))}
                     </nav>
 
+                    {/* Automotive Services Section */}
+                    <div className="mt-2 px-0">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-3 pb-2 pt-1">Vehicle Services</p>
+                        <Link
+                            to="/sell-your-car"
+                            onClick={onClose}
+                            className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-600 min-h-[52px] transition-colors border border-slate-100"
+                        >
+                            <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l1 1h11l2-6H7" />
+                            </svg>
+                            Sell Your Vehicle
+                            <span className="ml-auto text-[10px] font-black text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">New</span>
+                        </Link>
+                    </div>
+
                     <div className="my-4 h-px bg-slate-100" />
 
                     {/* Auth & Actions */}

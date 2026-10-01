@@ -8,10 +8,10 @@ import {
     ChatBubbleLeftIcon, Cog6ToothIcon, DocumentTextIcon, ShieldCheckIcon,
     NewspaperIcon, ArrowTopRightOnSquareIcon, Bars3Icon, BookOpenIcon,
     MagnifyingGlassIcon, BellIcon, EnvelopeIcon, QuestionMarkCircleIcon,
-    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon
+    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon, CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
-
+import AdminNotificationDrawer from '../components/AdminNotificationDrawer';
 // ── Search Result Item ─────────────────────────────────────────────────────
 function SearchResult({ item, onClose, navigate }) {
     const icons = { lead: '📋', vendor: '🏢', message: '✉️' };
@@ -48,11 +48,23 @@ export default function AdminLayout() {
     const searchRef = useRef(null);
     const searchTimeout = useRef(null);
 
-    // Notifications state (recent new leads)
+    // System Notifications Drawer state
     const [notifOpen, setNotifOpen] = useState(false);
-    const [notifications, setNotifications] = useState([]);
-    const [notifLoading, setNotifLoading] = useState(false);
-    const notifRef = useRef(null);
+    const [unreadNotifsCount, setUnreadNotifsCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const res = await api.getUnreadNotificationsCount();
+                setUnreadNotifsCount(res.unread_count || 0);
+            } catch {}
+        };
+        if (user) {
+            fetchCount();
+            const interval = setInterval(fetchCount, 60000);
+            return () => clearInterval(interval);
+        }
+    }, [user, notifOpen]);
 
     // Messages state (unread contact messages)
     const [msgOpen, setMsgOpen] = useState(false);
@@ -82,7 +94,6 @@ export default function AdminLayout() {
     useEffect(() => {
         const handle = (e) => {
             if (searchRef.current && !searchRef.current.contains(e.target)) setSearchOpen(false);
-            if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
             if (msgRef.current && !msgRef.current.contains(e.target)) setMsgOpen(false);
             if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
         };
@@ -143,20 +154,6 @@ export default function AdminLayout() {
         searchTimeout.current = setTimeout(() => doSearch(q), 400);
     };
 
-    // Fetch notifications (recent new leads)
-    const fetchNotifications = async () => {
-        setNotifLoading(true);
-        try {
-            const data = await api.getAdminLeads(null, { status: 'new', page_size: 8 });
-            const list = data?.results || data || [];
-            setNotifications(list);
-        } catch {
-            setNotifications([]);
-        } finally {
-            setNotifLoading(false);
-        }
-    };
-
     // Fetch messages panel
     const fetchMessages = async () => {
         setMsgLoading(true);
@@ -171,15 +168,7 @@ export default function AdminLayout() {
         }
     };
 
-    const handleNotifOpen = () => {
-        setMsgOpen(false);
-        setSearchOpen(false);
-        if (!notifOpen) fetchNotifications();
-        setNotifOpen(v => !v);
-    };
-
     const handleMsgOpen = () => {
-        setNotifOpen(false);
         setSearchOpen(false);
         if (!msgOpen) fetchMessages();
         setMsgOpen(v => !v);
@@ -193,13 +182,13 @@ export default function AdminLayout() {
     };
 
     const unreadMsgCount = messages.length;
-    const newLeadCount = notifications.length;
 
     const allNavItems = [
         { name: 'Dashboard',        href: '/admin-portal/dashboard',       icon: HomeIcon,          permission: null,                        exact: true },
         { name: 'Vendors',          href: '/admin-portal/vendors',          icon: BuildingOfficeIcon, permission: 'can_manage_vendors' },
         { name: 'Leads',            href: '/admin-portal/leads',           icon: ListBulletIcon,    permission: 'can_manage_leads' },
         { name: 'Vendor Leads',     href: '/admin-portal/vendor-leads',    icon: TruckIcon,         permission: 'can_manage_leads' },
+        { name: 'Sell Vehicle Leads', href: '/admin-portal/sell-vehicle-leads', icon: CurrencyDollarIcon, permission: 'can_manage_leads' },
         { name: 'Ads',              href: '/admin-portal/ads',              icon: MegaphoneIcon,     permission: 'can_manage_ads' },
         { name: 'Payments',         href: '/admin-portal/payments',         icon: CreditCardIcon,    permission: null },
         { name: 'Website Pages',    href: '/admin-portal/cms',              icon: DocumentTextIcon,  permission: 'can_manage_cms' },
@@ -321,72 +310,27 @@ export default function AdminLayout() {
                     <div className="flex items-center gap-5 pl-4">
                         <div className="flex items-center gap-4 border-r border-slate-200 pr-5">
 
-                            {/* ── Notifications (New Leads) ──────────── */}
-                            <div className="relative" ref={notifRef}>
+                            {/* ── Notifications (Global System Drawer) ──────────── */}
+                            <div className="relative">
                                 <button
-                                    onClick={handleNotifOpen}
+                                    onClick={() => setNotifOpen(true)}
+                                    title="System Notifications"
                                     className={`relative text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg ${notifOpen ? 'bg-blue-50 text-blue-600' : ''}`}
                                 >
                                     <BellIcon className="w-6 h-6" />
-                                    {newLeadCount > 0 && (
+                                    {unreadNotifsCount > 0 && (
                                         <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white flex items-center justify-center">
-                                            {newLeadCount > 99 ? '99+' : newLeadCount}
+                                            {unreadNotifsCount > 99 ? '99+' : unreadNotifsCount}
                                         </span>
                                     )}
                                 </button>
-
-                                {notifOpen && (
-                                    <div className="absolute right-0 top-full mt-3 w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
-                                        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-                                            <div>
-                                                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>New Leads</h3>
-                                                <p className="text-xs text-slate-400 mt-0.5">Recent unactioned lead submissions</p>
-                                            </div>
-                                            <Link to="/admin-portal/leads" onClick={() => setNotifOpen(false)}
-                                                className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
-                                                View All
-                                            </Link>
-                                        </div>
-
-                                        <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
-                                            {notifLoading ? (
-                                                <div className="flex items-center justify-center py-8">
-                                                    <div className="w-5 h-5 border-2 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-                                                </div>
-                                            ) : notifications.length === 0 ? (
-                                                <div className="py-10 text-center">
-                                                    <BellIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                                                    <p className="text-sm text-slate-400">No new leads</p>
-                                                </div>
-                                            ) : notifications.map(lead => (
-                                                <button key={lead.id}
-                                                    onClick={() => { navigate('/admin-portal/leads'); setNotifOpen(false); }}
-                                                    className="w-full flex items-start gap-3 px-5 py-3.5 hover:bg-blue-50/50 transition-colors text-left">
-                                                    <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                        <span className="text-blue-600 text-xs font-bold">{(lead.name || 'L').charAt(0).toUpperCase()}</span>
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-semibold text-slate-800 truncate">
-                                                            {lead.year} {lead.make} {lead.model}
-                                                        </p>
-                                                        <p className="text-xs text-slate-500 truncate">{lead.part} · {lead.name}</p>
-                                                        <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
-                                                            <ClockIcon className="w-3 h-3" />
-                                                            {new Date(lead.created_at).toLocaleString()}
-                                                        </p>
-                                                    </div>
-                                                    <span className="text-[10px] font-bold bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full flex-shrink-0">NEW</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
 
                             {/* ── Messages Panel (Unread) ───────────── */}
                             <div className="relative" ref={msgRef}>
                                 <button
                                     onClick={handleMsgOpen}
+                                    title="Messages"
                                     className={`relative text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg ${msgOpen ? 'bg-blue-50 text-blue-600' : ''}`}
                                 >
                                     <EnvelopeIcon className="w-6 h-6" />
@@ -453,7 +397,7 @@ export default function AdminLayout() {
                                 )}
                             </div>
 
-                            <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg">
+                            <button title="Help / Support" className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg">
                                 <QuestionMarkCircleIcon className="w-6 h-6" />
                             </button>
                         </div>
@@ -531,6 +475,12 @@ export default function AdminLayout() {
                     <Outlet />
                 </main>
             </div>
+            
+            <AdminNotificationDrawer 
+                isOpen={notifOpen} 
+                onClose={() => setNotifOpen(false)} 
+            />
         </div>
     );
 }
+
