@@ -8,7 +8,8 @@ import {
     ChatBubbleLeftIcon, Cog6ToothIcon, DocumentTextIcon, ShieldCheckIcon,
     NewspaperIcon, ArrowTopRightOnSquareIcon, Bars3Icon, BookOpenIcon,
     MagnifyingGlassIcon, BellIcon, EnvelopeIcon, QuestionMarkCircleIcon,
-    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon, CurrencyDollarIcon, ChartBarIcon
+    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon, CurrencyDollarIcon, ChartBarIcon,
+    ShareIcon
 } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import AdminNotificationDrawer from '../components/AdminNotificationDrawer';
@@ -187,6 +188,7 @@ export default function AdminLayout() {
         { name: 'Dashboard',        href: '/admin-portal/dashboard',       icon: HomeIcon,          permission: null,                        exact: true },
         { name: 'Vendors',          href: '/admin-portal/vendors',          icon: BuildingOfficeIcon, permission: 'can_manage_vendors' },
         { name: 'Leads',            href: '/admin-portal/leads',           icon: ListBulletIcon,    permission: 'can_manage_leads' },
+        { name: 'Lead Distribution', href: '/admin-portal/lead-distribution', icon: ShareIcon,      permission: 'can_manage_leads' },
         { name: 'Vendor Leads',     href: '/admin-portal/vendor-leads',    icon: TruckIcon,         permission: 'can_manage_leads' },
         { name: 'Sell Vehicle Leads', href: '/admin-portal/sell-vehicle-leads', icon: CurrencyDollarIcon, permission: 'can_manage_leads' },
         { name: 'Ads',              href: '/admin-portal/ads',              icon: MegaphoneIcon,     permission: 'can_manage_ads' },
@@ -398,9 +400,7 @@ export default function AdminLayout() {
                                 )}
                             </div>
 
-                            <button title="Help / Support" className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg">
-                                <QuestionMarkCircleIcon className="w-6 h-6" />
-                            </button>
+
                         </div>
 
                         {/* User Profile */}
@@ -436,6 +436,20 @@ export default function AdminLayout() {
                                     </div>
                                     
                                     <div className="flex flex-col gap-1">
+                                        <Link
+                                            to="/"
+                                            onClick={() => setUserMenuOpen(false)}
+                                            className="flex items-start gap-3 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-blue-50 text-left w-full focus:outline-none"
+                                        >
+                                            <div className="p-2 rounded-xl flex-shrink-0 bg-blue-50 border border-blue-100 transition-transform duration-300 group-hover:scale-110 shadow-sm">
+                                                <HomeIcon className="w-5 h-5 text-blue-500 group-hover:text-blue-700" />
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">Back to Homepage</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug">JunkyardsNearMe.com</span>
+                                            </div>
+                                        </Link>
+
                                         <Link
                                             to="/admin-portal/settings"
                                             onClick={() => setUserMenuOpen(false)}

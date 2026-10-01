@@ -7,7 +7,7 @@ const VendorLeadDetail = () => {
     const { get } = useCMS('vendor_portal');
     const { id } = useParams();
     const navigate = useNavigate();
-    const [lead, setLead] = useState(null);
+    const [dist, setDist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState('');
@@ -20,7 +20,7 @@ const VendorLeadDetail = () => {
     const loadLead = async () => {
         try {
             const response = await vendorLeads.get(id);
-            setLead(response.data);
+            setDist(response.data);
         } catch (err) {
             setError('Failed to load lead details');
             console.error(err);
@@ -29,30 +29,18 @@ const VendorLeadDetail = () => {
         }
     };
 
-    const handleStatusUpdate = async (newStatus) => {
+    const handleUnlock = async () => {
         setUpdating(true);
         setError('');
-        setSuccess('');
-
         try {
-            await vendorLeads.updateStatus(id, newStatus);
-            setSuccess('Status updated successfully');
-            loadLead();
+            await vendorLeads.unlock(id);
+            setSuccess('Lead unlocked successfully!');
+            await loadLead();
         } catch (err) {
-            setError('Failed to update status');
+            setError('Failed to unlock lead.');
             console.error(err);
         } finally {
             setUpdating(false);
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'new': return 'bg-blue-100 text-blue-700';
-            case 'contacted': return 'bg-amber-100 text-amber-700';
-            case 'converted': return 'bg-green-100 text-green-700';
-            case 'closed': return 'bg-gray-100 text-gray-700';
-            default: return 'bg-gray-100 text-gray-700';
         }
     };
 
@@ -64,7 +52,7 @@ const VendorLeadDetail = () => {
         );
     }
 
-    if (!lead) {
+    if (!dist) {
         return (
             <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
                 <div className="text-xl font-bold text-gray-800 mb-4">Lead not found</div>
@@ -74,6 +62,9 @@ const VendorLeadDetail = () => {
             </div>
         );
     }
+
+    const lead = dist.lead_summary || {};
+    const contact = dist.lead_contact;
 
     return (
         <div className="min-h-screen bg-[#f8fafc] pb-20 md:pb-8">
@@ -88,23 +79,13 @@ const VendorLeadDetail = () => {
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-extrabold mb-1.5 tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Lead #{lead.id}</h1>
-                            <p className="text-slate-500 font-medium flex items-center gap-2">
-                                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                {get('lead_detail', 'subheading', 'Review and respond to this customer request')}
-                            </p>
+                            <h1 className="text-3xl md:text-4xl font-extrabold mb-1.5 tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Lead #{dist.lead}</h1>
                             <p className="text-slate-500 font-medium flex items-center gap-2 mt-1">
-                                {new Date(lead.created_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                {new Date(dist.assigned_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
-                        <span className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm uppercase tracking-wide border ${lead.status === 'new' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                            lead.status === 'contacted' ? 'bg-amber-50 text-amber-600 border-amber-100' :
-                                lead.status === 'converted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                                    'bg-slate-100 text-slate-600 border-slate-200'
-                            }`}>
-                            {lead.status_display}
+                        <span className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm uppercase tracking-wide border ${dist.is_unlocked ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                            {dist.is_unlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}
                         </span>
                     </div>
                 </div>
@@ -160,28 +141,13 @@ const VendorLeadDetail = () => {
                                         <div className="text-base font-medium text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-100">{lead.options}</div>
                                     </div>
                                 )}
-                                <div className="sm:col-span-2">
-                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Hollander Interchange No.</div>
-                                    {lead.hollander_number && lead.hollander_number !== 'Not Found' && lead.hollander_number !== 'N/A' && lead.hollander_number !== '' ? (
-                                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-base shadow-sm">
-                                            <span className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0 animate-pulse"></span>
-                                            {lead.hollander_number}
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-mono text-base">
-                                            <span className="w-2 h-2 bg-slate-400 rounded-full flex-shrink-0"></span>
-                                            N/A
-                                        </span>
-                                    )}
-                                </div>
-
                             </div>
                         </div>
 
-                        {/* Customer Card */}
+                        {/* Customer / Unlock Card */}
                         <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 md:p-8">
                             <div className="flex items-center gap-3 mb-6">
-                                <span className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                                <span className={`w-10 h-10 rounded-xl flex items-center justify-center ${dist.is_unlocked ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-500'}`}>
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
@@ -189,114 +155,118 @@ const VendorLeadDetail = () => {
                                 <h3 className="text-xl font-bold text-gray-900">Customer Info</h3>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center font-bold text-lg">
-                                        {lead.customer_name.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-gray-900 text-lg">{lead.customer_name}</div>
-                                        <div className="text-sm text-gray-500 font-medium">{lead.state && lead.zip ? `${lead.state}, ${lead.zip}` : lead.location || 'Location not specified'}</div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <a href={`mailto:${lead.customer_email}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors group">
-                                        <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-[#1a56ff] flex items-center justify-center shadow-sm transition-colors">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                        </span>
-                                        <div className="overflow-hidden">
-                                            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email</div>
-                                            <div className="font-semibold text-gray-900 truncate">{lead.customer_email}</div>
+                            {dist.is_unlocked && contact ? (
+                                /* UNLOCKED VIEW */
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg">
+                                            {contact.name.charAt(0)}
                                         </div>
-                                    </a>
+                                        <div>
+                                            <div className="font-bold text-gray-900 text-lg">{contact.name}</div>
+                                            <div className="text-sm text-gray-500 font-medium">{contact.state && contact.zip ? `${contact.state}, ${contact.zip}` : 'Location hidden'}</div>
+                                        </div>
+                                    </div>
 
-                                    {lead.customer_phone && (
-                                        <a href={`tel:${lead.customer_phone}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors group">
-                                            <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-green-600 flex items-center justify-center shadow-sm transition-colors">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <a href={`mailto:${contact.email}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors group">
+                                            <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-[#1a56ff] flex items-center justify-center shadow-sm transition-colors">
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                                 </svg>
                                             </span>
-                                            <div>
-                                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Phone</div>
-                                                <div className="font-semibold text-gray-900">{lead.customer_phone}</div>
+                                            <div className="overflow-hidden">
+                                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email</div>
+                                                <div className="font-semibold text-gray-900 truncate">{contact.email}</div>
                                             </div>
                                         </a>
-                                    )}
+
+                                        {contact.phone && (
+                                            <a href={`tel:${contact.phone}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors group">
+                                                <span className="w-10 h-10 rounded-full bg-white text-gray-400 group-hover:text-green-600 flex items-center justify-center shadow-sm transition-colors">
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                    </svg>
+                                                </span>
+                                                <div>
+                                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Phone</div>
+                                                    <div className="font-semibold text-gray-900">{contact.phone}</div>
+                                                </div>
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                /* LOCKED VIEW */
+                                <div className="text-center py-10">
+                                    <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Customer Details Locked</h3>
+                                    <p className="text-slate-500 mb-6 max-w-sm mx-auto">
+                                        Unlock this lead to instantly view the customer's full name, email, and phone number so you can reach out with a quote.
+                                    </p>
+                                    <button
+                                        onClick={handleUnlock}
+                                        disabled={updating}
+                                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1a56ff] hover:bg-blue-700 active:scale-95 text-white rounded-xl font-bold transition-all shadow-[0_4px_12px_rgba(26,86,255,0.3)] disabled:opacity-75"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                        </svg>
+                                        {updating ? 'Unlocking...' : 'Unlock Customer Details'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Sidebar Actions */}
                     <div className="space-y-6">
-                        {/* Status Card */}
-                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Pipeline Status</h3>
-                            <div className="space-y-2">
-                                {[
-                                    { id: 'new', label: 'New Lead', icon: '✨' },
-                                    { id: 'contacted', label: 'Contacted', icon: '💬' },
-                                    { id: 'converted', label: 'Converted (Won)', icon: '✅' },
-                                    { id: 'closed', label: 'Closed (Lost)', icon: '❌' }
-                                ].map((status) => (
-                                    <button
-                                        key={status.id}
-                                        onClick={() => handleStatusUpdate(status.id)}
-                                        disabled={updating || lead.status === status.id}
-                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all border-2 ${lead.status === status.id
-                                            ? 'border-[#1a56ff] bg-[#1a56ff]/10 text-[#1a56ff] shadow-sm'
-                                            : 'border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:scale-[1.02]'
-                                            } disabled:opacity-100 disabled:cursor-default`}
-                                    >
-                                        <span className="flex items-center gap-3">
-                                            <span>{status.icon}</span>
-                                            {status.label}
-                                        </span>
-                                        {lead.status === status.id && (
-                                            <svg className="w-5 h-5 text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
                         {/* Quick Actions Card */}
-                        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 text-slate-800">
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                                Quick Actions
-                            </h3>
-                            <div className="space-y-3">
-                                <a
-                                    href={`mailto:${lead.customer_email}?subject=Re: ${lead.year} ${lead.make} ${lead.model} - ${lead.part}`}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-slate-200 backdrop-blur-sm transition-all text-sm font-bold"
-                                >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        {dist.is_unlocked && contact && (
+                            <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 p-6 text-slate-800">
+                                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
-                                    Email Customer
-                                </a>
-                                {lead.customer_phone && (
+                                    Quick Actions
+                                </h3>
+                                <div className="space-y-3">
                                     <a
-                                        href={`tel:${lead.customer_phone}`}
-                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-slate-200 backdrop-blur-sm transition-all text-sm font-bold"
+                                        href={`mailto:${contact.email}?subject=Re: ${lead.year} ${lead.make} ${lead.model} - ${lead.part}`}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all text-sm font-bold text-slate-700"
                                     >
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         </svg>
-                                        Call Customer
+                                        Email Customer
                                     </a>
-                                )}
+                                    {contact.phone && (
+                                        <a
+                                            href={`tel:${contact.phone}`}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all text-sm font-bold text-slate-700"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            </svg>
+                                            Call Customer
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
+                        
+                        {!dist.is_unlocked && (
+                            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl p-6 border border-blue-100">
+                                <h3 className="text-lg font-bold text-slate-800 mb-2">Sell More Parts</h3>
+                                <p className="text-sm text-slate-600 mb-4">
+                                    Our platform connects you with active buyers in your area. Unlock this lead to make a sale today!
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

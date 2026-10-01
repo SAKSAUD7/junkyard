@@ -31,36 +31,47 @@ export default function FloatingLeadWidget() {
 
     return (
         <>
-            {/* TRIGGER TAB — right side, vertical */}
+            {/* TRIGGER FAB — circular, bottom-right on mobile, right-middle on desktop */}
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
-                        initial={{ x: 80, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: 80, opacity: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.5, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                         onClick={() => setIsOpen(true)}
-                        aria-label="Request a Part"
-                        className="fixed right-0 top-24 z-[500] flex flex-col items-center gap-2 cursor-pointer group"
-                        style={{ writingMode: 'vertical-rl' }}
+                        aria-label="Find a Part Fast"
+                        title="Find a Part Fast"
+                        className="fixed z-[500] group
+                            bottom-6 right-4
+                            lg:bottom-auto lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-3 lg:rounded-r-none lg:rounded-l-2xl lg:pr-3
+                            w-14 h-14 lg:w-auto lg:h-auto lg:px-3 lg:py-3.5
+                            flex items-center justify-center gap-2
+                            bg-gradient-to-br from-[#1a56ff] to-[#4f46e5]
+                            rounded-full shadow-[0_6px_30px_rgba(26,86,255,0.5)]
+                            hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)]
+                            hover:scale-110 lg:hover:scale-100 lg:hover:translate-x-0
+                            transition-all duration-200 cursor-pointer"
                     >
-                        {/* Main pill */}
-                        <div className="flex flex-col items-center gap-2 bg-gradient-to-b from-[#1a56ff] to-[#4f46e5] text-white py-4 px-3 rounded-l-2xl shadow-[0_6px_30px_rgba(26,86,255,0.5)] hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)] hover:-translate-x-0.5 transition-all relative overflow-hidden">
-                            {/* Sheen overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
-                            {/* Pulse ring */}
-                            <div className="absolute -inset-0.5 rounded-l-2xl bg-blue-400/30 animate-pulse pointer-events-none" />
-                            {/* Icon */}
-                            <div className="relative w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/30 rotate-90">
-                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                </svg>
-                            </div>
-                            {/* Label */}
-                            <span className="relative text-[10px] lg:text-[11px] font-black tracking-[0.2em] uppercase rotate-180">
-                                Request Part
-                            </span>
-                        </div>
+                        {/* Pulse ring */}
+                        <span className="absolute inset-0 rounded-full lg:rounded-l-2xl lg:rounded-r-none bg-blue-400/40 animate-ping pointer-events-none" />
+
+                        {/* Wrench icon */}
+                        <svg className="relative w-6 h-6 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+
+                        {/* Desktop label (hidden on mobile) */}
+                        <span className="hidden lg:block text-[10px] font-black tracking-[0.2em] uppercase text-white whitespace-nowrap" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                            Find a Part
+                        </span>
+
+                        {/* Tooltip (mobile only) */}
+                        <span className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none lg:hidden shadow-lg">
+                            Find a Part Fast
+                            <span className="absolute top-full right-4 border-4 border-transparent border-t-slate-900" />
+                        </span>
                     </motion.button>
                 )}
             </AnimatePresence>

@@ -189,9 +189,17 @@ export const vendorInventory = {
 // ============================================
 
 export const vendorLeads = {
-    list: (params) => vendorApi.get('/leads/', { params }),
-    get: (id) => vendorApi.get(`/leads/${id}/`),
+    list: (params) => axios.get(`${API_BASE_URL}/leads/distributions/`, { 
+        params, 
+        headers: { Authorization: `Bearer ${localStorage.getItem('vendor_access_token') || localStorage.getItem('access_token')}` } 
+    }),
+    get: (id) => axios.get(`${API_BASE_URL}/leads/distributions/${id}/`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('vendor_access_token') || localStorage.getItem('access_token')}` }
+    }),
     updateStatus: (id, status) => vendorApi.patch(`/leads/${id}/`, { status }),
+    unlock: (id) => axios.patch(`${API_BASE_URL}/leads/distributions/${id}/`, { is_unlocked: true }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('vendor_access_token') || localStorage.getItem('access_token')}` }
+    }),
 };
 
 // ============================================

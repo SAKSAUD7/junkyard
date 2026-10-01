@@ -3,9 +3,12 @@ from django.http import HttpResponse  # type: ignore
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions, status as drf_status
-from .models import Lead, VendorLead, VehicleSubmission
+from .models import Lead, VendorLead, VehicleSubmission, LeadDistribution
 from apps.common.models import SiteAnalytics
-from .serializers import LeadSerializer, VendorLeadSerializer, VehicleSubmissionSerializer
+from .serializers import (
+    LeadSerializer, VendorLeadSerializer, VehicleSubmissionSerializer,
+    LeadDistributionSerializer, LeadDistributionAdminSerializer,
+)
 
 
 import logging
@@ -757,5 +760,92 @@ class VehicleSubmissionViewSet(viewsets.ModelViewSet):
                 lead.body_damage,
                 lead.description
             ])
-
         return response
+
+
+class LeadDistributionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing Lead Distributions (assigning leads to vendors).
+    - Admins can CRUD all.
+    - Vendors can GET their own assignments and PATCH (unlock) them.
+    """
+    authentication_classes = [JWTAuthentication]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return LeadDistribution.objects.none()
+        
+        # Admin gets everything
+        if user.is_staff or getattr(user, 'role', '') == 'admin':
+            return LeadDistribution.objects.all().select_related('lead', 'vendor')
+            
+        # Vendor gets only theirs
+        vendor_account = getattr(user, 'vendor_account', None)
+        if vendor_account:
+            return LeadDistribution.objects.filter(vendor=vendor_account).select_related('lead')
+            
+        return LeadDistribution.objects.none()
+
+    def get_serializer_class(self):
+        user = self.request.user
+        if user and (user.is_staff or getattr(user, 'role', '') == 'admin'):
+            return LeadDistributionAdminSerializer
+        return LeadDistributionSerializer
+
+    def get_permissions(self):
+        # Must be authenticated
+        return [permissions.IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if not (user.is_staff or getattr(user, 'role', '') == 'admin'):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only admins can assign leads.")
+            
+        distribution = serializer.save(assigned_by=user)
+        
+        # Optionally send a Teaser email to the vendor here
+        try:
+            vendor = distribution.vendor
+            if vendor and vendor.email:
+                from django.core.mail import send_mail
+                from django.conf import settings
+                from django.utils import timezone
+                
+                sender = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.net')
+                lead = distribution.lead
+                
+                msg = (
+                    f"Hi {vendor.name},\n\n"
+                    f"A new part request has been matched to your inventory!\n\n"
+                    f"Vehicle: {lead.year} {lead.make} {lead.model}\n"
+                    f"Part requested: {lead.part}\n\n"
+                    f"Log in to your Vendor Portal to view details and unlock contact info."
+                )
+                
+                send_mail(
+                    subject="New Lead Matched! - Junkyards Near Me",
+                    message=msg,
+                    from_email=sender,
+                    recipient_list=[vendor.email],
+                    fail_silently=True,
+                )
+                distribution.teaser_email_sent = True
+                distribution.teaser_email_sent_at = timezone.now()
+                distribution.save(update_fields=['teaser_email_sent', 'teaser_email_sent_at'])
+        except Exception as e:
+            logger.error(f"Failed to send teaser email to {distribution.vendor} for lead {distribution.lead_id}: {e}")
+
+    def perform_update(self, serializer):
+        # Logic to handle unlock (billing integration could go here)
+        instance = serializer.instance
+        is_unlocked_data = serializer.validated_data.get('is_unlocked', instance.is_unlocked)
+        
+        if is_unlocked_data and not instance.is_unlocked:
+            from django.utils import timezone
+            serializer.validated_data['unlocked_at'] = timezone.now()
+            # If freemium, charge could be tracked via price_paid
+            # serializer.validated_data['price_paid'] = 5.00
+            
+        serializer.save()

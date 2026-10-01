@@ -57,6 +57,7 @@ const AdminMessages = lazy(() => import('./pages/admin/Messages'))
 const AdminLeads = lazy(() => import('./pages/admin/Leads'))
 const AdminVendorLeads = lazy(() => import('./pages/admin/VendorLeads'))
 const AdminSellVehicleLeads = lazy(() => import('./pages/admin/SellVehicleLeads'))
+const AdminLeadDistribution = lazy(() => import('./pages/admin/LeadDistribution')) // NEW
 const AdminYardSubmissions = lazy(() => import('./pages/admin/YardSubmissions'))
 const AdminVendors = lazy(() => import('./pages/admin/Vendors'))
 const AdminAds = lazy(() => import('./pages/admin/Ads'))
@@ -250,6 +251,7 @@ function App() {
               <Route path="leads" element={<AdminLeads />} />
               <Route path="vendor-leads" element={<AdminVendorLeads />} />
               <Route path="sell-vehicle-leads" element={<AdminSellVehicleLeads />} />
+              <Route path="lead-distribution" element={<AdminLeadDistribution />} />
               <Route path="yard-submissions" element={<AdminYardSubmissions />} />
               <Route path="vendors" element={<AdminVendors />} />
               <Route path="ads" element={<AdminAds />} />

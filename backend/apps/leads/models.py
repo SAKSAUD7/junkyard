@@ -148,3 +148,53 @@ class VehicleSubmission(models.Model):
 
     def __str__(self):
         return f"Sell Car: {self.year} {self.make} {self.model} - {self.name}"
+
+
+class LeadDistribution(models.Model):
+    """
+    Freemium lead monetization junction model.
+
+    When admin assigns a Lead to one or more vendors:
+      - Vendor sees the lead SUMMARY (vehicle info, part, ZIP region) for free.
+      - To see full contact details (name, phone, email) the vendor must unlock
+        by paying a per-lead fee OR via an active subscription (handled in billing).
+      - Admin controls distribution; vendors cannot self-assign leads.
+    """
+    lead = models.ForeignKey(
+        'leads.Lead',
+        on_delete=models.CASCADE,
+        related_name='distributions',
+    )
+    vendor = models.ForeignKey(
+        'hollander.Vendor',
+        on_delete=models.CASCADE,
+        related_name='lead_distributions',
+    )
+
+    # Unlock tracking
+    is_unlocked = models.BooleanField(default=False, help_text="True when vendor has paid to see full contact info")
+    unlocked_at = models.DateTimeField(null=True, blank=True)
+    price_paid = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True, help_text="USD amount collected to unlock this lead")
+
+    # Teaser email tracking
+    teaser_email_sent = models.BooleanField(default=False, help_text="Whether the 'new lead assigned' teaser email was sent")
+    teaser_email_sent_at = models.DateTimeField(null=True, blank=True)
+
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    assigned_by = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='lead_distributions_assigned',
+        help_text="Admin user who assigned this lead",
+    )
+
+    class Meta:
+        ordering = ['-assigned_at']
+        unique_together = [('lead', 'vendor')]
+        verbose_name = "Lead Distribution"
+        verbose_name_plural = "Lead Distributions"
+
+    def __str__(self):
+        status = "Unlocked" if self.is_unlocked else "Locked"
+        return f"Lead #{self.lead_id} → {self.vendor} [{status}]"

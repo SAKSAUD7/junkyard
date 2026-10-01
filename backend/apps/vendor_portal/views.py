@@ -8,7 +8,7 @@ from datetime import timedelta
 from itertools import chain
 
 from apps.hollander.models import Vendor, VendorAd
-from apps.leads.models import Lead, VendorLead
+from apps.leads.models import Lead, VendorLead, LeadDistribution
 from apps.users.models import VendorProfile
 from .models import VendorInventory, VendorNotification, VendorBusinessHours
 from .serializers import (
@@ -39,24 +39,35 @@ class VendorDashboardView(APIView):
                 'error': 'No vendor profile found'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Get vendor leads matching vendor's state
-        # Note: Lead assignment system is disabled, only using VendorLead
-        vendor_leads = VendorLead.objects.filter(state__iexact=vendor.state)
+        # Get assigned leads from LeadDistribution
+        vendor_distributions = LeadDistribution.objects.filter(vendor=vendor)
         
         # Calculate stats
-        total_leads = vendor_leads.count()
-        new_leads = vendor_leads.filter(status='new').count()
-        contacted_leads = vendor_leads.filter(status='contacted').count()
-        converted_leads = vendor_leads.filter(status='converted').count()
-        closed_leads = vendor_leads.filter(status='closed').count()
+        total_leads = vendor_distributions.count()
+        new_leads = vendor_distributions.filter(is_unlocked=False).count()
+        contacted_leads = 0 # Not tracked directly on dist
+        converted_leads = vendor_distributions.filter(is_unlocked=True).count() # consider unlocked as won for now
+        closed_leads = 0
         
         # Calculate new SaaS metrics
         total_listings = VendorInventory.objects.filter(vendor=vendor).count()
         active_ads = VendorAd.objects.filter(vendor=vendor, status='active', payment_status='completed').count()
         total_profile_views_value = getattr(vendor, 'profile_views', 0)
         
-        # Get recent leads
-        recent_combined = list(vendor_leads.order_by('-created_at')[:5])
+        # Get recent leads (distribution summaries) - convert to dicts that the frontend expects
+        recent_dists = vendor_distributions.select_related('lead').order_by('-assigned_at')[:5]
+        recent_combined = []
+        for dist in recent_dists:
+            recent_combined.append({
+                'id': dist.id,
+                'customer_name': dist.lead.name if dist.is_unlocked else 'Locked',
+                'make': dist.lead.make,
+                'model': dist.lead.model,
+                'year': dist.lead.year,
+                'status': 'converted' if dist.is_unlocked else 'new',
+                'status_display': 'Unlocked' if dist.is_unlocked else 'New',
+                'created_at': dist.assigned_at,
+            })
         
         dashboard_data = {
             'total_leads': total_leads,
@@ -333,38 +344,40 @@ class VendorStatsView(APIView):
                 'error': 'No vendor profile found'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Calculate statistics using VendorLead (state-based matching)
-        # Note: Lead assignment system is disabled
-        vendor_leads = VendorLead.objects.filter(state__iexact=vendor.state)
+        # Calculate statistics using LeadDistribution
+        vendor_distributions = LeadDistribution.objects.filter(vendor=vendor)
         
-        # Leads by status
+        # Leads by status (simulated based on unlock status)
         leads_by_status = {
-            'new': vendor_leads.filter(status='new').count(),
-            'contacted': vendor_leads.filter(status='contacted').count(),
-            'converted': vendor_leads.filter(status='converted').count(),
-            'closed': vendor_leads.filter(status='closed').count(),
+            'new': vendor_distributions.filter(is_unlocked=False).count(),
+            'contacted': 0,
+            'converted': vendor_distributions.filter(is_unlocked=True).count(),
+            'closed': 0,
         }
         
         # Leads by time period
         now = timezone.now()
-        leads_this_week = vendor_leads.filter(
-            created_at__gte=now - timedelta(days=7)
+        leads_this_week = vendor_distributions.filter(
+            assigned_at__gte=now - timedelta(days=7)
         ).count()
-        leads_this_month = vendor_leads.filter(
-            created_at__gte=now - timedelta(days=30)
+        leads_this_month = vendor_distributions.filter(
+            assigned_at__gte=now - timedelta(days=30)
         ).count()
         
-        # Top requested makes (VendorLead doesn't have 'part' field)
-        top_makes = vendor_leads.values('make').annotate(
-            count=Count('make')
+        # Top requested makes
+        top_makes = vendor_distributions.values('lead__make').annotate(
+            count=Count('lead__make')
         ).order_by('-count')[:5]
+        
+        # Remap key names for frontend chart
+        mapped_top_makes = [{'make': x['lead__make'], 'count': x['count']} for x in top_makes]
         
         stats = {
             'leads_by_status': leads_by_status,
             'leads_this_week': leads_this_week,
             'leads_this_month': leads_this_month,
-            'total_leads': vendor_leads.count(),
-            'top_makes': list(top_makes),
+            'total_leads': vendor_distributions.count(),
+            'top_makes': mapped_top_makes,
             'inventory_count': VendorInventory.objects.filter(vendor=vendor).count(),
             'active_inventory': VendorInventory.objects.filter(
                 vendor=vendor, 

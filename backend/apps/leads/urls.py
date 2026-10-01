@@ -1,9 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import LeadViewSet, VendorLeadViewSet, VehicleSubmissionViewSet
+from .views import LeadViewSet, VendorLeadViewSet, VehicleSubmissionViewSet, LeadDistributionViewSet
 
 # Router for regular leads at /api/leads/
 leads_router = DefaultRouter()
+leads_router.register(r'distributions', LeadDistributionViewSet, basename='lead-distribution')
 leads_router.register(r'', LeadViewSet, basename='lead')
 
 # Router for vendor leads at /api/vendor-leads/

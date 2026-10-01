@@ -83,12 +83,12 @@ export default function SignIn() {
 
                     {/* Right panel — Form */}
                     <div className="flex-1 flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-                        {/* Logo + Close */}
+                        {/* Logo + Nav */}
                         <div className="flex items-center justify-between mb-8">
-                            <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-colors text-sm font-semibold">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                                Back
-                            </button>
+                            <Link to="/" className="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-colors text-sm font-semibold group">
+                                <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                Back to JunkyardsNearMe.com
+                            </Link>
                             <Link to="/" className="flex items-center gap-2">
                                 <img src="/logo.png" alt="JYNM" className="h-8 w-auto" onError={e => e.currentTarget.style.display='none'} />
                                 <span className="font-black text-slate-900 text-lg" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</span>

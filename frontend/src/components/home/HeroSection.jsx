@@ -130,6 +130,7 @@ function SearchableDropdown({
 }
 
 export default function HeroSection({ get, ready = false }) {
+  const [heroTab, setHeroTab] = useState('find_part'); // 'find_part' | 'find_yard' | 'sell_vehicle'
   const leadFormRef = useRef(null);
   const [formInView, setFormInView] = useState(true);
   const desktopVideoRef = useRef(null);
@@ -695,15 +696,34 @@ export default function HeroSection({ get, ready = false }) {
 
         <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
           <div ref={leadFormRef} className="w-full mb-8 relative z-[100]">
-            <div className="flex items-center gap-3 mb-4 pl-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.45)] animate-pulse">
-                <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                Free Instant Quote
-              </span>
-              <h3 className="text-[13px] font-black text-slate-700 uppercase tracking-[0.2em]">
-                Find Your Part in Seconds
-              </h3>
+
+            {/* ── TAB SWITCHER ─────────────────────────────────────── */}
+            <div className="flex rounded-2xl bg-slate-100/80 backdrop-blur-sm p-1 mb-5 gap-1 border border-slate-200/60 shadow-sm">
+              {[
+                { id: 'find_part',     label: 'Find a Part',       emoji: '🔧' },
+                { id: 'find_yard',     label: 'Find a Yard Near Me', emoji: '📍' },
+                { id: 'sell_vehicle',  label: 'Sell My Vehicle',   emoji: '💰' },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setHeroTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-4 rounded-xl text-[12px] sm:text-[13px] font-black transition-all duration-200 ${
+                    heroTab === tab.id
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  <span className="text-base leading-none">{tab.emoji}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                </button>
+              ))}
             </div>
+
+            {/* ── TAB 1: FIND A PART ───────────────────────────────── */}
+            <div className={heroTab === 'find_part' ? 'block' : 'hidden'}>
             <div
               className={`bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] ring-[8px] ring-blue-500/15 border-2 border-blue-500 relative z-[100] overflow-visible transition-all duration-300 hover:shadow-[0_25px_60px_rgba(37,99,235,0.25)]
                             ${heroStep > 1 && !heroSuccess ? "rounded-3xl" : "rounded-2xl lg:rounded-full"}`}
@@ -861,15 +881,7 @@ export default function HeroSection({ get, ready = false }) {
                 </div>
               )}
 
-              {/* HOW CAN WE HELP YOU DEEP LINKS */}
-              <div className="absolute -bottom-[52px] left-0 right-0 flex justify-center items-center gap-2 sm:gap-4 scale-90 sm:scale-100 w-full animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-                <span className="hidden sm:inline-flex text-[10px] font-black text-slate-400 bg-white/70 backdrop-blur-sm uppercase tracking-widest px-3 py-1 rounded-full border border-slate-200">
-                  More Services
-                </span>
-                <Link to="/sell-your-car" className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700 uppercase tracking-wider px-4 py-2 rounded-full hover:border-blue-300 hover:text-blue-600 transition-all hover:bg-white z-50 pointer-events-auto">
-                  🚗 Sell Your Vehicle
-                </Link>
-              </div>
+              {/* HOW CAN WE HELP YOU DEEP LINKS — removed; now in Sell My Vehicle tab */}
 
               {!heroSuccess &&
                 heroStep === 1 &&
@@ -1177,26 +1189,58 @@ export default function HeroSection({ get, ready = false }) {
                 />
               </div>
             )}
-          </div>
+          </div>{/* end tab 1 */}
 
-          <div
-            className="w-full max-w-3xl mt-4 animate-fade-in-up relative"
-            style={{ animationDelay: "0.4s", zIndex: 50 }}
-          >
-            <div className="bg-white/80 backdrop-blur-2xl rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-blue-100/60 relative">
-              <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/50 to-white/10 pointer-events-none"></div>
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4 relative z-10 pl-2">
-                {get(
-                  "pincode_search",
-                  "heading",
-                  "Or Search Locally By Zip Code",
-                )}
-              </h3>
-              <div className="relative" style={{ zIndex: 9999 }}>
-                <PincodeSearch />
+            {/* ── TAB 2: FIND A YARD (ZIP SEARCH) ─────────────────── */}
+            <div className={heroTab === 'find_yard' ? 'block' : 'hidden'}>
+              <div className="bg-white/80 backdrop-blur-2xl rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-blue-100/60 relative">
+                <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/50 to-white/10 pointer-events-none" />
+                <p className="text-[12px] font-bold text-slate-500 mb-1 pl-1">Find a junkyard near you</p>
+                <h2 className="text-[18px] font-black text-slate-900 mb-4 pl-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Search by ZIP Code</h2>
+                <div className="relative" style={{ zIndex: 9999 }}>
+                  <PincodeSearch />
+                </div>
+                <p className="text-[11px] text-slate-400 font-medium mt-3 pl-1">Browse salvage yards by state, city, or ZIP — all 50 states covered.</p>
               </div>
             </div>
-          </div>
+
+            {/* ── TAB 3: SELL MY VEHICLE ───────────────────────────── */}
+            <div className={heroTab === 'sell_vehicle' ? 'block' : 'hidden'}>
+              <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-[2rem] p-6 sm:p-8 border border-emerald-100 shadow-[0_8px_32px_rgba(16,185,129,0.10)] relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-200/20 rounded-full pointer-events-none" />
+                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-blue-200/20 rounded-full pointer-events-none" />
+                <div className="relative z-10">
+                  <p className="text-[12px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Quick &amp; Easy</p>
+                  <h2 className="text-[24px] sm:text-[28px] font-black text-slate-900 mb-3 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    Sell Your Vehicle<br />
+                    <span className="text-emerald-600">for Cash Today</span>
+                  </h2>
+                  <p className="text-[14px] text-slate-600 font-medium mb-6 max-w-[420px] leading-relaxed">
+                    Running or not — we connect you with licensed buyers and junkyards that pay top dollar for your vehicle.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link
+                      to="/sell-your-car"
+                      className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[15px] rounded-xl shadow-[0_8px_25px_rgba(16,185,129,0.35)] transition-all hover:-translate-y-0.5"
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Get My Free Offer
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </Link>
+                    <div className="flex items-center gap-4">
+                      {['No obligation', 'Free quote', 'Any condition'].map(f => (
+                        <span key={f} className="flex items-center gap-1 text-[12px] font-bold text-slate-600">
+                          <svg className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>{/* end leadFormRef */}
         </div>
 
         <div

@@ -197,27 +197,33 @@ const VendorLeads = () => {
                             <SkeletonLead />
                         </>
                     ) : leads.length > 0 ? (
-                        leads.map((lead) => (
+                        leads.map((dist) => {
+                            const lead = dist.lead_summary || {};
+                            const contact = dist.lead_contact;
+                            const isNew = true; // Todo: derive status from interactions
+
+                            return (
                             <Link
-                                to={`/vendor/leads/${lead.id}`}
-                                key={lead.id}
+                                to={`/vendor/leads/${dist.id}`}
+                                key={dist.id}
                                 className="block bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 p-4 md:p-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-blue-100 hover:-translate-y-0.5 transition-all duration-300 group active:scale-[0.98] mx-1"
                             >
                                 <div className="flex justify-between items-start mb-3 gap-3">
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 border border-blue-100">
-                                            {lead.customer_name.charAt(0).toUpperCase()}
+                                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 border ${dist.is_unlocked ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
+                                            {dist.is_unlocked ? (contact?.name?.charAt(0).toUpperCase() || '👤') : '🔒'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors truncate text-sm md:text-base">
+                                            <h3 className={`font-bold leading-tight group-hover:text-blue-600 transition-colors truncate text-sm md:text-base ${dist.is_unlocked ? 'text-slate-900' : 'text-slate-800'}`}>
                                                 {lead.year} {lead.make} {lead.model}
                                             </h3>
-                                            <p className="text-xs md:text-sm text-slate-500 font-medium truncate">{lead.customer_name}</p>
+                                            <p className="text-xs md:text-sm text-slate-500 font-medium truncate">
+                                                {dist.is_unlocked ? contact?.name : 'Customer Details Hidden - Unlock Required'}
+                                            </p>
                                         </div>
                                     </div>
-                                    <span className={`px-2.5 md:px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 uppercase tracking-wide ${getStatusColor(lead.status)}`}>
-                                        {getStatusIcon(lead.status)}
-                                        <span className="hidden sm:inline">{lead.status_display}</span>
+                                    <span className={`px-2.5 md:px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 uppercase tracking-wide ${dist.is_unlocked ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
+                                        {dist.is_unlocked ? '🔓 Unlocked' : '🔒 Locked'}
                                     </span>
                                 </div>
 
@@ -228,27 +234,27 @@ const VendorLeads = () => {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <span className="truncate text-slate-700">{lead.part}</span>
+                                            <span className="truncate text-slate-700 font-bold">{lead.part}</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            {new Date(dist.assigned_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </div>
-                                        {(lead.state || lead.location) && (
+                                        {(lead.state || lead.zip_preview) && (
                                             <div className="flex items-center gap-1.5">
                                                 <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
-                                                <span className="truncate">{lead.state && lead.zip ? `${lead.state}, ${lead.zip}` : lead.location}</span>
+                                                <span className="truncate">{lead.state && lead.zip_preview ? `${lead.state} ${lead.zip_preview}` : lead.state}</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </Link>
-                        ))
+                        )})
                     ) : (
                         <div className="text-center py-12 md:py-16 bg-white rounded-2xl md:rounded-3xl border-2 border-dashed border-gray-200">
                             <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">

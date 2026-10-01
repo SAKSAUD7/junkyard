@@ -79,9 +79,8 @@ class VendorDashboardSerializer(serializers.Serializer):
     vendor = serializers.SerializerMethodField()
     
     def get_recent_leads(self, obj):
-        # Return last 5 leads
-        leads = obj.get('recent_leads', [])
-        return VendorLeadSerializer(leads, many=True).data
+        # Return last 5 leads as provided by the view
+        return obj.get('recent_leads', [])
 
     def get_vendor(self, obj):
         vendor = obj.get('vendor')
