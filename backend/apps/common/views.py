@@ -2,11 +2,11 @@ from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
-from .models import ContactMessage, Feedback, AdminNotification
+from .models import ContactMessage, Feedback, AdminNotification, SiteAnalytics
 from .serializers import (
     MakeSerializer, ModelSerializer, PartSerializer,
     StateSerializer, ContactMessageSerializer, FeedbackSerializer,
-    AdminNotificationSerializer
+    AdminNotificationSerializer, SiteAnalyticsSerializer
 )
 
 
@@ -583,5 +583,32 @@ class SitemapView(APIView):
         xml_declaration = b'<?xml version="1.0" encoding="UTF-8"?>\n'
 
         return HttpResponse(xml_declaration + xml_str, content_type='application/xml')
+
+
+class SiteAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint for viewing site analytics.
+    GET: Admin only (IsAdminUser)
+    """
+    queryset = SiteAnalytics.objects.all().order_by('-created_at')
+    serializer_class = SiteAnalyticsSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=False, methods=['get'])
+    def summary(self, request):
+        """Returns aggregated counts of different analytics events"""
+        from django.db.models import Count
+        summary = SiteAnalytics.objects.values('event_type').annotate(count=Count('id'))
+        
+        counts = {
+            'login': 0,
+            'signup': 0,
+            'lead_submit': 0
+        }
+        for item in summary:
+            if item['event_type'] in counts:
+                counts[item['event_type']] = item['count']
+                
+        return Response(counts)
 
 

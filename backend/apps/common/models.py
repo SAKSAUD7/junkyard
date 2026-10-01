@@ -150,3 +150,33 @@ class AdminNotification(models.Model):
 
     def __str__(self):
         return f"[{self.get_notification_type_display()}] {self.title}"
+
+
+class SiteAnalytics(models.Model):
+    """Tracks key user engagement events: logins, signups, lead submissions."""
+    EVENT_TYPES = (
+        ('login', 'User Login'),
+        ('signup', 'User Signup'),
+        ('lead_submit', 'Lead Form Submitted'),
+    )
+
+    USER_TYPES = (
+        ('customer', 'Customer'),
+        ('vendor', 'Vendor'),
+        ('admin', 'Admin'),
+    )
+
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPES, db_index=True)
+    user_type = models.CharField(max_length=20, choices=USER_TYPES, default='customer', db_index=True)
+    user_email = models.EmailField(blank=True, null=True, help_text="Optional - stored for admin reference")
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    metadata = models.JSONField(default=dict, blank=True, help_text="Extra context e.g. lead type")
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Site Analytics Event'
+        verbose_name_plural = 'Site Analytics Events'
+
+    def __str__(self):
+        return f"[{self.get_event_type_display()}] {self.user_email or 'Anonymous'} — {self.created_at:%Y-%m-%d %H:%M}"

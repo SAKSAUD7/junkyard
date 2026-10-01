@@ -4,9 +4,8 @@ from .views import (
     MakeViewSet, ModelViewSet, PartViewSet,
     StateViewSet, ContactMessageViewSet, FeedbackViewSet, AdminStatsView,
     SiteStatsView, UploadAndMigrateLeadDataView, SitemapView,
-    CityListView, AdminNotificationViewSet
+    CityListView, AdminNotificationViewSet, SiteAnalyticsViewSet
 )
-
 
 router = DefaultRouter()
 router.register(r'makes', MakeViewSet, basename='make')
@@ -16,7 +15,7 @@ router.register(r'states', StateViewSet, basename='state')
 router.register(r'messages', ContactMessageViewSet, basename='message')
 router.register(r'feedback', FeedbackViewSet, basename='feedback')
 router.register(r'notifications', AdminNotificationViewSet, basename='notification')
-
+router.register(r'site-analytics', SiteAnalyticsViewSet, basename='site-analytics')
 
 urlpatterns = [
     path('', include(router.urls)),

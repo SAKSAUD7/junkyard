@@ -8,7 +8,7 @@ import {
     ChatBubbleLeftIcon, Cog6ToothIcon, DocumentTextIcon, ShieldCheckIcon,
     NewspaperIcon, ArrowTopRightOnSquareIcon, Bars3Icon, BookOpenIcon,
     MagnifyingGlassIcon, BellIcon, EnvelopeIcon, QuestionMarkCircleIcon,
-    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon, CurrencyDollarIcon
+    TruckIcon, XMarkIcon, UserIcon, ClockIcon, CreditCardIcon, CurrencyDollarIcon, ChartBarIcon
 } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import AdminNotificationDrawer from '../components/AdminNotificationDrawer';
@@ -191,6 +191,7 @@ export default function AdminLayout() {
         { name: 'Sell Vehicle Leads', href: '/admin-portal/sell-vehicle-leads', icon: CurrencyDollarIcon, permission: 'can_manage_leads' },
         { name: 'Ads',              href: '/admin-portal/ads',              icon: MegaphoneIcon,     permission: 'can_manage_ads' },
         { name: 'Payments',         href: '/admin-portal/payments',         icon: CreditCardIcon,    permission: null },
+        { name: 'Analytics',        href: '/admin-portal/analytics',        icon: ChartBarIcon,      permission: null },
         { name: 'Website Pages',    href: '/admin-portal/cms',              icon: DocumentTextIcon,  permission: 'can_manage_cms' },
         { name: 'Knowledge Center', href: '/admin-portal/blog',             icon: BookOpenIcon,      permission: 'can_manage_cms' },
         { name: 'Users',            href: '/admin-portal/roles',            icon: ShieldCheckIcon,   permission: 'can_manage_roles' },

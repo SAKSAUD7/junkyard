@@ -41,16 +41,25 @@ export default function FloatingLeadWidget() {
                         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                         onClick={() => setIsOpen(true)}
                         aria-label="Request a Part"
-                        className="fixed right-0 top-24 z-[500] flex flex-col items-center gap-2 lg:gap-3 bg-slate-900/90 backdrop-blur-xl border border-white/10 text-white py-3 px-2 lg:py-4 lg:px-2.5 rounded-l-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] hover:bg-slate-800 hover:-translate-x-0.5 transition-all cursor-pointer group"
+                        className="fixed right-0 top-24 z-[500] flex flex-col items-center gap-2 cursor-pointer group"
                         style={{ writingMode: 'vertical-rl' }}
                     >
-                        <span className="text-[10px] lg:text-[11px] font-black tracking-[0.2em] uppercase rotate-180 bg-gradient-to-t from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                            Request Part
-                        </span>
-                        <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-white/10 group-hover:bg-blue-500 border border-white/10 flex items-center justify-center transition-colors rotate-90">
-                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                            </svg>
+                        {/* Main pill */}
+                        <div className="flex flex-col items-center gap-2 bg-gradient-to-b from-[#1a56ff] to-[#4f46e5] text-white py-4 px-3 rounded-l-2xl shadow-[0_6px_30px_rgba(26,86,255,0.5)] hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)] hover:-translate-x-0.5 transition-all relative overflow-hidden">
+                            {/* Sheen overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                            {/* Pulse ring */}
+                            <div className="absolute -inset-0.5 rounded-l-2xl bg-blue-400/30 animate-pulse pointer-events-none" />
+                            {/* Icon */}
+                            <div className="relative w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/30 rotate-90">
+                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            {/* Label */}
+                            <span className="relative text-[10px] lg:text-[11px] font-black tracking-[0.2em] uppercase rotate-180">
+                                Request Part
+                            </span>
                         </div>
                     </motion.button>
                 )}

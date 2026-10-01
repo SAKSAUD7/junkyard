@@ -184,6 +184,11 @@ export const api = {
     return response.data;
   },
 
+  getSiteAnalyticsSummary: async () => {
+    const response = await axiosInstance.get('/common/site-analytics/summary/');
+    return response.data;
+  },
+
   getContactMessages: async (token) => {
     const response = await axiosInstance.get('/common/messages/');
     return response.data;

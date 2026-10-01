@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions, status as drf_status
 from .models import Lead, VendorLead, VehicleSubmission
+from apps.common.models import SiteAnalytics
 from .serializers import LeadSerializer, VendorLeadSerializer, VehicleSubmissionSerializer
 
 
@@ -142,6 +143,16 @@ class LeadViewSet(viewsets.ModelViewSet):
         # 1. Save the initial lead (includes the frontend-supplied hollander_number)
         lead = serializer.save()
         logger.info(f"Saved Lead ID {lead.id} with Hollander '{lead.hollander_number}' | make={lead.make} part={lead.part} year={lead.year}")
+
+        # Track Analytics
+        try:
+            SiteAnalytics.objects.create(
+                event_type='lead_submit',
+                user_email=lead.email,
+                metadata={'lead_type': 'part_request', 'lead_id': lead.id, 'make': lead.make, 'model': lead.model, 'part': lead.part}
+            )
+        except Exception:
+            pass
 
         # 2. If hollander_number or options is missing/empty, resolve it server-side
         needs_hollander = not lead.hollander_number or lead.hollander_number in ('', 'Not Found', 'N/A', 'not found')
@@ -636,6 +647,16 @@ class VehicleSubmissionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         submission = serializer.save()
         logger.info(f"New VehicleSubmission #{submission.id}: {submission.year} {submission.make} {submission.model} from {submission.name}")
+        
+        # Track Analytics
+        try:
+            SiteAnalytics.objects.create(
+                event_type='lead_submit',
+                user_email=submission.email,
+                metadata={'lead_type': 'sell_vehicle', 'lead_id': submission.id, 'make': submission.make, 'model': submission.model}
+            )
+        except Exception:
+            pass
 
         # Email notification
         try:

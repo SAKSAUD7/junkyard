@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import User, VendorProfile
+from apps.common.models import SiteAnalytics
 from .serializers import (
     UserSerializer, 
     RegisterSerializer, 
@@ -49,6 +50,19 @@ class RegisterView(generics.CreateAPIView):
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
+        # Track signup event
+        try:
+            ip = request.META.get('REMOTE_ADDR') or request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or None
+            SiteAnalytics.objects.create(
+                event_type='signup',
+                user_type=user.user_type or 'customer',
+                user_email=user.email,
+                ip_address=ip,
+                metadata={'user_id': user.id}
+            )
+        except Exception:
+            pass
+
         return Response({
             'user': UserSerializer(user).data,
             'tokens': {
@@ -96,6 +110,18 @@ class LoginView(APIView):
         except:
             pass
         
+        # Track login event
+        try:
+            ip = request.META.get('REMOTE_ADDR') or request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or None
+            SiteAnalytics.objects.create(
+                event_type='login',
+                user_type=user.user_type or 'customer',
+                user_email=user.email,
+                ip_address=ip
+            )
+        except Exception:
+            pass
+
         return Response({
             'user': UserSerializer(user).data,
             'vendor_profile': vendor_profile,

@@ -61,6 +61,7 @@ const AdminYardSubmissions = lazy(() => import('./pages/admin/YardSubmissions'))
 const AdminVendors = lazy(() => import('./pages/admin/Vendors'))
 const AdminAds = lazy(() => import('./pages/admin/Ads'))
 const AdminPayments = lazy(() => import('./pages/admin/Payments'))
+const AdminAnalytics = lazy(() => import('./pages/admin/Analytics'))
 const AdminSettings = lazy(() => import('./pages/admin/Settings'))
 const AdminCMS = lazy(() => import('./pages/admin/CMS'))
 const AdminRoles = lazy(() => import('./pages/admin/Roles'))
@@ -253,6 +254,7 @@ function App() {
               <Route path="vendors" element={<AdminVendors />} />
               <Route path="ads" element={<AdminAds />} />
               <Route path="payments" element={<AdminPayments />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="blog" element={<AdminBlogList />} />
               <Route path="blog/new" element={<AdminBlogEditor />} />

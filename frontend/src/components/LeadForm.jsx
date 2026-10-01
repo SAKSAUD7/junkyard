@@ -654,7 +654,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
             
             setTimeout(() => {
                 handleReset()
-            }, 7000)
+            }, 5000)
         } catch (error) {
             console.error(error)
             setSubmitError('Network failure. Please try again.')
@@ -1069,7 +1069,16 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                 const formatted = raw.length > 6 ? `(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}` : 
                                                   raw.length > 3 ? `(${raw.slice(0,3)}) ${raw.slice(3)}` : raw;
                                 setPhone(formatted);
-                            }} placeholder="(555) 555-5555"
+                            }} 
+                            onKeyDown={e => {
+                                // Block any additional digits once we have 10
+                                const raw = phone.replace(/\D/g, '');
+                                if (raw.length >= 10 && /^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                                    e.preventDefault();
+                                }
+                            }}
+                            placeholder="(555) 555-5555"
+                            maxLength={14}
                                 className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm placeholder-slate-400"
                                 required />
                         </div>
