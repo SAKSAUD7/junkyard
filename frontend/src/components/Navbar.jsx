@@ -75,7 +75,22 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-14 md:h-[72px]">
 
-                        <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="JYNM Home">
+                        {/* Mobile: Quote CTA (Left) */}
+                        <div className="flex items-center lg:hidden w-1/3 justify-start shrink-0">
+                            <Link
+                                to="/quote"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black rounded-full shadow-md shadow-blue-600/25 transition-all active:scale-95"
+                                aria-label="Get free quote"
+                            >
+                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <span>Get Quote</span>
+                            </Link>
+                        </div>
+
+                        {/* Center Logo */}
+                        <Link to="/" className="flex items-center gap-2.5 shrink-0 justify-center w-1/3 lg:w-auto lg:justify-start" aria-label="JYNM Home">
                             <picture>
                                 <source srcSet="/logo.webp" type="image/webp" />
                                 <img
@@ -96,10 +111,6 @@ export default function Navbar() {
                                     {get('brand', 'name_long', 'Junkyards Near Me')}
                                 </span>
                             </div>
-                            {/* Mobile-only compact brand name */}
-                            <span className="sm:hidden text-lg font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {get('brand', 'name_short', 'JYNM')}
-                            </span>
                         </Link>
 
                         {/* Desktop Nav Links */}
@@ -254,28 +265,8 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        {/* Mobile: Quote CTA + Menu Button */}
-                        <div className="flex items-center gap-2 lg:hidden">
-                            <Link
-                                to="/quote"
-                                className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-black rounded-full shadow-md shadow-blue-600/25 transition-all active:scale-95"
-                                aria-label="Get free quote"
-                            >
-                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                                <span>Get Quote</span>
-                            </Link>
-                            <button
-                                className="w-10 h-10 flex items-center justify-center rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors touch-target"
-                                onClick={() => setMobileMenuOpen(true)}
-                                aria-label="Open mobile menu"
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
-                        </div>
+                        {/* Mobile right spacer to balance the header flex */}
+                        <div className="w-1/3 lg:hidden flex justify-end shrink-0"></div>
                     </div>
                 </div>
             </nav>

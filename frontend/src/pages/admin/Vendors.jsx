@@ -93,6 +93,7 @@ export default function AdminVendors() {
     const [showHistoryModal, setShowHistoryModal] = useState(false);
 
     const [toast, setToast] = useState(null);
+    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
     const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
 
     const [formData, setFormData] = useState({

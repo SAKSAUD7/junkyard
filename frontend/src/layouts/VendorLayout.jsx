@@ -46,6 +46,18 @@ const VendorLayout = () => {
     const [logo, setLogo] = useState('');
     const [notifOpen, setNotifOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+    const accountDropdownRef = React.useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (accountDropdownRef.current && !accountDropdownRef.current.contains(event.target)) {
+                setAccountDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -223,25 +235,79 @@ const VendorLayout = () => {
                                 </span>
                             )}
                         </button>
-                        {/* Yard name pill */}
-                        <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5">
-                            <div className="w-5 h-5 rounded-full bg-[#1a56ff] flex items-center justify-center flex-shrink-0">
-                                <span className="text-[9px] font-black text-white">{vendorInitial}</span>
-                            </div>
-                            <span className="text-[12px] font-bold text-slate-700 max-w-[140px] truncate">{vendorName}</span>
+                        {/* Vendor Account Dropdown */}
+                        <div className="relative" ref={accountDropdownRef}>
+                            <button
+                                onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                                className={`flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm font-bold transition-all duration-300 border-2 ${
+                                    accountDropdownOpen 
+                                        ? 'border-transparent text-white bg-gradient-to-r from-[#1a56ff] to-indigo-600 shadow-lg shadow-blue-500/25 ring-2 ring-blue-500/20 ring-offset-1' 
+                                        : 'border-slate-200/80 text-slate-700 bg-white hover:border-[#1a56ff]/30 hover:bg-blue-50/50 hover:text-[#1a56ff] shadow-sm'
+                                }`}
+                            >
+                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm border border-white/20">
+                                    {vendorInitial}
+                                </div>
+                                <span className="hidden sm:block truncate max-w-[120px]">{vendorName}</span>
+                                <svg className={`w-3.5 h-3.5 opacity-80 transition-transform duration-300 ${accountDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+
+                            {accountDropdownOpen && (
+                                <div className="absolute right-0 mt-3 w-72 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-2 z-50 transform origin-top-right transition-all duration-200">
+                                    <div className="flex flex-col gap-1 p-1">
+                                        <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-2">
+                                            <p className="text-sm font-black text-slate-900 truncate">{vendorName}</p>
+                                            <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                        </div>
+
+                                        <NavLink
+                                            to="/vendor/dashboard"
+                                            onClick={() => setAccountDropdownOpen(false)}
+                                            className="flex items-start gap-3.5 px-3 py-2.5 rounded-xl group hover:bg-slate-50 transition-all duration-300"
+                                        >
+                                            <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:scale-110 transition-transform">
+                                                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">Dashboard</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5">Business overview</span>
+                                            </div>
+                                        </NavLink>
+
+                                        <a
+                                            href={`/vendors/${vendorId}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={() => setAccountDropdownOpen(false)}
+                                            className="flex items-start gap-3.5 px-3 py-2.5 rounded-xl group hover:bg-slate-50 transition-all duration-300"
+                                        >
+                                            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100/50 group-hover:scale-110 transition-transform">
+                                                <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-indigo-600 transition-colors">Public Profile</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5">View your yard listing</span>
+                                            </div>
+                                        </a>
+
+                                        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
+                                        
+                                        <button 
+                                            onClick={handleLogout}
+                                            className="flex items-start gap-3.5 px-3 py-2.5 rounded-xl group hover:bg-rose-50/50 transition-all duration-300 w-full text-left"
+                                        >
+                                            <div className="p-2 rounded-xl bg-rose-50 border border-rose-100 group-hover:scale-110 transition-transform">
+                                                <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-[13px] font-extrabold text-rose-600 group-hover:text-rose-700 transition-colors">Log out</span>
+                                                <span className="text-[11px] font-semibold text-slate-400 mt-0.5">End your session</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        {/* View public profile link */}
-                        <a
-                            href={`/vendors/${vendorId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors"
-                        >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            View Profile
-                        </a>
                     </div>
                 </header>
 

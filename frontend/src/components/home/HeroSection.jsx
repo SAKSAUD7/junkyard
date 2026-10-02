@@ -632,9 +632,9 @@ export default function HeroSection({ get, ready = false }) {
 
       <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-2">
         <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 text-center lg:text-left">
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md">
+          <div className="inline-flex items-center px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full mb-4 sm:mb-6 bg-blue-50 text-blue-600 text-[9px] sm:text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md whitespace-nowrap">
             <svg
-              className="w-4 h-4 mr-1.5"
+              className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

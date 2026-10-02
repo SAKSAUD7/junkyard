@@ -54,10 +54,7 @@ export default function MobileBottomNav() {
                         <span className="absolute bottom-1.5 text-[10px] font-bold tracking-tight text-[#1a56ff]">Request</span>
                     </div>
 
-                    <Link to="/search" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/search') ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}>
-                        <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive('/search') ? 2.5 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <span className="text-[10px] font-bold tracking-tight">Search</span>
-                    </Link>
+
 
                     <Link to={isAuthenticated ? "/profile" : "/signin"} className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/profile') || isActive('/signin') ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}>
                         <svg className="w-[22px] h-[22px]" fill={isActive('/profile') || isActive('/signin') ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive('/profile') || isActive('/signin') ? 0 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
