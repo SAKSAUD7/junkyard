@@ -10,6 +10,7 @@ import FloatingLeadWidget from './components/FloatingLeadWidget'
 import GlobalFAB from './components/GlobalFAB'
 import MobileBottomNav from './components/MobileBottomNav'
 import ScrollToTop from './components/ScrollToTop'
+import OnboardingOverlay from './components/OnboardingOverlay'
 
 // Lazily loaded pages — split into separate chunks
 const Search       = lazy(() => import('./pages/Search'))
@@ -148,6 +149,7 @@ function App() {
       <FloatingLeadWidget />
       <GlobalFAB onOpenFeedback={() => setFeedbackOpen(true)} />
       <MobileBottomNav />
+      <OnboardingOverlay />
       <Suspense fallback={<PageSpinner />}>
         <FeedbackWidget externalOpen={feedbackOpen} onExternalClose={() => setFeedbackOpen(false)} />
         <PageTransition>

@@ -119,24 +119,41 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        {/* Desktop Nav Links */}
-                        <div className="hidden lg:flex items-center gap-1 mx-auto">
-                            {!location.pathname.startsWith('/admin-portal') && !isAuthRoute() && navLinks.map(link => (
-                                <Link
-                                    key={link.path}
-                                    to={link.path}
-                                    className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
-                                        isActive(link.path)
-                                            ? 'text-blue-600'
-                                            : 'text-slate-600 hover:text-blue-600'
-                                    }`}
-                                >
-                                    <span className="relative z-10">{link.label}</span>
-                                    {isActive(link.path) && (
-                                        <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-blue-600 rounded-full" />
-                                    )}
-                                </Link>
-                            ))}
+                        {/* Desktop Nav: Etsy-style Search Bar & Categories */}
+                        <div className="hidden lg:flex items-center flex-1 max-w-4xl mx-8 gap-5 xl:gap-8">
+                            {!location.pathname.startsWith('/admin-portal') && !isAuthRoute() && (
+                                <>
+                                    <Link to="/junkyards-by-location" className="flex items-center gap-2 font-bold text-[14px] text-slate-800 hover:text-[#1a56ff] transition-colors whitespace-nowrap active:scale-95 group">
+                                        <svg className="w-5 h-5 text-slate-900 group-hover:text-[#1a56ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+                                        </svg>
+                                        States & Yards
+                                    </Link>
+                                    
+                                    <form 
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            navigate(`/search`);
+                                        }} 
+                                        className="flex-1 flex items-center relative group"
+                                    >
+                                        <input 
+                                            type="text" 
+                                            placeholder="Search for parts, models, or junkyards..." 
+                                            className="w-full h-11 text-slate-900 bg-white border-2 border-slate-700 hover:border-slate-800 focus:border-[#1a56ff] focus:ring-4 focus:ring-blue-500/10 rounded-full py-0 pl-6 pr-14 outline-none transition-all duration-300 font-medium text-[15px] placeholder-slate-500 shadow-sm"
+                                        />
+                                        <button 
+                                            type="submit" 
+                                            className="absolute right-1 top-1 bottom-1 w-10 flex items-center justify-center bg-[#F1641F] rounded-full hover:bg-[#e05615] transition-colors shadow-sm active:scale-95"
+                                            aria-label="Search"
+                                        >
+                                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </>
+                            )}
                         </div>
 
                         {/* Desktop Auth/Action Buttons */}
