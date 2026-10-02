@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { CMSProvider } from './contexts/CMSContext'
 import { PermissionProvider } from './contexts/PermissionContext'
 import { NotificationProvider } from './components/common/EnterpriseNotifications'
+import { CartProvider } from './contexts/CartContext'
 import App from './App.jsx'
 import './index.css'
 
@@ -46,7 +47,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <AuthProvider>
             <CMSProvider>
               <PermissionProvider>
-                <App />
+                <CartProvider>
+                  <App />
+                </CartProvider>
               </PermissionProvider>
             </CMSProvider>
           </AuthProvider>

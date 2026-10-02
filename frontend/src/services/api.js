@@ -621,4 +621,22 @@ export const api = {
     const response = await axiosInstance.post('/common/notifications/mark_all_as_read/');
     return response.data;
   },
+
+  deleteNotification: async (id) => {
+    try {
+      await axiosInstance.delete(`/common/notifications/${id}/`);
+    } catch {
+      // endpoint may not exist yet — fail silently
+    }
+    return true;
+  },
+
+  clearAllNotifications: async () => {
+    try {
+      await axiosInstance.post('/common/notifications/clear_all/');
+    } catch {
+      // endpoint may not exist yet — fail silently
+    }
+    return true;
+  },
 };

@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import { useState, useEffect, useRef, useContext, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import SignupModal from './auth/SignupModal'
 import LoginModal from './auth/LoginModal'
 import ForgotPasswordModal from './auth/ForgotPasswordModal'
 import MobileDrawer from './MobileDrawer'
+import UserNotificationDrawer from './UserNotificationDrawer'
+import CartSlider from './CartSlider'
 import { AuthContext } from '../contexts/AuthContext'
 import { useCMS } from '../hooks/useCMS'
+import { useCart } from '../contexts/CartContext'
+import { api } from '../services/api'
 
 export default function Navbar() {
     const { get } = useCMS('navbar')
@@ -18,11 +22,18 @@ export default function Navbar() {
     const [accountDropdownOpen, setAccountDropdownOpen] = useState(false)
     const [mobileAccountOpen, setMobileAccountOpen] = useState(false)
     const [welcomeToast, setWelcomeToast] = useState(false)
+    // Drawers
+    const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
+    const [cartOpen, setCartOpen] = useState(false)
+    // Notification unread count
+    const [unreadCount, setUnreadCount] = useState(0)
+
     const accountDropdownRef = useRef(null)
     const mobileAccountRef = useRef(null)
     const location = useLocation()
     const navigate = useNavigate()
     const { user, isAuthenticated, logout } = useContext(AuthContext)
+    const { cartCount } = useCart()
     const prevAuthRef = useRef(false)
 
     // Show welcome toast on login
@@ -35,6 +46,24 @@ export default function Navbar() {
         }
         if (!isAuthenticated) prevAuthRef.current = false
     }, [isAuthenticated])
+
+    // Fetch unread notification count when authenticated
+    const fetchUnreadCount = useCallback(async () => {
+        if (!isAuthenticated) { setUnreadCount(0); return; }
+        try {
+            const data = await api.getUnreadNotificationsCount()
+            setUnreadCount(data.count ?? 0)
+        } catch {
+            // fail silently
+        }
+    }, [isAuthenticated])
+
+    useEffect(() => {
+        fetchUnreadCount()
+        // Poll every 60 seconds
+        const interval = setInterval(fetchUnreadCount, 60000)
+        return () => clearInterval(interval)
+    }, [fetchUnreadCount])
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -81,6 +110,8 @@ export default function Navbar() {
         { path: '/contact', label: 'Contact' },
     ]
 
+    const openNotifDrawer = () => { setMobileAccountOpen(false); setAccountDropdownOpen(false); setNotifDrawerOpen(true) }
+    const openCartSlider = () => { setMobileAccountOpen(false); setAccountDropdownOpen(false); setCartOpen(true) }
 
     return (
         <>
@@ -119,7 +150,7 @@ export default function Navbar() {
                         {/* Mobile spacer to balance header */}
                         <div className="flex items-center lg:hidden w-1/3 justify-start shrink-0"></div>
 
-                        {/* Center Logo — bigger on mobile */}
+                        {/* Center Logo */}
                         <Link to="/" className="flex items-center gap-2 shrink-0 justify-center w-1/3 lg:w-auto lg:justify-start" aria-label="JYNM Home">
                             <picture>
                                 <source srcSet="/logo.webp" type="image/webp" />
@@ -143,10 +174,10 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        {/* Desktop Empty Center for minimalist look */}
+                        {/* Desktop Empty Center */}
                         <div className="hidden lg:flex flex-1"></div>
 
-                        {/* Desktop Actions / Icon Cluster */}
+                        {/* ── Desktop Actions / Icon Cluster ── */}
                         <div className="hidden lg:flex items-center shrink-0 gap-1 xl:gap-1.5">
                             
                             {/* Heart / Saved Parts — always visible */}
@@ -161,12 +192,18 @@ export default function Navbar() {
                             {/* Bell / Notifications — ONLY when authenticated */}
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => navigate('/profile')}
+                                    onClick={openNotifDrawer}
                                     title="Notifications"
                                     className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
                                 >
                                     <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
-                                    <span className="absolute top-[9px] right-[9px] w-2.5 h-2.5 rounded-full border-2 border-white bg-rose-500"></span>
+                                    {unreadCount > 0 ? (
+                                        <span className="absolute top-[7px] right-[7px] min-w-[16px] h-[16px] px-[3px] rounded-full border-2 border-white bg-rose-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    ) : (
+                                        <span className="absolute top-[9px] right-[9px] w-2.5 h-2.5 rounded-full border-2 border-white bg-rose-500"></span>
+                                    )}
                                 </button>
                             )}
 
@@ -176,7 +213,7 @@ export default function Navbar() {
                                 title="Vendor Hub"
                                 className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
                             >
-                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 019.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0114.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
+                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 009.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0014.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
                             </button>
 
                             <div className="w-px h-6 bg-slate-200 mx-0.5"></div>
@@ -210,9 +247,14 @@ export default function Navbar() {
                                     <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-2 z-50 transform origin-top-right transition-all duration-200">
                                         {isAuthenticated ? (
                                             <div className="flex flex-col gap-1 p-1">
-                                                <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-2">
-                                                    <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
-                                                    <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                                <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-2 flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md flex-shrink-0">
+                                                        {user?.first_name ? user.first_name.substring(0,2).toUpperCase() : (user?.email ? user.email.substring(0,2).toUpperCase() : 'U')}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
+                                                        <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                                    </div>
                                                 </div>
 
                                                 {user?.is_superuser && (
@@ -232,6 +274,20 @@ export default function Navbar() {
                                                         )}
                                                     </>
                                                 )}
+
+                                                {/* Notifications & Cart quick-links in dropdown */}
+                                                <ModernDropdownButton
+                                                    onClick={() => { setAccountDropdownOpen(false); openNotifDrawer(); }}
+                                                    icon={<svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>}
+                                                    label="Notifications"
+                                                    description={unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
+                                                />
+                                                <ModernDropdownButton
+                                                    onClick={() => { setAccountDropdownOpen(false); openCartSlider(); }}
+                                                    icon={<svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>}
+                                                    label="My Quotes"
+                                                    description={cartCount > 0 ? `${cartCount} request${cartCount !== 1 ? 's' : ''} pending` : 'No active requests'}
+                                                />
                                                 
                                                 <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
                                                 
@@ -294,66 +350,75 @@ export default function Navbar() {
                                                     icon={<svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                                                     label="Admin Gateway"
                                                 />
-
-                                                    <ModernDropdownLink
-                                                        to="/"
-                                                        onClick={() => setAccountDropdownOpen(false)}
-                                                        icon={<svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>}
-                                                        label="Back to Homepage"
-                                                        description="Return to JunkyardsNearMe.com"
-                                                    />
-                                                </div>
+                                            </div>
                                         )}
-                                        </div>
+                                    </div>
                                 )}
                             </div>
 
                             {/* Cart Icon — ONLY when authenticated */}
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => navigate('/quotes')}
+                                    onClick={openCartSlider}
                                     title="My Quotes / Cart"
                                     className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 ml-1 bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-[0_4px_16px_rgba(37,99,235,0.3)] group"
                                 >
                                     <svg className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[3px] rounded-full border-2 border-white bg-rose-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
+                                            {cartCount > 9 ? '9+' : cartCount}
+                                        </span>
+                                    )}
                                 </button>
                             )}
                         </div>
 
-                        {/* Mobile right — Account + action icons when logged in */}
+                        {/* ── Mobile right — Account + action icons when logged in ── */}
                         <div className="w-1/3 lg:hidden flex items-center justify-end shrink-0 gap-1" ref={mobileAccountRef}>
 
                             {/* Mobile: Bell icon — only when authenticated */}
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => navigate('/profile')}
+                                    onClick={openNotifDrawer}
                                     aria-label="Notifications"
                                     className="relative flex items-center justify-center w-9 h-9 rounded-full text-slate-600 hover:bg-slate-100 transition-colors active:scale-95"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
-                                    <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full border border-white bg-rose-500"></span>
+                                    {unreadCount > 0 ? (
+                                        <span className="absolute top-[6px] right-[6px] min-w-[14px] h-[14px] px-[2px] rounded-full border border-white bg-rose-500 text-white text-[8px] font-black flex items-center justify-center leading-none">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    ) : (
+                                        <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full border border-white bg-rose-500"></span>
+                                    )}
                                 </button>
                             )}
 
                             {/* Mobile: Cart icon — only when authenticated */}
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => navigate('/quotes')}
+                                    onClick={openCartSlider}
                                     aria-label="My Quotes Cart"
                                     className="relative flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors active:scale-95 shadow-md shadow-blue-500/30"
                                 >
                                     <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-[2px] rounded-full border border-white bg-rose-500 text-white text-[8px] font-black flex items-center justify-center leading-none">
+                                            {cartCount > 9 ? '9+' : cartCount}
+                                        </span>
+                                    )}
                                 </button>
                             )}
 
+                            {/* Mobile: Account button */}
                             <button
                                 onClick={() => setMobileAccountOpen(!mobileAccountOpen)}
                                 aria-label="Account"
-                                className="relative flex items-center justify-center w-9 h-9 rounded-full border-2 border-slate-200 bg-white shadow-sm active:scale-95 transition-all"
+                                className={`relative flex items-center justify-center w-10 h-10 rounded-full transition-all border-2 active:scale-95 ${isAuthenticated ? 'border-indigo-100 bg-white hover:border-indigo-200' : 'border-slate-100 bg-white shadow-sm'}`}
                             >
                                 {isAuthenticated ? (
-                                    <div className="w-full h-full rounded-full flex items-center justify-center text-xs font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600">
-                                        {user?.first_name?.[0] || user?.email?.[0] || 'U'}
+                                    <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm">
+                                        {user?.first_name ? user.first_name.substring(0, 2).toUpperCase() : (user?.email ? user.email.substring(0, 2).toUpperCase() : 'U')}
                                     </div>
                                 ) : (
                                     <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -364,20 +429,59 @@ export default function Navbar() {
 
                             {/* Mobile account dropdown */}
                             {mobileAccountOpen && (
-                                <div className="absolute top-[calc(100%+8px)] right-4 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-slate-100 p-2 min-w-[220px] z-50">
+                                <div className="absolute top-[calc(100%+8px)] right-4 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-slate-100 p-2 min-w-[240px] z-50">
                                     {isAuthenticated ? (
                                         <div className="flex flex-col gap-0.5">
-                                            <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-1">
-                                                <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
-                                                <p className="text-xs font-medium text-slate-500 truncate">{user?.email}</p>
+                                            {/* Avatar card */}
+                                            <div className="px-3 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-1 flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md flex-shrink-0">
+                                                    {user?.first_name ? user.first_name.substring(0,2).toUpperCase() : (user?.email ? user.email.substring(0,2).toUpperCase() : 'U')}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
+                                                    <p className="text-xs font-medium text-slate-500 truncate">{user?.email}</p>
+                                                </div>
                                             </div>
-                                            <Link to="/profile" onClick={() => setMobileAccountOpen(false)} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50">
-                                                <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+
+                                            {/* Admin Portal */}
+                                            {user?.is_superuser && (
+                                                <Link to="/admin-portal/dashboard" onClick={() => setMobileAccountOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-purple-700 hover:bg-purple-50">
+                                                    <svg className="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                                    Admin Portal
+                                                </Link>
+                                            )}
+
+                                            {/* Vendor dashboard */}
+                                            {user?.user_type === 'vendor' && (
+                                                <Link to="/vendor/dashboard" onClick={() => setMobileAccountOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-blue-700 hover:bg-blue-50">
+                                                    <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                                    Vendor Dashboard
+                                                </Link>
+                                            )}
+
+                                            {/* Profile */}
+                                            <Link to="/profile" onClick={() => setMobileAccountOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50">
+                                                <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                                 My Profile
                                             </Link>
+
+                                            {/* Notifications */}
+                                            <button onClick={() => { setMobileAccountOpen(false); openNotifDrawer(); }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-amber-50 w-full text-left">
+                                                <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                                                Notifications
+                                                {unreadCount > 0 && <span className="ml-auto text-[10px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
+                                            </button>
+
+                                            {/* Cart */}
+                                            <button onClick={() => { setMobileAccountOpen(false); openCartSlider(); }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 w-full text-left">
+                                                <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                                My Quotes
+                                                {cartCount > 0 && <span className="ml-auto text-[10px] font-black text-white bg-blue-600 px-1.5 py-0.5 rounded-full">{cartCount}</span>}
+                                            </button>
+
                                             <div className="h-px bg-slate-100 my-1" />
-                                            <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50 w-full text-left">
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                            <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50 w-full text-left">
+                                                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                 Log Out
                                             </button>
                                         </div>
@@ -388,14 +492,14 @@ export default function Navbar() {
                                                 onClick={() => { setMobileAccountOpen(false); setLoginModalOpen(true); }}
                                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#1a56ff] bg-blue-50 hover:bg-blue-100 w-full text-left"
                                             >
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                                                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                                                 Sign In
                                             </button>
                                             <button
                                                 onClick={() => { setMobileAccountOpen(false); setSignupModalOpen(true); }}
                                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#1a56ff] to-indigo-600 shadow-md hover:shadow-lg w-full text-left"
                                             >
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                                 Create Free Account
                                             </button>
                                             <div className="h-px bg-slate-100 my-1" />
@@ -421,9 +525,13 @@ export default function Navbar() {
                 handleLogout={handleLogout}
                 onOpenLogin={() => setLoginModalOpen(true)}
                 onOpenSignup={() => setSignupModalOpen(true)}
+                onOpenNotifs={openNotifDrawer}
+                onOpenCart={openCartSlider}
+                unreadCount={unreadCount}
+                cartCount={cartCount}
             />
 
-            {/* Spacer for fixed navbar — accounts for safe-area-inset-top */}
+            {/* Spacer for fixed navbar */}
             <div className="h-14 md:h-[72px]" style={{ marginTop: 'env(safe-area-inset-top, 0px)' }} />
 
             {/* Modals */}
@@ -442,6 +550,19 @@ export default function Navbar() {
                 isOpen={signupModalOpen}
                 onClose={() => setSignupModalOpen(false)}
                 onSwitchToLogin={() => { setSignupModalOpen(false); setLoginModalOpen(true) }}
+            />
+
+            {/* Drawers */}
+            <UserNotificationDrawer
+                isOpen={notifDrawerOpen}
+                onClose={() => setNotifDrawerOpen(false)}
+                onUnreadCountChange={setUnreadCount}
+            />
+            <CartSlider
+                isOpen={cartOpen}
+                onClose={() => setCartOpen(false)}
+                isAuthenticated={isAuthenticated}
+                onOpenLogin={() => setLoginModalOpen(true)}
             />
         </>
     )
