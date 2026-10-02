@@ -8,6 +8,7 @@ import PageTransition from './components/PageTransition'
 import Home from './pages/Home'
 import FloatingLeadWidget from './components/FloatingLeadWidget'
 import GlobalFAB from './components/GlobalFAB'
+import MobileBottomNav from './components/MobileBottomNav'
 
 // Lazily loaded pages — split into separate chunks
 const Search       = lazy(() => import('./pages/Search'))
@@ -144,6 +145,7 @@ function App() {
       <ScrollObserver />
       <FloatingLeadWidget />
       <GlobalFAB onOpenFeedback={() => setFeedbackOpen(true)} />
+      <MobileBottomNav />
       <Suspense fallback={<PageSpinner />}>
         <FeedbackWidget externalOpen={feedbackOpen} onExternalClose={() => setFeedbackOpen(false)} />
         <PageTransition>

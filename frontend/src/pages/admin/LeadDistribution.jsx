@@ -26,13 +26,24 @@ export default function LeadDistribution() {
         setLoading(true);
         try {
             const [distData, leadsData, vendorsData] = await Promise.allSettled([
-                api.getLeadDistributions?.() || fetch('/api/leads/distributions/').then(r => r.json()),
+                api.getLeadDistributions?.() || fetch('/api/leads/distributions/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+                }).then(r => r.json()),
                 api.getAdminLeads(null, { page_size: 100 }),
                 api.getAdminVendors(null, { page_size: 200 }),
             ]);
-            if (distData.status === 'fulfilled') setDistributions(distData.value?.results || distData.value || []);
-            if (leadsData.status === 'fulfilled') setLeads(leadsData.value?.results || leadsData.value || []);
-            if (vendorsData.status === 'fulfilled') setVendors(vendorsData.value?.results || vendorsData.value || []);
+            if (distData.status === 'fulfilled') {
+                const data = distData.value?.results || distData.value;
+                setDistributions(Array.isArray(data) ? data : []);
+            }
+            if (leadsData.status === 'fulfilled') {
+                const data = leadsData.value?.results || leadsData.value;
+                setLeads(Array.isArray(data) ? data : []);
+            }
+            if (vendorsData.status === 'fulfilled') {
+                const data = vendorsData.value?.results || vendorsData.value;
+                setVendors(Array.isArray(data) ? data : []);
+            }
         } catch (e) {
             setError('Failed to load data.');
         } finally {

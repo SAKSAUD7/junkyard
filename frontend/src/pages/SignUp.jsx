@@ -94,59 +94,34 @@ export default function SignUp() {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] flex flex-col font-inter">
+        <div className="min-h-screen bg-slate-50 flex flex-col font-inter bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-white">
             <SEO title="Sign Up - Create Your JYNM Account" description="Create a free account to list your junkyard, manage leads, and connect with customers." noindex={true} />
             <Navbar />
 
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-                <div className="w-full max-w-[1000px] flex flex-col gap-4">
-                    <div className="w-full flex rounded-3xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 bg-white min-h-[auto]">
-                    
-                    {/* Left Panel (Blue) */}
-                    <div className="hidden lg:flex flex-col justify-center w-[400px] bg-[#2563eb] shrink-0 p-12 text-center relative overflow-hidden">
-                        <div className="absolute -top-32 -left-32 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-70"></div>
-                        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
-                        
-                        <div className="relative z-10 w-48 h-20 bg-white mx-auto mb-10 flex items-center justify-center rounded-sm shadow-xl">
-                             <h2 className="text-3xl font-black text-blue-600 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</h2>
-                        </div>
-                        <h2 className="relative z-10 text-[26px] font-black text-white mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>Join JYNM Today!</h2>
-                        <p className="relative z-10 text-white/90 font-medium text-sm leading-relaxed">
-                            Create your free account to access nationwide parts, manage leads, and connect directly with trusted vendors.
-                        </p>
-                    </div>
-
-                    {/* Right Panel (Form) */}
-                    <div className="flex-1 p-5 sm:p-8 lg:p-12 xl:px-16 flex flex-col justify-center">
-                        <div className="lg:hidden text-center mb-6">
-                            <h2 className="text-[28px] font-black tracking-tight text-slate-800 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                Join <span className="text-blue-600">JYNM</span>
+                <div className="w-full max-w-[440px] flex flex-col gap-4">
+                    <div className="w-full flex flex-col p-8 sm:p-10 rounded-[1.5rem] shadow-xl bg-white border border-slate-100">
+                        <div className="text-center mb-6">
+                            <h2 className="text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Let's go!
                             </h2>
-                            <p className="text-slate-500 text-[13px] font-medium">Create your free account</p>
-                        </div>
-
-                        <div className="hidden lg:block mb-8 text-center">
-                            <h2 className="text-[28px] font-black tracking-tight text-slate-800" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                Create <span className="text-blue-600">Account</span>
-                            </h2>
-                            <p className="text-slate-500 text-[13px] font-medium mt-1">Fill in the details below to get started</p>
                         </div>
 
                         {/* Role Tabs */}
                         <div className="flex w-full mb-6 border-b border-slate-200">
                             <button 
                                 onClick={() => setRole('buyer')}
-                                className={`flex-1 pb-3 text-[14px] font-bold text-center transition-colors relative ${role === 'buyer' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`flex-1 pb-3 text-sm font-bold text-center transition-colors relative ${role === 'buyer' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                I'm a Buyer
-                                {role === 'buyer' && <div className="absolute bottom-[-1px] left-0 w-full h-[3px] bg-blue-600 rounded-t-full" />}
+                                Buyer
+                                {role === 'buyer' && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-indigo-600" />}
                             </button>
                             <button 
                                 onClick={() => setRole('vendor')}
-                                className={`flex-1 pb-3 text-[14px] font-bold text-center transition-colors relative ${role === 'vendor' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`flex-1 pb-3 text-sm font-bold text-center transition-colors relative ${role === 'vendor' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                I'm a Vendor
-                                {role === 'vendor' && <div className="absolute bottom-[-1px] left-0 w-full h-[3px] bg-blue-600 rounded-t-full" />}
+                                Vendor
+                                {role === 'vendor' && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-indigo-600" />}
                             </button>
                         </div>
 
@@ -246,19 +221,19 @@ export default function SignUp() {
                             <button 
                                 type="submit" 
                                 disabled={loading}
-                                className="w-full bg-[#cbd5e1] hover:bg-[#94a3b8] text-slate-800 font-bold rounded-xl px-4 py-4 transition-colors disabled:opacity-50 mt-4 shadow-sm text-[15px] flex items-center justify-center gap-2"
+                                className="w-full bg-[#7B61FF] hover:bg-[#6b50f0] text-white font-bold rounded-lg px-4 py-3 transition-colors disabled:opacity-70 mt-2 shadow-sm text-[14px] flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
-                                        <svg className="animate-spin h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                                        <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
                                         Creating...
                                     </>
-                                ) : 'Create Account'}
+                                ) : 'Play with JYNM'}
                             </button>
                         </form>
 
-                        <div className="mt-8 text-center text-[13px] font-medium text-slate-500">
-                            Already have an account? <Link to="/signin" className="text-blue-600 font-bold hover:underline">Sign In</Link>
+                        <div className="mt-8 text-center text-[12px] font-medium text-slate-500">
+                            Already playing with us? <Link to="/signin" className="text-indigo-600 font-bold hover:underline">Sign In</Link>
                         </div>
                     </div>
                 </div>
@@ -283,7 +258,6 @@ export default function SignUp() {
                         </div>
                         <div className="text-[11px] font-bold text-slate-700 leading-tight">Contact Yards<br/>Directly</div>
                     </div>
-                </div>
                 </div>
             </div>
 

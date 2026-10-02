@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { vendorAdApi } from '../../services/vendorApi';
+import { api } from '../../services/api';
 import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { LoadingButton } from '../../components/vendor/UIElements';
 import { 

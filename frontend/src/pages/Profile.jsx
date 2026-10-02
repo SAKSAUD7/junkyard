@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { Navigate } from 'react-router-dom';
+import md5 from 'md5';
 
 const Profile = () => {
     const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -30,8 +31,12 @@ const Profile = () => {
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden">
                     <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 font-black text-xl flex items-center justify-center">
-                                {user?.first_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                            <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 font-black text-xl flex items-center justify-center overflow-hidden">
+                                {user?.email ? (
+                                    <img src={`https://www.gravatar.com/avatar/${md5(user.email.toLowerCase().trim())}?d=identicon`} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                    user?.first_name?.charAt(0) || user?.email?.charAt(0) || 'U'
+                                )}
                             </div>
                             <div>
                                 <h3 className="text-xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Account Details</h3>

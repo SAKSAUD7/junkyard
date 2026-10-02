@@ -651,7 +651,7 @@ export default function HeroSection({ get, ready = false }) {
 
           {/* Heading — always visible immediately, updates when CMS loads */}
           <div
-            className="hero-responsive-text text-[22px] sm:text-3xl md:text-5xl lg:text-[54px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] [&>p]:m-0"
+            className="hero-responsive-text text-[22px] sm:text-2xl md:text-3xl lg:text-[40px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] [&>p]:m-0"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             dangerouslySetInnerHTML={{
               __html: get(
@@ -1251,25 +1251,7 @@ export default function HeroSection({ get, ready = false }) {
         </div>
       </div>
 
-      {/* STICKY MOBILE CTA BAR (Shows when hero form scrolls out of view) */}
-      {!formInView && (
-        <div
-          className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] p-3 lg:hidden mobile-cta-bar"
-          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
-        >
-          <button
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="w-full bg-blue-600 text-white font-black text-[15px] py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
-          >
-            Find My Part — Free Quote
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {/* STICKY MOBILE CTA BAR - Removed in favor of MobileBottomNav */}
     </section>
   );
 }

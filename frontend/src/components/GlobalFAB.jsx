@@ -81,7 +81,7 @@ export default function GlobalFAB({ onOpenFeedback }) {
 
     return (
         <div
-            className="fixed z-50"
+            className="fixed z-50 hidden lg:block"
             style={{
                 bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))',
                 right: '1rem',

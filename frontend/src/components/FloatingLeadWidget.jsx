@@ -42,15 +42,14 @@ export default function FloatingLeadWidget() {
                         onClick={() => setIsOpen(true)}
                         aria-label="Find a Part Fast"
                         title="Find a Part Fast"
-                        className="fixed z-[500] group
-                            bottom-6 right-4
+                        className="hidden lg:flex fixed z-[500] group
                             lg:bottom-auto lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-3 lg:rounded-r-none lg:rounded-l-2xl lg:pr-3
-                            w-14 h-14 lg:w-auto lg:h-auto lg:px-3 lg:py-3.5
-                            flex items-center justify-center gap-2
+                            lg:w-auto lg:h-auto lg:px-3 lg:py-3.5
+                            items-center justify-center gap-2
                             bg-gradient-to-br from-[#1a56ff] to-[#4f46e5]
                             rounded-full shadow-[0_6px_30px_rgba(26,86,255,0.5)]
                             hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)]
-                            hover:scale-110 lg:hover:scale-100 lg:hover:translate-x-0
+                            hover:scale-100 hover:translate-x-0
                             transition-all duration-200 cursor-pointer"
                     >
                         {/* Pulse ring */}
@@ -97,11 +96,9 @@ export default function FloatingLeadWidget() {
                             exit={window.innerWidth >= 1024 ? { opacity: 0, x: 40 } : { y: '100%' }}
                             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
                             className={[
-                                'fixed z-[999] bg-white flex flex-col',
+                                'hidden lg:flex fixed z-[999] bg-white flex-col',
                                 // Desktop: right-side panel
                                 'lg:top-16 lg:right-0 lg:bottom-0 lg:w-[320px] lg:rounded-l-[20px] lg:shadow-[-12px_0_50px_rgba(37,99,235,0.15)]',
-                                // Mobile: bottom sheet
-                                'max-lg:bottom-0 max-lg:left-0 max-lg:w-full max-lg:max-h-[92dvh] max-lg:rounded-t-[24px] max-lg:shadow-[0_-8px_50px_rgba(0,0,0,0.2)]',
                             ].join(' ')}
                         >
                             {/* Mobile drag handle */}

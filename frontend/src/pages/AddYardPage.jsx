@@ -122,6 +122,9 @@ export default function AddYardPage() {
     const [brandSearch, setBrandSearch] = useState(''); // search filter in dropdown
     const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
 
+    // CMS Driven pricing plans
+    const [subscriptionPlans, setSubscriptionPlans] = useState([]);
+    
     // Step 3 — Photos
     const photoInputRef = React.useRef(null);
 
@@ -132,7 +135,7 @@ export default function AddYardPage() {
         brands: [],
         photos: [],
         logo: null,
-        subscription_plan: 'free'
+        subscription_plan: 'minimal' // default to first plan
     });
 
     // Prevent accidental navigation
@@ -202,7 +205,31 @@ export default function AddYardPage() {
                 console.error('Failed to load parts/makes:', err);
             }
         };
+
+        const fetchAdPlans = async () => {
+             try {
+                 const response = await api.cms.getPageContent('vendor_portal');
+                 if (response && response.ad_plans) {
+                     const parsedPlans = JSON.parse(response.ad_plans);
+                     if (Array.isArray(parsedPlans) && parsedPlans.length > 0) {
+                         setSubscriptionPlans(parsedPlans);
+                         setFormData(prev => ({ ...prev, subscription_plan: parsedPlans[0].type || parsedPlans[0].id }));
+                         return;
+                     }
+                 }
+             } catch (err) {
+                 console.error('Failed to fetch CMS plans:', err);
+             }
+             // Fallback to default 4 plans
+             setSubscriptionPlans([
+                 { id: 'minimal', type: 'minimal', name: 'Minimal Plan', pricing: 19, is_popular: false, features: ['Basic marketplace visibility', 'Standard SEO indexing', 'Base catalog linkage'] },
+                 { id: 'compact', type: 'compact', name: 'Compact Plan', pricing: 29, is_popular: false, features: ['Highlighted layout aesthetic', 'Verified badge on profile', 'Mobile-optimized'] },
+                 { id: 'standard', type: 'standard', name: 'Standard Plan', pricing: 49, is_popular: false, features: ['Elevated search standing', 'Featured vendor status', 'Analytics unlocked'] },
+                 { id: 'premium', type: 'premium', name: 'Premium Plan', pricing: 99, is_popular: true, features: ['#1 Priority in search', 'Highlighted yard badge', 'Top Banner placement'] }
+             ]);
+        };
         fetchAll();
+        fetchAdPlans();
     }, []);
 
     // Step 1: When state changes, load cities from the real backend endpoint
@@ -377,23 +404,24 @@ export default function AddYardPage() {
         setError('');
 
         const isFree = formData.subscription_plan === 'free';
+        const selectedPlanObj = subscriptionPlans.find(p => (p.type === formData.subscription_plan || p.id === formData.subscription_plan));
+        const planPrice = selectedPlanObj ? selectedPlanObj.pricing : 0;
         
-        if (!isFree) {
-            showPaymentProgress(formData.subscription_plan === 'premium' ? '49.00' : '99.00');
+        if (planPrice > 0) {
+            showPaymentProgress(planPrice.toFixed(2));
         } else {
             showToast({ type: 'info', title: 'Submitting', message: 'Creating your junkyard profile...' });
         }
 
         try {
             let transactionId = null;
-            if (!isFree) {
+            if (planPrice > 0) {
                 if (!nonce) throw new Error("Payment nonce missing.");
-                const amount = formData.subscription_plan === 'premium' ? 49 : 99;
                 
                 updatePaymentStage('sending');
                 const chargeResponse = await api.chargeCard({
                     nonce: nonce, 
-                    amount: amount, 
+                    amount: planPrice, 
                     item_type: 'yard_submission', 
                     item_id: formData.business_name || 'Yard',
                     idempotency_key: idempotencyKeyRef.current
@@ -458,7 +486,7 @@ export default function AddYardPage() {
             setLoading(false);
         } catch (err) {
             setLoading(false);
-            if (!isFree) hidePaymentProgress();
+            if (planPrice > 0) hidePaymentProgress();
             
             const data = err.response?.data;
             let errorMessage = err.message || 'Submission failed. Please try again.';
@@ -1045,61 +1073,75 @@ export default function AddYardPage() {
 
                                     {/* Plans Selection */}
                                     <div className="pt-6">
-                                        <h3 className="text-[15px] font-bold text-slate-900 mb-4">Choose your plan</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                            {[
-                                                { id: 'free', name: 'Free Plan', price: '$0', desc: ['Basic listing', 'Limited visibility'] },
-                                                { id: 'premium', name: 'Premium Plan', price: '$49', isPopular: true, desc: ['Featured in search', 'More visibility', 'Priority support'] },
-                                                { id: 'featured', name: 'Featured Plan', price: '$99', desc: ['Top placement', 'Maximum visibility', 'Dedicated support'] }
-                                            ].map(plan => (
-                                                <div 
-                                                    key={plan.id}
-                                                    onClick={() => setFormData({...formData, subscription_plan: plan.id})}
-                                                    className={`rounded-2xl cursor-pointer transition-all border-2 flex flex-col items-center text-center p-6 relative ${
-                                                        formData.subscription_plan === plan.id 
-                                                        ? 'border-blue-500 bg-blue-50/20 shadow-md' 
-                                                        : 'border-slate-100 bg-white hover:border-blue-200'
-                                                    }`}
-                                                >
-                                                    {plan.isPopular && (
-                                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full whitespace-nowrap">
-                                                            Most Popular
-                                                        </div>
-                                                    )}
-                                                    <h4 className="text-[15px] font-bold text-slate-900 mb-3">{plan.name}</h4>
-                                                    <div className="text-3xl font-black text-slate-900 mb-4">{plan.price} <span className="text-[13px] font-medium text-slate-500">/mo</span></div>
-                                                    
-                                                    <ul className="text-[12px] text-slate-600 space-y-2 mb-6">
-                                                        {plan.desc.map((d, idx) => (
-                                                            <li key={idx} className="flex items-center justify-center gap-1.5">
-                                                                {plan.isPopular && <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
-                                                                {d}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-
-                                                    <div className="mt-auto">
-                                                        {formData.subscription_plan === plan.id ? (
-                                                            <span className="text-[13px] font-bold text-blue-600">Current Plan</span>
-                                                        ) : (
-                                                            <span className="text-[13px] font-bold text-slate-400 opacity-0 group-hover:opacity-100">Select</span>
+                                        <h3 className="text-[18px] font-black text-slate-900 mb-6 text-center tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Choose your plan</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                                            {subscriptionPlans.map(plan => {
+                                                const planId = plan.type || plan.id;
+                                                const isSelected = formData.subscription_plan === planId;
+                                                return (
+                                                    <div 
+                                                        key={planId}
+                                                        onClick={() => setFormData({...formData, subscription_plan: planId})}
+                                                        className={`rounded-[24px] cursor-pointer transition-all duration-300 border-2 flex flex-col relative overflow-hidden bg-white ${
+                                                            isSelected 
+                                                            ? 'border-blue-600 shadow-[0_8px_30px_rgba(26,86,255,0.15)] scale-[1.02] z-10' 
+                                                            : 'border-slate-100 hover:border-slate-300 hover:shadow-lg'
+                                                        }`}
+                                                    >
+                                                        {plan.is_popular && (
+                                                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
                                                         )}
+                                                        <div className="p-6 flex flex-col h-full">
+                                                            <div className="flex justify-between items-start mb-6">
+                                                                <div>
+                                                                    <div className={`text-[11px] font-black uppercase tracking-widest mb-1 ${plan.is_popular ? 'text-blue-600' : 'text-slate-500'}`}>
+                                                                        {plan.name}
+                                                                    </div>
+                                                                    <div className="flex items-baseline gap-1">
+                                                                        <span className="text-[32px] font-black text-slate-900 tracking-tighter">${plan.pricing}</span>
+                                                                        <span className="text-slate-500 font-medium text-[13px]">/mo</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300'}`}>
+                                                                    {isSelected && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div className="border-t border-slate-100 pt-6 flex-1">
+                                                                <ul className="text-[13px] text-slate-600 space-y-3 font-medium">
+                                                                    {(plan.features || []).map((f, idx) => (
+                                                                        <li key={idx} className="flex items-start gap-2">
+                                                                            <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                                                            <span className="leading-tight">{f}</span>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+
+                                                            <div className={`mt-8 py-2.5 rounded-xl text-center text-[13px] font-bold transition-colors ${
+                                                                isSelected 
+                                                                ? 'bg-blue-600 text-white shadow-sm'
+                                                                : 'bg-slate-50 text-slate-600 group-hover:bg-slate-100'
+                                                            }`}>
+                                                                {isSelected ? 'Selected' : 'Select Plan'}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                     
                                     {/* Checkout block for Paid Plans */}
-                                    {formData.subscription_plan !== 'free' && (
-                                        <div className="pt-8 max-w-lg mx-auto">
-                                            <h3 className="text-[15px] font-bold text-slate-900 mb-4 text-center">Secure Payment</h3>
-                                            <div className="bg-white border border-slate-100 shadow-md rounded-2xl p-6">
+                                    {formData.subscription_plan && subscriptionPlans.some(p => (p.type || p.id) === formData.subscription_plan && p.pricing > 0) && (
+                                        <div className="pt-10 max-w-lg mx-auto">
+                                            <h3 className="text-[18px] font-black text-slate-900 mb-6 text-center tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Secure Registration</h3>
+                                            <div className="bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] rounded-2xl p-8">
                                                 <AcceptJsCheckout 
-                                                    amount={formData.subscription_plan === 'premium' ? 49 : formData.subscription_plan === 'featured' ? 99 : 0} 
+                                                    amount={subscriptionPlans.find(p => (p.type || p.id) === formData.subscription_plan)?.pricing || 0} 
                                                     onSuccess={(nonce) => handleSubmit(null, nonce)} 
                                                     onError={(err) => setError(err)} 
-                                                    buttonText="Pay & Submit Yard"
+                                                    buttonText={`Pay $${subscriptionPlans.find(p => (p.type || p.id) === formData.subscription_plan)?.pricing || 0} & Submit Yard`}
                                                 />
                                             </div>
                                         </div>
@@ -1123,7 +1165,7 @@ export default function AddYardPage() {
 
                         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
                             {step === 4 && (
-                                formData.subscription_plan !== 'free' ? (
+                                formData.subscription_plan && subscriptionPlans.some(p => (p.type || p.id) === formData.subscription_plan && p.pricing > 0) ? (
                                     <div className="text-[11px] font-medium text-slate-500 flex items-start gap-1.5 order-2 sm:order-1 sm:mr-2 text-left max-w-[185px] sm:max-w-none">
                                         <svg className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-[3px]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm9 13H6v-8h12v8z" /></svg>
                                         <span>Secure payment powered by <span className="font-bold text-slate-700">Authorize.net</span></span>
@@ -1131,7 +1173,7 @@ export default function AddYardPage() {
                                 ) : (
                                     <div className="text-[11px] font-medium text-slate-500 flex items-start gap-1.5 order-2 sm:order-1 sm:mr-2 text-left max-w-[185px] sm:max-w-none">
                                         <svg className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-[2px]" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                                        <span>No credit card required for the <span className="font-bold text-slate-700">Free Plan</span>. Your listing will be published once approved.</span>
+                                        <span>No credit card required for the <span className="font-bold text-slate-700">Free Plan</span> (if applicable). Your listing will be published once approved.</span>
                                     </div>
                                 )
                             )}
@@ -1140,7 +1182,7 @@ export default function AddYardPage() {
                                 <button onClick={nextStep} className="px-6 py-3 bg-blue-600 text-white text-[14px] font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 order-1 sm:order-2">
                                     Save & Continue <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                 </button>
-                            ) : formData.subscription_plan === 'free' ? (
+                            ) : formData.subscription_plan && subscriptionPlans.some(p => (p.type || p.id) === formData.subscription_plan && p.pricing === 0) ? (
                                 <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-blue-600 text-white text-[14px] font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 order-1 sm:order-2">
                                     Submit Application 
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>

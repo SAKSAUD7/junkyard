@@ -78,6 +78,13 @@ export default function AdminAds() {
         }
     };
 
+    const DEFAULT_AD_PLANS = [
+        { id: 'minimal',  type: 'minimal',  name: 'Minimal Plan',  pricing: 19, is_popular: false, features: ['Basic marketplace visibility', 'Standard SEO indexing', 'Base catalog linkage'] },
+        { id: 'compact',  type: 'compact',  name: 'Compact Plan',  pricing: 29, is_popular: false, features: ['Highlighted layout aesthetic', 'Verified badge on profile', 'Mobile-optimized'] },
+        { id: 'standard', type: 'standard', name: 'Standard Plan', pricing: 49, is_popular: false, features: ['Elevated search standing', 'Featured vendor status', 'Analytics unlocked'] },
+        { id: 'premium',  type: 'premium',  name: 'Premium Plan',  pricing: 99, is_popular: true,  features: ['#1 Priority in search', 'Highlighted yard badge', 'Top Banner placement'] },
+    ];
+
     const fetchAdPlans = async () => {
         setPlansLoading(true);
         try {
@@ -87,21 +94,18 @@ export default function AdminAds() {
             if (plansRecord && plansRecord.value) {
                 setAdPlansRecordId(plansRecord.id);
                 try {
-                    setAdPlans(JSON.parse(plansRecord.value));
+                    const parsed = JSON.parse(plansRecord.value);
+                    setAdPlans(Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_AD_PLANS);
                 } catch (e) {
-                    setAdPlans([]);
+                    setAdPlans(DEFAULT_AD_PLANS);
                 }
             } else {
                 setAdPlansRecordId(null);
-                setAdPlans([
-                    { id: 'premium', name: 'Premium', price: 99 },
-                    { id: 'standard', name: 'Standard', price: 49 },
-                    { id: 'compact', name: 'Compact', price: 29 },
-                    { id: 'minimal', name: 'Minimal', price: 19 }
-                ]);
+                setAdPlans(DEFAULT_AD_PLANS);
             }
         } catch (e) {
             console.error('Failed to fetch ad plans:', e);
+            setAdPlans(DEFAULT_AD_PLANS);
         } finally {
             setPlansLoading(false);
         }
@@ -113,18 +117,43 @@ export default function AdminAds() {
             if (adPlansRecordId) {
                 await api.cms.updateContent(adPlansRecordId, { value: payloadValue });
             } else {
-                await api.cms.createContent({
+                const created = await api.cms.createContent({
                     page: 'vendor_portal',
                     key: 'ad_plans',
                     value: payloadValue,
                     type: 'json'
                 });
+                if (created?.id) setAdPlansRecordId(created.id);
             }
             setShowPlansModal(false);
         } catch (error) {
             console.error('Error saving ad plans:', error);
             alert('Failed to save subscription plans.');
         }
+    };
+
+    const handlePlanFeatureChange = (planIdx, featIdx, value) => {
+        const newPlans = adPlans.map((p, i) => i === planIdx
+            ? { ...p, features: p.features.map((f, j) => j === featIdx ? value : f) }
+            : p
+        );
+        setAdPlans(newPlans);
+    };
+
+    const handleAddFeature = (planIdx) => {
+        const newPlans = adPlans.map((p, i) => i === planIdx
+            ? { ...p, features: [...(p.features || []), ''] }
+            : p
+        );
+        setAdPlans(newPlans);
+    };
+
+    const handleRemoveFeature = (planIdx, featIdx) => {
+        const newPlans = adPlans.map((p, i) => i === planIdx
+            ? { ...p, features: p.features.filter((_, j) => j !== featIdx) }
+            : p
+        );
+        setAdPlans(newPlans);
     };
 
     const SLOT_GROUPS = [
@@ -794,50 +823,106 @@ export default function AdminAds() {
             {/* Subscription Plans Modal */}
             {showPlansModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center rounded-t-2xl z-10">
                             <div>
-                                <h2 className="text-xl font-semibold text-[#1f2937]">Subscription Plans</h2>
-                                <p className="text-sm text-[#6b7280]">Edit prices for vendor ad plans</p>
+                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Subscription Plans</h2>
+                                <p className="text-sm text-slate-500">Manage the 4 vendor pricing tiers — changes are reflected site-wide.</p>
                             </div>
-                            <button
-                                onClick={() => setShowPlansModal(false)}
-                                className="text-[#9ca3af] hover:text-[#6b7280] transition-colors"
-                            >
+                            <button onClick={() => setShowPlansModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
                         </div>
+
                         <div className="p-6">
                             {plansLoading ? (
                                 <div className="flex justify-center items-center py-12">
                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
+                                <div className="space-y-5">
                                     {adPlans.map((plan, idx) => (
-                                        <div key={plan.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex items-center gap-4">
-                                            <div className="flex-1">
-                                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{plan.name} Plan</label>
-                                                <p className="text-xs text-slate-400">ID: {plan.id}</p>
+                                        <div key={plan.id || idx} className="border border-slate-200 rounded-2xl overflow-hidden">
+                                            {/* Plan Header */}
+                                            <div className={`px-5 py-3 flex items-center justify-between ${plan.is_popular ? 'bg-blue-50 border-b border-blue-100' : 'bg-slate-50 border-b border-slate-100'}`}>
+                                                <div className="flex items-center gap-3">
+                                                    <input
+                                                        type="text"
+                                                        value={plan.name}
+                                                        onChange={e => setAdPlans(adPlans.map((p, i) => i === idx ? { ...p, name: e.target.value } : p))}
+                                                        className="font-bold text-slate-900 bg-transparent border-none focus:outline-none focus:ring-0 text-sm w-36"
+                                                        placeholder="Plan name"
+                                                    />
+                                                    <span className="text-xs text-slate-400 font-mono">({plan.type || plan.id})</span>
+                                                </div>
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <span className="text-xs font-semibold text-slate-500">Popular</span>
+                                                    <div
+                                                        onClick={() => setAdPlans(adPlans.map((p, i) => i === idx ? { ...p, is_popular: !p.is_popular } : p))}
+                                                        className={`w-10 h-5 rounded-full transition-colors relative cursor-pointer ${ plan.is_popular ? 'bg-blue-600' : 'bg-slate-300'}`}
+                                                    >
+                                                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${ plan.is_popular ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                                                    </div>
+                                                </label>
                                             </div>
-                                            <div>
-                                                <label className="block text-xs font-bold text-slate-700 mb-1">Price ($/mo)</label>
-                                                <input
-                                                    type="number"
-                                                    value={plan.price}
-                                                    onChange={e => {
-                                                        const newPlans = [...adPlans];
-                                                        newPlans[idx].price = Number(e.target.value);
-                                                        setAdPlans(newPlans);
-                                                    }}
-                                                    className="w-32 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm font-semibold"
-                                                />
+
+                                            {/* Plan Body */}
+                                            <div className="p-5 space-y-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex-1">
+                                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Price ($/mo)</label>
+                                                        <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+                                                            <span className="px-3 py-2 bg-slate-50 text-slate-500 font-bold text-sm border-r border-slate-200">$</span>
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                value={plan.pricing}
+                                                                onChange={e => setAdPlans(adPlans.map((p, i) => i === idx ? { ...p, pricing: Number(e.target.value) } : p))}
+                                                                className="flex-1 px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Features</label>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleAddFeature(idx)}
+                                                            className="text-xs text-blue-600 font-semibold hover:text-blue-800 flex items-center gap-1"
+                                                        >
+                                                            <PlusIcon className="w-3 h-3" /> Add feature
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {(plan.features || []).map((feat, fi) => (
+                                                            <div key={fi} className="flex items-center gap-2">
+                                                                <input
+                                                                    type="text"
+                                                                    value={feat}
+                                                                    onChange={e => handlePlanFeatureChange(idx, fi, e.target.value)}
+                                                                    className="flex-1 px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
+                                                                    placeholder="Feature description"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveFeature(idx, fi)}
+                                                                    className="text-slate-400 hover:text-rose-500 transition-colors"
+                                                                >
+                                                                    <XMarkIcon className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
+
                         <div className="sticky bottom-0 bg-white border-t border-slate-100 px-6 py-4 flex justify-end gap-3 rounded-b-2xl">
                             <button
                                 onClick={() => setShowPlansModal(false)}

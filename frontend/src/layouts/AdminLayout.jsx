@@ -203,6 +203,34 @@ export default function AdminLayout() {
         { name: 'Settings',         href: '/admin-portal/settings',         icon: Cog6ToothIcon,     permission: 'can_manage_settings' },
     ];
 
+    const [openGroups, setOpenGroups] = useState({
+        'Overview': true,
+        'Operations': true,
+        'Network': false,
+        'Content & Support': false
+    });
+
+    const toggleGroup = (group) => setOpenGroups(prev => ({ ...prev, [group]: !prev[group] }));
+
+    const navGroups = [
+        {
+            title: 'Overview',
+            items: ['Dashboard', 'Analytics', 'Payments']
+        },
+        {
+            title: 'Operations',
+            items: ['Leads', 'Lead Distribution', 'Vendor Leads', 'Sell Vehicle Leads']
+        },
+        {
+            title: 'Network',
+            items: ['Vendors', 'Users', 'Yard Submissions', 'Ads']
+        },
+        {
+            title: 'Content & Support',
+            items: ['Website Pages', 'Knowledge Center', 'Messages', 'Feedback', 'Settings']
+        }
+    ];
+
     const navigation = allNavItems.filter(item => !item.permission || isAdmin || hasPermission(item.permission));
     const isActive = (item) => item.exact ? location.pathname === item.href : location.pathname.startsWith(item.href);
 
@@ -219,16 +247,40 @@ export default function AdminLayout() {
                     </div>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-                    {navigation.map(item => {
-                        const Icon = item.icon;
-                        const active = isActive(item);
+                <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                    {navGroups.map(group => {
+                        const groupItems = group.items.map(name => navigation.find(i => i.name === name)).filter(Boolean);
+                        if (groupItems.length === 0) return null;
+                        
+                        const isOpen = openGroups[group.title];
                         return (
-                            <Link key={item.name} to={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${active ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                                <Icon className={`flex-shrink-0 w-[18px] h-[18px] ${active ? 'text-blue-600' : 'text-slate-400'}`} />
-                                <span>{item.name}</span>
-                            </Link>
+                            <div key={group.title} className="space-y-1">
+                                <button
+                                    onClick={() => toggleGroup(group.title)}
+                                    className="w-full flex items-center justify-between px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
+                                >
+                                    <span>{group.title}</span>
+                                    <svg className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                {isOpen && (
+                                    <div className="space-y-0.5 mt-1">
+                                        {groupItems.map(item => {
+                                            const Icon = item.icon;
+                                            const active = isActive(item);
+                                            return (
+                                                <Link key={item.name} to={item.href}
+                                                    className={`flex items-center gap-3 px-3 py-2 text-[13px] font-semibold rounded-xl transition-all duration-200 ${active ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
+                                                    <Icon className={`flex-shrink-0 w-4 h-4 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+                                                    <span>{item.name}</span>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
                 </nav>

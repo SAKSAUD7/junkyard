@@ -39,34 +39,47 @@ def seed():
         )
         print(f"{'Created' if created else 'Updated'} add_a_yard: {item['key']}")
 
-    # VENDOR PORTAL - ADS PRICING 
+    # VENDOR PORTAL - ADS PRICING (4 tiers — must match frontend fallback defaults)
     ads_json = [
         {
+            "id": "minimal",
+            "type": "minimal",
+            "name": "Minimal Plan",
+            "pricing": 19,
+            "duration": 30,
+            "features": ["Basic marketplace visibility", "Standard SEO indexing", "Base catalog linkage"],
+            "placement": "standard",
+            "is_popular": False
+        },
+        {
+            "id": "compact",
+            "type": "compact",
+            "name": "Compact Plan",
+            "pricing": 29,
+            "duration": 30,
+            "features": ["Highlighted layout aesthetic", "Verified badge on profile", "Mobile-optimized profile snippet"],
+            "placement": "standard",
+            "is_popular": False
+        },
+        {
+            "id": "standard",
             "type": "standard",
             "name": "Standard Plan",
-            "pricing": 99,
+            "pricing": 49,
             "duration": 30,
-            "features": ["Standard search ranking", "Vendor dashboard access", "Basic lead notifications"],
+            "features": ["Elevated search standing", "\"Featured\" vendor status badge", "Unlimited profile impressions", "Dashboard analytics unlocked"],
             "placement": "standard",
             "is_popular": False
         },
         {
+            "id": "premium",
             "type": "premium",
             "name": "Premium Plan",
-            "pricing": 199,
+            "pricing": 99,
             "duration": 30,
-            "features": ["#1 Priority in search results", "Highlighted yard badge", "Top Banner placement", "Instant SMS lead notifications"],
+            "features": ["#1 Priority in search results", "Homepage rotating banner", "Priority lead generation mapping", "\"Top Rated\" trusted vendor badge", "Advanced analytics"],
             "placement": "featured",
             "is_popular": True
-        },
-        {
-            "type": "compact",
-            "name": "Compact / Test Plan",
-            "pricing": 49,
-            "duration": 15,
-            "features": ["15 Days duration", "Standard ranking"],
-            "placement": "standard",
-            "is_popular": False
         }
     ]
 

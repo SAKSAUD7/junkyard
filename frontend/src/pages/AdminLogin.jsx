@@ -84,47 +84,16 @@ export default function AdminLogin() {
             <SEO title="Admin Login – JYNM" description="Admin access portal." noindex={true} />
 
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-                <div className="w-full max-w-[900px] flex flex-col gap-4">
-                    <div className="w-full bg-white rounded-3xl shadow-[0_20px_60px_rgba(124,58,237,0.12)] overflow-hidden flex flex-col md:flex-row min-h-[auto]">
-
-                    {/* Left panel — Purple */}
-                    <div className="md:w-[380px] shrink-0 relative bg-gradient-to-br from-[#5b21b6] to-[#8b5cf6] flex flex-col items-center justify-center p-10 text-white overflow-hidden hidden md:flex">
-                        <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-white/10" />
-                        <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-white/10" />
-                        <div className="relative z-10 w-36 h-36 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center mb-8 border border-white/30">
-                            <span className="text-5xl">🛡️</span>
-                        </div>
-                        <h2 className="relative z-10 text-2xl font-black mb-2 text-center" style={{ fontFamily: "'Outfit', sans-serif" }}>Admin Access</h2>
-                        <p className="relative z-10 text-purple-200 text-sm text-center font-medium max-w-[200px]">Login to access the admin dashboard and manage the platform.</p>
-                        <div className="relative z-10 mt-10 w-full space-y-2">
-                            {FEATURES.map(f => (
-                                <div key={f.title} className="flex items-start gap-3">
-                                    <span className="text-lg">{f.icon}</span>
-                                    <div>
-                                        <p className="text-white text-[12px] font-bold">{f.title}</p>
-                                        <p className="text-purple-200 text-[11px]">{f.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                <div className="w-full max-w-md flex flex-col gap-6">
+                    <div className="text-center">
+                        <Link to="/" className="inline-block mb-4">
+                            <img src="/logo.png" alt="JYNM" className="h-8 w-auto mx-auto" onError={e => e.currentTarget.style.display='none'} />
+                        </Link>
+                        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Admin Access</h1>
+                        <p className="text-slate-500 text-sm font-medium mt-2">Restricted access — authorized personnel only.</p>
                     </div>
 
-                    {/* Right panel — Form */}
-                    <div className="flex-1 flex flex-col justify-center p-8 sm:p-12">
-                        <div className="flex items-center justify-between mb-8">
-                            <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-slate-500 hover:text-violet-600 transition-colors text-sm font-semibold">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                                Back
-                            </button>
-                            <Link to="/" className="flex items-center gap-2">
-                                <img src="/logo.png" alt="JYNM" className="h-8 w-auto" onError={e => e.currentTarget.style.display='none'} />
-                                <span className="font-black text-slate-900 text-lg" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</span>
-                            </Link>
-                            <span className="px-2.5 py-1 bg-purple-50 border border-purple-100 text-purple-700 text-[11px] font-black uppercase tracking-widest rounded-lg">Admin Portal</span>
-                        </div>
-
-                        <h1 className="text-2xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Administrator Login</h1>
-                        <p className="text-slate-500 text-sm mb-6">Restricted access — authorized personnel only.</p>
+                    <div className="w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
 
                         {/* Lockout timer */}
                         {isLocked && (
@@ -171,29 +140,6 @@ export default function AdminLogin() {
                         <p className="text-center text-[11px] text-slate-400 mt-6">
                             Not an admin? <Link to="/signin" className="text-purple-600 font-semibold hover:underline">User Login</Link> · <Link to="/vendor/login" className="text-purple-600 font-semibold hover:underline">Vendor Login</Link>
                         </p>
-                    </div>
-                    </div>
-
-                    {/* Feature Strip */}
-                    <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100">
-                        <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto">
-                            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                            </div>
-                            <div className="text-[11px] font-bold text-slate-700 leading-tight">Platform<br/>Overview</div>
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-100">
-                            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            </div>
-                            <div className="text-[11px] font-bold text-slate-700 leading-tight">User<br/>Management</div>
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-100">
-                            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            </div>
-                            <div className="text-[11px] font-bold text-slate-700 leading-tight">System<br/>Control</div>
-                        </div>
                     </div>
                 </div>
             </div>
