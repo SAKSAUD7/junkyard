@@ -174,8 +174,22 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        {/* Desktop Empty Center */}
-                        <div className="hidden lg:flex flex-1"></div>
+                        {/* Desktop Center Links */}
+                        <div className="hidden lg:flex flex-1 justify-center items-center gap-1 xl:gap-2">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`px-2.5 xl:px-3.5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 ${
+                                        isActive(link.path)
+                                            ? 'text-[#1a56ff] bg-blue-50/80 shadow-[0_2px_8px_-2px_rgba(26,86,255,0.15)] ring-1 ring-blue-100/50'
+                                            : 'text-slate-600 hover:text-[#1a56ff] hover:bg-slate-50'
+                                    }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
 
                         {/* ── Desktop Actions / Icon Cluster ── */}
                         <div className="hidden lg:flex items-center shrink-0 gap-1 xl:gap-1.5">
