@@ -17,11 +17,24 @@ export default function Navbar() {
     const [forgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false)
     const [accountDropdownOpen, setAccountDropdownOpen] = useState(false)
     const [mobileAccountOpen, setMobileAccountOpen] = useState(false)
+    const [welcomeToast, setWelcomeToast] = useState(false)
     const accountDropdownRef = useRef(null)
     const mobileAccountRef = useRef(null)
     const location = useLocation()
     const navigate = useNavigate()
     const { user, isAuthenticated, logout } = useContext(AuthContext)
+    const prevAuthRef = useRef(false)
+
+    // Show welcome toast on login
+    useEffect(() => {
+        if (isAuthenticated && !prevAuthRef.current) {
+            setWelcomeToast(true)
+            const t = setTimeout(() => setWelcomeToast(false), 5000)
+            prevAuthRef.current = true
+            return () => clearTimeout(t)
+        }
+        if (!isAuthenticated) prevAuthRef.current = false
+    }, [isAuthenticated])
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -68,34 +81,30 @@ export default function Navbar() {
         { path: '/contact', label: 'Contact' },
     ]
 
-    // Action Icons Data
-    const actionIcons = [
-        {
-            id: 'saved',
-            icon: <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>,
-            label: 'Saved Parts',
-            onClick: () => isAuthenticated ? navigate('/profile') : setLoginModalOpen(true),
-            hasDot: false,
-        },
-        {
-            id: 'notifications',
-            icon: <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>,
-            label: 'Notifications',
-            onClick: () => isAuthenticated ? navigate('/profile') : setLoginModalOpen(true),
-            hasDot: true, // Example ping
-            dotClass: 'bg-rose-500'
-        },
-        {
-            id: 'vendor',
-            icon: <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 019.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0114.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>,
-            label: 'Vendor Hub',
-            onClick: () => isAuthenticated && user?.user_type === 'vendor' ? navigate('/vendor/dashboard') : navigate('/vendor/login'),
-            hasDot: false,
-        },
-    ]
 
     return (
         <>
+            {/* ── Welcome Notification Toast ─────────────────── */}
+            {welcomeToast && (
+                <div className="fixed top-[80px] right-4 z-[9999] max-w-sm w-full pointer-events-none">
+                    <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 p-4 flex items-start gap-4 animate-fade-in pointer-events-auto">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white flex-shrink-0 text-lg shadow-md shadow-blue-500/30">
+                            🎉
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="font-extrabold text-slate-900 text-[14px]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Welcome to JYNM, {user?.first_name || 'Explorer'}!
+                            </p>
+                            <p className="text-slate-500 text-[12px] mt-0.5 leading-snug">
+                                Explore thousands of verified junkyards and find the exact part you need.
+                            </p>
+                        </div>
+                        <button onClick={() => setWelcomeToast(false)} className="text-slate-400 hover:text-slate-600 ml-1 flex-shrink-0">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+            )}
             <nav
                 className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 backdrop-blur-xl border-b border-slate-200/80 shadow-sm"
                 style={{
@@ -138,24 +147,39 @@ export default function Navbar() {
                         <div className="hidden lg:flex flex-1"></div>
 
                         {/* Desktop Actions / Icon Cluster */}
-                        <div className="hidden lg:flex items-center shrink-0 gap-1.5 xl:gap-2.5">
+                        <div className="hidden lg:flex items-center shrink-0 gap-1 xl:gap-1.5">
                             
-                            {/* Standard 3 Icons: Saved, Notifications, Vendor */}
-                            {actionIcons.map(icon => (
-                                <button
-                                    key={icon.id}
-                                    onClick={icon.onClick}
-                                    title={icon.label}
-                                    className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95 group"
-                                >
-                                    {icon.icon}
-                                    {icon.hasDot && (
-                                        <span className={`absolute top-[9px] right-[9px] w-2.5 h-2.5 rounded-full border-2 border-white ${icon.dotClass || 'bg-blue-500'}`}></span>
-                                    )}
-                                </button>
-                            ))}
+                            {/* Heart / Saved Parts — always visible */}
+                            <button
+                                onClick={() => isAuthenticated ? navigate('/profile') : setLoginModalOpen(true)}
+                                title="Saved Parts"
+                                className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-rose-500 active:scale-95"
+                            >
+                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                            </button>
 
-                            <div className="w-px h-6 bg-slate-200 mx-1"></div>
+                            {/* Bell / Notifications — ONLY when authenticated */}
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => navigate('/profile')}
+                                    title="Notifications"
+                                    className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
+                                >
+                                    <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                                    <span className="absolute top-[9px] right-[9px] w-2.5 h-2.5 rounded-full border-2 border-white bg-rose-500"></span>
+                                </button>
+                            )}
+
+                            {/* Vendor Hub */}
+                            <button
+                                onClick={() => isAuthenticated && user?.user_type === 'vendor' ? navigate('/vendor/dashboard') : navigate('/vendor/login')}
+                                title="Vendor Hub"
+                                className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
+                            >
+                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 019.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0114.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
+                            </button>
+
+                            <div className="w-px h-6 bg-slate-200 mx-0.5"></div>
 
                             {/* User Menu Icon */}
                             <div className="relative" ref={accountDropdownRef}>
@@ -284,21 +308,44 @@ export default function Navbar() {
                                 )}
                             </div>
 
-                            {/* Quote/Cart Icon */}
-                            <button
-                                onClick={() => navigate('/quotes')}
-                                title="Active Quotes"
-                                className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 ml-1.5 xl:ml-2.5 bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-[0_4px_16px_rgba(37,99,235,0.3)] shadow-blue-500/30 group"
-                            >
-                                <svg className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
-                                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-[20px] px-1 text-[10px] font-black text-blue-700 bg-white border-2 border-blue-600 rounded-full">
-                                    3
-                                </span>
-                            </button>
+                            {/* Cart Icon — ONLY when authenticated */}
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => navigate('/quotes')}
+                                    title="My Quotes / Cart"
+                                    className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 ml-1 bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-[0_4px_16px_rgba(37,99,235,0.3)] group"
+                                >
+                                    <svg className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                </button>
+                            )}
                         </div>
 
-                        {/* Mobile right — Account icon with dropdown */}
-                        <div className="w-1/3 lg:hidden flex justify-end shrink-0" ref={mobileAccountRef}>
+                        {/* Mobile right — Account + action icons when logged in */}
+                        <div className="w-1/3 lg:hidden flex items-center justify-end shrink-0 gap-1" ref={mobileAccountRef}>
+
+                            {/* Mobile: Bell icon — only when authenticated */}
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => navigate('/profile')}
+                                    aria-label="Notifications"
+                                    className="relative flex items-center justify-center w-9 h-9 rounded-full text-slate-600 hover:bg-slate-100 transition-colors active:scale-95"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                                    <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full border border-white bg-rose-500"></span>
+                                </button>
+                            )}
+
+                            {/* Mobile: Cart icon — only when authenticated */}
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => navigate('/quotes')}
+                                    aria-label="My Quotes Cart"
+                                    className="relative flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors active:scale-95 shadow-md shadow-blue-500/30"
+                                >
+                                    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                </button>
+                            )}
+
                             <button
                                 onClick={() => setMobileAccountOpen(!mobileAccountOpen)}
                                 aria-label="Account"

@@ -33,6 +33,7 @@ const SignUp       = lazy(() => import('./pages/SignUp'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 const SellYourCar    = lazy(() => import('./pages/SellYourCar'))
 const Profile        = lazy(() => import('./pages/Profile'))
+const QuotesCart     = lazy(() => import('./pages/QuotesCart'))
 
 // Auth Components
 import ProtectedRoute from './components/ProtectedRoute'
@@ -158,6 +159,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/quote" element={<QuoteRequest />} />
+            <Route path="/quotes" element={<QuotesCart />} />
             <Route path="/sell-your-car" element={<SellYourCar />} />
 
             {/* Auth Routes */}
