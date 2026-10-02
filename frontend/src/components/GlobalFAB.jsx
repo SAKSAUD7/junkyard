@@ -81,10 +81,10 @@ export default function GlobalFAB({ onOpenFeedback }) {
 
     return (
         <div
-            className="fixed z-50 hidden lg:block"
+            className="fixed z-[400]"
             style={{
-                bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))',
-                right: '1rem',
+                bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))', // Above bottom nav
+                left: '1rem', // Put on the left side to avoid conflicting with the LeadWidget on the right
             }}
             role="group"
             aria-label="Quick contact options"
@@ -142,11 +142,11 @@ export default function GlobalFAB({ onOpenFeedback }) {
                     aria-expanded={open}
                 >
                     <svg
-                        className="w-6 h-6 transition-transform duration-300"
-                        style={{ transform: open ? 'rotate(45deg)' : 'rotate(0deg)' }}
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        className="w-7 h-7 transition-transform duration-300 transform"
+                        style={{ transform: open ? 'rotate(135deg)' : 'rotate(0deg)' }}
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                 </button>
             </div>

@@ -39,7 +39,14 @@ export default function AdminLayout() {
     const location = useLocation();
     const navigate = useNavigate();
     const [logo, setLogo] = useState('');
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
+
+    // Auto-close sidebar on route change in mobile
+    useEffect(() => {
+        if (window.innerWidth < 1024) {
+            setSidebarOpen(false);
+        }
+    }, [location.pathname]);
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -235,10 +242,18 @@ export default function AdminLayout() {
     const isActive = (item) => item.exact ? location.pathname === item.href : location.pathname.startsWith(item.href);
 
     return (
-        <div className="flex h-screen bg-[#f8fafc]" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div className="flex h-[100dvh] bg-[#f8fafc] overflow-hidden w-full relative" style={{ fontFamily: "'Inter', sans-serif" }}>
+
+            {/* Sidebar Mobile Backdrop */}
+            {sidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
             {/* ── Sidebar ─────────────────────────────────────────────── */}
-            <aside className={`flex flex-col bg-white border-r border-slate-100 shadow-sm transition-all duration-300 flex-shrink-0 z-20 ${sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'}`}>
+            <aside className={`fixed lg:static inset-y-0 left-0 flex flex-col bg-white border-r border-slate-100 shadow-[20px_0_40px_rgba(0,0,0,0.1)] lg:shadow-sm transition-all duration-300 flex-shrink-0 z-50 overflow-hidden ${sidebarOpen ? 'w-[280px] lg:w-64 translate-x-0' : 'w-[280px] lg:w-0 -translate-x-full lg:translate-x-0'}`}>
                 <div className="flex items-center gap-3 px-6 h-20 flex-shrink-0">
                     <img src={logo || '/logo.png'} alt="JYNM Logo" className="h-8 w-auto object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
                     <div className="flex flex-col leading-none">
@@ -294,7 +309,7 @@ export default function AdminLayout() {
                                 <span className="font-bold text-slate-900 text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>Platform Live</span>
                             </div>
                             <p className="text-xs text-slate-500 mb-4 leading-relaxed">You are viewing the production administration environment.</p>
-                            <Link to="/" className="block w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl text-center shadow-md shadow-blue-200 transition-all">
+                            <Link onClick={() => { if(window.innerWidth < 1024) setSidebarOpen(false); }} to="/" className="block w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl text-center shadow-md shadow-blue-200 transition-all">
                                 View Main Site
                             </Link>
                         </div>
@@ -306,8 +321,8 @@ export default function AdminLayout() {
             <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
                 {/* Top Header */}
-                <header className="bg-white h-20 px-6 flex items-center justify-between flex-shrink-0 border-b border-slate-100 z-30 relative">
-                    <div className="flex items-center gap-6 flex-1">
+                <header className="bg-white h-16 lg:h-20 px-3 lg:px-6 flex items-center justify-between flex-shrink-0 border-b border-slate-100 z-30 relative w-full shadow-sm">
+                    <div className="flex items-center gap-3 lg:gap-6 flex-1 min-w-0">
                         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-slate-400 hover:text-slate-600 transition-colors">
                             <Bars3Icon className="w-6 h-6" />
                         </button>
@@ -366,7 +381,7 @@ export default function AdminLayout() {
                         <div className="flex items-center gap-4 border-r border-slate-200 pr-5">
 
                             {/* ── Notifications (Global System Drawer) ──────────── */}
-                            <div className="relative">
+                            <div className="relative hidden md:block">
                                 <button
                                     onClick={() => setNotifOpen(true)}
                                     title="System Notifications"
@@ -467,7 +482,7 @@ export default function AdminLayout() {
                                 title="Admin Profile"
                             >
                                 <div className="text-right hidden sm:block ml-2">
-                                    <p className="text-sm font-extrabold text-slate-800 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                    <p className="text-xs lg:text-sm font-extrabold text-slate-800 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                         {user?.username || 'Admin'}
                                     </p>
                                     <p className="text-[11px] text-slate-500 font-bold">{roleName || 'Superuser'}</p>
@@ -538,7 +553,7 @@ export default function AdminLayout() {
                 </header>
 
                 {/* Page Content */}
-                <main className={`flex-1 overflow-y-auto bg-[#f8fafc] ${location.pathname.includes('/cms') ? 'p-0' : 'p-6 lg:p-8'}`}>
+                <main className={`flex-1 overflow-x-hidden overflow-y-auto bg-[#f8fafc] w-full ${location.pathname.includes('/cms') ? 'p-0' : 'p-4 lg:p-8'}`} style={{ WebkitOverflowScrolling: 'touch' }}>
                     <Outlet />
                 </main>
             </div>

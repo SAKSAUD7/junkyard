@@ -42,21 +42,22 @@ export default function FloatingLeadWidget() {
                         onClick={() => setIsOpen(true)}
                         aria-label="Find a Part Fast"
                         title="Find a Part Fast"
-                        className="hidden lg:flex fixed z-[500] group
+                        className="flex fixed z-[400] group
+                            top-[65%] right-0 -translate-y-1/2 rounded-l-2xl pl-3 pr-2 py-3
                             lg:bottom-auto lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-3 lg:rounded-r-none lg:rounded-l-2xl lg:pr-3
-                            lg:w-auto lg:h-auto lg:px-3 lg:py-3.5
+                            w-auto h-auto px-3 py-3.5
                             items-center justify-center gap-2
                             bg-gradient-to-br from-[#1a56ff] to-[#4f46e5]
                             rounded-full shadow-[0_6px_30px_rgba(26,86,255,0.5)]
                             hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)]
-                            hover:scale-100 hover:translate-x-0
+                            lg:hover:scale-100 lg:hover:translate-x-0
                             transition-all duration-200 cursor-pointer"
                     >
                         {/* Pulse ring */}
-                        <span className="absolute inset-0 rounded-full lg:rounded-l-2xl lg:rounded-r-none bg-blue-400/40 animate-ping pointer-events-none" />
+                        <span className="absolute inset-0 rounded-l-2xl bg-blue-400/40 animate-ping pointer-events-none" />
 
                         {/* Wrench icon */}
-                        <svg className="relative w-6 h-6 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className="relative w-5 h-5 lg:w-6 lg:h-6 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
@@ -96,9 +97,9 @@ export default function FloatingLeadWidget() {
                             exit={window.innerWidth >= 1024 ? { opacity: 0, x: 40 } : { y: '100%' }}
                             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
                             className={[
-                                'hidden lg:flex fixed z-[999] bg-white flex-col',
-                                // Desktop: right-side panel
-                                'lg:top-16 lg:right-0 lg:bottom-0 lg:w-[320px] lg:rounded-l-[20px] lg:shadow-[-12px_0_50px_rgba(37,99,235,0.15)]',
+                                'flex fixed z-[999] bg-white flex-col',
+                                // Mobile: full screen, Desktop: right-side panel
+                                'inset-0 lg:left-auto lg:top-16 lg:right-0 lg:bottom-0 lg:w-[320px] lg:rounded-l-[20px] lg:shadow-[-12px_0_50px_rgba(37,99,235,0.15)]',
                             ].join(' ')}
                         >
                             {/* Mobile drag handle */}

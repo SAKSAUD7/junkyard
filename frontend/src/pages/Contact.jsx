@@ -6,7 +6,9 @@ import { api } from '../services/api'
 
 // Floating animated orb background
 function Orb({ className }) {
-    return <div className={`absolute rounded-full blur-[100px] pointer-events-none ${className}`} />
+    return (
+        <div className={`absolute rounded-full blur-[100px] pointer-events-none mix-blend-multiply opacity-50 ${className}`} />
+    )
 }
 
 const infoCards = [
@@ -128,59 +130,72 @@ export default function Contact() {
 
 
 
-            {/* ─── MAIN SPLIT LAYOUT ─── */}
-            <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-16 pb-24 grid lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-start">
-                 {/* LEFT COLUMN - TEXT & INFO */}
-                 <div className="order-2 lg:order-1 mt-4 lg:mt-8">
-                     <h2 className="text-4xl md:text-[42px] font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0em' }}>
-                         We'd <span className="text-[#101b4d]">Love to</span>
-                     </h2>
-                     <p className="text-[16px] text-slate-500 mb-12 leading-relaxed max-w-md">
-                         Have questions about finding a part? Need help using our platform? Our team is here to assist you 24/7.
-                     </p>
+            {/* ─── MAIN OVERHAUL SPLIT LAYOUT ─── */}
+            <div className="relative overflow-hidden bg-slate-50 min-h-[calc(100vh-72px)] pb-24">
+                
+                {/* Premium Background Elements */}
+                <Orb className="top-0 left-0 w-[600px] h-[600px] bg-blue-200/40 -translate-x-1/2 -translate-y-1/4 animate-pulse duration-10000" />
+                <Orb className="bottom-0 right-0 w-[500px] h-[500px] bg-indigo-200/40 translate-x-1/4 translate-y-1/4" />
+                
+                <section className="relative z-10 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 mt-16 md:mt-24 grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-24 items-center">
+                    
+                    {/* LEFT COLUMN - TEXT & PREMIUM INFO BOARDS */}
+                    <div className="order-2 lg:order-1 flex flex-col pt-4 lg:pt-0">
+                        
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-blue-100/50 border border-blue-200/50 w-fit">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                            </span>
+                            <span className="text-blue-700 text-[11px] font-black uppercase tracking-widest">24/7 Nationwide Support</span>
+                        </div>
 
-                     <div className="space-y-8">
-                         {/* Contact Items */}
-                         <div className="flex gap-4">
-                             <div className="w-11 h-11 rounded-full bg-[#ecf2ff] flex items-center justify-center flex-shrink-0 text-[#2b5aeb]">
-                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                             </div>
-                             <div>
-                                 <h4 className="text-[14px] font-bold text-slate-900">Call Us</h4>
-                                 <p className="text-slate-500 text-[14px] mt-0.5">+1 (800) 555-1234</p>
-                                 <p className="text-slate-400 text-[12px]">Mon - Sun, 8AM - 8PM</p>
-                             </div>
-                         </div>
-                         {/* Email Us */}
-                         <div className="flex gap-4">
-                             <div className="w-11 h-11 rounded-full bg-[#ecf2ff] flex items-center justify-center flex-shrink-0 text-[#2b5aeb]">
-                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                             </div>
-                             <div>
-                                 <h4 className="text-[14px] font-bold text-slate-900">Email Us</h4>
-                                 <p className="text-slate-500 text-[14px] mt-0.5">support@jynm.com</p>
-                                 <p className="text-slate-400 text-[12px]">We reply within 30 mins</p>
-                             </div>
-                         </div>
+                        <h2 className="text-4xl sm:text-5xl lg:text-[56px] leading-[1.1] font-black text-slate-900 mb-6 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            How can we <br className="hidden lg:block"/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">help you?</span>
+                        </h2>
+                        
+                        <p className="text-[17px] text-slate-500 mb-12 leading-relaxed max-w-lg font-medium">
+                            Whether you're looking for a rare auto part, need help with your vendor account, or want to partner with us, our USA-based team is ready to assist.
+                        </p>
 
-                         {/* Head Office */}
-                         <div className="flex gap-4">
-                             <div className="w-11 h-11 rounded-full bg-[#ecf2ff] flex items-center justify-center flex-shrink-0 text-[#2b5aeb]">
-                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                             </div>
-                             <div>
-                                 <h4 className="text-[14px] font-bold text-slate-900">Head Office</h4>
-                                 <p className="text-slate-500 text-[14px] mt-0.5 leading-relaxed">
-                                     123 Auto Salvage Way,<br/>
-                                     Phoenix, AZ 85001, United States
-                                 </p>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                            {/* Contact Items Re-imagined */}
+                            <div className="p-6 bg-white rounded-3xl border border-slate-200/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white mb-5 shadow-lg shadow-blue-500/30">
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                </div>
+                                <h4 className="text-[16px] font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Call Us Directly</h4>
+                                <p className="text-slate-500 text-[14px] font-medium">+1 (800) 555-1234</p>
+                            </div>
 
-                 {/* RIGHT COLUMN - FORM */}
-                 <div className="order-1 lg:order-2 bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-8 md:p-10 relative overflow-hidden">
+                            <div className="p-6 bg-white rounded-3xl border border-slate-200/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white mb-5 shadow-lg shadow-emerald-500/30">
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <h4 className="text-[16px] font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Email Support</h4>
+                                <p className="text-slate-500 text-[14px] font-medium">support@jynm.com</p>
+                            </div>
+                        </div>
+
+                        {/* Head Office Inline */}
+                        <div className="flex items-center gap-4 px-6 py-5 bg-slate-900 rounded-3xl text-white shadow-xl shadow-slate-900/10">
+                            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white shrink-0">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            </div>
+                            <div>
+                                <h4 className="text-[13px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Corporate HQ</h4>
+                                <p className="text-[15px] font-bold">123 Auto Salvage Way, Phoenix, AZ 85001</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN - PREMIUM FORM */}
+                    <div className="order-1 lg:order-2 w-full lg:max-w-[540px] ml-auto relative">
+                        {/* Decorative glow behind form */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-[32px] transform rotate-1 scale-[1.02] opacity-20 blur-xl"></div>
+                        
+                        <div className="bg-white rounded-[32px] shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100 p-8 sm:p-10 relative overflow-hidden backdrop-blur-3xl z-10">
                             {status === 'success' ? (
                                 <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center animate-fade-in">
                                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2b5aeb] to-[#4b76f2] flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
@@ -202,13 +217,17 @@ export default function Contact() {
                             ) : (
                                 <>
                                     <div className="mb-8">
-                                        <h3 className="text-[26px] font-black text-[#101b4d] mb-1" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                                            Send us a Message
+                                        <h3 className="text-[28px] font-black text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            Send a Message
                                         </h3>
+                                        <p className="text-[14px] text-slate-500 font-medium">
+                                            Fill out the form below and we'll be in touch ASAP.
+                                        </p>
                                     </div>
 
-                                    <form onSubmit={handleSubmit} className="space-y-5">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            {/* Glowing Focus Inputs */}
                                             <div>
                                                 <label className="block text-[13px] font-bold text-slate-700 mb-1.5">Full Name</label>
                                                 <input
@@ -290,17 +309,27 @@ export default function Contact() {
                                             </div>
                                         )}
 
-                                        <button
-                                            type="submit"
-                                            disabled={status === 'loading'}
-                                            className="mt-2 w-full py-3.5 bg-[#2b5aeb] hover:bg-[#1a44c9] text-white font-bold text-[15px] rounded-2xl shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
-                                            {status === 'loading' ? 'Sending...' : 'Send Message'}
-                                        </button>
+                                        <div className="mt-2 pt-2">
+                                            <button
+                                                type="submit"
+                                                disabled={status === 'loading'}
+                                                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-[15px] rounded-xl shadow-[0_8px_20px_rgba(79,70,229,0.25)] hover:shadow-[0_12px_28px_rgba(79,70,229,0.35)] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+                                            >
+                                                {status === 'loading' ? (
+                                                    <span className="flex items-center justify-center gap-2">
+                                                        <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                        Sending...
+                                                    </span>
+                                                ) : 'Send Message'}
+                                            </button>
+                                        </div>
                                     </form>
                                 </>
                             )}
-                 </div>
-            </section>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
             <Footer />
         </div>

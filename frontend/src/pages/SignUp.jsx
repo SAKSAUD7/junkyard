@@ -100,8 +100,12 @@ export default function SignUp() {
 
             <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
                 <div className="w-full max-w-[440px] flex flex-col gap-4">
-                    <div className="w-full flex flex-col p-6 sm:p-10 rounded-3xl sm:rounded-[1.5rem] shadow-xl bg-white border border-slate-100">
-                        <div className="text-center mb-6">
+                    <div className="w-full flex flex-col p-6 sm:p-10 rounded-3xl sm:rounded-[1.5rem] shadow-xl bg-white border border-slate-100 relative">
+                        <Link to="/" className="absolute top-6 left-6 flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors text-sm font-semibold">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            Back Home
+                        </Link>
+                        <div className="text-center mb-6 mt-6 sm:mt-2">
                             <h2 className="text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                 Let's go!
                             </h2>
@@ -228,7 +232,7 @@ export default function SignUp() {
                                         <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
                                         Creating...
                                     </>
-                                ) : 'Play with JYNM'}
+                                ) : (role === 'buyer' ? 'Create Account' : 'Register Vendor')}
                             </button>
                         </form>
 

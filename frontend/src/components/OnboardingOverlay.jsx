@@ -6,7 +6,7 @@ export default function OnboardingOverlay() {
     const [step, setStep] = useState(0)
 
     useEffect(() => {
-        const hasSeen = localStorage.getItem('jynm_onboarding_seen')
+        const hasSeen = sessionStorage.getItem('jynm_onboarding_seen')
         if (!hasSeen) {
             // Slight delay so the background loads first
             const timer = setTimeout(() => {
@@ -18,7 +18,7 @@ export default function OnboardingOverlay() {
 
     const handleDismiss = () => {
         setIsVisible(false)
-        localStorage.setItem('jynm_onboarding_seen', 'true')
+        sessionStorage.setItem('jynm_onboarding_seen', 'true')
     }
 
     if (!isVisible) return null

@@ -85,9 +85,13 @@ export default function AdminLogin() {
 
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
                 <div className="w-full max-w-md flex flex-col gap-6">
-                    <div className="text-center">
+                    <div className="text-center relative">
+                        <Link to="/" className="absolute left-0 top-0 mt-1 flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors text-sm font-semibold">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            Back Home
+                        </Link>
                         <Link to="/" className="inline-block mb-4">
-                            <img src="/logo.png" alt="JYNM" className="h-8 w-auto mx-auto" onError={e => e.currentTarget.style.display='none'} />
+                            <img src="/logo.png" alt="JYNM" className="h-8 w-auto mx-auto inline-block" onError={e => e.currentTarget.style.display='none'} />
                         </Link>
                         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>Admin Access</h1>
                         <p className="text-slate-500 text-sm font-medium mt-2">Restricted access — authorized personnel only.</p>
