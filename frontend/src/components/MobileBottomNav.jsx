@@ -47,12 +47,21 @@ export default function MobileBottomNav() {
             <div className="h-16 lg:hidden pb-[env(safe-area-inset-bottom)]" />
             
             {/* iOS/Android style bottom tab bar */}
-            {/* Made bg translucent to avoid hiding content completely */}
-            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/70 backdrop-blur-2xl border-t border-white/50 lg:hidden pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+            {/* Ultra-transparent frosted glass so content below is still visible */}
+            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/40 backdrop-blur-3xl border-t border-white/30 lg:hidden pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ WebkitBackdropFilter: 'blur(24px)' }}>
                 
                 {/* Expandable "More" Menu overlay */}
                 {moreOpen && (
-                    <div ref={moreMenuRef} className="absolute bottom-[75px] right-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-slate-100 p-2 min-w-[200px] flex flex-col z-[110] transform transition-all duration-300">
+                    <div ref={moreMenuRef} className="absolute bottom-[75px] right-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-slate-100 p-2 min-w-[220px] flex flex-col z-[110]">
+                        <Link to="/junkyards-by-location" onClick={() => setMoreOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50`}>
+                            <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Browse States
+                        </Link>
+                        <Link to="/search" onClick={() => setMoreOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50`}>
+                            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            Search Parts
+                        </Link>
+                        <div className="h-px bg-slate-100 my-1"></div>
                         <Link to="/sell-your-car" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50`}>
                             <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             Sell My Vehicle
