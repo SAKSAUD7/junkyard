@@ -630,9 +630,29 @@ export default function HeroSection({ get, ready = false }) {
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent w-3/4" />
       </div>
 
-      <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-2">
-        <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 text-center lg:text-left">
-          <div className="inline-flex items-center px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full mb-4 sm:mb-6 bg-blue-50 text-blue-600 text-[9px] sm:text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md whitespace-nowrap">
+      <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-0">
+        
+        {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}
+        <div className="w-[100vw] -ml-[calc(50vw-50%)] relative flex lg:hidden items-center justify-center overflow-hidden mb-5" style={{ height: '240px' }}>
+          <video
+            ref={mobileVideoRef}
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster="/hero-bg.webp"
+            aria-label="Background video of cars at a junkyard"
+            className="w-full h-full object-cover object-center scale-[1.05]"
+            style={{ filter: "brightness(1.05) contrast(1.05)" }}
+          >
+            <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
+          </video>
+          {/* subtle gradient overlay at bottom to blend into content */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+        </div>
+
+        <div className="w-full lg:max-w-[70%] text-left mb-2 lg:mb-10 mt-1">
+          <div className="inline-flex items-left justify-start px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full mb-4 sm:mb-6 bg-blue-50 text-blue-600 text-[10px] sm:text-[12px] lg:text-[13px] font-bold border border-blue-100/50 backdrop-blur-md whitespace-nowrap">
             <svg
               className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5"
               fill="none"
@@ -651,7 +671,7 @@ export default function HeroSection({ get, ready = false }) {
 
           {/* Heading — always visible immediately, updates when CMS loads */}
           <div
-            className="hero-responsive-text text-[22px] sm:text-2xl md:text-3xl lg:text-[40px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.15] [&>p]:m-0"
+            className="hero-responsive-text text-[20px] sm:text-[22px] md:text-3xl lg:text-[40px] font-black text-[#1e293b] mb-4 lg:mb-5 tracking-tight leading-[1.2] [&_p]:text-left [&_p]:m-0"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             dangerouslySetInnerHTML={{
               __html: get(
@@ -664,7 +684,7 @@ export default function HeroSection({ get, ready = false }) {
 
           {/* Subheading — always visible immediately, updates when CMS loads */}
           <div
-            className="hero-responsive-text text-[15px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-auto lg:mx-0 [&>p]:m-0"
+            className="hero-responsive-text text-[14px] lg:text-[17px] text-slate-600 mb-2 lg:mb-8 max-w-[540px] font-medium leading-relaxed mx-0 [&_p]:text-left [&_p]:m-0"
             dangerouslySetInnerHTML={{
               __html: get(
                 "hero",
@@ -675,24 +695,6 @@ export default function HeroSection({ get, ready = false }) {
           />
         </div>
 
-        {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}
-        <div className="w-[100vw] -ml-[calc(50vw-50%)] relative flex lg:hidden items-center justify-center overflow-hidden mt-1 mb-2" style={{ height: '200px' }}>
-          <video
-            ref={mobileVideoRef}
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster="/hero-bg.webp"
-            aria-label="Background video of cars at a junkyard"
-            className="w-full h-full object-cover object-center scale-[1.05]"
-            style={{ filter: "brightness(1.05) contrast(1.05)" }}
-          >
-            <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
-          </video>
-          {/* subtle gradient overlay at bottom to blend into content */}
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-        </div>
 
         <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
           <div ref={leadFormRef} className="w-full mb-8 relative z-[100]">

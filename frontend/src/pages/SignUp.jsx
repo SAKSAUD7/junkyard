@@ -98,9 +98,9 @@ export default function SignUp() {
             <SEO title="Sign Up - Create Your JYNM Account" description="Create a free account to list your junkyard, manage leads, and connect with customers." noindex={true} />
             <Navbar />
 
-            <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+            <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
                 <div className="w-full max-w-[440px] flex flex-col gap-4">
-                    <div className="w-full flex flex-col p-8 sm:p-10 rounded-[1.5rem] shadow-xl bg-white border border-slate-100">
+                    <div className="w-full flex flex-col p-6 sm:p-10 rounded-3xl sm:rounded-[1.5rem] shadow-xl bg-white border border-slate-100">
                         <div className="text-center mb-6">
                             <h2 className="text-3xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                 Let's go!
@@ -239,7 +239,7 @@ export default function SignUp() {
                 </div>
 
                 {/* Mobile & Desktop Feature Strip */}
-                <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100">
+                <div className="hidden sm:flex w-full flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100">
                     <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto">
                         <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>

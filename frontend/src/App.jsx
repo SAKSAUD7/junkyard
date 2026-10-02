@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import FloatingLeadWidget from './components/FloatingLeadWidget'
 import GlobalFAB from './components/GlobalFAB'
 import MobileBottomNav from './components/MobileBottomNav'
+import ScrollToTop from './components/ScrollToTop'
 
 // Lazily loaded pages — split into separate chunks
 const Search       = lazy(() => import('./pages/Search'))
@@ -142,6 +143,7 @@ function App() {
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   return (
     <MotionConfig reducedMotion="user">
+      <ScrollToTop />
       <ScrollObserver />
       <FloatingLeadWidget />
       <GlobalFAB onOpenFeedback={() => setFeedbackOpen(true)} />
