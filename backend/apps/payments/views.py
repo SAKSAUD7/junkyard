@@ -181,16 +181,20 @@ class ChargeCardView(views.APIView):
             
             # Send Success Email
             if customer_email:
-                try:
-                    send_mail(
-                        subject=f"JYNM - Payment Receipt for {txn.item_type}",
-                        message=f"Hello,\n\nYour payment of ${amount} has been successfully processed.\nInvoice Number: {txn.invoice_number}\nTransaction ID: {result.transaction_id}\n\nThank you for choosing JYNM!",
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[customer_email],
-                        fail_silently=True,
-                    )
-                except Exception as e:
-                    logger.error("Failed to send success email for TXN#%s: %s", txn.id, e)
+                def _send_receipt_async():
+                    try:
+                        send_mail(
+                            subject=f"JYNM - Payment Receipt for {txn.item_type}",
+                            message=f"Hello,\n\nYour payment of ${amount} has been successfully processed.\nInvoice Number: {txn.invoice_number}\nTransaction ID: {result.transaction_id}\n\nThank you for choosing JYNM!",
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[customer_email],
+                            fail_silently=True,
+                        )
+                    except Exception as e:
+                        logger.error("Failed to send success email for TXN#%s: %s", txn.id, e)
+                
+                import threading
+                threading.Thread(target=_send_receipt_async).start()
 
             return Response({
                 'success': True,
@@ -209,16 +213,20 @@ class ChargeCardView(views.APIView):
             
             # Send Failure Email
             if customer_email:
-                try:
-                    send_mail(
-                        subject=f"JYNM - Payment Failed",
-                        message=f"Hello,\n\nUnfortunately, your payment of ${amount} could not be processed.\nReason: {result.error}\n\nPlease try again or contact support.",
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[customer_email],
-                        fail_silently=True,
-                    )
-                except Exception as e:
-                    logger.error("Failed to send failure email for TXN#%s: %s", txn.id, e)
+                def _send_fail_async():
+                    try:
+                        send_mail(
+                            subject=f"JYNM - Payment Failed",
+                            message=f"Hello,\n\nUnfortunately, your payment of ${amount} could not be processed.\nReason: {result.error}\n\nPlease try again or contact support.",
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[customer_email],
+                            fail_silently=True,
+                        )
+                    except Exception as e:
+                        logger.error("Failed to send failure email for TXN#%s: %s", txn.id, e)
+                
+                import threading
+                threading.Thread(target=_send_fail_async).start()
 
             return Response({
                 'error': result.error or 'Payment was declined.',

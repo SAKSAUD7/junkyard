@@ -61,19 +61,24 @@ If you didn't request this, please ignore this email.
 JYNM Vendor Portal
         """
         
-        try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
-            print(f"[OK] Password reset email sent to {user.email}")
-            print(f"Reset link: {reset_link}")  # For testing
-        except Exception as e:
-            print(f"[ERROR] Failed to send email: {str(e)}")
-            # Still return success for security
+        def _send_reset_async():
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+                print(f"[OK] Password reset email sent to {user.email}")
+                print(f"Reset link: {reset_link}")  # For testing
+            except Exception as e:
+                print(f"[ERROR] Failed to send email: {str(e)}")
+                # Still return success for security in the main thread anyway
+
+        import threading
+        email_thread = threading.Thread(target=_send_reset_async)
+        email_thread.start()
         
         return Response({
             'message': 'If a vendor account exists with this email, you will receive password reset instructions.'

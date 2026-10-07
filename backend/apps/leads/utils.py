@@ -110,19 +110,29 @@ def send_lead_notification(lead):
         print(f"Subject: {subject}")
         print(f"===================================")
             
-        send_mail(
-            subject,
-            plain_message,
-            from_email,
-            [to_email],
-            html_message=html_message,
-            fail_silently=False,
-        )
-        logger.info(f"Notification email sent to {to_email} for Lead #{lead.id}")
-        print(f"[EMAIL SENT] Successfully sent to {to_email}")
+        def _send_async():
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    from_email,
+                    [to_email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                logger.info(f"Notification email sent to {to_email} for Lead #{lead.id}")
+                print(f"[EMAIL SENT] Successfully sent to {to_email}")
+            except Exception as e:
+                logger.error(f"Failed to send email for Lead #{lead.id}: {str(e)}")
+                print(f"!!! EMAIL ERROR: {str(e)}")
+
+        import threading
+        email_thread = threading.Thread(target=_send_async)
+        email_thread.start()
+        
         return True
     except Exception as e:
-        logger.error(f"Failed to send email for Lead #{lead.id}: {str(e)}")
+        logger.error(f"Failed to prepare email for Lead #{lead.id}: {str(e)}")
         # Print to console for visibility during dev
-        print(f"!!! EMAIL ERROR: {str(e)}")
+        print(f"!!! EMAIL PREP ERROR: {str(e)}")
         return False
