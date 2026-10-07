@@ -70,7 +70,7 @@ class ChargeCardView(views.APIView):
         idempotency_key (str) — Optional client-supplied dedup key
         description    (str)  — Optional human-readable purchase description
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         nonce            = request.data.get('nonce')
@@ -80,6 +80,7 @@ class ChargeCardView(views.APIView):
         source_module    = request.data.get('source_module', '')
         idempotency_key  = request.data.get('idempotency_key', '')
         description      = request.data.get('description', '')
+        guest_email      = request.data.get('guest_email', '')
 
         # ── Validation ──────────────────────────────────────────────
         if not nonce:
@@ -113,16 +114,20 @@ class ChargeCardView(views.APIView):
                     }, status=status.HTTP_409_CONFLICT)
                 # If transaction failed previously, we will allow creating a new one (although ideally with a new key).
 
-        # ── Resolve vendor FK if possible ────────────────────────────
+        # ── Resolve FKs and Emails ───────────────────────────────────
         vendor = None
-        try:
-            vendor = request.user.vendor_profile.vendor
-        except Exception:
-            pass  # Customer payment — no vendor FK needed
+        user = request.user if request.user.is_authenticated else None
+        if user:
+            try:
+                vendor = request.user.vendor_profile.vendor
+            except Exception:
+                pass  # Customer payment — no vendor FK needed
+        
+        customer_email = user.email if user else guest_email
 
         # ── Create Draft Transaction ─────────────────────────────────
         txn = Transaction.objects.create(  # type: ignore
-            user=request.user,
+            user=user,
             vendor=vendor,
             amount=amount,
             status='draft',
@@ -145,7 +150,7 @@ class ChargeCardView(views.APIView):
             correlation_id=str(txn.correlation_id),
             ref_id=f"TXN_{txn.id}",
             description=description or f"{item_type}:{item_id}",
-            customer_email=request.user.email,
+            customer_email=customer_email,
             metadata={'ip_address': _get_client_ip(request) or ''},
         )
 
@@ -170,21 +175,22 @@ class ChargeCardView(views.APIView):
                 logger.error("Invoice generation failed for TXN#%s: %s", txn.id, inv_err)
 
             logger.info(
-                "Payment SUCCESS: TXN#%s | $%s | gateway_txn=%s | user=%s",
-                txn.id, amount, result.transaction_id, request.user.email
+                "Payment SUCCESS: TXN#%s | $%s | gateway_txn=%s | customer=%s",
+                txn.id, amount, result.transaction_id, customer_email
             )
             
             # Send Success Email
-            try:
-                send_mail(
-                    subject=f"JYNM - Payment Receipt for {txn.item_type}",
-                    message=f"Hello,\n\nYour payment of ${amount} has been successfully processed.\nInvoice Number: {txn.invoice_number}\nTransaction ID: {result.transaction_id}\n\nThank you for choosing JYNM!",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[request.user.email],
-                    fail_silently=True,
-                )
-            except Exception as e:
-                logger.error("Failed to send success email for TXN#%s: %s", txn.id, e)
+            if customer_email:
+                try:
+                    send_mail(
+                        subject=f"JYNM - Payment Receipt for {txn.item_type}",
+                        message=f"Hello,\n\nYour payment of ${amount} has been successfully processed.\nInvoice Number: {txn.invoice_number}\nTransaction ID: {result.transaction_id}\n\nThank you for choosing JYNM!",
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[customer_email],
+                        fail_silently=True,
+                    )
+                except Exception as e:
+                    logger.error("Failed to send success email for TXN#%s: %s", txn.id, e)
 
             return Response({
                 'success': True,
@@ -197,21 +203,22 @@ class ChargeCardView(views.APIView):
         else:
             txn.transition_to('failed', note=f"Gateway declined: {result.error}")
             logger.warning(
-                "Payment FAILED: TXN#%s | $%s | error=%s | user=%s",
-                txn.id, amount, result.error, request.user.email
+                "Payment FAILED: TXN#%s | $%s | error=%s | customer=%s",
+                txn.id, amount, result.error, customer_email
             )
             
             # Send Failure Email
-            try:
-                send_mail(
-                    subject=f"JYNM - Payment Failed",
-                    message=f"Hello,\n\nUnfortunately, your payment of ${amount} could not be processed.\nReason: {result.error}\n\nPlease try again or contact support.",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[request.user.email],
-                    fail_silently=True,
-                )
-            except Exception as e:
-                logger.error("Failed to send failure email for TXN#%s: %s", txn.id, e)
+            if customer_email:
+                try:
+                    send_mail(
+                        subject=f"JYNM - Payment Failed",
+                        message=f"Hello,\n\nUnfortunately, your payment of ${amount} could not be processed.\nReason: {result.error}\n\nPlease try again or contact support.",
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[customer_email],
+                        fail_silently=True,
+                    )
+                except Exception as e:
+                    logger.error("Failed to send failure email for TXN#%s: %s", txn.id, e)
 
             return Response({
                 'error': result.error or 'Payment was declined.',

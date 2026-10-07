@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { vendorLeads } from '../../services/vendorApi';
+import { vendorLeads, vendorPayments } from '../../services/vendorApi';
 import { useCMS } from '../../hooks/useCMS';
+import AcceptJsCheckout from '../../components/vendor/AcceptJsCheckout';
+
+const VENDOR_LEAD_FEE = "4.99";
 
 const VendorLeadDetail = () => {
     const { get } = useCMS('vendor_portal');
@@ -29,15 +32,26 @@ const VendorLeadDetail = () => {
         }
     };
 
-    const handleUnlock = async () => {
+    const handlePaymentSuccess = async (nonce) => {
         setUpdating(true);
         setError('');
         try {
+            // 1. Process payment
+            await vendorPayments.chargeCard({
+                nonce,
+                amount: VENDOR_LEAD_FEE,
+                item_type: 'lead_unlock',
+                item_id: id,
+                source_module: 'vendor_leads',
+                description: `Lead Unlock Fee - Lead #${dist.lead}`
+            });
+
+            // 2. Unlock lead
             await vendorLeads.unlock(id);
             setSuccess('Lead unlocked successfully!');
             await loadLead();
         } catch (err) {
-            setError('Failed to unlock lead.');
+            setError(err.response?.data?.error || 'Payment failed to process.');
             console.error(err);
         } finally {
             setUpdating(false);
@@ -208,16 +222,24 @@ const VendorLeadDetail = () => {
                                     <p className="text-slate-500 mb-6 max-w-sm mx-auto">
                                         Unlock this lead to instantly view the customer's full name, email, and phone number so you can reach out with a quote.
                                     </p>
-                                    <button
-                                        onClick={handleUnlock}
-                                        disabled={updating}
-                                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1a56ff] hover:bg-blue-700 active:scale-95 text-white rounded-xl font-bold transition-all shadow-[0_4px_12px_rgba(26,86,255,0.3)] disabled:opacity-75"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                                        </svg>
-                                        {updating ? 'Unlocking...' : 'Unlock Customer Details'}
-                                    </button>
+                                    <div className="max-w-md mx-auto text-left relative z-20">
+                                        {updating ? (
+                                            <div className="w-full bg-blue-50 text-[#1a56ff] font-bold text-center py-4 rounded-xl flex items-center justify-center gap-2">
+                                                <svg className="w-5 h-5 animate-spin text-[#1a56ff]" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                Unlocking Details...
+                                            </div>
+                                        ) : (
+                                            <AcceptJsCheckout
+                                                amount={VENDOR_LEAD_FEE}
+                                                buttonText="Unlock Customer Details"
+                                                onSuccess={handlePaymentSuccess}
+                                                onError={(err) => setError(err)}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

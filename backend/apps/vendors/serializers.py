@@ -95,8 +95,9 @@ class VendorSerializer(serializers.ModelSerializer):
         return None
 
     def get_leads_count(self, obj):
+        if hasattr(obj, 'leads_count_annotation'):
+            return obj.leads_count_annotation
         try:
-            # Count the number of leads assigned to this vendor
             if hasattr(obj, 'leads'):
                 return obj.leads.count()
             return 0

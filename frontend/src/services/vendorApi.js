@@ -220,4 +220,14 @@ export const vendorAdApi = {
     purchaseAd: (data) => vendorApi.post('/ads/', data),
 };
 
+// ============================================
+// PAYMENTS
+// ============================================
+
+export const vendorPayments = {
+    chargeCard: (data) => axios.post(`${API_BASE_URL}/payments/charge/`, data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('vendor_access_token') || localStorage.getItem('access_token')}` }
+    })
+};
+
 export default vendorApi;

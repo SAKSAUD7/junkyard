@@ -5,6 +5,7 @@ import LoginModal from './auth/LoginModal'
 import ForgotPasswordModal from './auth/ForgotPasswordModal'
 import MobileDrawer from './MobileDrawer'
 import UserNotificationDrawer from './UserNotificationDrawer'
+import FavoritesDrawer from './FavoritesDrawer'
 import CartSlider from './CartSlider'
 import { AuthContext } from '../contexts/AuthContext'
 import { useCMS } from '../hooks/useCMS'
@@ -25,6 +26,7 @@ export default function Navbar() {
     // Drawers
     const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
     const [cartOpen, setCartOpen] = useState(false)
+    const [favoritesDrawerOpen, setFavoritesDrawerOpen] = useState(false)
     // Notification unread count
     const [unreadCount, setUnreadCount] = useState(0)
 
@@ -196,27 +198,29 @@ export default function Navbar() {
                             
                             {/* Heart / Saved Parts — always visible */}
                             <button
-                                onClick={() => isAuthenticated ? navigate('/profile') : setLoginModalOpen(true)}
-                                title="Saved Parts"
-                                className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-rose-500 active:scale-95"
+                                onClick={() => setFavoritesDrawerOpen(true)}
+                                aria-label="Saved Parts"
+                                className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all duration-300 active:scale-95"
                             >
-                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Saved Parts</span>
                             </button>
 
                             {/* Bell / Notifications — ONLY when authenticated */}
                             {isAuthenticated && (
                                 <button
                                     onClick={openNotifDrawer}
-                                    title="Notifications"
-                                    className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
+                                    aria-label="Notifications"
+                                    className="relative flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 active:scale-95"
                                 >
-                                    <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                                    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                                    <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Alerts</span>
                                     {unreadCount > 0 ? (
-                                        <span className="absolute top-[7px] right-[7px] min-w-[16px] h-[16px] px-[3px] rounded-full border-2 border-white bg-rose-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
+                                        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full border-2 border-white bg-rose-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
                                             {unreadCount > 9 ? '9+' : unreadCount}
                                         </span>
                                     ) : (
-                                        <span className="absolute top-[9px] right-[9px] w-2.5 h-2.5 rounded-full border-2 border-white bg-rose-500"></span>
+                                        <span className="absolute top-[10px] left-[26px] w-[9px] h-[9px] rounded-full border-2 border-slate-50 bg-rose-500"></span>
                                     )}
                                 </button>
                             )}
@@ -224,10 +228,11 @@ export default function Navbar() {
                             {/* Vendor Hub */}
                             <button
                                 onClick={() => isAuthenticated && user?.user_type === 'vendor' ? navigate('/vendor/dashboard') : navigate('/vendor/login')}
-                                title="Vendor Hub"
-                                className="relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 border-2 border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95"
+                                aria-label="Vendor Hub"
+                                className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 active:scale-95"
                             >
-                                <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 009.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0014.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
+                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 009.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0014.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
+                                <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Vendor Hub</span>
                             </button>
 
                             <div className="w-px h-6 bg-slate-200 mx-0.5"></div>
@@ -258,16 +263,16 @@ export default function Navbar() {
                                 </button>
 
                                 {accountDropdownOpen && (
-                                    <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-2 z-50 transform origin-top-right transition-all duration-200">
+                                    <div className="absolute right-0 mt-3 w-[260px] bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-1.5 z-50 transform origin-top-right transition-all duration-200">
                                         {isAuthenticated ? (
-                                            <div className="flex flex-col gap-1 p-1">
-                                                <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-2 flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md flex-shrink-0">
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="px-3 py-2 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-1 flex items-center gap-2.5">
+                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs shadow-md flex-shrink-0">
                                                         {user?.first_name ? user.first_name.substring(0,2).toUpperCase() : (user?.email ? user.email.substring(0,2).toUpperCase() : 'U')}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="text-sm font-black text-slate-900 truncate">{user?.first_name} {user?.last_name}</p>
-                                                        <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{user?.email}</p>
+                                                        <p className="text-[13px] font-black text-slate-900 truncate tracking-tight">{user?.first_name} {user?.last_name}</p>
+                                                        <p className="text-[10px] font-semibold text-slate-400 truncate uppercase mt-0.5">{user?.email}</p>
                                                     </div>
                                                 </div>
 
@@ -572,6 +577,10 @@ export default function Navbar() {
                 onClose={() => setNotifDrawerOpen(false)}
                 onUnreadCountChange={setUnreadCount}
             />
+            <FavoritesDrawer 
+                isOpen={favoritesDrawerOpen}
+                onClose={() => setFavoritesDrawerOpen(false)}
+            />
             <CartSlider
                 isOpen={cartOpen}
                 onClose={() => setCartOpen(false)}
@@ -587,14 +596,14 @@ function ModernDropdownLink({ to, icon, label, description, onClick, gradient })
         <Link
             to={to}
             onClick={onClick}
-            className="flex items-start gap-3.5 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-slate-50 relative overflow-hidden text-left bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="flex items-start gap-2.5 px-2.5 py-2 rounded-[14px] group transition-all duration-300 hover:bg-slate-50 relative overflow-hidden text-left bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
         >
-            <div className={`p-2 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${gradient ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100/50' : 'bg-slate-50 border border-slate-100'}`}>
+            <div className={`p-1.5 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${gradient ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100/50' : 'bg-slate-50 border border-slate-100'}`}>
                 {icon}
             </div>
-            <div className="flex flex-col justify-center">
-                <span className="text-[13px] font-extrabold text-slate-800 group-hover:text-[#1a56ff] transition-colors">{label}</span>
-                {description && <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-2 max-w-[200px]">{description}</span>}
+            <div className="flex flex-col justify-center pt-0.5">
+                <span className="text-[12px] font-extrabold text-slate-800 group-hover:text-[#1a56ff] transition-colors">{label}</span>
+                {description && <span className="text-[10px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-1 max-w-[170px]">{description}</span>}
             </div>
         </Link>
     )
@@ -604,14 +613,14 @@ function ModernDropdownButton({ onClick, icon, label, description, gradient, dan
     return (
         <button
             onClick={onClick}
-            className={`flex items-start gap-3.5 px-3 py-2.5 rounded-xl group transition-all duration-300 relative overflow-hidden text-left focus:outline-none w-full ${danger ? 'hover:bg-rose-50/50' : 'hover:bg-slate-50'}`}
+            className={`flex items-start gap-2.5 px-2.5 py-2 rounded-[14px] group transition-all duration-300 relative overflow-hidden text-left focus:outline-none w-full ${danger ? 'hover:bg-rose-50/50' : 'hover:bg-slate-50'}`}
         >
-            <div className={`p-2 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${danger ? 'bg-rose-50 border border-rose-100' : gradient ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/50' : 'bg-slate-50 border border-slate-100'}`}>
+            <div className={`p-1.5 rounded-xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-sm ${danger ? 'bg-rose-50 border border-rose-100' : gradient ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/50' : 'bg-slate-50 border border-slate-100'}`}>
                 {icon}
             </div>
-            <div className="flex flex-col justify-center">
-                <span className={`text-[13px] font-extrabold transition-colors ${danger ? 'text-rose-600 group-hover:text-rose-700' : 'text-slate-800 group-hover:text-indigo-600'}`}>{label}</span>
-                {description && <span className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-2 max-w-[200px]">{description}</span>}
+            <div className="flex flex-col justify-center pt-0.5">
+                <span className={`text-[12px] font-extrabold transition-colors ${danger ? 'text-rose-600 group-hover:text-rose-700' : 'text-slate-800 group-hover:text-indigo-600'}`}>{label}</span>
+                {description && <span className="text-[10px] font-semibold text-slate-400 mt-0.5 leading-snug truncate pr-1 max-w-[170px]">{description}</span>}
             </div>
         </button>
     )

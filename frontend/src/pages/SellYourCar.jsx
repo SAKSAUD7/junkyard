@@ -5,6 +5,9 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import { api } from "../services/api";
+import AcceptJsCheckout from "../components/vendor/AcceptJsCheckout";
+
+const SELL_VEHICLE_FEE = "9.99";
 
 // ── Searchable Dropdown Component (Reused exactly from HeroSection) ──
 function SearchableDropdown({ value, label, placeholder, options, onSelect, disabled, loading }) {
@@ -426,7 +429,8 @@ function StepContact({ data, setData, onBack, onNext }) {
 }
 
 // ── Step 4: Review ──
-function StepReview({ data, onBack, onSubmit, submitting, submitError }) {
+function StepReview({ data, onBack, onPaymentSuccess, submitting, submitError }) {
+  const [payError, setPayError] = useState("");
   return (
     <div className="space-y-6 max-w-[800px] mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-slate-100">
       <div className="mb-8">
@@ -434,9 +438,9 @@ function StepReview({ data, onBack, onSubmit, submitting, submitError }) {
         <p className="text-slate-500 font-medium">Verify your vehicle and contact details before submitting.</p>
       </div>
       
-      {submitError && (
+      {(submitError || payError) && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm font-bold rounded-xl border border-red-100">
-          {submitError}
+          {submitError || payError}
         </div>
       )}
 
@@ -491,17 +495,33 @@ function StepReview({ data, onBack, onSubmit, submitting, submitError }) {
         </div>
       </div>
 
-      <div className="pt-8 flex gap-4">
-        <button type="button" onClick={onBack} disabled={submitting} className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition text-[13px] uppercase tracking-wide">Change Details</button>
-        <div className="flex-1 hidden sm:block"></div>
-        <button
-          type="button"
-          disabled={submitting}
-          onClick={onSubmit}
-          className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white text-[14px] font-black uppercase tracking-wide rounded-xl px-10 py-3.5 transition-all shadow-[0_4px_14px_rgb(16,185,129,0.3)] disabled:shadow-none flex items-center justify-center gap-2"
-        >
-          {submitting ? "Submitting..." : "✓ Submit Vehicle"}
-        </button>
+      <div className="pt-8 border-t border-slate-100">
+        <div className="flex justify-between items-center mb-8">
+            <button type="button" onClick={onBack} disabled={submitting} className="px-6 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition text-[13px] uppercase tracking-wide">Change Details</button>
+            <div className="text-right">
+                <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">Listing Fee</div>
+                <div className="text-3xl font-black text-slate-900">${SELL_VEHICLE_FEE}</div>
+            </div>
+        </div>
+        
+        <div className="max-w-md mx-auto">
+            {submitting ? (
+                <div className="w-full bg-blue-50 text-blue-600 font-bold text-center py-4 rounded-xl flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing Submission...
+                </div>
+            ) : (
+                <AcceptJsCheckout
+                   amount={SELL_VEHICLE_FEE}
+                   buttonText="Pay & Submit Vehicle"
+                   onSuccess={onPaymentSuccess}
+                   onError={(err) => setPayError(err)}
+                />
+            )}
+        </div>
       </div>
     </div>
   );
@@ -509,30 +529,62 @@ function StepReview({ data, onBack, onSubmit, submitting, submitError }) {
 
 // ── Success Screen ──
 function SuccessScreen({ vehicle, onReset }) {
+  const [countdown, setCountdown] = useState(10);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onReset();
-    }, 25000);
-    return () => clearTimeout(timer);
-  }, [onReset]);
+    if (countdown <= 0) { onReset(); return; }
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown, onReset]);
+
+  const progress = ((10 - countdown) / 10) * 100;
 
   return (
-    <motion.div className="p-8 sm:p-16 text-center bg-white max-w-[800px] mx-auto rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-slate-100" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+    <motion.div
+      className="p-8 sm:p-16 text-center bg-white max-w-[800px] mx-auto rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-slate-100 relative overflow-hidden"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+    >
+      {/* Animated success check */}
       <div className="w-24 h-24 bg-emerald-50 border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
         <svg className="w-12 h-12 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
         </svg>
       </div>
-      <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Submission Received</h2>
+      <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Submission Received!</h2>
       <p className="text-slate-500 font-medium text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-        We have received the details for your <span className="font-bold text-slate-900">{vehicle.year} {vehicle.makeName || vehicle.make} {vehicle.modelName || vehicle.model}</span>. Our team will review your submission and contact you within 24 hours.
+        We have received the details for your{' '}
+        <span className="font-bold text-slate-900">
+          {vehicle.year} {vehicle.makeName || vehicle.make} {vehicle.modelName || vehicle.model}
+        </span>.
+        {' '}Our team will contact you within 24 hours with an offer.
       </p>
-      <div className="flex justify-center mt-12 animate-fade-in">
+
+      <div className="flex justify-center mb-10">
         <p className="text-2xl sm:text-3xl font-serif italic text-blue-600 px-8 py-6 rounded-2xl">
-          "Thanks for believing in us, we will be there soon."
+          "Thanks for trusting us — we'll be in touch soon."
         </p>
       </div>
-      <p className="text-slate-300 text-xs mt-10 uppercase tracking-widest font-bold">Redirecting you shortly...</p>
+
+      {/* Countdown bar */}
+      <div className="mt-6">
+        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-linear"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
+          Resetting in {countdown}s…
+        </p>
+      </div>
+
+      <button
+        onClick={onReset}
+        className="mt-8 px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+      >
+        Submit Another Vehicle
+      </button>
     </motion.div>
   );
 }
@@ -657,10 +709,22 @@ export default function SellYourCar() {
     }
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (nonce) => {
     setSubmitting(true);
     setSubmitError("");
     try {
+      // 1. Process Authorize.net Payment
+      await api.chargeCard({
+         nonce: nonce,
+         amount: SELL_VEHICLE_FEE,
+         item_type: 'sell_vehicle_fee',
+         item_id: 'sell_vehicle',
+         source_module: 'sell_vehicle',
+         description: `Vehicle Submission Fee - ${data.year} ${data.makeName || data.make} ${data.modelName || data.model}`,
+         guest_email: data.email
+      });
+
+      // 2. Submit the vehicle lead
       // data.name, data.email, data.phone, data.zip_code are set
       // directly by StepContact form fields — pass them as-is.
       const payload = {
@@ -769,7 +833,7 @@ export default function SellYourCar() {
                     )}
                     {step === 1 && <StepCondition data={data} setData={setData} onBack={prevStep} onNext={nextStep} dbStates={dbStates} dbCities={dbCities} />}
                     {step === 2 && <StepContact data={data} setData={setData} onBack={prevStep} onNext={nextStep} />}
-                    {step === 3 && <StepReview data={data} onBack={prevStep} onSubmit={handleSubmit} submitting={submitting} submitError={submitError} />}
+                    {step === 3 && <StepReview data={data} onBack={prevStep} onPaymentSuccess={handleSubmit} submitting={submitting} submitError={submitError} />}
                   </motion.div>
                 </AnimatePresence>
              </div>

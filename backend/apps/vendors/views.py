@@ -40,8 +40,9 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
+        from django.db.models import Count
         # Only show active vendors in public API
-        queryset = Vendor.objects.prefetch_related('ads', 'profiles__user').filter(is_active=True).order_by('id')
+        queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).filter(is_active=True).order_by('id')
         
         # Filter for trusted vendors
         trusted = self.request.query_params.get('trusted', None)
@@ -144,7 +145,7 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     """
     Admin ViewSet for full vendor management.
     """
-    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user').all().order_by('id')
+    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).order_by('id')
     serializer_class = VendorSerializer
     permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth

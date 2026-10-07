@@ -300,21 +300,7 @@ export default function AdminLayout() {
                     })}
                 </nav>
 
-                <div className="p-4">
-                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-4 border border-blue-100/50 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-2 opacity-10"><SparklesIcon className="w-12 h-12 text-blue-600" /></div>
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-2">
-                                <SparklesIcon className="w-5 h-5 text-blue-600" />
-                                <span className="font-bold text-slate-900 text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>Platform Live</span>
-                            </div>
-                            <p className="text-xs text-slate-500 mb-4 leading-relaxed">You are viewing the production administration environment.</p>
-                            <Link onClick={() => { if(window.innerWidth < 1024) setSidebarOpen(false); }} to="/" className="block w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl text-center shadow-md shadow-blue-200 transition-all">
-                                View Main Site
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+
             </aside>
 
             {/* ── Main Content ─────────────────────────────────────────── */}

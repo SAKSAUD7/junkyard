@@ -238,25 +238,16 @@ class AdminStatsView(APIView):
         from datetime import datetime, timedelta
         from django.core.cache import cache
         
+        CACHE_KEY = 'admin_stats_dashboard'
+        cached_data = cache.get(CACHE_KEY)
+        if cached_data:
+            return Response(cached_data)
+            
         # Basic stats with optimized queries
         total_leads = Lead.objects.count()  # type: ignore[attr-defined]
         new_leads = Lead.objects.filter(status='new').count()  # type: ignore[attr-defined]
         
-        # Cache total vendor count for 5 minutes to avoid repeated full table scans
-        # Wrap in try-except in case cache backend is not configured
-        total_vendors = None
-        try:
-            total_vendors = cache.get('total_vendors_count')
-        except Exception as e:
-            print(f"Cache get failed: {e}")
-            
-        if total_vendors is None:
-            total_vendors = Vendor.objects.count()  # type: ignore[attr-defined]
-            try:
-                cache.set('total_vendors_count', total_vendors, 300)  # 5 minutes
-            except Exception as e:
-                print(f"Cache set failed: {e}")
-        
+        total_vendors = Vendor.objects.count()  # type: ignore[attr-defined]
         active_vendors = Vendor.objects.filter(is_active=True).count()  # type: ignore[attr-defined]
         total_ads = Advertisement.objects.count()  # type: ignore[attr-defined]
         active_ads = Advertisement.objects.filter(is_active=True).count()  # type: ignore[attr-defined]
@@ -325,7 +316,7 @@ class AdminStatsView(APIView):
             for item in lead_type_dist
         ]
         
-        return Response({
+        response_data = {
             "total_leads": total_leads,
             "new_leads": new_leads,
             "active_vendors": active_vendors,
@@ -338,7 +329,10 @@ class AdminStatsView(APIView):
             "recent_activity": recent_activity,
             "top_vendors_by_leads": top_vendors_by_leads,
             "lead_type_distribution": lead_type_distribution,
-        })
+        }
+        
+        cache.set(CACHE_KEY, response_data, 60) # Cache for 60 seconds
+        return Response(response_data)
 
 
 
@@ -598,17 +592,24 @@ class SiteAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
     def summary(self, request):
         """Returns aggregated counts of different analytics events"""
         from django.db.models import Count
-        summary = SiteAnalytics.objects.values('event_type').annotate(count=Count('id'))
+        from django.core.cache import cache
+        
+        cached = cache.get('site_analytics_summary')
+        if cached:
+            return Response(cached)
+            
+        summary_qs = SiteAnalytics.objects.values('event_type').annotate(count=Count('id'))
         
         counts = {
             'login': 0,
             'signup': 0,
             'lead_submit': 0
         }
-        for item in summary:
+        for item in summary_qs:
             if item['event_type'] in counts:
                 counts[item['event_type']] = item['count']
                 
+        cache.set('site_analytics_summary', counts, 60)
         return Response(counts)
 
 

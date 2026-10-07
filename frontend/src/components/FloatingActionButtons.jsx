@@ -1,4 +1,6 @@
-// Floating Action Buttons — Phone & WhatsApp only (clean, no bloom)
+// Floating Action Buttons — Speed-dial FAB (modern interaction)
+import { useState } from 'react';
+
 const PHONE_NUMBER = '+18662933731';
 const WHATSAPP_NUMBER = '+18662933731';
 
@@ -14,56 +16,84 @@ const PhoneIcon = () => (
     </svg>
 );
 
-const BUTTONS = [
-    {
-        id: 'call',
-        label: 'Call Us',
-        icon: <PhoneIcon />,
-        href: `tel:${PHONE_NUMBER}`,
-        bg: '#10b981',
-        hover: '#059669',
-        external: false,
-    },
+const ACTIONS = [
     {
         id: 'whatsapp',
         label: 'WhatsApp',
         icon: <WhatsAppIcon />,
         href: `https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}?text=Hi!%20I%20need%20a%20used%20auto%20part.`,
         bg: '#25D366',
-        hover: '#1ebe5a',
+        shadow: 'rgba(37,211,102,0.4)',
         external: true,
+    },
+    {
+        id: 'call',
+        label: 'Call Us',
+        icon: <PhoneIcon />,
+        href: `tel:${PHONE_NUMBER}`,
+        bg: '#3b82f6',
+        shadow: 'rgba(59,130,246,0.4)',
+        external: false,
     },
 ];
 
 export default function FloatingActionButtons() {
+    const [open, setOpen] = useState(false);
+
     return (
         <div
-            className="fixed bottom-24 right-4 z-40 flex flex-col items-end gap-3"
+            className="fixed bottom-6 right-5 z-40 flex flex-col items-end gap-3"
             role="complementary"
             aria-label="Quick contact options"
         >
-            {BUTTONS.map((btn) => (
-                <div key={btn.id} className="flex items-center gap-2 group">
-                    {/* Tooltip */}
-                    <span className="hidden md:flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold text-white shadow-md pointer-events-none whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-150"
-                        style={{ background: btn.bg }}>
-                        {btn.label}
-                    </span>
-                    {/* Button */}
-                    <a
-                        href={btn.href}
-                        target={btn.external ? '_blank' : undefined}
-                        rel={btn.external ? 'noopener noreferrer' : undefined}
-                        aria-label={btn.label}
-                        className="w-11 h-11 rounded-full text-white flex items-center justify-center shadow-lg transition-transform duration-150 hover:scale-110 active:scale-95"
-                        style={{ background: btn.bg }}
-                        onMouseEnter={e => e.currentTarget.style.background = btn.hover}
-                        onMouseLeave={e => e.currentTarget.style.background = btn.bg}
+            {/* Expanded action buttons */}
+            {ACTIONS.map((action, i) => (
+                <div
+                    key={action.id}
+                    className="flex items-center gap-2.5"
+                    style={{
+                        transition: `all 0.25s cubic-bezier(0.16,1,0.3,1) ${i * 60}ms`,
+                        opacity: open ? 1 : 0,
+                        transform: open ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.85)',
+                        pointerEvents: open ? 'auto' : 'none',
+                    }}
+                >
+                    {/* Label pill */}
+                    <span
+                        className="text-white text-[11px] font-bold px-3 py-1.5 rounded-full shadow-md whitespace-nowrap"
+                        style={{ background: action.bg }}
                     >
-                        {btn.icon}
+                        {action.label}
+                    </span>
+                    {/* Action button */}
+                    <a
+                        href={action.href}
+                        target={action.external ? '_blank' : undefined}
+                        rel={action.external ? 'noopener noreferrer' : undefined}
+                        aria-label={action.label}
+                        className="w-12 h-12 rounded-full text-white flex items-center justify-center shadow-xl transition-transform duration-150 hover:scale-110 active:scale-95"
+                        style={{
+                            background: action.bg,
+                            boxShadow: `0 4px 20px ${action.shadow}`,
+                        }}
+                    >
+                        {action.icon}
                     </a>
                 </div>
             ))}
+
+            {/* Main FAB trigger */}
+            <button
+                onClick={() => setOpen(v => !v)}
+                aria-label={open ? 'Close contact options' : 'Contact us'}
+                aria-expanded={open}
+                className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-[0_8px_28px_rgba(37,99,235,0.45)] transition-all duration-300 active:scale-95 ring-4 ring-white/20"
+                style={{ transform: open ? 'rotate(45deg)' : 'rotate(0deg)' }}
+            >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
         </div>
     );
 }

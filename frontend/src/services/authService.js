@@ -53,15 +53,24 @@ api.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${access}`;
                 return api(originalRequest);
             } catch (refreshError) {
-                // Refresh failed — clear auth and redirect to appropriate login
+                // Refresh failed — clear auth context
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('user');
                 localStorage.removeItem('vendor_profile');
-                // Redirect admin users to admin login, others to signin
-                const isAdminRoute = window.location.pathname.startsWith('/admin');
-                window.location.href = isAdminRoute ? '/admin/login' : '/signin';
-                return Promise.reject(refreshError);
+                
+                // Only redirect if the user is explicitly in a protected portal area
+                const path = window.location.pathname;
+                if (path.startsWith('/admin')) {
+                    window.location.href = '/admin/login';
+                } else if (path.startsWith('/vendor/') && !path.includes('login')) {
+                    window.location.href = '/vendor/login';
+                }
+                
+                // If it's a public route (like /sell-your-car), retry the original request WITHOUT the token
+                // This prevents 401 errors from crashing public submissions if a stale auth token was present
+                delete originalRequest.headers.Authorization;
+                return api(originalRequest);
             }
         }
 

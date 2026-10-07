@@ -68,10 +68,10 @@ function SearchableDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 z-[200] mt-2 w-64 bg-white rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.18)] border border-slate-100 overflow-hidden">
+        <div className="absolute top-full left-0 z-[200] mt-2 w-full min-w-[220px] max-w-[300px] bg-white/95 backdrop-blur-xl rounded-[18px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] border border-slate-100 overflow-hidden transform origin-top transition-all duration-200">
           {/* Search input */}
-          <div className="px-3 pt-3 pb-2 border-b border-slate-100">
-            <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2">
+          <div className="px-2 pt-2 pb-1.5 border-b border-slate-100/80">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-[12px] px-3 py-2 shadow-inner">
               <svg
                 className="w-4 h-4 text-blue-500 shrink-0"
                 fill="none"
@@ -114,8 +114,9 @@ function SearchableDropdown({
                       setOpen(false);
                       setQuery("");
                     }}
-                    className={`w-full text-left px-4 py-2.5 text-[13px] font-semibold transition-colors
-                                        ${String(val) === String(value?.split(" ")[0]) ? "bg-blue-50 text-blue-600" : "text-slate-700 hover:bg-slate-50 hover:text-blue-600"}`}
+                    className={`w-full text-left px-3.5 py-2 text-[13px] font-bold transition-all rounded-lg my-0.5 mx-1.5
+                                        ${String(val) === String(value?.split(" ")[0]) ? "bg-blue-50 text-[#1a56ff]" : "text-slate-600 hover:bg-slate-50 hover:text-[#1a56ff]"}`}
+                    style={{ width: 'calc(100% - 12px)' }}
                   >
                     {lbl}
                   </button>

@@ -1,20 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../contexts/AuthContext'
 
 export default function OnboardingOverlay() {
     const [isVisible, setIsVisible] = useState(false)
     const [step, setStep] = useState(0)
+    const { isAuthenticated } = useContext(AuthContext)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const hasSeen = sessionStorage.getItem('jynm_onboarding_seen')
-        if (!hasSeen) {
-            // Slight delay so the background loads first
+        // Don't show if already authenticated or seen
+        if (!hasSeen && !isAuthenticated) {
             const timer = setTimeout(() => {
                 setIsVisible(true)
             }, 300)
             return () => clearTimeout(timer)
         }
-    }, [])
+    }, [isAuthenticated])
+    
+    // Auto slide logic
+    useEffect(() => {
+        if (!isVisible || step >= 3) return
+        
+        const autoSlidertimer = setInterval(() => {
+            setStep(prev => (prev < 2 ? prev + 1 : 3))
+        }, 3500)
+        
+        return () => clearInterval(autoSlidertimer)
+    }, [isVisible, step])
 
     const handleDismiss = () => {
         setIsVisible(false)
@@ -107,15 +122,15 @@ export default function OnboardingOverlay() {
                     </div>
 
                     {/* Content Area */}
-                    <div className="bg-white rounded-t-[32px] -mt-6 sm:-mt-10 relative z-20 px-6 pt-8 pb-10 sm:px-12 flex flex-col items-center text-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                    <div className="bg-white rounded-t-[32px] -mt-6 sm:-mt-10 relative z-20 px-6 pt-8 pb-10 sm:px-12 flex flex-col items-center text-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] min-h-[360px]">
                         
                         {/* Dots */}
-                        <div className="flex gap-2 mb-8">
-                            {slides.map((_, i) => (
+                        <div className="flex gap-2 mb-6">
+                            {[0, 1, 2].map((i) => (
                                 <button 
                                     key={i} 
                                     onClick={() => setStep(i)}
-                                    className={`h-2 rounded-full transition-all duration-300 ${i === step ? 'w-6 bg-blue-600' : 'w-2 bg-slate-200 hover:bg-slate-300'}`}
+                                    className={`h-2 rounded-full transition-all duration-300 ${i === step ? 'w-6 bg-blue-600' : step === 3 && i === 2 ? 'w-6 bg-blue-600' : 'w-2 bg-slate-200 hover:bg-slate-300'}`}
                                     aria-label={`Go to slide ${i + 1}`}
                                 />
                             ))}
@@ -128,37 +143,69 @@ export default function OnboardingOverlay() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full"
+                                className="w-full flex-1 flex flex-col justify-center"
                             >
-                                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-3 tracking-tight">
-                                    {slides[step].title}
-                                </h1>
-                                <p className="text-base sm:text-lg text-slate-500 font-medium mb-10 max-w-sm mx-auto">
-                                    {slides[step].subtitle}
-                                </p>
+                                {step < 3 ? (
+                                    <>
+                                        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-3 tracking-tight">
+                                            {slides[step].title}
+                                        </h1>
+                                        <p className="text-base sm:text-lg text-slate-500 font-medium mb-8 max-w-sm mx-auto">
+                                            {slides[step].subtitle}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <div className="mb-4">
+                                        <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
+                                            Get Started Now
+                                        </h1>
+                                        <p className="text-sm text-slate-500 font-medium mb-6">
+                                            Create an account to save favorite yards, streamline part requests, and receive automated quotes.
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div className="w-full max-w-sm mx-auto flex flex-col gap-3">
+                                    {step < 3 ? (
+                                        <>
+                                            <button 
+                                                onClick={() => setStep(prev => prev + 1)} 
+                                                className="w-full py-4 rounded-2xl bg-black text-white font-bold text-lg hover:bg-slate-800 transition-colors active:scale-[0.98]"
+                                            >
+                                                Next
+                                            </button>
+                                            <button 
+                                                onClick={handleDismiss} 
+                                                className="w-full py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-lg hover:bg-slate-200 transition-colors active:scale-[0.98]"
+                                            >
+                                                Skip to Website
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button 
+                                                onClick={() => { handleDismiss(); navigate('/signup'); }} 
+                                                className="w-full py-3.5 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white font-bold text-base shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition"
+                                            >
+                                                Create Account
+                                            </button>
+                                            <button 
+                                                onClick={() => { handleDismiss(); navigate('/signin'); }} 
+                                                className="w-full py-3.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-base hover:bg-slate-50 transition"
+                                            >
+                                                I Already Have an Account
+                                            </button>
+                                            <button 
+                                                onClick={handleDismiss} 
+                                                className="w-full py-3 mt-2 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm hover:text-slate-800 transition"
+                                            >
+                                                Skip For Now (Continue as Guest)
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
                             </motion.div>
                         </AnimatePresence>
-
-                        <div className="w-full max-w-sm flex flex-col gap-3">
-                            <button 
-                                onClick={() => {
-                                    if (step < slides.length - 1) {
-                                        setStep(step + 1)
-                                    } else {
-                                        handleDismiss()
-                                    }
-                                }} 
-                                className="w-full py-4 rounded-2xl bg-black text-white font-bold text-lg hover:bg-slate-800 transition-colors active:scale-[0.98]"
-                            >
-                                {step < slides.length - 1 ? 'Next' : 'Get Started'}
-                            </button>
-                            <button 
-                                onClick={handleDismiss} 
-                                className="w-full py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-lg hover:bg-slate-200 transition-colors active:scale-[0.98]"
-                            >
-                                Skip
-                            </button>
-                        </div>
                     </div>
                 </motion.div>
             )}

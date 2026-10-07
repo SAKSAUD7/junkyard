@@ -326,7 +326,7 @@ export default function Payments() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/30">
-                  {['ID', 'Status', 'Amount', 'User', 'Vendor', 'Source', 'Gateway Txn ID', 'Invoice #', 'Date'].map(h => (
+                  {['ID', 'Status', 'Amount', 'User', 'Vendor', 'Payment Source', 'Gateway Txn ID', 'Invoice #', 'Date'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -356,10 +356,11 @@ export default function Payments() {
                     <td className="px-4 py-3.5 font-bold text-slate-900">{fmtMoney(txn.amount)}</td>
                     <td className="px-4 py-3.5 text-slate-600 max-w-[160px] truncate">{txn.user_email || '—'}</td>
                     <td className="px-4 py-3.5 text-slate-500 max-w-[140px] truncate">{txn.vendor_name || '—'}</td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3.5 flex flex-col gap-1 items-start justify-center min-h-[50px]">
                       {txn.source_module
-                        ? <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 text-xs font-semibold rounded-full">{txn.source_module_display || txn.source_module}</span>
+                        ? <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 text-xs font-semibold rounded-full min-w-max">{txn.source_module_display || txn.source_module}</span>
                         : <span className="text-slate-300">—</span>}
+                      {txn.gateway && <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{txn.gateway}</span>}
                     </td>
                     <td className="px-4 py-3.5 font-mono text-xs text-slate-400 max-w-[130px] truncate" title={txn.transaction_id}>{txn.transaction_id || '—'}</td>
                     <td className="px-4 py-3.5 font-mono text-xs text-slate-500">{txn.invoice_number || '—'}</td>
