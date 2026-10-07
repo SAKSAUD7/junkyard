@@ -34,7 +34,27 @@ vendors_router.register(r'import', VendorImportViewSet, basename='vendor-import'
 
 def health_check(request):
     """Health check endpoint"""
-    return JsonResponse({"status": "ok"})
+    response = {"status": "ok", "database": "ok", "cache": "ok"}
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except Exception:
+        response["database"] = "error"
+        response["status"] = "error"
+        
+    try:
+        from django.core.cache import cache
+        cache.set("health_check_test", "ok", 10)
+        if cache.get("health_check_test") != "ok":
+            response["cache"] = "error"
+            response["status"] = "error"
+    except Exception:
+        response["cache"] = "error"
+        response["status"] = "error"
+        
+    status_code = 200 if response["status"] == "ok" else 503
+    return JsonResponse(response, status=status_code)
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
