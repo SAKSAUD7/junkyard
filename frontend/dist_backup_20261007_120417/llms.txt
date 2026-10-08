@@ -1,0 +1,7 @@
+# Junkyards Near Me
+
+This platform helps users find local junkyards, auto salvage yards, and recycle centers.
+We serve 7745 location and vendor detail pages.
+
+## Sitemaps
+Full Site Map: https://junkyardnearme.com/sitemap.xml

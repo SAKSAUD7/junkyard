@@ -1,0 +1,16 @@
+[15-Feb-2024 19:25:05 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 21
+[15-Feb-2024 19:25:05 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 22
+[15-Feb-2024 19:25:05 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 22
+[15-Feb-2024 19:25:05 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 23
+[15-Feb-2024 19:25:05 UTC] PHP Fatal error:  Uncaught Error: Class 'Imagick' not found in /home/jynm/public_html/static/uploads/resize/imagic_resize.php:39
+Stack trace:
+#0 {main}
+  thrown in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 39
+[16-Feb-2024 15:27:22 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 21
+[16-Feb-2024 15:27:22 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 22
+[16-Feb-2024 15:27:22 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 22
+[16-Feb-2024 15:27:22 UTC] PHP Notice:  Undefined index: image in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 23
+[16-Feb-2024 15:27:22 UTC] PHP Fatal error:  Uncaught Error: Class 'Imagick' not found in /home/jynm/public_html/static/uploads/resize/imagic_resize.php:39
+Stack trace:
+#0 {main}
+  thrown in /home/jynm/public_html/static/uploads/resize/imagic_resize.php on line 39

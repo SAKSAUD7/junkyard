@@ -1,0 +1,129 @@
+# ==============================================================================
+# JUNKYARDSNEARME.COM — FULL 301 REDIRECT & SEO CONFIGURATION
+# Migration: PHP -> React SPA + Django API
+# ==============================================================================
+
+Options -MultiViews
+RewriteEngine On
+
+# ─── 1. FORCE HTTPS (SSL) ───────────────────────────────────────────────────
+# Redirect all HTTP traffic to HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ─── 2. CANONICAL DOMAIN: FORCE NON-WWW ─────────────────────────────────────
+# The site uses the non-www version historically. Force all www to non-www.
+RewriteCond %{HTTP_HOST} ^www\.junkyardsnearme\.com [NC]
+RewriteRule ^ https://junkyardsnearme.com%{REQUEST_URI} [L,R=301]
+
+# ─── 3. BLOG SUBDOMAIN REDIRECT ─────────────────────────────────────────────
+# If blog.junkyardsnearme.com points to this directory, redirect to /blog
+RewriteCond %{HTTP_HOST} ^blog\.junkyardsnearme\.com [NC]
+RewriteRule ^(.*)$ https://junkyardsnearme.com/blog/$1 [L,R=301]
+
+# ─── 4. LEGACY PHP CLEANUP & QUERY PARAM REMOVAL ────────────────────────────
+# Redirect old PHP files to root
+RewriteRule ^index\.php$ / [L,R=301]
+RewriteRule ^index\.html$ / [L,R=301]
+
+# Strip old PHP query strings like ?page_id= or ?id=
+RewriteCond %{QUERY_STRING} ^page_id=
+RewriteRule ^(.*)$ /$1? [L,R=301]
+
+RewriteCond %{QUERY_STRING} ^id=
+RewriteRule ^(.*)$ /$1? [L,R=301]
+
+# ─── 5. HIGH-PRIORITY CANONICAL ROUTE ALIASES ───────────────────────────────
+# Fix old non-canonical aliases (React Router also handles these, but server-level
+# 301s pass link equity much faster to Google).
+RewriteRule ^about/?$ /about-us [L,R=301]
+RewriteRule ^privacy/?$ /privacy-policy [L,R=301]
+RewriteRule ^terms/?$ /terms-and-conditions [L,R=301]
+RewriteRule ^vendors/?$ /junkyards [L,R=301]
+RewriteRule ^browse/?$ /junkyards-by-location [L,R=301]
+
+# Map old admin registration to new get-listed page
+RewriteRule ^admin/register-junkyard/?$ /get-listed [L,R=301]
+RewriteRule ^add-yard/start/?$ /get-listed [L,R=301]
+
+# ─── 6. SECURITY HEADERS ────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # HSTS: Tells browsers to ALWAYS use HTTPS — no more HTTP attempts at all.
+  # Once SSL is live on the domain, this activates automatically.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ─── 7. GZIP COMPRESSION ────────────────────────────────────────────────────
+# Compresses files before sending to browser. HTML/CSS/JS shrink 60-80%.
+# Browser decompresses automatically — visitors never notice, just see speed.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/ld+json
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/woff
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE application/font-woff
+  AddOutputFilterByType DEFLATE application/font-woff2
+
+  # Don't compress already-compressed binary formats (wastes CPU, no benefit)
+  SetEnvIfNoCase Request_URI \.(?:gif|jpg|jpeg|png|webp|ico|mp4|mp3|zip|gz|bz2|rar)$ no-gzip dont-vary
+</IfModule>
+
+# ─── 8. BROWSER CACHING FOR REACT STATIC ASSETS ─────────────────────────────
+# Tell browsers to keep files locally so they don't re-download on every visit.
+# Vite adds a unique hash to each file name (index-abc123.js), so it's safe
+# to cache aggressively — new deploys get new hashes, forcing fresh downloads.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Images — 1 year (content-hashed, always fresh on redeploy)
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType image/ico "access plus 1 year"
+  # Fonts — essentially never change
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  # CSS & JS — 6 months (Vite hashes ensure users always get the latest)
+  ExpiresByType text/css "access plus 6 months"
+  ExpiresByType application/javascript "access plus 6 months"
+  ExpiresByType text/javascript "access plus 6 months"
+  # Data files — 1 day (sitemap, JSON APIs)
+  ExpiresByType application/json "access plus 1 day"
+  ExpiresByType application/ld+json "access plus 1 day"
+  # HTML — 1 hour (short so page updates reach users quickly)
+  ExpiresByType text/html "access plus 1 hour"
+</IfModule>
+
+# ─── 9. DJANGO API PROXY (OPTIONAL) ─────────────────────────────────────────
+# If Django runs on a port locally (e.g. 8000), use ProxyPass.
+# (If Django is on a completely separate Azure service, ignore this section).
+# RewriteRule ^api/(.*)$ http://localhost:8000/api/$1 [P,L]
+
+# ─── 10. REACT SPA ROUTING FALLBACK ──────────────────────────────────────────
+# All remaining traffic goes to React's index.html, EXCEPT real files/dirs
+# and the /api/ folder.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^ /index.html [L]

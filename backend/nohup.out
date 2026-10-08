@@ -1,0 +1,26 @@
+/home/junkyard/backend/venv/lib64/python3.12/site-packages/django/db/backends/utils.py:98: RuntimeWarning: Accessing the database during app initialization is discouraged. To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported.
+  warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning)
+/home/junkyard/backend/venv/lib64/python3.12/site-packages/django/db/backends/utils.py:98: RuntimeWarning: Accessing the database during app initialization is discouraged. To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported.
+  warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning)
+INFO 2026-10-02 22:21:12,127 autoreload 24112 140188689096320 Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+Operations to perform:
+  Apply all migrations: admin, ads, auth, blog, cms, common, contenttypes, hollander, leads, payments, rbac, sessions, token_blacklist, users, vendor_portal, vendors, yard_submissions
+Running migrations:
+  No migrations to apply.
+Error: That port is already in use.
+/home/junkyard/backend/venv/lib64/python3.12/site-packages/django/db/backends/utils.py:98: RuntimeWarning: Accessing the database during app initialization is discouraged. To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported.
+  warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning)
+/home/junkyard/backend/venv/lib64/python3.12/site-packages/django/db/backends/utils.py:98: RuntimeWarning: Accessing the database during app initialization is discouraged. To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported.
+  warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning)
+INFO 2026-10-02 22:35:12,890 autoreload 24340 140554226957952 Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+Operations to perform:
+  Apply all migrations: admin, ads, auth, blog, cms, common, contenttypes, hollander, leads, payments, rbac, sessions, token_blacklist, users, vendor_portal, vendors, yard_submissions
+Running migrations:
+  No migrations to apply.
+Error: That port is already in use.
