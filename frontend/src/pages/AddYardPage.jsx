@@ -9,6 +9,7 @@ import AcceptJsCheckout from '../components/vendor/AcceptJsCheckout';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
 import VendorAuthModal from '../components/vendor/VendorAuthModal';
 import { useNotifications } from '../components/common/EnterpriseNotifications';
+import PostSubmissionFeedback from '../components/PostSubmissionFeedback';
 
 // Mock CMS Hook - this makes the strings easy to update without code changes later
 const useAddYardCMS = () => {
@@ -580,7 +581,7 @@ export default function AddYardPage() {
 
             <Navbar />
 
-            <div className="flex-grow flex items-start justify-center pt-24 pb-20 px-4">
+            <div className="flex-grow flex items-start justify-center pt-10 md:pt-24 pb-20 px-4">
                 
                 <div className="w-full max-w-[850px] bg-white rounded-[24px] shadow-sm border border-slate-100 p-8 sm:p-12 relative overflow-hidden">
                     
@@ -588,27 +589,23 @@ export default function AddYardPage() {
                     <div className="absolute top-8 right-8 w-24 h-24 bg-blue-50 rounded-full blur-xl opacity-60 pointer-events-none" />
 
                     {isSubmitted ? (
-                        <div className="flex flex-col items-center justify-center text-center py-12 px-4">
-                            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
-                                <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4 tracking-tight">Your yard has been successfully processed!</h2>
-                            <p className="text-[15px] text-slate-600 mb-8 max-w-[500px] leading-relaxed">
-                                {formData.subscription_plan === 'free'
-                                    ? `Thank you for registering ${formData.business_name || 'your business'}. Your application has been submitted and is under review.`
-                                    : `Thank you for your payment! Your transaction through Authorize.net was successful. Your ${formData.subscription_plan} plan is active, and your application is under review.`
+                        <div className="py-12">
+                            <PostSubmissionFeedback
+                                title="Your yard has been successfully processed!"
+                                message={
+                                    <>
+                                        {formData.subscription_plan === 'free'
+                                            ? `Thank you for registering ${formData.business_name || 'your business'}. Your application has been submitted and is under review.`
+                                            : `Thank you for your payment! Your transaction through Authorize.net was successful. Your ${formData.subscription_plan} plan is active, and your application is under review.`
+                                        }
+                                        <br/><br/>
+                                        You will be notified soon via email at <span className="font-bold text-slate-800">{formData.email || 'your provided email'}</span> once approved.
+                                    </>
                                 }
-                                <br/><br/>
-                                You will be notified soon via email at <span className="font-bold text-slate-800">{formData.email || 'your provided email'}</span> once approved.
-                            </p>
-                            <button
-                                onClick={() => navigate('/add-a-yard')}
-                                className="px-8 py-3.5 bg-blue-600 text-white text-[15px] font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
-                            >
-                                Submit Another Yard
-                            </button>
+                                referenceId={`YD-${idempotencyKeyRef.current}`}
+                                actionText="Submit Another Yard"
+                                onAction={() => window.location.reload()}
+                            />
                         </div>
                     ) : (
                         <>

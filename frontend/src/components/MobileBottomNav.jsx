@@ -44,11 +44,11 @@ export default function MobileBottomNav() {
     return (
         <>
             {/* Spacer to prevent content from hiding behind the fixed bottom nav */}
-            <div className="h-16 lg:hidden pb-[env(safe-area-inset-bottom)]" />
+            <div className="h-[68px] lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)', boxSizing: 'content-box' }} />
             
             {/* iOS/Android style bottom tab bar */}
             {/* Ultra-transparent frosted glass so content below is still visible */}
-            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/40 backdrop-blur-3xl border-t border-white/30 lg:hidden pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ WebkitBackdropFilter: 'blur(24px)' }}>
+            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/40 backdrop-blur-3xl border-t border-white/30 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitBackdropFilter: 'blur(24px)' }}>
                 
                 {/* Expandable "More" Menu overlay */}
                 {moreOpen && (

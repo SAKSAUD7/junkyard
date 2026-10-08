@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { api } from '../services/api'
+import JYNMSelect from '../components/JYNMSelect'
 
 // Floating animated orb background
 function Orb({ className }) {
@@ -32,9 +33,9 @@ const infoCards = [
             </svg>
         ),
         label: 'Email Us',
-        value: 'info@jynm.com',
+        value: 'contact@junkyardsnearme.com',
         sub: 'Typical response: 15 mins',
-        href: 'mailto:info@jynm.com',
+        href: 'mailto:contact@junkyardsnearme.com',
         gradient: 'from-violet-500 to-purple-600',
         glow: 'shadow-purple-200',
     },
@@ -175,7 +176,7 @@ export default function Contact() {
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 </div>
                                 <h4 className="text-[16px] font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Email Support</h4>
-                                <a href="mailto:info@jynm.com" className="text-emerald-600 font-bold text-[15px] hover:underline">info@jynm.com</a>
+                                <a href="mailto:contact@junkyardsnearme.com" className="text-emerald-600 font-bold text-[15px] hover:underline">contact@junkyardsnearme.com</a>
                                 <p className="text-slate-400 text-[12px] font-medium mt-0.5">Typical response under 2 hours</p>
                             </div>
                         </div>
@@ -196,7 +197,7 @@ export default function Contact() {
                             <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Follow Us</span>
                             <div className="flex items-center gap-2">
                                 {/* Facebook */}
-                                <a href="https://www.facebook.com/junkyardsnearme" target="_blank" rel="noopener noreferrer"
+                                <a href="https://www.facebook.com/JunkYardsNearMe" target="_blank" rel="noopener noreferrer"
                                     className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
                                     aria-label="Facebook">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -302,20 +303,14 @@ export default function Contact() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-[13px] font-bold text-slate-700 mb-1.5">What are you looking for?</label>
-                                                <select
+                                                <JYNMSelect
+                                                    label="What are you looking for?"
+                                                    placeholder="Select a topic..."
+                                                    options={topics.map(t => t.label)}
                                                     value={activeTopic}
-                                                    onChange={(e) => setActiveTopic(e.target.value)}
-                                                    onFocus={() => setFocused('topic')}
-                                                    onBlur={() => setFocused('')}
+                                                    onChange={setActiveTopic}
                                                     required
-                                                    className={inputClass('topic')}
-                                                >
-                                                    <option value="" disabled></option>
-                                                    {topics.map(t => (
-                                                        <option key={t.id} value={t.label}>{t.label}</option>
-                                                    ))}
-                                                </select>
+                                                />
                                             </div>
                                         </div>
 

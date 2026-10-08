@@ -7,6 +7,7 @@ import { useContext } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import LoginModal from './auth/LoginModal'
 import SignupModal from './auth/SignupModal'
+import PostSubmissionFeedback from './PostSubmissionFeedback'
 
 import SecurityQuestionnaireModal from './auth/SecurityQuestionnaireModal'
 
@@ -212,6 +213,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     const [submitting, setSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [submitError, setSubmitError] = useState(null)
+    const [submissionId, setSubmissionId] = useState(null)
 
     // Generate strict Security Code
     const generateSecurityCode = () => {
@@ -633,9 +635,10 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         };
 
         try {
+            let res;
             if (leadType === 'vendor') {
                 // Vendor Lead
-                await api.createVendorLead(payload)
+                res = await api.createVendorLead(payload)
             } else {
                 // Quality Auto Parts Lead
                 payload.part = finalPart.split(' (')[0].trim();
@@ -646,15 +649,16 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                     : '';
                 // Include all candidate HNs if unresolved (admin will confirm)
                 payload.hollander_candidates = hollanderResolved ? [] : hollanderCandidates;
-                await api.createLead(payload)
+                res = await api.createLead(payload)
             }
 
             setSubmitting(false)
+            setSubmissionId(res?.id || `fallback_${Date.now()}`)
             setIsSuccess(true)
             
             setTimeout(() => {
                 handleReset()
-            }, 5000)
+            }, 60000) // Much longer timeout since there is a feedback form attached
         } catch (error) {
             console.error(error)
             setSubmitError('Network failure. Please try again.')
@@ -688,6 +692,7 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
         setUserSecurityCode('')
         setTurnstileToken('')
         setSubmitError(null)
+        setSubmissionId(null)
         generateSecurityCode()
     }
 
@@ -747,20 +752,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
 
     if (isSuccess) {
         return (
-            <div className="w-full bg-white rounded-2xl border border-slate-100 p-8 text-center flex flex-col items-center justify-center min-h-[320px]">
-                <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center mb-5 shadow-[0_8px_20px_rgba(16,185,129,0.3)]">
-                    <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-                <h2 className="text-2xl font-black text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Request Submitted</h2>
-                <p className="text-slate-500 text-[14px] mb-6 leading-relaxed">
-                    Got it! Your request has been sent.<br />You'll hear back shortly with quotes.
-                </p>
-                <button onClick={handleReset} className="text-blue-600 font-bold text-[13px] hover:text-blue-800 transition-colors underline underline-offset-2">
-                    Submit Another Request
-                </button>
-            </div>
+            <PostSubmissionFeedback
+                title="Request Submitted"
+                message="Got it! Your request has been sent. You'll hear back shortly with quotes."
+                referenceId={submissionId ? `LD-${submissionId}` : null}
+                actionText="Submit Another Request"
+                onAction={handleReset}
+            />
         )
     }
 

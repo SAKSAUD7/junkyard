@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // ─── Route exclusion list ─────────────────────────────────────
@@ -65,11 +65,30 @@ const ACTIONS = [
 export default function GlobalFAB({ onOpenFeedback }) {
     const location = useLocation();
     const [open, setOpen] = useState(false);
+    const containerRef = useRef(null);
 
     // Hide on excluded routes
     const isExcluded = EXCLUDED_PREFIXES.some(prefix =>
         location.pathname.startsWith(prefix)
     );
+
+    // Close on click outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setOpen(false);
+            }
+        };
+        if (open) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [open]);
+
     if (isExcluded) return null;
 
     const handleAction = (action) => {
@@ -81,63 +100,72 @@ export default function GlobalFAB({ onOpenFeedback }) {
 
     return (
         <div
+            ref={containerRef}
             className="fixed z-[400]"
             style={{
                 bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))', // Above bottom nav
-                left: '1rem', // Put on the left side to avoid conflicting with the LeadWidget on the right
+                left: '1rem', // Left side
             }}
             role="group"
             aria-label="Quick contact options"
         >
             {/* Speed-dial child buttons */}
             {open && (
-                <div className="flex flex-col items-end gap-2 mb-3">
-                    {ACTIONS.map((action, i) => (
-                        <div
-                            key={action.id}
-                            className="flex items-center gap-2 fab-item-enter"
-                            style={{ animationDelay: `${i * 40}ms` }}
-                        >
-                            {/* Label */}
-                            <span className="text-[11px] font-black text-white px-2.5 py-1 rounded-full shadow-md whitespace-nowrap"
-                                style={{ background: action.bg }}>
-                                {action.label}
-                            </span>
+                <div className="absolute bottom-full left-0 mb-4 flex flex-col items-start gap-3 bg-white/70 backdrop-blur-xl border border-white/40 p-3 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+                    {ACTIONS.map((action, i) => {
+                        const btnContent = (
+                            <>
+                                <div
+                                    className="w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md shrink-0"
+                                    style={{ background: action.bg }}
+                                >
+                                    {action.icon}
+                                </div>
+                                <span className="text-[14px] font-bold text-slate-800 tracking-tight pr-3">
+                                    {action.label}
+                                </span>
+                            </>
+                        );
 
-                            {/* Button */}
-                            {action.href ? (
-                                <a
-                                    href={action.href}
-                                    target={action.external ? '_blank' : undefined}
-                                    rel={action.external ? 'noopener noreferrer' : undefined}
-                                    onClick={() => handleAction(action)}
-                                    className="w-11 h-11 rounded-full text-white flex items-center justify-center shadow-lg transition-transform duration-150 hover:scale-110 active:scale-95"
-                                    style={{ background: action.bg }}
-                                    aria-label={action.label}
-                                >
-                                    {action.icon}
-                                </a>
-                            ) : (
-                                <button
-                                    onClick={() => handleAction(action)}
-                                    className="w-11 h-11 rounded-full text-white flex items-center justify-center shadow-lg transition-transform duration-150 hover:scale-110 active:scale-95"
-                                    style={{ background: action.bg }}
-                                    aria-label={action.label}
-                                >
-                                    {action.icon}
-                                </button>
-                            )}
-                        </div>
-                    ))}
+                        return (
+                            <div
+                                key={action.id}
+                                className="flex items-center gap-3 w-full animate-fade-in-up"
+                                style={{ animationDelay: `${(ACTIONS.length - 1 - i) * 30}ms` }}
+                            >
+                                {action.href ? (
+                                    <a
+                                        href={action.href}
+                                        target={action.external ? '_blank' : undefined}
+                                        rel={action.external ? 'noopener noreferrer' : undefined}
+                                        onClick={() => handleAction(action)}
+                                        className="flex items-center gap-3 w-full p-1 rounded-full hover:bg-white/80 transition-all active:scale-95"
+                                        aria-label={action.label}
+                                    >
+                                        {btnContent}
+                                    </a>
+                                ) : (
+                                    <button
+                                        onClick={() => handleAction(action)}
+                                        className="flex items-center gap-3 w-full p-1 rounded-full hover:bg-white/80 transition-all active:scale-95 text-left"
+                                        aria-label={action.label}
+                                    >
+                                        {btnContent}
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 
             {/* Main toggle button */}
-            <div className="flex justify-end">
+            <div className="flex justify-start">
                 <button
                     onClick={() => setOpen(v => !v)}
-                    className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/40 flex items-center justify-center transition-all duration-200 active:scale-95"
-                    style={{ willChange: 'transform' }}
+                    className={`w-14 h-14 rounded-full text-white shadow-lg flex items-center justify-center transition-all duration-300 active:scale-95 z-20 relative ${
+                        open ? 'bg-slate-800 shadow-slate-800/40 rotate-135' : 'bg-blue-600 shadow-blue-600/40 hover:bg-blue-700'
+                    }`}
                     aria-label={open ? 'Close contact menu' : 'Open contact menu'}
                     aria-expanded={open}
                 >

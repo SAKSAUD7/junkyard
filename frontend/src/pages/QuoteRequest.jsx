@@ -180,12 +180,12 @@ export default function QuoteRequest() {
             })
             setSubmitSuccess(true)
             
-            // Auto-reset form after 7 seconds
+            // Auto-reset form after 10 seconds
             setTimeout(() => {
                 setSubmitSuccess(false)
                 setCurrentStep(1)
                 setFormData({ name: '', phone: '', email: '', state: '', zip: '' })
-            }, 7000)
+            }, 10000)
             
         } catch (err) {
             setFormError('Submission failed. Please try again.')

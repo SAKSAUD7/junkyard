@@ -11,6 +11,7 @@ import MobileAdBanner from '../components/MobileAdBanner';
 import { getLogoUrl } from '../utils/imageUrl';
 import Rating from '../components/Rating';
 import VendorBadges from '../components/VendorBadges';
+import VendorCard from '../components/VendorCard';
 import { generateVendorUrl } from '../utils/urlHelpers';
 
 const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100','text-purple-700 bg-purple-50 border-purple-100','text-orange-700 bg-orange-50 border-orange-100','text-emerald-700 bg-emerald-50 border-emerald-100'];
@@ -186,63 +187,9 @@ export default function BrowseState() {
                 ) : junkyards.length > 0 ? (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
-                            {junkyards.map((vendor, index) => {
-                                const logoUrl = vendor.logo ? getLogoUrl(vendor.logo) : null;
-                                const badgeColor = BADGE_COLORS[index % BADGE_COLORS.length];
-                                return (
-                                    <Link to={generateVendorUrl(vendor)} key={vendor.id} className="block group focus:outline-none h-full">
-                                        <div className="bg-white rounded-[16px] md:rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full flex flex-row sm:flex-col">
-
-                                            {/* Status Badge */}
-                                            <div className="absolute top-2 left-2 sm:top-3 sm:right-3 sm:left-auto sm:relative z-10 sm:px-4 sm:pt-4 flex items-center gap-1 justify-between scale-[0.8] sm:scale-100 origin-top-left sm:origin-top-right">
-                                                {(vendor.is_top_rated || vendor.is_featured) ? (
-                                                    <VendorBadges isTopRated={vendor.is_top_rated} isFeatured={vendor.is_featured} compact={true} />
-                                                ) : (
-                                                    <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-wider px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-full border ${badgeColor}`}>
-                                                        ✓ Verified
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {/* Logo */}
-                                            <div className="w-[100px] sm:w-auto sm:h-32 flex items-center justify-center bg-slate-50 shrink-0 border-r sm:border-r-0 border-slate-100 sm:mx-4 sm:my-0 sm:rounded-xl overflow-hidden min-h-[120px]">
-                                                {logoUrl ? (
-                                                    <img src={logoUrl} alt={vendor.name}
-                                                        className="max-h-16 sm:max-h-full max-w-full object-contain p-2 md:p-3 group-hover:scale-105 transition-transform duration-300"
-                                                        onError={e => { e.target.onerror = null; e.target.style.display = 'none'; }}
-                                                    />
-                                                ) : (
-                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-12 md:h-12 rounded-full bg-blue-100 text-blue-600 font-black text-sm md:text-xl flex items-center justify-center">
-                                                        {vendor.name?.charAt(0) || 'J'}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Info */}
-                                            <div className="px-3 md:px-4 pb-3 md:pb-4 flex-1 flex flex-col pt-3 min-w-0">
-                                                <h3 className="font-black text-slate-900 text-[14px] md:text-[15px] leading-snug mb-1 line-clamp-2 sm:line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                                    {vendor.name}
-                                                </h3>
-                                                <p className="text-[11px] md:text-[12px] font-medium text-slate-400 mb-2 flex items-center gap-1.5">
-                                                    <svg className="w-3 h-3 text-slate-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
-                                                    <span className="truncate">{vendor.city}, {vendor.state}</span>
-                                                </p>
-
-                                                <div className="mb-2 sm:mb-3 scale-90 origin-left sm:scale-100">
-                                                    <Rating stars={vendor.rating_stars || 5} percentage={vendor.rating_percentage || 100} size="sm" showPercentage={false} />
-                                                </div>
-
-                                                <div className="mt-auto">
-                                                    <span className="w-full py-2 md:py-2.5 rounded-lg md:rounded-xl font-bold text-[12px] md:text-[13px] text-white bg-blue-600 group-hover:bg-blue-700 transition-colors flex justify-center items-center gap-1.5 shadow-sm">
-                                                        View <span className="hidden sm:inline">Inventory</span>
-                                                        <svg className="w-3.5 h-3.5 md:w-3.5 md:h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7"/></svg>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                );
-                            })}
+                            {junkyards.map((vendor) => (
+                                <VendorCard key={vendor.id} vendor={vendor} />
+                            ))}
                         </div>
 
                         {/* Pagination */}

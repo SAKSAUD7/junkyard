@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import { api } from "../services/api";
 import AcceptJsCheckout from "../components/vendor/AcceptJsCheckout";
+import PostSubmissionFeedback from "../components/PostSubmissionFeedback";
 
 const SELL_VEHICLE_FEE = "9.99";
 
@@ -540,52 +541,36 @@ function SuccessScreen({ vehicle, onReset }) {
   const progress = ((10 - countdown) / 10) * 100;
 
   return (
-    <motion.div
-      className="p-8 sm:p-16 text-center bg-white max-w-[800px] mx-auto rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-slate-100 relative overflow-hidden"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-    >
-      {/* Animated success check */}
-      <div className="w-24 h-24 bg-emerald-50 border-4 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
-        <svg className="w-12 h-12 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-      <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Submission Received!</h2>
-      <p className="text-slate-500 font-medium text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-        We have received the details for your{' '}
-        <span className="font-bold text-slate-900">
-          {vehicle.year} {vehicle.makeName || vehicle.make} {vehicle.modelName || vehicle.model}
-        </span>.
-        {' '}Our team will contact you within 24 hours with an offer.
-      </p>
-
-      <div className="flex justify-center mb-10">
-        <p className="text-2xl sm:text-3xl font-serif italic text-blue-600 px-8 py-6 rounded-2xl">
-          "Thanks for trusting us — we'll be in touch soon."
-        </p>
-      </div>
-
-      {/* Countdown bar */}
-      <div className="mt-6">
-        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
-          <div
-            className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-linear"
-            style={{ width: `${progress}%` }}
-          />
+    <PostSubmissionFeedback
+      title="Submission Received!"
+      message={
+        <>
+          We have received the details for your{' '}
+          <span className="font-bold text-slate-900">
+            {vehicle.year} {vehicle.makeName || vehicle.make} {vehicle.modelName || vehicle.model}
+          </span>.
+          {' '}Our team will contact you within 24 hours with an offer.
+        </>
+      }
+      referenceId={`SYC-${vehicle.vin || Date.now()}`}
+      actionText="Submit Another Vehicle"
+      onAction={onReset}
+      extra={
+        <div className="mt-4 w-full flex flex-col items-center">
+          <div className="w-full max-w-[240px]">
+            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div
+                className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-linear"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest text-center">
+              Resetting in {countdown}s…
+            </p>
+          </div>
         </div>
-        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-          Resetting in {countdown}s…
-        </p>
-      </div>
-
-      <button
-        onClick={onReset}
-        className="mt-8 px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
-      >
-        Submit Another Vehicle
-      </button>
-    </motion.div>
+      }
+    />
   );
 }
 
@@ -779,7 +764,7 @@ export default function SellYourCar() {
 
       <div className="flex-1 w-full relative">
         {/* Simple Page Header in JYNM style */}
-        <div className="bg-white border-b border-slate-100 py-16 text-center">
+        <div className="bg-white border-b border-slate-100 py-8 md:py-16 text-center">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Sell Your Vehicle

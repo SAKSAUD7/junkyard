@@ -90,10 +90,10 @@ export default function FloatingActionButtons({ onFeedbackClick }) {
     };
 
     return (
-        // bottom-20 on mobile to avoid the bottom navigation; bottom-6 on md+
+        // bottom offset is calculated to safely clear the MobileBottomNav + safe area
         <div
             ref={fabRef}
-            className="fixed bottom-20 md:bottom-6 right-4 md:right-5 z-40 flex flex-col items-end gap-2"
+            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6 right-4 md:right-5 z-[90] flex flex-col items-end gap-2"
             role="complementary"
             aria-label="Quick contact options"
         >
