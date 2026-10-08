@@ -38,7 +38,8 @@ export default function BrowseState() {
                     state: state,
                     page: currentPage,
                     page_size: vendorsPerPage,
-                    search: searchTerm
+                    search: searchTerm,
+                    ordering: 'name'
                 };
 
                 const data = await api.getVendors(params);

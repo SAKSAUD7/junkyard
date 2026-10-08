@@ -11,6 +11,7 @@ import { getLocalBusinessSchema } from '../utils/structuredData';
 import { getLogoUrl } from '../utils/imageUrl';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import { useVendorAuth } from '../contexts/VendorAuthContext';
 import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal';
 import SignupModal from '../components/auth/SignupModal';
 import LoginModal from '../components/auth/LoginModal';
@@ -25,6 +26,8 @@ const VendorDetail = () => {
     const [error, setError] = useState(null);
 
     const { isAuthenticated } = useContext(AuthContext);
+    const { vendorProfile } = useVendorAuth();
+    const isOwnProfile = vendorProfile && vendorProfile.id === vendor?.id;
     const [showSecurityCheck, setShowSecurityCheck] = useState(false);
     const [showSignup, setShowSignup] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
@@ -378,20 +381,32 @@ const VendorDetail = () => {
                         <div className="sticky top-24 space-y-4">
                             {/* Form Card */}
                             <div className="bg-white/60 backdrop-blur-2xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-2xl p-6">
-                                {/* Header */}
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgb(37,99,235,0.3)]">
-                                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
+                                {isOwnProfile ? (
+                                    <div className="text-center py-6">
+                                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" /></svg>
+                                        </div>
+                                        <h3 className="text-[16px] font-black text-slate-900 mb-2">This is your public profile</h3>
+                                        <p className="text-[13px] text-slate-500 font-medium leading-relaxed">Customer lead requests will appear in your vendor dashboard.</p>
                                     </div>
-                                    <div>
-                                        <h2 className="font-black text-slate-900 text-[16px]" style={{ fontFamily: "'Outfit', sans-serif" }}>Get a Quote</h2>
-                                        <p className="text-[11px] text-slate-400 font-medium">Free, no-obligation</p>
-                                    </div>
-                                </div>
-                                <p className="text-slate-500 text-[13px] mb-5 leading-relaxed">
-                                    Fill out the form below to request a quote from <span className="font-bold text-slate-700">{vendor.name}</span>
-                                </p>
-                                <LeadForm vendorName={vendor.name} mode="vendor" />
+                                ) : (
+                                    <>
+                                        {/* Header */}
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgb(37,99,235,0.3)]">
+                                                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
+                                            </div>
+                                            <div>
+                                                <h2 className="font-black text-slate-900 text-[16px]" style={{ fontFamily: "'Outfit', sans-serif" }}>Get a Quote</h2>
+                                                <p className="text-[11px] text-slate-400 font-medium">Free, no-obligation</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-slate-500 text-[13px] mb-5 leading-relaxed">
+                                            Fill out the form below to request a quote from <span className="font-bold text-slate-700">{vendor.name}</span>
+                                        </p>
+                                        <LeadForm vendorName={vendor.name} mode="vendor" />
+                                    </>
+                                )}
                             </div>
 
                             {/* Back Button */}

@@ -5,7 +5,7 @@
 // - Dismiss via X, Skip, Sign In, Create Account, or Continue as Guest
 import { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 const STORAGE_KEY = 'jynm_onboarding_v2_done';
@@ -46,15 +46,16 @@ export default function OnboardingOverlay({ onOpenLogin, onOpenSignup }) {
     const [intent, setIntent]       = useState(null);
     const { isAuthenticated }       = useContext(AuthContext);
     const navigate                  = useNavigate();
+    const location                  = useLocation();
     const timerRef                  = useRef(null);
 
     useEffect(() => {
         const done = localStorage.getItem(STORAGE_KEY);
-        if (!done && !isAuthenticated) {
+        if (!done && !isAuthenticated && location.pathname === '/') {
             const t = setTimeout(() => setVisible(true), 350);
             return () => clearTimeout(t);
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, location.pathname]);
 
     // Auto-advance carousel only while on SLIDES screen
     useEffect(() => {
