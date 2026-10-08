@@ -610,7 +610,7 @@ export default function HeroSection({ get, ready = false }) {
   }, [heroSuccess]);
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-4 lg:pt-8 pb-20 min-h-[90vh] flex flex-col justify-start">
+    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-0 lg:pt-8 pb-20 min-h-[90vh] flex flex-col justify-start">
       {/* Full-bleed cinematic background video - DESKTOP ONLY */}
       <div className="absolute inset-0 z-0 bg-white hidden lg:block">
         <video

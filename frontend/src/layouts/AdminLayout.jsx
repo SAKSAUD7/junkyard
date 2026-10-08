@@ -267,34 +267,25 @@ export default function AdminLayout() {
                         const groupItems = group.items.map(name => navigation.find(i => i.name === name)).filter(Boolean);
                         if (groupItems.length === 0) return null;
                         
-                        const isOpen = openGroups[group.title];
                         return (
                             <div key={group.title} className="space-y-1">
-                                <button
-                                    onClick={() => toggleGroup(group.title)}
-                                    className="w-full flex items-center justify-between px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
-                                >
+                                <div className="w-full flex items-center justify-between px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     <span>{group.title}</span>
-                                    <svg className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
+                                </div>
                                 
-                                {isOpen && (
-                                    <div className="space-y-0.5 mt-1">
-                                        {groupItems.map(item => {
-                                            const Icon = item.icon;
-                                            const active = isActive(item);
-                                            return (
-                                                <Link key={item.name} to={item.href}
-                                                    className={`flex items-center gap-3 px-3 py-2 text-[13px] font-semibold rounded-xl transition-all duration-200 ${active ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
-                                                    <Icon className={`flex-shrink-0 w-4 h-4 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
-                                                    <span>{item.name}</span>
-                                                </Link>
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                                <div className="space-y-0.5 mt-1 mb-3">
+                                    {groupItems.map(item => {
+                                        const Icon = item.icon;
+                                        const active = isActive(item);
+                                        return (
+                                            <Link key={item.name} to={item.href}
+                                                className={`flex items-center gap-3 px-3 py-2 text-[13px] font-semibold rounded-xl transition-all duration-200 ${active ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
+                                                <Icon className={`flex-shrink-0 w-4 h-4 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+                                                <span>{item.name}</span>
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         );
                     })}

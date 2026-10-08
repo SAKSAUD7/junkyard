@@ -76,7 +76,7 @@ const HowItWorks = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {steps.map((step, index) => (
-                            <div key={index} className="bg-white rounded-2xl p-7 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-lg transition-all">
+                            <div key={index} className="bg-white rounded-2xl p-7 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:border-blue-300 hover:shadow-[0_8px_30px_rgba(26,86,255,0.12)] hover:bg-blue-50/50 active:scale-[0.98] hover:-translate-y-1 transition-all duration-300 cursor-default">
                                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5" style={{ background: index % 2===0 ? 'rgba(37,99,235,0.08)' : 'rgba(234,88,12,0.08)' }}>
                                     <span className="font-black text-xl" style={{ color: index % 2===0 ? '#2563eb' : '#ea580c', fontFamily: "'Outfit', sans-serif" }}>{step.number}</span>
                                 </div>
@@ -102,11 +102,11 @@ const HowItWorks = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {benefits.map((benefit, index) => (
-                            <div key={index} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_rgb(0,0,0,0.04)] hover:-translate-y-1 transition-all">
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-blue-50 text-blue-600 border border-blue-100">
+                            <div key={index} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_rgb(0,0,0,0.04)] hover:border-blue-300 hover:shadow-[0_8px_30px_rgba(26,86,255,0.12)] hover:bg-blue-50/50 hover:-translate-y-1 active:scale-[0.98] transition-all cursor-default group">
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-white group-hover:shadow-sm transition-all duration-300">
                                     {benefit.icon}
                                 </div>
-                                <h3 className="font-bold text-lg text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>{benefit.title}</h3>
+                                <h3 className="font-bold text-lg text-slate-900 mb-2 group-hover:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>{benefit.title}</h3>
                                 <p className="text-sm text-slate-500 leading-relaxed">{benefit.description}</p>
                             </div>
                         ))}

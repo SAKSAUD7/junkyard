@@ -56,13 +56,13 @@ export default function QuotesCart() {
                             </div>
                         </Link>
 
-                        <Link to="/search" className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
+                        <Link to="/quote" className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all">
                             <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
-                                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                             </div>
                             <div className="text-left">
-                                <p className="font-extrabold text-slate-900 text-[15px]">Search for Parts</p>
-                                <p className="text-slate-500 text-[13px] font-medium">Find the exact part you need</p>
+                                <p className="font-extrabold text-slate-900 text-[15px]">Request a Quote</p>
+                                <p className="text-slate-500 text-[13px] font-medium">Get free quotes for any part</p>
                             </div>
                         </Link>
                     </div>

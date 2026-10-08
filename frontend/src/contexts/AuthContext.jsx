@@ -82,10 +82,14 @@ export const AuthProvider = ({ children }) => {
         try {
             await authService.logout();
         } finally {
-            setUser(null);
-            setToken(null);
-            setVendorProfile(null);
-            setIsAuthenticated(false);
+            // Defering state nullification so the router can unmount protected children first. 
+            // Avoids null reference errors (blank screen) on logout.
+            setTimeout(() => {
+                setUser(null);
+                setToken(null);
+                setVendorProfile(null);
+                setIsAuthenticated(false);
+            }, 50);
         }
     };
 

@@ -215,6 +215,7 @@ export default function AdminSettings() {
                         <div>
                             <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Password</label>
                             <button
+                                onClick={() => setShowPasswordModal(true)}
                                 className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2"
                             >
                                 <KeyIcon className="h-5 w-5" />

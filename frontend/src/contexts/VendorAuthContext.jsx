@@ -107,9 +107,13 @@ export const VendorAuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
-            setUser(null);
-            setVendorProfile(null);
             navigate('/vendor/login');
+            // Defering state nullification so the router can unmount protected children first. 
+            // Avoids null reference errors (blank screen) on logout.
+            setTimeout(() => {
+                setUser(null);
+                setVendorProfile(null);
+            }, 50);
         }
     };
 

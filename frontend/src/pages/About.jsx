@@ -123,11 +123,11 @@ export default function About() {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 animate-fade-in-up delay-200">
                         {stats.map((stat, index) => (
-                            <div key={index} className="p-8 rounded-2xl text-center bg-white border border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.08)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
-                                <div className="text-4xl md:text-5xl font-black mb-2 text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                            <div key={index} className="p-8 rounded-2xl text-center bg-white border border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.15)] hover:-translate-y-1 hover:border-blue-600 hover:bg-blue-600 active:bg-blue-700 active:border-blue-700 active:scale-[0.98] transition-all duration-300 group cursor-default">
+                                <div className="text-4xl md:text-5xl font-black mb-2 text-slate-900 group-hover:text-white transition-colors" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
                                     {stat.value}
                                 </div>
-                                <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">{stat.label}</div>
+                                <div className="text-sm font-bold text-slate-500 group-hover:text-blue-100 uppercase tracking-widest transition-colors">{stat.label}</div>
                             </div>
                         ))}
                     </div>
@@ -167,14 +167,14 @@ export default function About() {
                     <div className="relative">
                         <div className="grid gap-6 relative z-10 w-full max-w-lg mx-auto">
                             {features.map((feature, index) => (
-                                <div key={index} className="p-7 rounded-2xl transition-all duration-200 group bg-white border border-slate-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_32px_rgb(0,0,0,0.08)] hover:border-blue-300 hover:bg-blue-50/30 hover:-translate-y-[4px] focus-within:border-blue-300 focus-within:shadow-[0_8px_32px_rgb(0,0,0,0.08)]">
+                                <div key={index} className="p-7 rounded-2xl transition-all duration-200 group bg-white border border-slate-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_32px_rgb(37,99,235,0.2)] hover:border-blue-600 hover:bg-blue-600 active:bg-blue-700 active:-translate-y-0 active:scale-[0.98] hover:-translate-y-[4px] cursor-default">
                                     <div className="flex items-start gap-5">
-                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-110 bg-slate-50 border border-slate-100 text-blue-500 group-hover:bg-blue-100 group-hover:text-blue-600 group-hover:border-blue-200 group-hover:shadow-md">
+                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 bg-slate-50 border border-slate-100 text-blue-500 group-hover:bg-white group-hover:text-blue-600 group-hover:border-transparent group-hover:shadow-md">
                                             {feature.icon}
                                         </div>
                                         <div>
-                                            <h3 className="text-[18px] font-bold mb-2 text-slate-900 leading-snug" style={{ fontFamily: "'Outfit', sans-serif" }}>{feature.title}</h3>
-                                            <p className="text-slate-500 text-[0.93rem] leading-[1.65] font-medium">{feature.description}</p>
+                                            <h3 className="text-[18px] font-bold mb-2 text-slate-900 group-hover:text-white transition-colors leading-snug" style={{ fontFamily: "'Outfit', sans-serif" }}>{feature.title}</h3>
+                                            <p className="text-slate-500 group-hover:text-blue-100 transition-colors text-[0.93rem] leading-[1.65] font-medium">{feature.description}</p>
                                         </div>
                                     </div>
                                 </div>

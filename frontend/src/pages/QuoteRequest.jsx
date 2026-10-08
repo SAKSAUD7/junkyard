@@ -294,7 +294,7 @@ export default function QuoteRequest() {
                                                         onChange={handleChange}
                                                         required
                                                         placeholder="John Doe"
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
+                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none hover:border-blue-300 hover:bg-white focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-300"
                                                     />
                                                 </div>
                                                 <div>
@@ -306,7 +306,7 @@ export default function QuoteRequest() {
                                                         onChange={handlePhoneChange}
                                                         required
                                                         placeholder="(555) 123-4567"
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
+                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none hover:border-blue-300 hover:bg-white focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-300"
                                                     />
                                                 </div>
                                                 <div>
@@ -318,13 +318,13 @@ export default function QuoteRequest() {
                                                         onChange={handleChange}
                                                         required
                                                         placeholder="john@example.com"
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
+                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none hover:border-blue-300 hover:bg-white focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-300"
                                                     />
                                                 </div>
                                                 <button
                                                     type="button"
                                                     onClick={handleNext}
-                                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-[0_8px_20px_rgb(37,99,235,0.25)] mt-4 flex justify-center items-center gap-2"
+                                                    className="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-[0_8px_20px_rgb(37,99,235,0.25)] hover:shadow-[0_8px_25px_rgb(37,99,235,0.4)] mt-4 flex justify-center items-center gap-2"
                                                 >
                                                     Continue to Location
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -376,7 +376,7 @@ export default function QuoteRequest() {
                                                             required
                                                             placeholder="12345"
                                                             autoComplete="off"
-                                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
+                                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none hover:border-blue-300 hover:bg-white focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-300"
                                                         />
                                                         {showZipSuggestions && zipcodes.length > 0 && (
                                                             <div className="absolute top-[80px] left-0 z-50 w-full bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
@@ -426,7 +426,7 @@ export default function QuoteRequest() {
                                                             maxLength={4}
                                                             autoComplete="off"
                                                             required
-                                                            className="flex-1 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all uppercase tracking-widest text-center"
+                                                            className="flex-1 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 outline-none hover:border-blue-300 hover:bg-white focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-300 uppercase tracking-widest text-center"
                                                         />
                                                     </div>
                                                 </div>
@@ -434,7 +434,7 @@ export default function QuoteRequest() {
                                                 <button
                                                     type="submit"
                                                     disabled={isSubmitting || formData.zip.length < 5}
-                                                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-4 px-6 rounded-xl transition-all shadow-[0_8px_20px_rgb(16,185,129,0.25)] disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 mt-4"
+                                                    className="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-300 shadow-[0_8px_20px_rgb(16,185,129,0.25)] hover:shadow-[0_8px_25px_rgb(16,185,129,0.4)] disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 flex justify-center items-center gap-2 mt-4"
                                                 >
                                                     {isSubmitting ? 'Sending Request...' : '✓ Get Instant Quotes'}
                                                 </button>

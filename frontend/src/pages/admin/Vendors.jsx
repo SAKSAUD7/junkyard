@@ -80,6 +80,7 @@ export default function AdminVendors() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
     const [totalPages, setTotalPages] = useState(1);
     const [totalVendors, setTotalVendors] = useState(0);
     const [activeTab, setActiveTab] = useState('all');
@@ -123,7 +124,7 @@ export default function AdminVendors() {
 
     useEffect(() => {
         fetchVendors(page);
-    }, [token, page, activeTab]);
+    }, [token, page, activeTab, pageSize]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -136,7 +137,7 @@ export default function AdminVendors() {
     const fetchVendors = async (pageNo) => {
         setLoading(true);
         try {
-            const params = { page: pageNo, page_size: 50, search: searchTerm };
+            const params = { page: pageNo, page_size: pageSize, search: searchTerm };
             if (activeTab !== 'all') {
                 params.is_active = activeTab === 'active';
             }
@@ -145,7 +146,7 @@ export default function AdminVendors() {
 
             const count = data.count || 0;
             setTotalVendors(count);
-            setTotalPages(Math.ceil(count / 50));
+            setTotalPages(Math.ceil(count / pageSize));
 
             const [allVendorsData, activeVendorsData, inactiveVendorsData] = await Promise.all([
                 api.getAdminVendors(token, { page_size: 1 }).catch(() => ({ count: 0 })),
@@ -516,21 +517,21 @@ export default function AdminVendors() {
             </div>
 
             {/* Modern Table Card */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="px-6 py-3 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Logo</th>
-                                <th className="px-6 py-3 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vendor</th>
-                                <th className="px-6 py-3 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Location</th>
-                                <th className="px-6 py-3 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-3 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                                <th className="px-6 py-3 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">Rating</th>
-                                <th className="px-6 py-3 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ad Plan</th>
-                                <th className="px-6 py-3 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">Leads</th>
-                                <th className="px-6 py-3 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col relative w-full">
+                <div className="overflow-x-auto overflow-y-hidden max-w-full">
+                    <table className="w-full text-left border-collapse min-w-[1000px]">
+                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-100 shadow-sm">
+                            <tr>
+                                <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Logo</th>
+                                <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Vendor</th>
+                                <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Location</th>
+                                <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Contact</th>
+                                <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Description</th>
+                                <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Rating</th>
+                                <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Ad Plan</th>
+                                <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Leads</th>
+                                <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Status</th>
+                                <th className="px-5 py-3 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap sticky right-0 z-20 bg-slate-50/95 shadow-[-4px_0_12px_rgba(0,0,0,0.03)] border-l border-slate-100 backdrop-blur-sm">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -642,14 +643,15 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Status */}
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="flex flex-col items-center gap-1.5">
-                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold ${vendor.is_active
-                                                    ? 'bg-emerald-50 text-emerald-600'
-                                                    : 'bg-rose-50 text-rose-600'
+                                        <td className="px-4 py-3 text-center">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-bold ${vendor.is_active
+                                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                                    : 'bg-rose-50 text-rose-600 border border-rose-100'
                                                     }`}>
                                                     {vendor.is_active ? 'Active' : 'Inactive'}
                                                 </span>
+
                                                 {vendor.trusted_vendor && (
                                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-600">
                                                         <StarIcon className="h-3 w-3 text-amber-500" />
@@ -660,45 +662,45 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-1.5">
+                                        <td className="px-4 py-3 text-right sticky right-0 bg-white/95 backdrop-blur-sm border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50/95 transition-colors z-0">
+                                            <div className="flex items-center justify-end gap-1">
                                                 {/* Edit */}
                                                 <button
                                                     onClick={() => handleEditClick(vendor)}
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-md text-xs font-semibold hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 shadow-sm transition-all"
+                                                    className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-100"
                                                     title="Edit Vendor"
+                                                    aria-label="Edit Vendor"
                                                 >
-                                                    <PencilSquareIcon className="h-3.5 w-3.5" />
-                                                    Edit
+                                                    <PencilSquareIcon className="h-4 w-4" />
                                                 </button>
 
                                                 {/* Reset Password */}
                                                 <button
                                                     onClick={() => handleResetPassword(vendor)}
                                                     disabled={!vendor.is_active}
-                                                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold border shadow-sm transition-all ${
+                                                    className={`p-1.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-amber-100 ${
                                                         vendor.is_active
-                                                            ? 'bg-white border-slate-200 text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700'
-                                                            : 'bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed'
+                                                            ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
+                                                            : 'text-slate-200 cursor-not-allowed'
                                                     }`}
                                                     title={vendor.is_active ? 'Reset Password' : 'Activate vendor first'}
+                                                    aria-label="Reset Password"
                                                 >
-                                                    <KeyIcon className="h-3.5 w-3.5" />
-                                                    Reset PW
+                                                    <KeyIcon className="h-4 w-4" />
                                                 </button>
 
                                                 {/* Activate / Deactivate */}
                                                 <button
                                                     onClick={() => toggleStatus(vendor)}
-                                                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold border shadow-sm transition-all ${
+                                                    className={`p-1.5 rounded-lg transition-all focus:outline-none focus:ring-2 ${
                                                         vendor.is_active
-                                                            ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100'
-                                                            : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
+                                                            ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 focus:ring-rose-100'
+                                                            : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 focus:ring-emerald-100'
                                                     }`}
                                                     title={vendor.is_active ? 'Deactivate' : 'Activate'}
+                                                    aria-label={vendor.is_active ? 'Deactivate' : 'Activate'}
                                                 >
-                                                    <PowerIcon className="h-3.5 w-3.5" />
-                                                    {vendor.is_active ? 'Deactivate' : 'Activate'}
+                                                    {vendor.is_active ? <PowerIcon className="h-4 w-4" /> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" /></svg>}
                                                 </button>
                                             </div>
                                         </td>
@@ -711,9 +713,25 @@ export default function AdminVendors() {
 
                 {/* Pagination */}
                 {!loading && vendors.length > 0 && (
-                    <div className="px-6 py-4 border-t-2 border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-[#f9fafb] to-white">
-                        <div className="text-sm text-[#6b7280]">
-                            Showing <span className="font-bold text-[#1f2937]">{((page - 1) * 50) + 1}</span>–<span className="font-bold text-[#1f2937]">{Math.min(page * 50, totalVendors)}</span> of <span className="font-bold text-[#1f2937]">{totalVendors}</span> vendors
+                    <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
+                        <div className="flex items-center gap-4 text-sm text-slate-500">
+                            <div>
+                                Showing <span className="font-semibold text-slate-900">{((page - 1) * pageSize) + 1}</span>–<span className="font-semibold text-slate-900">{Math.min(page * pageSize, totalVendors)}</span> of <span className="font-semibold text-slate-900">{totalVendors}</span> vendors
+                            </div>
+                            <div className="hidden sm:block w-px h-4 bg-slate-200"></div>
+                            <div className="flex items-center gap-2">
+                                <label htmlFor="pageSize" className="hidden sm:block">Rows per page:</label>
+                                <select 
+                                    id="pageSize" 
+                                    value={pageSize} 
+                                    onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+                                    className="border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 bg-slate-50 py-1.5 pl-3 pr-8 shadow-sm"
+                                >
+                                    <option value={25}>25</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <button

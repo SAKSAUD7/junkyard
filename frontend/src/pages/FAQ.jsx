@@ -158,13 +158,17 @@ const FAQ = () => {
                                     return (
                                         <div
                                             key={questionIdx}
-                                            className="group border-b border-slate-100 last:border-0"
+                                            className={`group rounded-2xl overflow-hidden transition-all duration-300 border ${
+                                                isOpen 
+                                                ? 'bg-white border-blue-200 shadow-[0_8px_30px_rgba(26,86,255,0.12)]' 
+                                                : 'bg-white border-slate-100 hover:border-blue-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)]'
+                                            }`}
                                         >
                                             <button
                                                 onClick={() => toggleQuestion(categoryIdx, questionIdx)}
-                                                className="w-full flex items-center justify-between text-left py-6 transition-all"
+                                                className="w-full flex items-center justify-between text-left p-6 transition-all"
                                             >
-                                                <h3 className={`font-semibold pr-8 text-lg ${isOpen ? 'text-blue-600' : 'text-slate-900 hover:text-blue-600'} transition-colors duration-300`}>
+                                                <h3 className={`font-semibold pr-8 text-lg ${isOpen ? 'text-blue-600' : 'text-slate-900 group-hover:text-blue-600'} transition-colors duration-300`}>
                                                     {item.q}
                                                 </h3>
                                                 <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-blue-600 shadow-md rotate-180' : 'bg-slate-50 group-hover:bg-blue-50'}`}>
@@ -175,9 +179,9 @@ const FAQ = () => {
                                             </button>
 
                                             <div 
-                                                className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}
+                                                className={`overflow-hidden transition-all duration-500 ease-in-out px-6 ${isOpen ? 'max-h-[500px] opacity-100 pb-6' : 'max-h-0 opacity-0 pb-0'}`}
                                             >
-                                                <p className="leading-relaxed text-slate-600 font-medium text-[15px] whitespace-pre-wrap pr-12">
+                                                <p className="leading-relaxed text-slate-600 font-medium text-[15px] whitespace-pre-wrap">
                                                     {item.a}
                                                 </p>
                                             </div>

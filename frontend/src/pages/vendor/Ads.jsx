@@ -416,7 +416,7 @@ export default function Ads() {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                                     {displayPlans.map(plan => {
                                         const discount = billing === 'quarterly' ? 0.15 : 0;
                                         const finalPrice = billing === 'quarterly'
@@ -427,70 +427,60 @@ export default function Ads() {
                                             : plan.price;
                                         
                                         const isSelected = selectedPlan?.id === plan.id;
-                                        const PreviewComponent = plan.Component || subscriptionPlans.find(p => p.id === plan.id)?.Component;
-
+                                        
                                         return (
-                                            <div key={plan.id}
+                                            <div 
+                                                key={plan.id}
                                                 onClick={() => {
                                                     const planData = subscriptionPlans.find(p => p.id === plan.id) || { ...plan, price: perMonth };
                                                     setSelectedPlan({ ...planData, price: perMonth });
                                                 }}
-                                                className={`relative flex flex-col rounded-3xl border-2 bg-white transition-all duration-300 cursor-pointer overflow-hidden ${
-                                                    isSelected
-                                                        ? 'border-[#1a56ff] ring-4 ring-blue-100 shadow-xl scale-[1.02] z-10'
-                                                        : 'border-slate-200 hover:border-blue-300 hover:shadow-lg'
-                                                }`}>
-                                                
-                                                <div className="p-8 flex flex-col flex-1">
-                                                    {/* Top Row: Pill & Radio */}
+                                                className={`rounded-[24px] cursor-pointer transition-all duration-300 border-2 flex flex-col relative overflow-hidden bg-white ${
+                                                    isSelected 
+                                                    ? 'border-blue-600 shadow-[0_8px_30px_rgba(26,86,255,0.15)] scale-[1.02] z-10' 
+                                                    : 'border-slate-100 hover:border-slate-300 hover:shadow-lg'
+                                                }`}
+                                            >
+                                                {plan.popular && (
+                                                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                                                )}
+                                                <div className="p-6 flex flex-col h-full">
                                                     <div className="flex justify-between items-start mb-6">
-                                                        <div className={`text-[12px] font-black px-3 py-1 rounded-full uppercase tracking-widest text-white ${plan.btnColor.split(' ')[0]}`}>
-                                                            {plan.name}
-                                                        </div>
-                                                        <div className="flex flex-col items-end">
-                                                            {plan.popular && (
-                                                                <div className="bg-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full tracking-widest uppercase mb-2 shadow-sm">
-                                                                    MOST POPULAR
-                                                                </div>
+                                                        <div>
+                                                            <div className={`text-[11px] font-black uppercase tracking-widest mb-1 ${plan.popular ? 'text-blue-600' : 'text-slate-500'}`}>
+                                                                {plan.name}
+                                                            </div>
+                                                            <div className="flex items-baseline gap-1">
+                                                                <span className="text-[32px] font-black text-slate-900 tracking-tighter">${perMonth}</span>
+                                                                <span className="text-slate-500 font-medium text-[13px]">/mo</span>
+                                                            </div>
+                                                            {billing === 'quarterly' && (
+                                                                <p className="text-emerald-600 text-[12px] font-bold mt-1">${finalPrice} billed quarterly</p>
                                                             )}
-                                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-blue-600 bg-blue-500' : 'border-slate-300'}`}>
-                                                                {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
-                                                            </div>
+                                                        </div>
+                                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300'}`}>
+                                                            {isSelected && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                                                         </div>
                                                     </div>
-
-                                                    {/* Price */}
-                                                    <div className="mb-8">
-                                                        <div className="flex items-baseline gap-1">
-                                                            <span className="text-[44px] font-black text-slate-900 tracking-tighter leading-none">${perMonth}</span>
-                                                            <span className="text-slate-400 font-medium">/mo</span>
-                                                        </div>
-                                                        {billing === 'quarterly' && (
-                                                            <p className="text-emerald-600 text-[12px] font-bold mt-1">${finalPrice} billed quarterly</p>
-                                                        )}
+                                                    
+                                                    <div className="border-t border-slate-100 pt-6 flex-1">
+                                                        <ul className="text-[13px] text-slate-600 space-y-3 font-medium">
+                                                            {(plan.features || []).map((f, idx) => (
+                                                                <li key={idx} className="flex items-start gap-2">
+                                                                    <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                                                    <span className="leading-tight">{f}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
                                                     </div>
 
-                                                    {/* Live Preview Area */}
-                                                    <div className="mb-8">
-                                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-3">Live Preview</p>
-                                                        <div className="bg-[#f8fafc] border border-slate-100 rounded-2xl p-5 flex items-center justify-center min-h-[140px]">
-                                                            <div className="w-full">
-                                                                {PreviewComponent ? <PreviewComponent ad={mockAd} /> : <p className="text-center text-slate-400">Loading Preview...</p>}
-                                                            </div>
-                                                        </div>
+                                                    <div className={`mt-8 py-2.5 rounded-xl text-center text-[13px] font-bold transition-colors ${
+                                                        isSelected 
+                                                        ? 'bg-blue-600 text-white shadow-sm'
+                                                        : 'bg-slate-50 text-slate-600 group-hover:bg-slate-100'
+                                                    }`}>
+                                                        {isSelected ? 'Selected' : 'Select Plan'}
                                                     </div>
-
-                                                    {/* Features */}
-                                                    <ul className="space-y-3 flex-1">
-                                                        {plan.features.map((f, i) => (
-                                                            <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600 font-medium tracking-tight">
-                                                                <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                                {f}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
                                                 </div>
                                             </div>
                                         );
