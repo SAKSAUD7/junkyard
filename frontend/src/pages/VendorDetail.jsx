@@ -14,6 +14,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal';
 import SignupModal from '../components/auth/SignupModal';
 import LoginModal from '../components/auth/LoginModal';
+import SaveJunkyardButton from '../components/SaveJunkyardButton';
 
 const VendorDetail = () => {
     const params = useParams();
@@ -198,11 +199,14 @@ const VendorDetail = () => {
                                 <span className="font-bold text-slate-700 text-[14px]">{vendor.rating || '5.0'}</span>
                             </div>
 
-                            {/* Address */}
-                            <p className="flex items-start gap-1.5 text-slate-500 text-[14px] font-medium">
-                                <svg className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-                                {vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}
-                            </p>
+                            {/* Address & Save Button */}
+                            <div className="flex flex-wrap items-center gap-4">
+                                <p className="flex items-start gap-1.5 text-slate-500 text-[14px] font-medium">
+                                    <svg className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+                                    {vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}
+                                </p>
+                                <SaveJunkyardButton vendor={vendor} className="w-10 h-10 rounded-full border border-slate-200" />
+                            </div>
                         </div>
                     </div>
                 </div>

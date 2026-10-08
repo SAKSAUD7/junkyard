@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
+import ConfirmModal from '../common/ConfirmModal';
 import {
     XCircleIcon,
     ArrowPathIcon,
@@ -23,6 +24,8 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
     // Rollback state
     const [rollingBack, setRollingBack] = useState(null); // batch ID
     const [error, setError] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false });
+    const [toastMsg, setToastMsg] = useState(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -46,25 +49,34 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
         }
     };
 
-    const handleRollback = async (batch) => {
-        if (!window.confirm(`Are you sure you want to rollback import "${batch.filename}"? This will delete created vendors and revert updated ones.`)) {
-            return;
-        }
-
+    const executeRollback = async (batch) => {
+        setConfirmModal({ isOpen: false });
         setRollingBack(batch.batch_id);
         setError(null);
 
         try {
             const result = await api.vendorImport.rollback(token, batch.batch_id);
-            alert(`Rollback successful: ${result.stats.deleted} vendors deleted, ${result.stats.restored} restored.`);
+            setToastMsg(`Rollback successful: ${result.stats.deleted} vendors deleted, ${result.stats.restored} restored.`);
+            setTimeout(() => setToastMsg(null), 5000);
             fetchHistory(page); // Refresh list
             if (onRollbackComplete) onRollbackComplete(result);
         } catch (err) {
             console.error('Rollback failed:', err);
-            alert('Rollback failed: ' + (err.message || 'Unknown error'));
+            setToastMsg('Rollback failed: ' + (err.message || 'Unknown error'));
+            setTimeout(() => setToastMsg(null), 5000);
         } finally {
             setRollingBack(null);
         }
+    };
+
+    const handleRollback = (batch) => {
+        setConfirmModal({
+            isOpen: true,
+            title: "Rollback Import",
+            message: `Are you sure you want to rollback import "${batch.filename}"? This will delete created vendors and revert updated ones.`,
+            type: "danger",
+            onConfirm: () => executeRollback(batch)
+        });
     };
 
     const handleDownloadError = async (batchId) => {
@@ -80,7 +92,8 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
             window.URL.revokeObjectURL(url);
         } catch (err) {
             console.error('Download failed:', err);
-            alert('Failed to download error report');
+            setToastMsg('Failed to download error report');
+            setTimeout(() => setToastMsg(null), 5000);
         }
     };
 
@@ -215,6 +228,19 @@ export default function ImportHistoryModal({ isOpen, onClose, onRollbackComplete
                     </div>
                 )}
             </div>
+            {toastMsg && (
+                <div className="fixed top-4 right-4 z-[9999] bg-slate-800 text-white px-6 py-4 rounded-xl shadow-lg font-medium animate-in slide-in-from-right">
+                    {toastMsg}
+                </div>
+            )}
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                type={confirmModal.type}
+                onConfirm={confirmModal.onConfirm}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>,
         document.body
     );

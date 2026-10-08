@@ -167,14 +167,14 @@ export default function About() {
                     <div className="relative">
                         <div className="grid gap-6 relative z-10 w-full max-w-lg mx-auto">
                             {features.map((feature, index) => (
-                                <div key={index} className="p-6 rounded-2xl transition-all duration-300 group bg-white border border-slate-200 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-lg hover:border-blue-200">
+                                <div key={index} className="p-7 rounded-2xl transition-all duration-200 group bg-white border border-slate-200 shadow-[0_2px_12px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_32px_rgb(0,0,0,0.08)] hover:border-blue-300 hover:bg-blue-50/30 hover:-translate-y-[4px] focus-within:border-blue-300 focus-within:shadow-[0_8px_32px_rgb(0,0,0,0.08)]">
                                     <div className="flex items-start gap-5">
-                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 bg-slate-50 border border-slate-100 text-blue-600 group-hover:bg-blue-50 group-hover:text-blue-700">
+                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-110 bg-slate-50 border border-slate-100 text-blue-500 group-hover:bg-blue-100 group-hover:text-blue-600 group-hover:border-blue-200 group-hover:shadow-md">
                                             {feature.icon}
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold mb-2 text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{feature.title}</h3>
-                                            <p className="text-slate-500 text-[0.95rem] lineHeight-[1.6] font-medium">{feature.description}</p>
+                                            <h3 className="text-[18px] font-bold mb-2 text-slate-900 leading-snug" style={{ fontFamily: "'Outfit', sans-serif" }}>{feature.title}</h3>
+                                            <p className="text-slate-500 text-[0.93rem] leading-[1.65] font-medium">{feature.description}</p>
                                         </div>
                                     </div>
                                 </div>

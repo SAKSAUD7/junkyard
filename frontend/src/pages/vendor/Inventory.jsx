@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { vendorInventory } from '../../services/vendorApi';
 import { EmptyState } from '../../components/vendor/UIElements';
 import { useCMS } from '../../hooks/useCMS';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 const VendorInventory = () => {
     const { get } = useCMS('vendor_portal');
@@ -9,6 +10,7 @@ const VendorInventory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false });
 
     const [formData, setFormData] = useState({
         item_type: 'make',
@@ -67,16 +69,25 @@ const VendorInventory = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this item?')) {
-            try {
-                await vendorInventory.delete(id);
-                loadInventory();
-            } catch (err) {
-                setError('Failed to delete item');
-                console.error(err);
-            }
+    const executeDelete = async (id) => {
+        setConfirmModal({ isOpen: false });
+        try {
+            await vendorInventory.delete(id);
+            loadInventory();
+        } catch (err) {
+            setError('Failed to delete item');
+            console.error(err);
         }
+    };
+
+    const handleDelete = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            title: "Delete Inventory Item",
+            message: "Are you sure you want to delete this item?",
+            type: "danger",
+            onConfirm: () => executeDelete(id)
+        });
     };
 
     const handleToggleAvailability = async (item) => {
@@ -363,6 +374,15 @@ const VendorInventory = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                type={confirmModal.type}
+                onConfirm={confirmModal.onConfirm}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

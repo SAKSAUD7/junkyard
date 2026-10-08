@@ -101,12 +101,12 @@ export default function Contact() {
             await api.submitContact({ ...form, phone: form.phone, subject: activeTopic })
             setStatus('success')
             
-            // Auto-reset form after 7 seconds
+            // Auto-reset form after 5 seconds
             setTimeout(() => {
                 setStatus('idle')
                 setForm({ name: '', email: '', phone: '', message: '' })
                 setActiveTopic('')
-            }, 7000)
+            }, 5000)
             
         } catch (err) {
             setStatus('error')
@@ -176,7 +176,7 @@ export default function Contact() {
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 </div>
                                 <h4 className="text-[16px] font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Email Support</h4>
-                                <a href="mailto:contact@junkyardsnearme.com" className="text-emerald-600 font-bold text-[15px] hover:underline">contact@junkyardsnearme.com</a>
+                                <a href="mailto:contact@junkyardsnearme.com" className="text-emerald-600 font-bold text-[14px] hover:underline break-all overflow-wrap-anywhere leading-snug block">contact@junkyardsnearme.com</a>
                                 <p className="text-slate-400 text-[12px] font-medium mt-0.5">Typical response under 2 hours</p>
                             </div>
                         </div>
@@ -232,8 +232,13 @@ export default function Contact() {
                         <div className="bg-white rounded-[32px] shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100 p-8 sm:p-10 relative overflow-hidden backdrop-blur-3xl z-10">
                             {status === 'success' ? (
                                 <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center animate-fade-in">
-                                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2b5aeb] to-[#4b76f2] flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
-                                        <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="mb-6 flex justify-center">
+                                        <div className="w-16 h-16 rounded-2xl bg-white shadow-lg border border-slate-100 flex items-center justify-center p-2">
+                                            <img src="/logo.png" alt="JYNM Logo" className="w-full h-full object-contain" onError={e => { e.target.style.display = 'none'; }} />
+                                        </div>
+                                    </div>
+                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#2b5aeb] to-[#4b76f2] flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
+                                        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                                         </svg>
                                     </div>

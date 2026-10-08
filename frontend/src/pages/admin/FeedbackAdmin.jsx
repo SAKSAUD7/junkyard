@@ -7,11 +7,13 @@ import {
     TrashIcon,
     XMarkIcon
 } from '@heroicons/react/24/outline';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function FeedbackAdmin() {
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [viewItem, setViewItem] = useState(null);
+    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
 
     const handleView = (item) => {
         setViewItem(item);
@@ -53,17 +55,28 @@ export default function FeedbackAdmin() {
         }
     };
 
-    const deleteFeedback = async (id) => {
-        if (!window.confirm('Delete this feedback?')) return;
-        try {
-            const token = localStorage.getItem('access_token');
-            await axios.delete(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/common/feedback/${id}/`, 
-                { headers: { 'Authorization': `Bearer ${token}` } }
-            );
-            fetchFeedbacks();
-        } catch (err) {
-            console.error('Delete failed', err);
-        }
+    const deleteFeedback = (id) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Feedback',
+            message: 'Are you sure you want to delete this feedback?',
+            confirmText: 'Delete Feedback',
+            cancelText: 'Cancel',
+            type: 'danger',
+            onConfirm: async () => {
+                setConfirmConfig({ isOpen: false });
+                try {
+                    const token = localStorage.getItem('access_token');
+                    await axios.delete(`${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api/common/feedback/${id}/`, 
+                        { headers: { 'Authorization': `Bearer ${token}` } }
+                    );
+                    fetchFeedbacks();
+                } catch (err) {
+                    console.error('Delete failed', err);
+                }
+            },
+            onCancel: () => setConfirmConfig({ isOpen: false })
+        });
     };
 
     const getTopicStyle = (topic) => {
@@ -220,6 +233,8 @@ export default function FeedbackAdmin() {
                     </div>
                 </div>
             )}
+            
+            <ConfirmModal {...confirmConfig} />
         </div>
     );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { vendorLeads } from '../../services/vendorApi';
 import { useCMS } from '../../hooks/useCMS';
+import JYNMSelect from '../../components/JYNMSelect';
 
 const VendorLeads = () => {
     const { get } = useCMS('vendor_portal');
@@ -134,20 +135,18 @@ const VendorLeads = () => {
                         )}
                     </div>
                     <div className="md:w-52 relative">
-                        <select
-                            className="w-full pl-4 pr-10 py-3 md:py-3.5 rounded-xl md:rounded-2xl bg-slate-50 outline-none appearance-none cursor-pointer text-slate-700 font-medium text-sm md:text-base hover:bg-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 transition-all border border-transparent focus:shadow-[0_4px_20px_rgb(0,0,0,0.03)]"
+                        <JYNMSelect
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="">All Statuses</option>
-                            <option value="new">🆕 New</option>
-                            <option value="contacted">💬 In Progress</option>
-                            <option value="converted">✅ Won</option>
-                            <option value="closed">❌ Lost</option>
-                        </select>
-                        <svg className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                            onChange={(val) => setStatusFilter(val)}
+                            options={[
+                                { value: "new", label: "🆕 New" },
+                                { value: "contacted", label: "💬 In Progress" },
+                                { value: "converted", label: "✅ Won" },
+                                { value: "closed", label: "❌ Lost" }
+                            ]}
+                            placeholder="All Statuses"
+                            searchable={false}
+                        />
                     </div>
                 </div>
 

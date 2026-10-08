@@ -17,6 +17,8 @@ const STATUS_BADGE = {
   archived: 'bg-slate-100 text-slate-700 border-slate-200',
 };
 
+import ConfirmModal from '../../../components/common/ConfirmModal';
+
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -30,6 +32,7 @@ export default function AdminBlogList() {
   const [statusFilter, setStatusFilter] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState(null);
+  const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -57,18 +60,29 @@ export default function AdminBlogList() {
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
-    setActionLoading(id);
-    try {
-      await blogApi.adminDeletePost(id);
-      showToast('Article deleted successfully.');
-      fetchPosts();
-    } catch {
-      showToast('Failed to delete article.', 'error');
-    } finally {
-      setActionLoading(null);
-    }
+  const handleDelete = (id, title) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Delete Article',
+      message: `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+      confirmText: 'Delete Article',
+      cancelText: 'Cancel',
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmConfig({ isOpen: false });
+        setActionLoading(id);
+        try {
+          await blogApi.adminDeletePost(id);
+          showToast('Article deleted successfully.');
+          fetchPosts();
+        } catch {
+          showToast('Failed to delete article.', 'error');
+        } finally {
+          setActionLoading(null);
+        }
+      },
+      onCancel: () => setConfirmConfig({ isOpen: false })
+    });
   };
 
   const handleTogglePublish = async (post) => {
@@ -295,6 +309,8 @@ export default function AdminBlogList() {
           </div>
         )}
       </div>
+
+      <ConfirmModal {...confirmConfig} />
     </div>
   );
 }

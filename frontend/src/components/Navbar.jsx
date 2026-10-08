@@ -11,6 +11,7 @@ import { AuthContext } from '../contexts/AuthContext'
 import { useCMS } from '../hooks/useCMS'
 import { useCart } from '../contexts/CartContext'
 import { api } from '../services/api'
+import JYNMAvatar from './JYNMAvatar'
 
 export default function Navbar() {
     const { get } = useCMS('navbar')
@@ -208,10 +209,10 @@ export default function Navbar() {
                         {/* ── Desktop Actions / Icon Cluster ── */}
                         <div className="hidden lg:flex items-center shrink-0 gap-1 xl:gap-1.5">
                             
-                            {/* Heart / Saved Junkyards — always visible */}
                             <button
                                 onClick={() => setFavoritesDrawerOpen(true)}
                                 aria-label="Saved Junkyards"
+                                title="Saved Junkyards"
                                 className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all duration-300 active:scale-95"
                             >
                                 <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
@@ -263,9 +264,11 @@ export default function Navbar() {
                                     }`}
                                 >
                                     {isAuthenticated ? (
-                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_2px_8px_rgba(79,70,229,0.3)] border-white border">
-                                            {user?.first_name?.[0] || user?.email?.[0] || 'U'}
-                                        </div>
+                                        <JYNMAvatar
+                                            user={user}
+                                            vendorProfile={user?.user_type === 'vendor' ? (user?.vendor_profile || null) : null}
+                                            size="sm"
+                                        />
                                     ) : (
                                         <svg className="w-5 h-5 opacity-80" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -281,9 +284,12 @@ export default function Navbar() {
                                         {isAuthenticated ? (
                                             <div className="flex flex-col gap-0.5">
                                                 <div className="px-3 py-2 bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl border border-slate-100 mb-1 flex items-center gap-2.5">
-                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs shadow-md flex-shrink-0">
-                                                        {user?.first_name ? user.first_name.substring(0,2).toUpperCase() : (user?.email ? user.email.substring(0,2).toUpperCase() : 'U')}
-                                                    </div>
+                                                    <JYNMAvatar
+                                                        user={user}
+                                                        vendorProfile={user?.user_type === 'vendor' ? (user?.vendor_profile || null) : null}
+                                                        size="md"
+                                                        className="flex-shrink-0"
+                                                    />
                                                     <div className="min-w-0">
                                                         <p className="text-[13px] font-black text-slate-900 truncate tracking-tight">{user?.first_name} {user?.last_name}</p>
                                                         <p className="text-[10px] font-semibold text-slate-400 truncate uppercase mt-0.5">{user?.email}</p>
@@ -408,6 +414,16 @@ export default function Navbar() {
 
                         {/* ── Mobile right — Account + action icons when logged in ── */}
                         <div className="w-1/3 lg:hidden flex items-center justify-end shrink-0 gap-1" ref={mobileAccountRef}>
+
+                            {/* Mobile: Saved Junkyards */}
+                            <button
+                                onClick={() => setFavoritesDrawerOpen(true)}
+                                aria-label="Saved Junkyards"
+                                title="Saved Junkyards"
+                                className="relative flex items-center justify-center w-9 h-9 rounded-full text-slate-600 hover:bg-rose-50 hover:text-rose-500 transition-colors active:scale-95"
+                            >
+                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                            </button>
 
                             {/* Mobile: Bell icon — only when authenticated */}
                             {isAuthenticated && (

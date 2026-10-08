@@ -5,9 +5,9 @@ import Footer from '../components/Footer';
 import Rating from '../components/Rating';
 import VendorBadges from '../components/VendorBadges';
 import SEO from '../components/SEO';
-import { getCollectionPageSchema } from '../utils/structuredData';
 import { api } from '../services/api';
 import { getLogoUrl } from '../utils/imageUrl';
+import JYNMSelect from '../components/JYNMSelect';
 import { useCMS } from '../hooks/useCMS';
 import VendorCard from '../components/VendorCard';
 import PromoBanner from '../components/PromoBanner';
@@ -38,7 +38,7 @@ const AllVendors = () => {
         const fetchVendors = async () => {
             try {
                 setLoading(true);
-                const params = { page: currentPage, page_size: vendorsPerPage };
+                const params = { page: currentPage, page_size: vendorsPerPage, ordering: 'name' };
                 if (searchTerm) params.search = searchTerm;
                 if (selectedState) params.state = selectedState;
                 const data = await api.getVendors(params);
@@ -124,22 +124,17 @@ const AllVendors = () => {
                                     />
                                 </div>
                                 {/* State dropdown */}
-                                <div className="flex-1 relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-                                    </div>
-                                    <select
-                                        id="state-filter"
+                                <div className="flex-1 relative" style={{ minWidth: '220px' }}>
+                                    <JYNMSelect
                                         value={selectedState}
-                                        onChange={handleStateChange}
-                                        className="w-full pl-11 pr-10 py-3.5 bg-white rounded-xl border border-slate-100 text-[14px] font-medium text-slate-900 appearance-none focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
-                                    >
-                                        <option value="">All States</option>
-                                        {US_STATES.map(s => <option key={s} value={s}>{STATE_NAMES[s] || s}</option>)}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                                    </div>
+                                        onChange={(val) => handleStateChange({ target: { value: val } })}
+                                        options={[
+                                            { value: "", label: "All States" },
+                                            ...US_STATES.map(s => ({ value: s, label: STATE_NAMES[s] || s }))
+                                        ]}
+                                        placeholder="All States"
+                                        searchable={true}
+                                    />
                                 </div>
                                 {/* Search Button */}
                                 <button className="px-7 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] whitespace-nowrap text-[14px]">

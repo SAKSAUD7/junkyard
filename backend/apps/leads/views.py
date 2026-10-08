@@ -47,6 +47,20 @@ class VendorLeadViewSet(viewsets.ModelViewSet):
             return [ScopedRateThrottle()]
         return []
 
+    def create(self, request, *args, **kwargs):
+        if request.user and request.user.is_authenticated:
+            vendor_id = request.data.get('vendor_id') or request.data.get('vendor')
+            if vendor_id:
+                try:
+                    from apps.hollander.models import Vendor
+                    vendor = Vendor.objects.get(pk=vendor_id)
+                    if vendor.profiles.filter(user=request.user).exists():
+                        from rest_framework.exceptions import PermissionDenied
+                        raise PermissionDenied("Vendors cannot submit customer leads to their own yard.")
+                except Exception:
+                    pass
+        return super().create(request, *args, **kwargs)
+
     def list(self, request, *args, **kwargs):
         try:
             return super().list(request, *args, **kwargs)

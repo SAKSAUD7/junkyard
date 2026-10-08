@@ -15,8 +15,10 @@ export default function PostSubmissionFeedback({
     title = 'Success!',
     message = 'Your submission has been received.',
     referenceId,
-    actionText = 'Done',
+    actionText = 'New Request',
     onAction,
+    onReset,
+    autoResetDelay,
     extra,
 }) {
     // Feedback Logic
@@ -35,6 +37,15 @@ export default function PostSubmissionFeedback({
             }
         }
     }, [referenceId]);
+
+    useEffect(() => {
+        if (autoResetDelay && onReset) {
+            const timer = setTimeout(() => {
+                onReset();
+            }, autoResetDelay);
+            return () => clearTimeout(timer);
+        }
+    }, [autoResetDelay, onReset]);
 
     const handleFeedbackSubmit = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
@@ -82,8 +93,13 @@ export default function PostSubmissionFeedback({
             transition={{ duration: 0.3 }}
             className="flex flex-col items-center justify-center py-10 px-6 text-center bg-white rounded-3xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]"
         >
-            <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-sm border border-emerald-100">
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <div className="mb-6 flex justify-center">
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-lg border border-slate-100 flex items-center justify-center p-2">
+                    <img src="/logo.png" alt="JYNM Logo" className="w-full h-full object-contain" onError={e => { e.target.style.display = 'none'; }} />
+                </div>
+            </div>
+            <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 shadow-sm border border-blue-100">
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
             </div>

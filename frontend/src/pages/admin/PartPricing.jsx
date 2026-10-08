@@ -13,8 +13,10 @@ import {
     DocumentTextIcon,
     Cog6ToothIcon
 } from '@heroicons/react/24/outline';
+import { useNotifications } from '../../components/common/EnterpriseNotifications';
 
 export default function AdminPartPricing() {
+    const { showToast } = useNotifications();
     const { token } = useContext(AuthContext);
     const [pricing, setPricing] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -81,7 +83,7 @@ export default function AdminPartPricing() {
             document.body.removeChild(a);
         } catch (error) {
             console.error('Export error:', error);
-            alert('Failed to export data');
+            showToast({ type: 'error', message: 'Failed to export data' });
         } finally {
             setExporting(false);
         }

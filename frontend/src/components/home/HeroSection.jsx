@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import Captcha from "../Captcha";
 import PincodeSearch from "../PincodeSearch";
 import PromoBanner from "../PromoBanner";
+import JYNMSelect from "../JYNMSelect";
 
 // ── Searchable Dropdown Component ───────────────────────────────────────────
 function SearchableDropdown({
@@ -1009,22 +1010,18 @@ export default function HeroSection({ get, ready = false }) {
                     />
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <select
+                    <JYNMSelect
                       value={heroState}
-                      onChange={(e) => {
-                        setHeroState(e.target.value);
+                      onChange={(val) => {
+                        setHeroState(val);
                         setHeroZip("");
                       }}
+                      options={US_STATES.map(s => ({ value: s, label: s }))}
+                      placeholder="State"
                       required
-                      className="bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-semibold text-slate-700 outline-none px-4 py-3 appearance-none cursor-pointer focus:bg-white focus:border-blue-500 transition-colors"
-                    >
-                      <option value="">State</option>
-                      {US_STATES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
+                      className="bg-transparent"
+                      searchable={true}
+                    />
 
                     <div className="relative">
                       <input

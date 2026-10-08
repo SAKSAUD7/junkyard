@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 // ─── Utility ────────────────────────────────────────────────────────────────
 const fmt = (d) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
@@ -21,6 +22,7 @@ export default function LeadDistribution() {
     const [assignLoading, setAssignLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [filterUnlocked, setFilterUnlocked] = useState('all');
+    const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -73,13 +75,24 @@ export default function LeadDistribution() {
         }
     };
 
-    const handleUnassign = async (id) => {
-        if (!window.confirm('Remove this lead assignment?')) return;
-        await fetch(`/api/leads/distributions/${id}/`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+    const handleUnassign = (id) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Remove Assignment',
+            message: 'Are you sure you want to remove this lead assignment?',
+            confirmText: 'Remove Leads',
+            cancelText: 'Cancel',
+            type: 'danger',
+            onConfirm: async () => {
+                setConfirmConfig({ isOpen: false });
+                await fetch(`/api/leads/distributions/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+                });
+                load();
+            },
+            onCancel: () => setConfirmConfig({ isOpen: false })
         });
-        load();
     };
 
     const handleToggleUnlock = async (dist) => {
@@ -292,6 +305,8 @@ export default function LeadDistribution() {
                     </div>
                 </div>
             )}
+            
+            <ConfirmModal {...confirmConfig} />
         </div>
     );
 }

@@ -16,8 +16,10 @@ import {
     FunnelIcon
 } from '@heroicons/react/24/outline';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import { useNotifications } from '../../components/common/EnterpriseNotifications';
 
 export default function AdminAds() {
+    const { showToast } = useNotifications();
     const { token } = useContext(AuthContext);
     const [ads, setAds] = useState([]);
     const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
@@ -128,7 +130,7 @@ export default function AdminAds() {
             setShowPlansModal(false);
         } catch (error) {
             console.error('Error saving ad plans:', error);
-            alert('Failed to save subscription plans.');
+            showToast({ type: 'error', message: 'Failed to save subscription plans.' });
         }
     };
 
@@ -193,13 +195,13 @@ export default function AdminAds() {
         if (file) {
             const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'video/mp4'];
             if (!validTypes.includes(file.type)) {
-                alert('Invalid file type. Please upload JPG, PNG, WebP, or MP4 files.');
+                showToast({ type: 'error', message: 'Invalid file type. Please upload JPG, PNG, WebP, or MP4 files.' });
                 return;
             }
 
             const maxSize = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
             if (file.size > maxSize) {
-                alert(`File too large. Max size: ${file.type.startsWith('video/') ? '50MB' : '10MB'}`);
+                showToast({ type: 'error', message: `File too large. Max size: ${file.type.startsWith('video/') ? '50MB' : '10MB'}` });
                 return;
             }
 
@@ -264,7 +266,7 @@ export default function AdminAds() {
         } catch (error) {
             console.error('[Admin Ads] Save error:', error);
             const errorDetail = error.response?.data ? JSON.stringify(error.response.data, null, 2) : error.message;
-            alert(errorDetail || 'Failed to save ad. Check console for details.');
+            showToast({ type: 'error', message: errorDetail || 'Failed to save ad. Check console for details.' });
         }
     };
 
@@ -300,9 +302,10 @@ export default function AdminAds() {
                 setConfirmConfig({ isOpen: false });
                 try {
                     await api.deleteAd(token, id);
+                    showToast({ type: 'success', message: 'Ad deleted successfully' });
                     fetchAds();
                 } catch (error) {
-                    alert('Failed to delete ad');
+                    showToast({ type: 'error', message: 'Failed to delete ad' });
                 }
             },
             onCancel: () => setConfirmConfig({ isOpen: false })

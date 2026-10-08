@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { vendorProfile } from '../../services/vendorApi';
 import { getLogoUrl } from '../../utils/imageUrl';
 import { useCMS } from '../../hooks/useCMS';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 const VendorProfile = () => {
     const { get } = useCMS('vendor_portal');
@@ -14,6 +15,7 @@ const VendorProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const logoInputRef = useRef(null);
     const [logoPreview, setLogoPreview] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false });
 
     const [formData, setFormData] = useState({
         name: '',
@@ -126,9 +128,8 @@ const VendorProfile = () => {
         });
     };
 
-    const handleDeleteLogo = async (e) => {
-        e.stopPropagation();
-        if (!window.confirm("Are you sure you want to remove your logo?")) return;
+    const executeDeleteLogo = async () => {
+        setConfirmModal({ isOpen: false });
         setLogoSaving(true);
         setError('');
         setSuccess('');
@@ -145,6 +146,17 @@ const VendorProfile = () => {
         } finally {
             setLogoSaving(false);
         }
+    };
+
+    const handleDeleteLogo = (e) => {
+        e.stopPropagation();
+        setConfirmModal({
+            isOpen: true,
+            title: "Remove Logo",
+            message: "Are you sure you want to remove your logo?",
+            type: "danger",
+            onConfirm: executeDeleteLogo
+        });
     };
 
     if (loading) {
@@ -412,6 +424,15 @@ const VendorProfile = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                type={confirmModal.type}
+                onConfirm={confirmModal.onConfirm}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div >
     );
 };

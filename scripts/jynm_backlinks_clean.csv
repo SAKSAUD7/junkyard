@@ -1,0 +1,5 @@
+Source URL,Target URL,Anchor Text,Link Status
+http://example.com/blog1,http://qualityautoparts.com/home,quality auto parts,Active
+http://example.com/blog2,http://qualityautoparts.com/about,about us,Active
+http://example.net/directory,http://qualityautoparts.com/contact,contact,Active
+http://spam.com/link,http://qualityautoparts.com/home,click here,Active

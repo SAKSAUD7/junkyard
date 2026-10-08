@@ -37,16 +37,16 @@ export default function SaveJunkyardButton({ vendor, className = '' }) {
     return (
         <button
             onClick={handleFavoriteClick}
-            className={`group/fav flex items-center justify-center gap-1.5 backdrop-blur-md transition-all duration-300 active:scale-95 ${className} ${
+            className={`group/fav flex items-center justify-center backdrop-blur-md transition-all duration-300 active:scale-95 shadow-sm hover:shadow active:shadow-inner ${className} ${
                 isFav
-                    ? 'bg-rose-50 border-rose-200 text-rose-500 hover:bg-rose-100 hover:border-rose-300'
-                    : 'bg-white/90 border-slate-200 text-slate-500 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50'
+                    ? 'bg-rose-50 border-rose-200 text-rose-500 hover:bg-rose-100'
+                    : 'bg-white/95 border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50'
             }`}
             aria-label={isFav ? 'Remove from saved junkyards' : 'Save this junkyard'}
             title={isAuthenticated ? (isFav ? 'Remove from Saved Junkyards' : 'Save Junkyard') : 'Sign in to save junkyards'}
         >
             <svg
-                className={`w-4 h-4 transition-transform ${isFav ? 'scale-110 fill-current text-rose-500' : 'stroke-current'}`}
+                className={`w-5 h-5 transition-transform ${isFav ? 'scale-110 fill-current text-rose-500' : 'stroke-current'}`}
                 fill={isFav ? 'currentColor' : 'none'}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -54,9 +54,6 @@ export default function SaveJunkyardButton({ vendor, className = '' }) {
             >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
-            <span className={`text-[11px] font-bold tracking-wide ${isFav ? 'text-rose-600' : 'text-slate-600 group-hover/fav:text-rose-600'}`}>
-                {isFav ? 'Saved' : 'Save Junkyard'}
-            </span>
         </button>
     );
 }

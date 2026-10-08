@@ -275,7 +275,7 @@ const VendorLayout = () => {
                                         </NavLink>
 
                                         <a
-                                            href={`/vendors/${vendorId}`}
+                                            href={vendorProfile?.slug && vendorProfile?.state ? `/junkyards/${vendorProfile.state.toLowerCase()}/${vendorProfile.slug}` : '/junkyards'}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={() => setAccountDropdownOpen(false)}

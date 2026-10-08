@@ -10,6 +10,7 @@ import SignupModal from './auth/SignupModal'
 import PostSubmissionFeedback from './PostSubmissionFeedback'
 
 import SecurityQuestionnaireModal from './auth/SecurityQuestionnaireModal'
+import JYNMSelect from './JYNMSelect'
 
 // US States and Canadian Provinces (from zipcode database)
 const US_STATES = [
@@ -753,11 +754,13 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
     if (isSuccess) {
         return (
             <PostSubmissionFeedback
-                title="Request Submitted"
-                message="Got it! Your request has been sent. You'll hear back shortly with quotes."
+                title="Request Submitted Successfully"
+                message="Your request has been received and will be processed shortly."
                 referenceId={submissionId ? `LD-${submissionId}` : null}
                 actionText="Submit Another Request"
                 onAction={handleReset}
+                onReset={handleReset}
+                autoResetDelay={5000}
             />
         )
     }
@@ -1089,15 +1092,15 @@ export default function LeadForm({ layout = 'vertical', mode = null, vendorName 
                                     <span>State <span className="text-blue-500">*</span></span>
                                     {loadingZipcodes && <span className="font-normal text-blue-500 animate-pulse text-[11px]">Loading ZIPs...</span>}
                                 </label>
-                                <select
+                                <JYNMSelect
                                     value={state}
-                                    onChange={e => handleStateChange(e.target.value)}
-                                    className="w-full bg-white text-slate-900 text-[14px] rounded-xl px-4 py-3 border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                                    onChange={(val) => handleStateChange(val)}
+                                    options={US_STATES.map(s => ({ value: s, label: s }))}
+                                    placeholder="Select State"
                                     required
-                                >
-                                    <option value="">Select State</option>
-                                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                                    className="w-full"
+                                    searchable={true}
+                                />
                             </div>
 
                             {/* ZIP Code */}

@@ -7,6 +7,7 @@ import SEO from "../components/SEO";
 import { api } from "../services/api";
 import AcceptJsCheckout from "../components/vendor/AcceptJsCheckout";
 import PostSubmissionFeedback from "../components/PostSubmissionFeedback";
+import JYNMSelect from "../components/JYNMSelect";
 
 const SELL_VEHICLE_FEE = "9.99";
 
@@ -307,22 +308,20 @@ function StepCondition({ data, setData, onBack, onNext, dbStates, dbCities }) {
             onChange={(e) => setData((d) => ({ ...d, mileage: e.target.value }))}
           />
         </div>
-        <div className="w-full sm:w-1/2 relative">
+        <div className="w-full sm:w-1/2 relative z-20">
           <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-2">Body Damage *</label>
           <div className="relative group">
-            <select
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl h-[52px] px-4 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all appearance-none shadow-sm cursor-pointer"
+            <JYNMSelect
               value={data.body_damage}
-              onChange={(e) => setData((d) => ({ ...d, body_damage: e.target.value }))}
-            >
-              <option value="None">None – Excellent condition</option>
-              <option value="Minor">Minor – Small dents or scratches</option>
-              <option value="Moderate">Moderate – Noticeable damage</option>
-              <option value="Severe">Severe – Major damage</option>
-            </select>
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-            </div>
+              onChange={(val) => setData((d) => ({ ...d, body_damage: val }))}
+              options={[
+                { value: "None", label: "None – Excellent condition" },
+                { value: "Minor", label: "Minor – Small dents or scratches" },
+                { value: "Moderate", label: "Moderate – Noticeable damage" },
+                { value: "Severe", label: "Severe – Major damage" },
+              ]}
+              placeholder="Select Body Damage"
+            />
           </div>
         </div>
       </div>
@@ -530,7 +529,7 @@ function StepReview({ data, onBack, onPaymentSuccess, submitting, submitError })
 
 // ── Success Screen ──
 function SuccessScreen({ vehicle, onReset }) {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     if (countdown <= 0) { onReset(); return; }
@@ -538,7 +537,7 @@ function SuccessScreen({ vehicle, onReset }) {
     return () => clearTimeout(t);
   }, [countdown, onReset]);
 
-  const progress = ((10 - countdown) / 10) * 100;
+  const progress = ((5 - countdown) / 5) * 100;
 
   return (
     <PostSubmissionFeedback

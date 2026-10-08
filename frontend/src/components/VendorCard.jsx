@@ -29,7 +29,7 @@ export default function VendorCard({ vendor, compact = false, showBadge = true }
                     )}
                     <SaveJunkyardButton 
                         vendor={vendor} 
-                        className="h-9 px-3 rounded-full border shadow-sm" 
+                        className="w-10 h-10 rounded-full border shadow-sm" 
                     />
                 </div>
 

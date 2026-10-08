@@ -41,8 +41,9 @@ class VendorViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         from django.db.models import Count
+        from django.db.models.functions import Lower
         # Only show active vendors in public API
-        queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).filter(is_active=True).order_by('id')
+        queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).filter(is_active=True).order_by(Lower('name'))
         
         # Filter for trusted vendors
         trusted = self.request.query_params.get('trusted', None)
@@ -145,7 +146,8 @@ class AdminVendorViewSet(viewsets.ModelViewSet):
     """
     Admin ViewSet for full vendor management.
     """
-    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).order_by('id')
+    from django.db.models.functions import Lower
+    queryset = Vendor.objects.prefetch_related('ads', 'profiles__user', 'inventory_items').annotate(leads_count_annotation=Count('leads', distinct=True)).order_by(Lower('name'))
     serializer_class = VendorSerializer
     permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication] # Explicitly add JWT Auth

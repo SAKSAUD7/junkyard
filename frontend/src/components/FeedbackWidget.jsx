@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useLocation } from 'react-router-dom';
+import JYNMSelect from './JYNMSelect';
 
 const DevRecaptcha = ({ onChange }) => (
     <div className="border border-[#d3d3d3] bg-[#f9f9f9] p-3 rounded-[3px] flex items-center justify-between w-[304px] h-[78px] shadow-sm">
@@ -193,18 +194,19 @@ const FeedbackWidget = ({ externalOpen = false, onExternalClose }) => {
                                                     <div>
                                                         <label className="block text-[13px] font-bold text-slate-800 mb-2">What is your feedback about?</label>
                                                         <div className="relative">
-                                                            <select
-                                                                required
-                                                                className="w-full h-12 bg-white border border-slate-200 text-slate-700 text-[14px] font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-colors cursor-pointer"
+                                                            <JYNMSelect
                                                                 value={formData.topic}
-                                                                onChange={(e) => setFormData({...formData, topic: e.target.value})}
-                                                            >
-                                                                <option value="find_business">Can't find a business</option>
-                                                                <option value="bug">Report a bug or issue</option>
-                                                                <option value="suggestion">Feature suggestion</option>
-                                                                <option value="general">General feedback</option>
-                                                            </select>
-                                                            <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                                onChange={(val) => setFormData({...formData, topic: val})}
+                                                                options={[
+                                                                    { value: "find_business", label: "Can't find a business" },
+                                                                    { value: "bug", label: "Report a bug or issue" },
+                                                                    { value: "suggestion", label: "Feature suggestion" },
+                                                                    { value: "general", label: "General feedback" }
+                                                                ]}
+                                                                placeholder="Select topic..."
+                                                                required
+                                                                searchable={false}
+                                                            />
                                                         </div>
                                                     </div>
 

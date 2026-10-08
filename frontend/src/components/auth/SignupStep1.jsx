@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNotifications } from '../common/EnterpriseNotifications';
 
 const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
+    const { showToast } = useNotifications();
     const [name, setName] = useState(formData.name || '');
     const [phone, setPhone] = useState(formData.phone || '');
     const [countryCode, setCountryCode] = useState(formData.countryCode || '+1');
@@ -52,7 +54,7 @@ const SignupStep1 = ({ formData, onNext, onSwitchToLogin }) => {
     const isValid = !validateName(name) && !validatePhone(phone);
 
     const handleSocialAuth = (provider) => {
-        alert(`${provider} authentication is not yet configured.\n\nPlease use email signup for now.\n\nTo enable social login, OAuth must be configured in the backend.`);
+        showToast({ type: 'error', message: `${provider} authentication is not yet configured. Please use email signup for now.` });
     };
 
     return (
