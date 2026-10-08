@@ -110,16 +110,13 @@ export default function About() {
                 <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
                     <div className="text-center max-w-4xl mx-auto">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100 animate-fade-in-up">
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Our Story</span>
+                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">About JunkYardsNearMe.com</span>
                         </div>
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-6 tracking-tight animate-fade-in-up" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.05 }}>
-                            {get('hero', 'heading', 'The Future of')} <br />
-                            <span className="text-blue-600">
-                                {get('hero', 'heading_accent', 'Auto Salvage')}
-                            </span>
+                            Expediting <span className="text-blue-600">Your Search</span>
                         </h1>
                         <p className="text-[17px] md:text-[20px] text-slate-500 font-medium max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-100">
-                            {get('hero', 'subheading', "We're revolutionizing how you find used auto parts. Connecting mechanics, enthusiasts, and car owners with the nation's most extensive inventory.")}
+                            Welcome to Junkyards Near Me — your source for listings, information and reviews of local junk yards and auto recyclers near you. We offer one of the most comprehensive listings of salvage yards across the United States and Canada.
                         </p>
                     </div>
 
@@ -146,36 +143,24 @@ export default function About() {
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="space-y-8">
                         <h2 className="text-4xl md:text-5xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                            {get('mission', 'title', 'Our Mission is')} <span className="text-blue-600">{get('mission', 'title_accent', 'Simple')}</span>
+                            Why <span className="text-blue-600">JYNM?</span>
                         </h2>
                         <div className="space-y-6 leading-relaxed text-lg text-slate-600 font-medium">
                             <p>
-                                {get('mission', 'para_1', "Finding quality used auto parts shouldn't be a hassle. We built Junkyards Near Me to bridge the gap between organized inventory and the people who need it most.")}
+                                Junkyards Near Me was founded under the idea that with the increased amount of retail business junk yards are getting, there needed to be an easier way to put consumers in contact with the junk yards near them so they could get the parts they need, when they need them.
                             </p>
                             <p>
-                                {get('mission', 'para_2', "Whether you're restoring a classic, fixing a daily driver, or running a repair shop, our platform gives you instant access to millions of parts across the country.")}
+                                We realize that when your car is broken and you need parts, you want them to be available locally and affordably. Often, that means a trip to your local auto recycler where you can get your parts the same day and get your car back on the road.
                             </p>
                         </div>
 
-                        <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100">
+                        <div className="p-8 rounded-2xl bg-blue-50 border border-blue-100">
                             <h3 className="text-xl font-bold mb-5 flex items-center gap-3 text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                <span className="text-2xl text-orange-600">⚡</span> Why Choose Used?
+                                <span className="text-2xl">🔧</span> Easy To Use!
                             </h3>
-                            <ul className="space-y-4">
-                                {[
-                                    'Save up to 70% compared to new parts',
-                                    'Environmentally friendly auto recycling',
-                                    'Find rare and discontinued items',
-                                    'OEM quality fit and finish'
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
-                                        <div className="w-6 h-6 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center flex-shrink-0 text-blue-600">
-                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                                        </div>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
+                            <p className="text-slate-600 font-medium leading-relaxed">
+                                With Junkyards Near Me, you simply enter your zip code or postal code and instantly receive a listing of all the junk yards in your area along with helpful information and reviews written by people just like you. We make it easy for you to find what you need.
+                            </p>
                         </div>
                     </div>
 
