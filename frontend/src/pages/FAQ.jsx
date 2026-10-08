@@ -108,7 +108,7 @@ const FAQ = () => {
             <Navbar />
 
             {/* Clean Light Hero */}
-            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
                 <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
 

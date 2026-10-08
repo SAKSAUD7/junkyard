@@ -11,6 +11,7 @@ import JYNMSelect from '../components/JYNMSelect';
 import { useCMS } from '../hooks/useCMS';
 import VendorCard from '../components/VendorCard';
 import PromoBanner from '../components/PromoBanner';
+import { getCollectionPageSchema } from '../utils/structuredData';
 
 const US_STATES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
 
@@ -84,7 +85,7 @@ const AllVendors = () => {
             <Navbar />
 
             {/* ── HERO ── */}
-            <section className="relative pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
                 {/* Decorative blobs */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
                 <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />

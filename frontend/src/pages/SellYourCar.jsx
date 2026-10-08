@@ -584,7 +584,18 @@ const INITIAL = {
 
 export default function SellYourCar() {
   const [step, setStep] = useState(0);
-  const [data, setData] = useState(INITIAL);
+  const [data, setData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jynm_sell_vehicle_draft');
+      return saved ? JSON.parse(saved) : INITIAL;
+    } catch {
+      return INITIAL;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('jynm_sell_vehicle_draft', JSON.stringify(data));
+  }, [data]);
   const [vinLoading, setVinLoading] = useState(false);
   const [vinError, setVinError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -731,6 +742,7 @@ export default function SellYourCar() {
         zip_code: data.zip_code,
       };
       await api.sellVehicle(payload);
+      localStorage.removeItem('jynm_sell_vehicle_draft');
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {

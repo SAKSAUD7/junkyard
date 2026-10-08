@@ -129,15 +129,26 @@ export default function AddYardPage() {
     // Step 3 — Photos
     const photoInputRef = React.useRef(null);
 
-    const [formData, setFormData] = useState({
-        business_name: '', email: '', phone: '', website: '', description: '',
-        city: '', state: '', zip_code: '', country: 'United States',
-        parts: [],
-        brands: [],
-        photos: [],
-        logo: null,
-        subscription_plan: 'minimal' // default to first plan
+    const [formData, setFormData] = useState(() => {
+        const defaultData = {
+            business_name: '', email: '', phone: '', website: '', description: '',
+            city: '', state: '', zip_code: '', country: 'United States',
+            parts: [], brands: [], photos: [], logo: null, subscription_plan: 'minimal'
+        };
+        try {
+            const saved = localStorage.getItem('jynm_add_yard_draft');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                return { ...defaultData, ...parsed, photos: [], logo: null };
+            }
+        } catch {}
+        return defaultData;
     });
+
+    useEffect(() => {
+        const { photos, logo, ...saveableData } = formData;
+        localStorage.setItem('jynm_add_yard_draft', JSON.stringify(saveableData));
+    }, [formData]);
 
     // Prevent accidental navigation
     const hasUnsavedChanges = !isSubmitted && (
@@ -477,10 +488,12 @@ export default function AddYardPage() {
                 updatePaymentStage('complete');
                 setTimeout(() => {
                     hidePaymentProgress();
+                    localStorage.removeItem('jynm_add_yard_draft');
                     setIsSubmitted(true);
                 }, 1500);
             } else {
                 showToast({ type: 'success', title: 'Success', message: 'Your junkyard profile has been created!' });
+                localStorage.removeItem('jynm_add_yard_draft');
                 setIsSubmitted(true);
             }
 

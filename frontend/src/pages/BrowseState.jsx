@@ -120,7 +120,7 @@ export default function BrowseState() {
             <Navbar />
 
             {/* Light Hero Section */}
-            <section className="relative pt-32 pb-14 bg-white border-b border-slate-100 overflow-hidden">
+            <section className="relative pt-20 md:pt-32 pb-14 bg-white border-b border-slate-100 overflow-hidden">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-50/80 rounded-full blur-[100px] pointer-events-none transform -translate-x-1/2 -translate-y-1/2" />
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>

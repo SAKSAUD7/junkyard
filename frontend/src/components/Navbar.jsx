@@ -23,7 +23,6 @@ export default function Navbar() {
     const [forgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false)
     const [accountDropdownOpen, setAccountDropdownOpen] = useState(false)
     const [mobileAccountOpen, setMobileAccountOpen] = useState(false)
-    const [welcomeToast, setWelcomeToast] = useState(false)
     // Drawers
     const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
     const [cartOpen, setCartOpen] = useState(false)
@@ -38,17 +37,6 @@ export default function Navbar() {
     const { user, isAuthenticated, logout } = useContext(AuthContext)
     const { cartCount } = useCart()
     const prevAuthRef = useRef(false)
-
-    // Show welcome toast on login
-    useEffect(() => {
-        if (isAuthenticated && !prevAuthRef.current) {
-            setWelcomeToast(true)
-            const t = setTimeout(() => setWelcomeToast(false), 5000)
-            prevAuthRef.current = true
-            return () => clearTimeout(t)
-        }
-        if (!isAuthenticated) prevAuthRef.current = false
-    }, [isAuthenticated])
 
     // Fetch unread notification count when authenticated
     const fetchUnreadCount = useCallback(async () => {
@@ -130,27 +118,6 @@ export default function Navbar() {
 
     return (
         <>
-            {/* ── Welcome Notification Toast ─────────────────── */}
-            {welcomeToast && (
-                <div className="fixed top-[80px] right-4 z-[9999] max-w-sm w-full pointer-events-none">
-                    <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 p-4 flex items-start gap-4 animate-fade-in pointer-events-auto">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white flex-shrink-0 text-lg shadow-md shadow-blue-500/30">
-                            🎉
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-extrabold text-slate-900 text-[14px]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                Welcome to JYNM, {user?.first_name || 'Explorer'}!
-                            </p>
-                            <p className="text-slate-500 text-[12px] mt-0.5 leading-snug">
-                                Explore thousands of verified junkyards and find the exact part you need.
-                            </p>
-                        </div>
-                        <button onClick={() => setWelcomeToast(false)} className="text-slate-400 hover:text-slate-600 ml-1 flex-shrink-0">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </div>
-                </div>
-            )}
             <nav
                 className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 backdrop-blur-xl border-b border-slate-200/80 shadow-sm"
                 style={{
@@ -162,8 +129,12 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-14 md:h-[72px]">
 
-                        {/* Mobile spacer to balance header */}
-                        <div className="flex items-center lg:hidden w-1/3 justify-start shrink-0"></div>
+                        {/* Mobile left-side action (Balance) */}
+                        <div className="flex items-center lg:hidden w-1/3 justify-start shrink-0">
+                            <Link to="/search" className="p-2 -ml-2 text-slate-500 hover:text-[#1a56ff] transition-colors" aria-label="Search Parts">
+                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </Link>
+                        </div>
 
                         {/* Center Logo */}
                         <Link to="/" className="flex items-center gap-2 shrink-0 justify-center w-1/3 lg:w-auto lg:justify-start" aria-label="JYNM Home">
