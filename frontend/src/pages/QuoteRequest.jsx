@@ -9,6 +9,7 @@ import { AuthContext } from '../contexts/AuthContext'
 import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal'
 import LoginModal from '../components/auth/LoginModal'
 import SignupModal from '../components/auth/SignupModal'
+import JYNMSelect from '../components/JYNMSelect'
 
 const US_STATES = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
 
@@ -349,17 +350,14 @@ export default function QuoteRequest() {
 
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-2">State <span className="text-red-500">*</span></label>
-                                                        <select 
-                                                            name="state"
+                                                        <JYNMSelect
+                                                            label="State"
+                                                            placeholder="Select state"
+                                                            options={US_STATES}
                                                             value={formData.state}
-                                                            onChange={(e) => { handleChange(e); setFormData(prev => ({...prev, zip: ''})) }}
+                                                            onChange={(val) => { setFormData(prev => ({...prev, state: val, zip: ''})) }}
                                                             required
-                                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all appearance-none cursor-pointer"
-                                                        >
-                                                            <option value="">Select</option>
-                                                            {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                                                        </select>
+                                                        />
                                                     </div>
                                                     <div className="relative">
                                                         <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-2">ZIP Code <span className="text-red-500">*</span></label>

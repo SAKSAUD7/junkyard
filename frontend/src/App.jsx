@@ -150,7 +150,10 @@ function App() {
       <FloatingLeadWidget />
       <GlobalFAB onOpenFeedback={() => setFeedbackOpen(true)} />
       <MobileBottomNav />
-      <OnboardingOverlay />
+      <OnboardingOverlay
+        onOpenLogin={() => window.dispatchEvent(new CustomEvent('jynm:open-login'))}
+        onOpenSignup={() => window.dispatchEvent(new CustomEvent('jynm:open-signup'))}
+      />
       <Suspense fallback={<PageSpinner />}>
         <FeedbackWidget externalOpen={feedbackOpen} onExternalClose={() => setFeedbackOpen(false)} />
         <PageTransition>

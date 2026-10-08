@@ -93,6 +93,18 @@ export default function Navbar() {
         navigate('/')
     }
 
+    // Allow outside components (e.g. OnboardingOverlay) to open modals via global events
+    useEffect(() => {
+        const handleLogin = () => setLoginModalOpen(true)
+        const handleSignup = () => setSignupModalOpen(true)
+        window.addEventListener('jynm:open-login', handleLogin)
+        window.addEventListener('jynm:open-signup', handleSignup)
+        return () => {
+            window.removeEventListener('jynm:open-login', handleLogin)
+            window.removeEventListener('jynm:open-signup', handleSignup)
+        }
+    }, [])
+
     const isAuthRoute = () => {
         const authRoutes = ['/admin/login', '/admin-portal', '/vendor/login', '/signin', '/signup']
         return authRoutes.some(route => location.pathname.startsWith(route))
@@ -196,14 +208,14 @@ export default function Navbar() {
                         {/* ── Desktop Actions / Icon Cluster ── */}
                         <div className="hidden lg:flex items-center shrink-0 gap-1 xl:gap-1.5">
                             
-                            {/* Heart / Saved Parts — always visible */}
+                            {/* Heart / Saved Junkyards — always visible */}
                             <button
                                 onClick={() => setFavoritesDrawerOpen(true)}
-                                aria-label="Saved Parts"
+                                aria-label="Saved Junkyards"
                                 className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all duration-300 active:scale-95"
                             >
                                 <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
-                                <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Saved Parts</span>
+                                <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Saved Junkyards</span>
                             </button>
 
                             {/* Bell / Notifications — ONLY when authenticated */}
@@ -225,15 +237,17 @@ export default function Navbar() {
                                 </button>
                             )}
 
-                            {/* Vendor Hub */}
-                            <button
-                                onClick={() => isAuthenticated && user?.user_type === 'vendor' ? navigate('/vendor/dashboard') : navigate('/vendor/login')}
-                                aria-label="Vendor Hub"
-                                className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 active:scale-95"
-                            >
-                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 009.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0014.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
-                                <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Vendor Hub</span>
-                            </button>
+                            {/* Vendor Hub (ONLY for Vendors) */}
+                            {isAuthenticated && user?.user_type === 'vendor' && (
+                                <button
+                                    onClick={() => navigate('/vendor/dashboard')}
+                                    aria-label="Vendor Hub"
+                                    className="flex items-center gap-2 px-3.5 h-10 rounded-full bg-slate-50 border border-slate-100/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 active:scale-95"
+                                >
+                                    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.999 2.999 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.999 2.999 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5-.615a3.001 3.001 0 013.75-.615A2.999 2.999 0 009.75 8.75c.896 0 1.7-.393 2.25-1.016A2.999 2.999 0 0014.25 8.75c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 013.75.614m-16.5-.615V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v7.45m-16.5 0v7.45" /></svg>
+                                    <span className="text-[12px] font-extrabold pb-px hidden xl:inline-block">Vendor Hub</span>
+                                </button>
+                            )}
 
                             <div className="w-px h-6 bg-slate-200 mx-0.5"></div>
 
@@ -289,7 +303,7 @@ export default function Navbar() {
                                                     <>
                                                         <ModernDropdownLink to="/profile" icon={<svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>} label="Profile" description="Your personal settings" onClick={() => setAccountDropdownOpen(false)} />
                                                         {!user?.is_superuser && (
-                                                            <ModernDropdownLink to="/add-a-yard" icon={<svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>} label="Add Your Yard" description="Become a certified partner" onClick={() => setAccountDropdownOpen(false)} gradient={true} />
+                                                            <ModernDropdownLink to="/add-a-yard" icon={<svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>} label="Are you a Junkyard?" description="Join JYNM as a Vendor" onClick={() => setAccountDropdownOpen(false)} gradient={true} />
                                                         )}
                                                     </>
                                                 )}
