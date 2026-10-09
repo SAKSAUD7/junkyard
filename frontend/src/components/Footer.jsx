@@ -1,42 +1,5 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCMS } from '../hooks/useCMS'
-
-// Mobile-only accordion column
-function FooterAccordion({ heading, children, id }) {
-    const [open, setOpen] = useState(false)
-    const panelId = `footer-panel-${id || heading?.toLowerCase().replace(/\s+/g, '-')}`
-    return (
-        <div className="border-b border-slate-100 md:border-0">
-            {/* Header — clickable on mobile only */}
-            <button
-                className="w-full flex items-center justify-between py-3.5 md:py-0 md:mb-4 md:cursor-default touch-target"
-                onClick={() => setOpen(v => !v)}
-                aria-expanded={open}
-                aria-controls={panelId}
-                aria-label={`${heading} links`}
-            >
-                <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">
-                    {heading}
-                </span>
-                {/* Chevron — mobile only */}
-                <svg
-                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 md:hidden ${open ? 'rotate-180' : ''}`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-
-            {/* Body: always visible on md+, accordion on mobile */}
-            <div id={panelId} className={`footer-accordion-body md:block ${open ? 'open' : ''}`}>
-                <div className="pb-4 md:pb-0">
-                    {children}
-                </div>
-            </div>
-        </div>
-    )
-}
 
 export default function Footer() {
     const currentYear = new Date().getFullYear()
@@ -72,38 +35,42 @@ export default function Footer() {
         { key: 'youtube', href: getFooter('social', 'youtube', 'https://www.youtube.com/@junkyardsnearme'), icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 00-2.122 2.136C0 8.084 0 12 0 12s0 3.916.501 5.814a3.016 3.016 0 002.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 002.122-2.136C24 15.916 24 12 24 12s0-3.916-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg> },
     ]
 
+    const LinkGroup = ({ heading, links }) => (
+        <div>
+            <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">{heading}</p>
+            <ul className="space-y-2.5">
+                {links.map(item => (
+                    <li key={item.path}>
+                        <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                            {item.name}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+
     return (
-        <footer className="bg-white border-t border-slate-100 pt-8 pb-6"
+        <footer className="bg-white border-t border-slate-100 pt-10 pb-6"
             style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    {/* Brand Column */}
-                    <div className="lg:col-span-1 mb-6 lg:mb-0 lg:pt-8">
-                        <div className="flex items-center justify-between lg:block">
-                            <div className="flex items-center gap-2.5 mb-5 mt-2">
-                                <img src={logoUrl || '/logo.png'} alt="JYNM Logo" width="28" height="28" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                                <div>
-                                    <div className="text-base font-black text-slate-900 leading-none">{getGlobal('brand', 'name_short', 'JYNM')}</div>
-                                    <div className="text-[8px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">{getGlobal('brand', 'name_long', 'Junkyards Near Me')}</div>
-                                </div>
-                            </div>
-                            {/* Socials inline on mobile */}
-                            <div className="flex gap-2.5 lg:hidden">
-                                {socials.map(s => (
-                                    <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
-                                        aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
-                                        className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
-                                        {s.icon}
-                                    </a>
-                                ))}
+                {/* Top section: Brand + Links */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 mb-8">
+
+                    {/* Brand */}
+                    <div className="lg:col-span-1">
+                        <div className="flex items-center gap-2.5 mb-4">
+                            <img src={logoUrl || '/logo.png'} alt="JYNM Logo" width="28" height="28" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                            <div>
+                                <div className="text-base font-black text-slate-900 leading-none">{getGlobal('brand', 'name_short', 'JYNM')}</div>
+                                <div className="text-[8px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">{getGlobal('brand', 'name_long', 'Junkyards Near Me')}</div>
                             </div>
                         </div>
-                        <p className="text-[12px] text-slate-500 leading-relaxed max-w-[240px] hidden lg:block">
-                            {getFooter('brand', 'description', "The nation's most trusted marketplace for verified used auto parts. Connecting mechanics and enthusiasts with salvage yards nationwide.")}
+                        <p className="text-[12px] text-slate-500 leading-relaxed max-w-[240px] mb-5">
+                            {getFooter('brand', 'description', "The nation's most trusted marketplace for verified used auto parts.")}
                         </p>
-                        {/* Socials desktop */}
-                        <div className="hidden lg:flex gap-2.5 mt-6">
+                        <div className="flex gap-2.5">
                             {socials.map(s => (
                                 <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
                                     aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
@@ -114,61 +81,38 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Link columns */}
-                    <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:pt-8">
-                        {/* Quick Links */}
-                        <FooterAccordion heading={getFooter('quick_links', 'heading', 'Quick Links')}>
-                            <ul className="space-y-3 lg:mt-4">
-                                {quickLinks.map(item => (
-                                    <li key={item.path}><Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
-                                ))}
-                            </ul>
-                        </FooterAccordion>
-
-                        {/* For Buyers */}
-                        <FooterAccordion heading={getFooter('buyers', 'heading', 'For Buyers')}>
-                            <ul className="space-y-3 lg:mt-4">
-                                {buyerLinks.map(item => (
-                                    <li key={item.path}><Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
-                                ))}
-                            </ul>
-                        </FooterAccordion>
-
-                        {/* For Vendors */}
-                        <FooterAccordion heading={getFooter('vendors', 'heading', 'For Vendors')}>
-                            <ul className="space-y-3 lg:mt-4">
-                                {vendorLinks.map(item => (
-                                    <li key={item.path}><Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">{item.name}</Link></li>
-                                ))}
-                            </ul>
-                        </FooterAccordion>
-
+                    {/* Link columns — 2×2 on mobile, 4 across on md+ */}
+                    <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                        <LinkGroup heading={getFooter('quick_links', 'heading', 'Quick Links')} links={quickLinks} />
+                        <LinkGroup heading={getFooter('buyers', 'heading', 'For Buyers')} links={buyerLinks} />
+                        <LinkGroup heading={getFooter('vendors', 'heading', 'For Vendors')} links={vendorLinks} />
                         {/* Contact */}
-                        <FooterAccordion heading={getFooter('contact', 'heading', 'Contact')}>
-                            <ul className="space-y-4 lg:mt-4">
+                        <div>
+                            <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">{getFooter('contact', 'heading', 'Contact')}</p>
+                            <ul className="space-y-3">
                                 <li>
-                                    <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-3 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                    <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
                                         <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02C8.76 8.2 8.57 7 8.57 5.77c0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
                                         {getFooter('contact', 'phone', '1-866-293-3731')}
                                     </a>
                                 </li>
                                 <li>
-                                    <a href={`mailto:${getFooter('contact', 'email', 'info@jynm.com')}`} className="flex items-center gap-3 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                    <a href={`mailto:${getFooter('contact', 'email', 'info@jynm.com')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
                                         <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                                         {getFooter('contact', 'email', 'info@jynm.com')}
                                     </a>
                                 </li>
-                                <li className="flex items-center gap-3 text-[13px] font-medium text-slate-500">
+                                <li className="flex items-center gap-2 text-[13px] font-medium text-slate-500">
                                     <svg className="w-4 h-4 shrink-0 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                                     {getFooter('contact', 'location', 'Nationwide Service')}
                                 </li>
                             </ul>
-                        </FooterAccordion>
+                        </div>
                     </div>
                 </div>
 
                 {/* Bottom bar */}
-                <div className="border-t border-slate-100 pt-5 mt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p className="text-[11px] font-medium text-slate-400">
                         © {currentYear} {getFooter('brand', 'copyright_name', 'JYNM')}. {getFooter('brand', 'copyright_text', 'All rights reserved.')}
                     </p>

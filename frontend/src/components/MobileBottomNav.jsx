@@ -57,11 +57,7 @@ export default function MobileBottomNav() {
                             <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             Browse States
                         </Link>
-                        <Link to="/junkyards" onClick={() => setMoreOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50`}>
-                            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            Find Junkyards
-                        </Link>
-                        <div className="h-px bg-slate-100 my-1"></div>
+
                         <Link to="/sell-your-car" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50`}>
                             <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             Sell My Vehicle
@@ -98,12 +94,12 @@ export default function MobileBottomNav() {
                     {/* Request Part - Center FAB style - Request icon */}
                     <div className="relative w-full flex justify-center h-full">
                         {/* the FAB itself has a more translucent backdrop approach to avoid blocking */}
-                        <Link to="/quote" className="absolute -top-[22px] flex flex-col items-center justify-center w-[56px] h-[56px] bg-gradient-to-br from-[#1a56ff] to-[#4f46e5] text-white rounded-full shadow-[0_8px_20px_rgba(26,86,255,0.3)] transform transition-transform active:scale-95 z-10 border-4 border-slate-50/20 backdrop-blur-md">
+                        <Link to="/quote" className="absolute -top-[20px] flex flex-col items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-[#1a56ff] to-[#4f46e5] text-white rounded-full shadow-[0_8px_20px_rgba(26,86,255,0.3)] transform transition-transform active:scale-95 z-10 border-4 border-slate-50/20 backdrop-blur-md">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                         </Link>
-                        <span className="absolute bottom-1.5 text-[10px] font-bold tracking-tight text-blue-600">Request</span>
+                        <span className="absolute bottom-2.5 text-[10px] font-bold tracking-tight text-blue-600">Request</span>
                     </div>
 
                     <Link to={isAuthenticated ? "/profile" : "/signin"} className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/profile') || isActive('/signin') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>

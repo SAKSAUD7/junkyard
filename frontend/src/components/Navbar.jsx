@@ -129,14 +129,9 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-14 md:h-[72px]">
 
-                        {/* Mobile left-side action (Balance) */}
-                        <div className="flex items-center lg:hidden w-1/3 justify-start shrink-0">
-                            <Link to="/junkyards" className="p-2 -ml-2 text-slate-500 hover:text-[#1a56ff] transition-colors" aria-label="Find Junkyards">
-                                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            </Link>
-                        </div>
 
-                        {/* Center Logo */}
+                        {/* Logo centered on mobile, left on desktop */}
+
                         <Link to="/" className="flex items-center gap-2 shrink-0 justify-center w-1/3 lg:w-auto lg:justify-start" aria-label="JYNM Home">
                             <picture>
                                 <source srcSet="/logo.webp" type="image/webp" />
