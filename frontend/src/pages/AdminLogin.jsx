@@ -68,7 +68,7 @@ export default function AdminLogin() {
             {/* Background Image - Bright Luxury Car */}
             <div className="absolute inset-0 z-0">
                 <img
-                    src="https://images.unsplash.com/photo-1620892019318-7b243ebd7f7e?q=80&w=2000&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2000&auto=format&fit=crop"
                     alt="Luxury Auto Background"
                     className="w-full h-full object-cover opacity-30"
                 />

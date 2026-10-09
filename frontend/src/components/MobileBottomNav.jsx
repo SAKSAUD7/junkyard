@@ -114,10 +114,17 @@ export default function MobileBottomNav() {
                         <span className="absolute bottom-2.5 text-[10px] font-bold tracking-tight text-blue-600">Request</span>
                     </div>
 
-                    <Link to={isAuthenticated ? "/profile" : "/signin"} className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/profile') || isActive('/signin') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>
-                        <svg className="w-[22px] h-[22px]" fill={isActive('/profile') || isActive('/signin') ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive('/profile') || isActive('/signin') ? 0 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                        <span className="text-[10px] font-bold tracking-tight">{isAuthenticated ? 'Profile' : 'Log In'}</span>
-                    </Link>
+                    {isAuthenticated ? (
+                        <Link to="/profile" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/profile') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>
+                            <svg className="w-[22px] h-[22px]" fill={isActive('/profile') ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive('/profile') ? 0 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            <span className="text-[10px] font-bold tracking-tight">Profile</span>
+                        </Link>
+                    ) : (
+                        <button onClick={() => window.dispatchEvent(new CustomEvent('jynm:open-login'))} className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-500 hover:text-slate-700`}>
+                            <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            <span className="text-[10px] font-bold tracking-tight">Log In</span>
+                        </button>
+                    )}
 
                     <button onClick={() => setMoreOpen(!moreOpen)} className={`flex flex-col items-center justify-center w-full h-full gap-1 ${moreOpen ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>
                         <svg className="w-[22px] h-[22px]" fill={moreOpen ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={moreOpen ? 0 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" /></svg>
