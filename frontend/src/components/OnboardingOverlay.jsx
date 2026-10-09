@@ -52,7 +52,10 @@ export default function OnboardingOverlay({ onOpenLogin, onOpenSignup }) {
     useEffect(() => {
         const done = localStorage.getItem(STORAGE_KEY);
         if (!done && !isAuthenticated && location.pathname === '/') {
-            const t = setTimeout(() => setVisible(true), 350);
+            const t = setTimeout(() => {
+                setVisible(true);
+                localStorage.setItem(STORAGE_KEY, 'true'); // Immediately mark as done to prevent repeating
+            }, 350);
             return () => clearTimeout(t);
         }
     }, [isAuthenticated, location.pathname]);

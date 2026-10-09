@@ -511,7 +511,7 @@ export default function AdminLayout() {
                                         <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
                                         
                                         <button
-                                            onClick={() => { setUserMenuOpen(false); logout(); }}
+                                            onClick={() => { setUserMenuOpen(false); window.dispatchEvent(new CustomEvent('jynm:logout-feedback', { detail: { role: 'admin' } })); logout(); }}
                                             className="flex items-start gap-3 px-3 py-2.5 rounded-xl group transition-all duration-300 hover:bg-rose-50 text-left w-full focus:outline-none"
                                         >
                                             <div className="p-2 rounded-xl flex-shrink-0 bg-rose-50 border border-rose-100 transition-transform duration-300 group-hover:scale-110 shadow-sm">

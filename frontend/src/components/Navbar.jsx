@@ -79,7 +79,7 @@ export default function Navbar() {
         logout()
         setAccountDropdownOpen(false)
         setMobileAccountOpen(false)
-        navigate('/')
+        window.dispatchEvent(new CustomEvent('jynm:logout-feedback', { detail: { role: 'customer' } }));
     }
 
     // Allow outside components (e.g. OnboardingOverlay) to open modals via global events

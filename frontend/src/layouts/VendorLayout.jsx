@@ -88,7 +88,7 @@ const VendorLayout = () => {
     }, [user, notifOpen]);
 
     const handleLogout = async () => {
-        await logout();
+        window.dispatchEvent(new CustomEvent('jynm:logout-feedback', { detail: { role: 'vendor' } }));
         navigate('/vendor/login');
     };
 

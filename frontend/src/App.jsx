@@ -11,6 +11,7 @@ import GlobalFAB from './components/GlobalFAB'
 import MobileBottomNav from './components/MobileBottomNav'
 import ScrollToTop from './components/ScrollToTop'
 import OnboardingOverlay from './components/OnboardingOverlay'
+import LogoutFeedbackModal from './components/LogoutFeedbackModal'
 
 // Lazily loaded pages — split into separate chunks
 const Search       = lazy(() => import('./pages/Search'))
@@ -147,6 +148,7 @@ function App() {
     <MotionConfig reducedMotion="user">
       <ScrollToTop />
       <ScrollObserver />
+      <LogoutFeedbackModal />
       <FloatingLeadWidget />
       <GlobalFAB onOpenFeedback={() => setFeedbackOpen(true)} />
       <MobileBottomNav />
