@@ -98,6 +98,10 @@ const VendorLayout = () => {
     const vendorId = vendorProfile?.vendor_id || vendorProfile?.vendor?.yard_id || vendorProfile?.vendor?.id || '';
     const vendorLogo = vendorProfile?.vendor?.logo; // Logo may not be in vendorProfile, might need to rely on API if available
     const vendorInitial = vendorName.charAt(0).toUpperCase();
+    
+    const vendorState = vendorProfile?.state || vendorProfile?.vendor?.state || '';
+    const vendorSlug = vendorProfile?.slug || vendorProfile?.vendor?.slug || '';
+    const publicProfileUrl = vendorState && vendorSlug ? `/junkyards/${vendorState.toLowerCase()}/${vendorSlug}` : '/junkyards';
 
     // Current page title
     const currentNav = NAV_ITEMS.find(n => location.pathname.startsWith(n.to));
@@ -275,7 +279,7 @@ const VendorLayout = () => {
                                         </NavLink>
 
                                         <a
-                                            href={vendorProfile?.slug && vendorProfile?.state ? `/junkyards/${vendorProfile.state.toLowerCase()}/${vendorProfile.slug}` : '/junkyards'}
+                                            href={publicProfileUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={() => setAccountDropdownOpen(false)}

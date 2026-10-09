@@ -32,6 +32,19 @@ export default function AddYardStart() {
                 title="Add Your Junkyard – JYNM"
                 description="List your salvage yard on JYNM and connect with thousands of buyers looking for used auto parts."
             />
+
+            {/* Background Image - Matches SignIn */}
+            {isGuest && (
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1620892019318-7b243ebd7f7e?q=80&w=2000&auto=format&fit=crop"
+                        alt="Luxury Auto Background"
+                        className="w-full h-full object-cover opacity-30"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-slate-50/90 to-white/95"></div>
+                </div>
+            )}
+
             <Navbar />
 
             {/* SCENARIO A — Guest: show the vendor auth modal */}

@@ -102,16 +102,22 @@ const VendorSignUp = () => {
 
                     {/* Right panel — Form */}
                     <div className="flex-1 flex flex-col justify-center p-5 sm:p-8">
-                        <div className="flex items-center justify-between mb-4">
-                            <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-slate-500 hover:text-green-600 transition-colors text-sm font-semibold">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        <div className="flex items-center justify-between mb-6">
+                            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm transition-colors group bg-slate-50 px-4 py-2 rounded-full shadow-sm hover:shadow-md border border-slate-200">
+                                <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                 Back
                             </button>
-                            <Link to="/" className="flex items-center gap-2">
-                                <img src="/logo.png" alt="JYNM" className="h-7 w-auto" onError={e => e.currentTarget.style.display='none'} />
-                                <span className="font-black text-slate-900 text-lg" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</span>
+                            <Link to="/" className="flex items-center gap-2 shrink-0">
+                                <img src="/logo.png" alt="JYNM" className="h-9 w-auto object-contain" onError={e => e.currentTarget.style.display='none'} />
+                                <div className="flex flex-col leading-none text-left">
+                                    <span className="text-[17px] font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        JYNM
+                                    </span>
+                                    <span className="text-[6.5px] uppercase tracking-widest text-slate-500 font-bold mt-0.5">
+                                        Junkyards Near Me
+                                    </span>
+                                </div>
                             </Link>
-                            <div className="w-12" /> {/* Spacer */}
                         </div>
 
                         <div className="text-center mb-5">

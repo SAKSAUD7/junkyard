@@ -132,7 +132,7 @@ export default function Navbar() {
 
                         {/* Logo centered on mobile, left on desktop */}
 
-                        <Link to="/" className="flex items-center gap-2 shrink-0 justify-center w-1/3 lg:w-auto lg:justify-start" aria-label="JYNM Home">
+                        <Link to="/" className="flex items-center gap-2 shrink-0 justify-center lg:justify-start min-w-max" aria-label="JYNM Home">
                             <picture>
                                 <source srcSet="/logo.webp" type="image/webp" />
                                 <img
@@ -141,15 +141,15 @@ export default function Navbar() {
                                     width="52"
                                     height="52"
                                     fetchpriority="high"
-                                    className="h-11 md:h-12 w-auto object-contain"
+                                    className="h-10 sm:h-11 md:h-12 w-auto object-contain"
                                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />
                             </picture>
-                            <div className="hidden sm:flex flex-col leading-none">
-                                <span className="text-xl md:text-2xl font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            <div className="flex flex-col leading-none text-left">
+                                <span className="text-[17px] sm:text-xl md:text-2xl font-black tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {get('brand', 'name_short', 'JYNM')}
                                 </span>
-                                <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-slate-500 font-bold mt-0.5">
+                                <span className="text-[6.5px] sm:text-[7px] md:text-[8px] uppercase tracking-widest text-slate-500 font-bold mt-0.5">
                                     {get('brand', 'name_long', 'Junkyards Near Me')}
                                 </span>
                             </div>

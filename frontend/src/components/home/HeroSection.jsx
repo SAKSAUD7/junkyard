@@ -610,9 +610,9 @@ export default function HeroSection({ get, ready = false }) {
   }, [heroSuccess]);
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-[60px] lg:pt-[80px] pb-20 min-h-[90vh] flex flex-col justify-start">
-      {/* Full-bleed cinematic background video - DESKTOP ONLY */}
-      <div className="absolute inset-0 z-0 bg-white hidden lg:block">
+    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-[120px] sm:pt-[100px] lg:pt-[80px] pb-20 min-h-[90vh] flex flex-col justify-start">
+      {/* Full-bleed cinematic background video */}
+      <div className="absolute inset-0 z-0 bg-white">
         <video
           ref={desktopVideoRef}
           muted
@@ -629,7 +629,7 @@ export default function HeroSection({ get, ready = false }) {
           />
         </video>
         {/* Light Gradient Overlay */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent w-3/4" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-slate-50/95 via-slate-50/70 to-transparent lg:bg-gradient-to-r lg:from-slate-50 lg:via-slate-50/80 lg:to-transparent w-full lg:w-3/4" />
       </div>
 
       <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col justify-start px-4 sm:px-6 lg:px-8 flex-1 mt-0">
@@ -679,24 +679,7 @@ export default function HeroSection({ get, ready = false }) {
           />
         </div>
 
-        {/* MOBILE VIDEO BLOCK — compact fixed height to stay above fold */}
-        <div className="w-[100vw] -ml-[calc(50vw-50%)] relative flex lg:hidden items-center justify-center overflow-hidden mb-5" style={{ height: '230px' }}>
-          <video
-            ref={mobileVideoRef}
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster="/hero-bg.webp"
-            aria-label="Background video of cars at a junkyard"
-            className="w-full h-full object-cover object-center scale-[1.05]"
-            style={{ filter: "brightness(1.05) contrast(1.05)" }}
-          >
-            <source src="/Video/hero-models-bg.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-        </div>
-        <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 space-y-4">
+        <div className="w-full xl:max-w-[800px] lg:max-w-[750px] flex flex-col items-start mt-2 md:mt-2 space-y-4">
           <div ref={leadFormRef} className="w-full mb-8 relative z-[100]">
 
             {/* ── TAB SWITCHER ─────────────────────────────────────── */}

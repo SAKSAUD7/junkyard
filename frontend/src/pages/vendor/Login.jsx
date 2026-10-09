@@ -92,14 +92,14 @@ const VendorLogin = () => {
                 </div>
 
                 {/* Mobile — back link */}
-                <div className="absolute top-5 left-5 lg:hidden z-20">
+                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 lg:hidden z-20">
                     <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-3 py-2 rounded-full shadow-sm hover:bg-white/20 transition-all">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                 </div>
 
-                <div className="w-full max-w-[420px] px-5 sm:px-6 py-6 sm:py-10 relative z-10 bg-white lg:bg-transparent rounded-3xl lg:rounded-none shadow-2xl lg:shadow-none m-4 md:m-0 my-auto lg:my-0 lg:mx-0">
+                <div className="w-full max-w-[420px] px-5 sm:px-6 py-6 sm:py-10 relative z-10 bg-white lg:bg-transparent rounded-3xl lg:rounded-none shadow-2xl lg:shadow-none m-4 mt-24 sm:mt-16 md:m-0 my-auto lg:my-0 lg:mx-0">
                     {/* Logo */}
                     <div className="text-center mb-6">
                         <Link to="/" className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 inline-block mb-4">

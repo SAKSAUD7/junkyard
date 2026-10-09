@@ -27,7 +27,12 @@ const VendorDetail = () => {
 
     const { isAuthenticated } = useContext(AuthContext);
     const { vendorProfile } = useVendorAuth();
-    const isOwnProfile = vendorProfile && vendorProfile.id === vendor?.id;
+    const isOwnProfile = vendorProfile && vendor && (
+        String(vendorProfile.id) === String(vendor.id) ||
+        String(vendorProfile.vendor?.id) === String(vendor.id) || 
+        String(vendorProfile.vendor_id) === String(vendor.id) ||
+        String(vendorProfile.vendor?.yard_id) === String(vendor.id)
+    );
     const [showSecurityCheck, setShowSecurityCheck] = useState(false);
     const [showSignup, setShowSignup] = useState(false);
     const [showLogin, setShowLogin] = useState(false);

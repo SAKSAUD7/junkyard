@@ -61,14 +61,14 @@ export default function SignIn() {
             <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 min-h-screen w-full max-w-7xl mx-auto">
                 
                 {/* Back to Home Link */}
-                <div className="absolute top-6 left-6 md:top-10 md:left-10 z-20">
+                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-10 md:left-10 z-20">
                     <Link to="/" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-semibold text-sm transition-colors group bg-white/50 backdrop-blur px-4 py-2 rounded-full shadow-sm hover:shadow-md border border-slate-200">
                         <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                 </div>
                 {/* Main Card */}
-                <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden transform transition-all relative mt-10">
+                <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden transform transition-all relative mt-20 sm:mt-10 md:mt-0">
                     {/* Inner subtle top highlight */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
 
