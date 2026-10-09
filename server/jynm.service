@@ -1,0 +1,21 @@
+[Unit]
+Description=JYNM Gunicorn daemon (junkyardsnearme.com backend)
+After=network.target
+
+[Service]
+User=junkyard
+Group=www-data
+WorkingDirectory=/home/junkyard/backend
+EnvironmentFile=/home/junkyard/backend/.env
+ExecStart=/home/junkyard/venv/bin/gunicorn \
+    --config /home/junkyard/backend/gunicorn.conf.py \
+    core.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=30
+PrivateTmp=true
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
