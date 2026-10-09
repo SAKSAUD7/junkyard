@@ -53,19 +53,19 @@ const VendorLogin = () => {
 
                     {/* Left branding — desktop only */}
                     <div className="hidden lg:flex flex-col justify-between flex-1 p-10 text-slate-800 bg-slate-50 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-white opacity-90 z-0"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-slate-100 z-0"></div>
                         <div className="relative z-10">
                             <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 transition-colors text-[13px] font-semibold mb-10 group bg-white/80 px-4 py-2 rounded-full backdrop-blur-md border border-slate-200 shadow-sm">
-                                <svg className="w-4 h-4 transform group-Hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                 Back to JYNM
                             </Link>
-                            <div className="inline-flex items-center gap-1.5 bg-blue-500/20 border border-blue-500/30 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-blue-300 mb-6 backdrop-blur-md shadow-lg shadow-blue-900/20">
+                            <div className="inline-flex items-center gap-1.5 bg-blue-100 border border-blue-200 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-blue-700 mb-6">
                                 🏪 Yard Partner Portal
                             </div>
-                            <h1 className="text-4xl font-black leading-tight tracking-tight shadow-md drop-shadow-xl" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                Vendor <span className="text-blue-400">Sign In</span>
+                            <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Vendor <span className="text-blue-600">Sign In</span>
                             </h1>
-                            <p className="text-white/80 text-base mt-4 max-w-sm leading-relaxed font-medium text-[15px]">
+                            <p className="text-slate-600 text-base mt-4 max-w-sm leading-relaxed font-medium text-[15px]">
                                 Sign in to manage your yard listing and inventory.
                             </p>
                         </div>
@@ -75,11 +75,11 @@ const VendorLogin = () => {
                                 { icon: '📈', title: 'Receive More Leads', desc: 'Real-time buyer notifications.' },
                                 { icon: '⚡', title: 'Grow Your Business', desc: 'Boost visibility & increase yard revenue.' },
                             ].map(f => (
-                                <div key={f.title} className="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
-                                    <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl shrink-0 drop-shadow-md">{f.icon}</div>
+                                <div key={f.title} className="flex items-center gap-4 bg-white/70 p-3 rounded-2xl border border-slate-200 hover:bg-white transition-colors cursor-default shadow-sm">
+                                    <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-xl shrink-0">{f.icon}</div>
                                     <div>
-                                        <div className="text-[14px] font-bold text-white">{f.title}</div>
-                                        <div className="text-[12px] text-white/70 font-medium">{f.desc}</div>
+                                        <div className="text-[14px] font-bold text-slate-800">{f.title}</div>
+                                        <div className="text-[12px] text-slate-500 font-medium">{f.desc}</div>
                                     </div>
                                 </div>
                             ))}

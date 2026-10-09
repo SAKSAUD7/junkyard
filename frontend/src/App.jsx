@@ -189,8 +189,8 @@ function App() {
             <Route path="/junkyards" element={<AllVendors />} />
             <Route path="/junkyards-by-location" element={<BrowseStates />} />
             <Route path="/junkyards/:state" element={<BrowseState />} />
-            <Route path="/junkyards/:state/:slug" element={<VendorDetail />} />
-            <Route path="/junkyard/:slug" element={<VendorDetail />} />
+            <Route path="/junkyards/:state/:slug" element={<VendorAuthProvider><VendorDetail /></VendorAuthProvider>} />
+            <Route path="/junkyard/:slug" element={<VendorAuthProvider><VendorDetail /></VendorAuthProvider>} />
 
             {/* Backwards compatibility for paths that temporarily used /vendors or /browse */}
             <Route path="/vendors" element={<Navigate to="/junkyards" replace />} />

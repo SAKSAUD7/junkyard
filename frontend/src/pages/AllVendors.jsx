@@ -44,11 +44,16 @@ const AllVendors = () => {
                 if (selectedState) params.state = selectedState;
                 const data = await api.getVendors(params);
                 if (data.results) {
-                    setVendors(data.results);
+                    const unique = Array.from(new Map(data.results.map(v => [v.id, v])).values())
+                        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    setVendors(unique);
                     setTotalCount(data.count);
                 } else {
-                    setVendors(Array.isArray(data) ? data : []);
-                    setTotalCount(Array.isArray(data) ? data.length : 0);
+                    const arr = Array.isArray(data) ? data : [];
+                    const unique = Array.from(new Map(arr.map(v => [v.id, v])).values())
+                        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    setVendors(unique);
+                    setTotalCount(unique.length);
                 }
                 setError(null);
             } catch (err) {
