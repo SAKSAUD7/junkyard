@@ -5,18 +5,13 @@ import { useCMS } from '../../hooks/useCMS';
 import PasswordInput from '../../components/PasswordInput';
 import SEO from '../../components/SEO';
 
-const FEATURES = [
-    { icon: '📦', title: 'Manage Inventory', desc: 'Add, edit and manage your parts & listings.' },
-    { icon: '📥', title: 'Get More Leads', desc: 'Receive real-time leads from serious buyers.' },
-    { icon: '📈', title: 'Grow Business', desc: 'Boost visibility and increase your sales.' },
-];
+// Automotive background — salvage yard operations (Unsplash free-use)
+const BG = 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1400&q=75';
 
 const VendorLogin = () => {
     const { get } = useCMS('vendor_portal');
-    const [tab, setTab] = useState('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [failCount, setFailCount] = useState(0);
@@ -28,7 +23,7 @@ const VendorLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (failCount >= 5) { setError('Too many failed attempts. Please wait before trying again.'); return; }
+        if (failCount >= 5) { setError('Too many failed attempts. Please wait.'); return; }
         setError(''); setLoading(true);
         const result = await login(email, password);
         if (result.success) {
@@ -40,135 +35,137 @@ const VendorLogin = () => {
         }
     };
 
-
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-inter">
-            <SEO title="Vendor Login – JYNM" description="Log in to your JYNM Vendor account." noindex={true} />
+        <div className="min-h-screen flex flex-col relative font-inter overflow-hidden">
+            <SEO title="Vendor Login – JYNM" description="Sign in to your JYNM Vendor account." noindex={true} />
 
-            <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-                {/* Unified Auth Container */}
-                <div className="w-full max-w-[900px] flex flex-col gap-4">
-                    <div className="w-full bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[auto] border border-slate-100">
+            {/* Automotive Background */}
+            <div className="absolute inset-0 z-0">
+                <img src={BG} alt="" aria-hidden="true" className="w-full h-full object-cover object-right" loading="eager" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/90 via-[#0d1f3c]/80 to-[#0a1628]/40" />
+            </div>
 
-                    {/* Left panel — Dark Indigo */}
-                    <div className="md:w-[380px] shrink-0 relative bg-gradient-to-br from-[#111827] via-[#1e1b4b] to-[#312e81] flex flex-col items-center justify-center p-10 text-white overflow-hidden hidden md:flex">
-                        <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-white/10" />
-                        <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-white/10" />
-                        <div className="relative z-10 w-36 h-36 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center mb-8 border border-white/30">
-                            <span className="text-5xl">🏪</span>
-                        </div>
-                        <h2 className="relative z-10 text-2xl font-black mb-2 text-center text-white tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }} 
-                            dangerouslySetInnerHTML={{ __html: get('login', 'panel_heading', 'Welcome Vendor!') }} />
-                        <p className="relative z-10 text-indigo-200 text-[13px] text-center font-medium max-w-[220px]"
-                            dangerouslySetInnerHTML={{ __html: get('login', 'panel_subtext', 'Login to manage your inventory, leads and grow your business.') }} />
-                        <div className="relative z-10 mt-10 w-full space-y-2">
-                            {FEATURES.map(f => (
-                                <div key={f.title} className="flex items-start gap-3">
-                                    <span className="text-lg">{f.icon}</span>
-                                    <div>
-                                        <p className="text-white text-[12px] font-bold">{f.title}</p>
-                                        <p className="text-indigo-200 text-[11px] font-medium">{f.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+            <div className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8 min-h-screen">
+                <div className="w-full max-w-[920px] flex items-stretch gap-0">
 
-                    {/* Right panel — Form */}
-                    <div className="flex-1 flex flex-col justify-center p-8 sm:p-12">
-                        <div className="flex items-center justify-between mb-8 relative">
-                            <Link to="/" className="absolute left-0 top-1.5 flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors text-sm font-semibold">
+                    {/* Left branding — desktop only */}
+                    <div className="hidden lg:flex flex-col justify-between flex-1 p-10 text-white">
+                        <div>
+                            <Link to="/" className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-semibold mb-10">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                                Back Home
+                                Back to JYNM
                             </Link>
-                            <Link to="/" className="flex items-center gap-2 mx-auto">
-                                <img src="/logo.png" alt="JYNM" className="h-8 w-auto" onError={e => e.currentTarget.style.display='none'} />
-                                <span className="font-black text-slate-900 text-lg" style={{ fontFamily: "'Outfit', sans-serif" }}>JYNM</span>
-                            </Link>
-                            <div className="w-12" />
+                            <div className="inline-flex items-center gap-1.5 bg-white/15 border border-white/20 rounded-full px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-blue-200 mb-5">
+                                🏪 Yard Partner Portal
+                            </div>
+                            <h1 className="text-4xl font-black leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Vendor <span className="text-[#4e9dff]">Sign In</span>
+                            </h1>
+                            <p className="text-white/65 text-base mt-3 max-w-sm leading-relaxed">
+                                Sign in to manage your yard listing and inventory.
+                            </p>
                         </div>
-
-                        {/* Tabs */}
-                        <div className="flex rounded-xl border border-slate-200 p-1 mb-7">
-                            {['login', 'signup'].map(t => (
-                                <button key={t} onClick={() => { setTab(t); setError(''); }}
-                                    className={`flex-1 py-2 text-[13px] font-bold rounded-lg transition-all ${tab === t ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-                                    {t === 'login' ? 'Login' : 'Create Account'}
-                                </button>
+                        <div className="space-y-4 mt-10">
+                            {[
+                                { icon: '📦', title: 'Manage Inventory', desc: 'Add, edit and manage your parts & listings.' },
+                                { icon: '📈', title: 'Receive More Leads', desc: 'Real-time buyer notifications.' },
+                                { icon: '⚡', title: 'Grow Your Business', desc: 'Boost visibility & increase yard revenue.' },
+                            ].map(f => (
+                                <div key={f.title} className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-xl shrink-0">{f.icon}</div>
+                                    <div>
+                                        <div className="text-[13px] font-bold text-white">{f.title}</div>
+                                        <div className="text-[11px] text-white/55">{f.desc}</div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
+                    </div>
 
-                        <h1 className="text-2xl font-black text-slate-900 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}
-                            dangerouslySetInnerHTML={{ __html: tab === 'login' ? get('login', 'form_heading', 'Vendor Sign In') : 'Register as Vendor' }} />
-                        <p className="text-slate-500 text-sm mb-6"
-                            dangerouslySetInnerHTML={{ __html: tab === 'login' ? get('login', 'form_subtext', 'Access your vendor dashboard.') : 'Start listing your yard today.' }} />
+                    {/* Right — Auth Card */}
+                    <div className="w-full max-w-[400px] lg:w-[400px] shrink-0">
+                        <div className="bg-white rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col">
 
-                        {error && (
-                            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[13px] font-semibold flex items-center gap-2">
-                                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                                {error}
-                            </div>
-                        )}
-
-                        {tab === 'login' ? (
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Email</label>
-                                    <input type="email" required value={email} onChange={e => { setEmail(e.target.value); setError(''); }}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
-                                        placeholder="vendor@example.com" autoComplete="email" />
+                            <div className="px-7 pt-8 pb-5 border-b border-slate-100 text-center">
+                                <div className="lg:hidden mb-4 text-left">
+                                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 text-sm font-semibold">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                        Back Home
+                                    </Link>
                                 </div>
-                                <div>
-                                    <div className="flex justify-between items-center mb-1.5">
-                                        <label className="text-[12px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                                        <Link to="/vendor/forgot-password" className="text-[12px] text-indigo-600 font-semibold hover:underline">Forgot password?</Link>
-                                    </div>
-                                    <PasswordInput required value={password} onChange={e => { setPassword(e.target.value); setError(''); }}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
-                                        placeholder="••••••••" autoComplete="current-password" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <input type="checkbox" id="vremember" checked={remember} onChange={e => setRemember(e.target.checked)} className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
-                                    <label htmlFor="vremember" className="text-[13px] text-slate-600 font-medium">Remember me</label>
-                                </div>
-                                <button type="submit" disabled={loading || failCount >= 5}
-                                    className="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-[0_4px_12px_rgba(79,70,229,0.25)] disabled:opacity-60 flex items-center justify-center gap-2 text-[14px]">
-                                    {loading && <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>}
-                                    {loading ? 'Signing in…' : get('login', 'submit_btn', 'Login')}
-                                </button>
-                            </form>
-                        ) : (
-                            <div className="text-center py-8">
-                                <p className="text-slate-500 text-sm mb-4">Don't have an account? Create one to start managing your yard.</p>
-                                <Link to={`/vendor/signup?redirect=${encodeURIComponent(redirectAfter)}`}
-                                    className="inline-block px-8 py-3.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-[0_4px_12px_rgba(79,70,229,0.25)] text-[14px]">
-                                    Create Vendor Account
+                                <Link to="/" className="inline-block mb-3">
+                                    <img src="/logo.png" alt="JYNM" className="h-10 w-auto mx-auto" onError={e => e.currentTarget.style.display='none'} />
                                 </Link>
+                                <div className="lg:hidden inline-flex items-center gap-1 bg-blue-50 border border-blue-100 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-blue-600 mb-3">
+                                    🏪 Yard Partner Portal
+                                </div>
+                                <h2 className="text-xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}
+                                    dangerouslySetInnerHTML={{ __html: get('login', 'form_heading', 'Vendor Sign In') }} />
+                                <p className="text-slate-500 text-sm mt-1"
+                                    dangerouslySetInnerHTML={{ __html: get('login', 'form_subtext', 'Sign in to manage your yard listing and inventory.') }} />
                             </div>
-                        )}
-                    </div>
-                </div>
 
-                <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100">
-                    <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            <div className="px-7 py-6">
+                                {error && (
+                                    <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[13px] font-semibold flex items-center gap-2">
+                                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        {error}
+                                    </div>
+                                )}
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    <div>
+                                        <label htmlFor="vl-email" className="block text-[13px] font-bold text-slate-700 mb-1.5">Email Address</label>
+                                        <div className="relative">
+                                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                            </span>
+                                            <input
+                                                id="vl-email" type="email" required value={email}
+                                                onChange={e => { setEmail(e.target.value); setError(''); }}
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                                                placeholder="vendor@example.com" autoComplete="email"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between items-center mb-1.5">
+                                            <label htmlFor="vl-pw" className="text-[13px] font-bold text-slate-700">Password</label>
+                                            <Link to="/vendor/forgot-password" className="text-[12px] text-blue-600 font-semibold hover:underline">Forgot password?</Link>
+                                        </div>
+                                        <PasswordInput
+                                            id="vl-pw" required value={password}
+                                            onChange={e => { setPassword(e.target.value); setError(''); }}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
+                                            placeholder="••••••••" autoComplete="current-password"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit" disabled={loading || failCount >= 5}
+                                        className="w-full py-3.5 bg-[#1a56ff] hover:bg-[#1648d0] text-white font-bold rounded-xl transition-all shadow-[0_6px_20px_rgba(26,86,255,0.3)] disabled:opacity-60 flex items-center justify-center gap-2 text-[15px] active:scale-[0.98]"
+                                    >
+                                        {loading && <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>}
+                                        {loading ? 'Signing in…' : get('login', 'submit_btn', 'Sign In →')}
+                                    </button>
+                                </form>
+                                <p className="mt-5 text-center text-sm text-slate-500">
+                                    New to JYNM?{' '}
+                                    <Link to={`/vendor/signup?redirect=${encodeURIComponent(redirectAfter)}`} className="font-bold text-blue-600 hover:underline">
+                                        Create Free Vendor Account
+                                    </Link>
+                                </p>
+                            </div>
+
+                            {/* Feature strip */}
+                            <div className="flex items-center justify-around px-4 py-3 bg-slate-50 border-t border-slate-100">
+                                {[{ icon: '📦', label: 'Manage Inventory' }, { icon: '📈', label: 'Receive Leads' }, { icon: '⚡', label: 'Grow Business' }].map(f => (
+                                    <div key={f.label} className="flex flex-col items-center gap-1 text-center flex-1">
+                                        <span className="text-lg">{f.icon}</span>
+                                        <span className="text-[10px] font-bold text-slate-500">{f.label}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="text-[11px] font-bold text-slate-700 leading-tight">Manage Your<br/>Inventory</div>
                     </div>
-                    <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-100">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        </div>
-                        <div className="text-[11px] font-bold text-slate-700 leading-tight">Receive More<br/>Leads</div>
-                    </div>
-                    <div className="flex items-center gap-3 px-3 py-1 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-100">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v8l9-11h-7z" /></svg>
-                        </div>
-                        <div className="text-[11px] font-bold text-slate-700 leading-tight">Grow Your<br/>Business</div>
-                    </div>
-                </div>
                 </div>
             </div>
         </div>

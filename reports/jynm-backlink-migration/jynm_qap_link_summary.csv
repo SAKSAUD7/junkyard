@@ -1,0 +1,10 @@
+Metric,Count
+Total Raw Records Recovered,7698
+Target Record Semrush Goal,35768
+Deficit from Target,28070
+Deficit Reason,"Semrush includes 35,768 indexed dynamic JYNM pages displaying the identical sitewide footer link. The exported sample only includes 7,699 indexed rows representing the limit of Semrush's export tier."
+Unique Source URLs,7698
+Unique Source-Target Pairs,7698
+Unique Referring Domains,1
+Sitewide Link Candidates,7698
+Duplicates in Raw,0

@@ -11,6 +11,23 @@ import { FavoritesProvider } from './contexts/FavoritesContext'
 import App from './App.jsx'
 import './index.css'
 
+// ── Stale Asset Recovery ────────────────────────────────────────────────────
+// When a new build is deployed, old sessions reference hashed chunks that no
+// longer exist. Vite fires 'vite:preloadError' when a dynamic import fails.
+// We reload ONCE per session to pick up the latest index.html and fresh assets.
+// A sessionStorage guard prevents infinite reload loops.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault()
+  const RELOAD_KEY = 'jynm_preload_reload'
+  if (!sessionStorage.getItem(RELOAD_KEY)) {
+    sessionStorage.setItem(RELOAD_KEY, '1')
+    window.location.reload()
+  } else {
+    // Second failure — show a graceful recovery message instead of looping
+    console.error('[JYNM] Dynamic import failed after recovery attempt. Please hard-refresh (Ctrl+Shift+R).', event.payload)
+  }
+})
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
