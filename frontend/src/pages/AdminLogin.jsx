@@ -62,20 +62,17 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#0a192f] overflow-hidden">
-            <SEO title="Admin Access – JYNM" description="Admin access portal." noindex={true} />
-            
-            {/* Background Image with optimized loading */}
+        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-hidden">
+            <SEO title="Admin Login – JYNM" description="Restricted area." noindex={true} />
+
+            {/* Background Image - Bright Luxury Car */}
             <div className="absolute inset-0 z-0">
-                <img 
-                    src={BG_IMAGE_URL} 
-                    alt="Automotive Background" 
-                    className="w-full h-full object-cover select-none"
-                    loading="lazy"
+                <img
+                    src="https://images.unsplash.com/photo-1620892019318-7b243ebd7f7e?q=80&w=2000&auto=format&fit=crop"
+                    alt="Luxury Auto Background"
+                    className="w-full h-full object-cover opacity-30"
                 />
-                {/* Deep Navy Gradient Overlay */}
-                <div className="absolute inset-0 bg-slate-900/75 mix-blend-multiply" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-slate-900/60 to-slate-900/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-slate-50/90 to-white/95"></div>
             </div>
 
             {/* Content Container */}
@@ -83,13 +80,13 @@ export default function AdminLogin() {
                 
                 {/* Header elements: Logo & Title */}
                 <div className="text-center w-full">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] font-semibold mb-6 group bg-white/5 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors text-[13px] font-semibold mb-6 group bg-white/80 px-4 py-2 rounded-full backdrop-blur-md border border-slate-200 shadow-sm">
                         <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                     
-                    <div className="bg-white/10 p-4 rounded-3xl backdrop-blur-md border border-white/20 inline-block mb-6 shadow-2xl">
-                        <img src="/logo.png" alt="JYNM" className="h-10 sm:h-12 w-auto drop-shadow-md" onError={e => e.currentTarget.style.display='none'} />
+                    <div className="bg-white p-4 rounded-3xl backdrop-blur-md border border-slate-200 inline-block mb-6 shadow-xl">
+                        <img src="/logo.png" alt="JYNM" className="h-10 sm:h-12 w-auto drop-shadow-sm" onError={e => e.currentTarget.style.display='none'} />
                     </div>
                 </div>
 

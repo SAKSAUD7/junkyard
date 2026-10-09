@@ -41,7 +41,7 @@ export default function BrowseStates() {
                     const count = countsResponse[state.stateCode] || 0;
                     total += count;
                     return { ...state, junkyardCount: count };
-                }).filter(s => s.junkyardCount > 0).sort((a, b) => b.junkyardCount - a.junkyardCount);
+                }).filter(s => s.junkyardCount > 0).sort((a, b) => a.stateName.localeCompare(b.stateName));
                 setStatesData(merged);
                 setTotalVendors(total);
             } catch (err) {

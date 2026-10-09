@@ -35,29 +35,27 @@ const VendorLogin = () => {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#0a192f] overflow-hidden">
+        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-hidden">
             <SEO title="Vendor Login – JYNM" description="Sign in to your JYNM Vendor account." noindex={true} />
 
-            {/* Background Image with optimized loading */}
+            {/* Background Image - Bright Luxury Car */}
             <div className="absolute inset-0 z-0">
-                <img 
-                    src={BG_IMAGE_URL} 
-                    alt="Automotive Background" 
-                    className="w-full h-full object-cover select-none"
-                    loading="lazy"
+                <img
+                    src="https://images.unsplash.com/photo-1620892019318-7b243ebd7f7e?q=80&w=2000&auto=format&fit=crop"
+                    alt="Luxury Auto Background"
+                    className="w-full h-full object-cover opacity-30"
                 />
-                {/* Deep Navy Gradient Overlay */}
-                <div className="absolute inset-0 bg-slate-900/75 mix-blend-multiply" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-slate-900/60 to-slate-900/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-slate-50/90 to-white/95"></div>
             </div>
 
-            <div className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8 min-h-screen">
-                <div className="w-full max-w-[920px] flex items-stretch gap-0">
+            <div className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8 min-h-screen w-full">
+                <div className="w-full max-w-[920px] flex items-stretch gap-0 bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden relative">
 
                     {/* Left branding — desktop only */}
-                    <div className="hidden lg:flex flex-col justify-between flex-1 p-10 text-white">
-                        <div>
-                            <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] font-semibold mb-10 group bg-white/5 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                    <div className="hidden lg:flex flex-col justify-between flex-1 p-10 text-slate-800 bg-slate-50 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-white opacity-90 z-0"></div>
+                        <div className="relative z-10">
+                            <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 transition-colors text-[13px] font-semibold mb-10 group bg-white/80 px-4 py-2 rounded-full backdrop-blur-md border border-slate-200 shadow-sm">
                                 <svg className="w-4 h-4 transform group-Hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                 Back to JYNM
                             </Link>

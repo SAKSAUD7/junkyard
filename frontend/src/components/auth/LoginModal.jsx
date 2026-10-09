@@ -112,6 +112,11 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
 
     if (!isOpen) return null;
 
+    // Redirect to the beautifully styled full page instead of showing a modal
+    window.location.href = '/signin';
+    return null;
+    
+    // The rest of the modal is skipped...
     const logoUrl = getGlobal('brand', 'logo');
 
     return (
