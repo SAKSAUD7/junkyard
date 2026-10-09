@@ -121,7 +121,7 @@ export default function Footer() {
                         <span className="hidden sm:inline text-slate-300">|</span>
                         <Link to="/privacy" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Privacy Policy</Link>
                         <Link to="/terms" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Terms &amp; Conditions</Link>
-                        <Link to="/admin/login" className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">Admin</Link>
+                        <Link to="/admin-portal/login" className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">Admin</Link>
                     </div>
                 </div>
             </div>

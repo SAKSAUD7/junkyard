@@ -219,7 +219,7 @@ export default function MobileDrawer({
                                 </Link>
 
                                 <Link
-                                    to="/admin/login"
+                                    to="/admin-portal/login"
                                     onClick={onClose}
                                     className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-purple-700 hover:bg-purple-50 min-h-[52px] transition-colors"
                                 >

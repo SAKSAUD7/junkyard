@@ -62,7 +62,7 @@ api.interceptors.response.use(
                 // Only redirect if the user is explicitly in a protected portal area
                 const path = window.location.pathname;
                 if (path.startsWith('/admin')) {
-                    window.location.href = '/admin/login';
+                    window.location.href = '/admin-portal/login';
                 } else if (path.startsWith('/vendor/') && !path.includes('login')) {
                     window.location.href = '/vendor/login';
                 }

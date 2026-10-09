@@ -344,7 +344,7 @@ export default function AdminAds() {
                     </svg>
                     <h3 className="text-lg font-bold text-slate-800 mb-2">Session Expired or Unauthorized</h3>
                     <p className="text-sm text-slate-500 mb-6">Your admin session has expired or you don't have permission to manage ads. Please log in again.</p>
-                    <a href="/admin/login" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all">
+                    <a href="/admin-portal/login" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all">
                         Sign In Again
                     </a>
                 </div>

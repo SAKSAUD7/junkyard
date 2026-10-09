@@ -58,7 +58,7 @@ export default function SignIn() {
                 <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-slate-50/90 to-white/95"></div>
             </div>
 
-            <div className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8 min-h-screen w-full max-w-7xl mx-auto">
+            <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 min-h-screen w-full max-w-7xl mx-auto">
                 
                 {/* Back to Home Link */}
                 <div className="absolute top-6 left-6 md:top-10 md:left-10 z-20">

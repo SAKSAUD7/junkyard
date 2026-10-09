@@ -18,7 +18,7 @@ export default function LogoutFeedbackModal() {
 
     const handleFinish = () => {
         setIsOpen(false);
-        if (role === 'admin') navigate('/admin/login');
+        if (role === 'admin') navigate('/admin-portal/login');
         else if (role === 'vendor') navigate('/vendor/login');
         else navigate('/');
     };

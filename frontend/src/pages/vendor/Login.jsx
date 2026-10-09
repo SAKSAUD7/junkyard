@@ -84,16 +84,22 @@ const VendorLogin = () => {
             </div>
 
             {/* ===== RIGHT PANEL — white form ===== */}
-            <div className="w-full lg:w-[460px] shrink-0 flex flex-col items-center justify-center relative bg-white min-h-screen">
+            <div className="w-full lg:w-[460px] shrink-0 flex flex-col items-center justify-center relative bg-slate-900 lg:bg-white min-h-screen">
+                {/* Mobile background */}
+                <div className="absolute inset-0 z-0 lg:hidden block">
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1400&auto=format&fit=crop" alt="Vendor Mobile Background" className="w-full h-full object-cover object-center opacity-70" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-800/80" />
+                </div>
+
                 {/* Mobile — back link */}
-                <div className="absolute top-5 left-5 lg:hidden">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 text-[13px] font-semibold bg-slate-100 px-3 py-2 rounded-full">
+                <div className="absolute top-5 left-5 lg:hidden z-20">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-3 py-2 rounded-full">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                 </div>
 
-                <div className="w-full max-w-[420px] px-6 py-10">
+                <div className="w-full max-w-[420px] px-6 py-10 relative z-10 bg-white lg:bg-transparent rounded-3xl lg:rounded-none mx-4 lg:mx-0 shadow-2xl lg:shadow-none my-10 lg:my-0">
                     {/* Logo */}
                     <div className="text-center mb-6">
                         <Link to="/" className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 inline-block mb-4">
