@@ -634,7 +634,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-4 py-3 text-right sticky right-0 bg-white/95 backdrop-blur-sm border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50/95 transition-colors z-0">
+                                        <td className="px-4 py-3 text-right sticky right-0 bg-white/95 backdrop-blur-sm border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50/95 transition-colors z-[15]">
                                             <div className="flex items-center justify-end gap-1">
                                                 {/* Edit */}
                                                 <button

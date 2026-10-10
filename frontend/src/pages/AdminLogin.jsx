@@ -78,15 +78,15 @@ export default function AdminLogin() {
             {/* Content Container */}
             <div className="relative z-10 w-full max-w-[440px] flex flex-col gap-6 items-center">
                 
-                {/* Header elements: Logo & Title */}
-                <div className="text-center w-full">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-[13px] font-semibold mb-6 group bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
+                {/* Header elements: Unified Header */}
+                <div className="w-full flex items-center justify-between mb-8 px-2">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white transition-colors text-sm font-semibold group bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
                         <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                     
-                    <div className="bg-white/10 p-4 rounded-3xl backdrop-blur-md border border-white/20 inline-block mb-6 shadow-xl">
-                        <img src="/logo.png" alt="JYNM" className="h-10 sm:h-12 w-auto drop-shadow-lg brightness-0 invert" onError={e => e.currentTarget.style.display='none'} />
+                    <div className="bg-white/10 p-2 sm:px-4 sm:py-2.5 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl flex items-center justify-center">
+                        <img src="/logo.png" alt="JYNM" className="h-7 sm:h-9 w-auto object-contain drop-shadow-lg" onError={e => e.currentTarget.style.display='none'} />
                     </div>
                 </div>
 

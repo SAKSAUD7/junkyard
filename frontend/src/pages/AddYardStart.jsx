@@ -158,12 +158,19 @@ export default function AddYardStart() {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/80" />
                 </div>
                 
-                <div className="relative z-10 max-w-lg mt-8">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-[13px] font-semibold mb-12 group bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20">
+                {/* Header elements: Unified Header */}
+                <div className="relative z-10 w-full flex items-center justify-between mb-8">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white transition-colors text-sm font-semibold group bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
                         <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                     
+                    <div className="bg-white/10 p-2 sm:px-4 sm:py-2 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl flex items-center justify-center">
+                        <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow-lg" onError={e => e.currentTarget.style.display='none'} />
+                    </div>
+                </div>
+                
+                <div className="relative z-10 max-w-lg mt-4">
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-blue-300 mb-6">
                         <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
                         JYNM Vendor Network
@@ -205,19 +212,19 @@ export default function AddYardStart() {
                     <div className="absolute inset-0 bg-white/95" />
                 </div>
                 
-                {/* Mobile Back Link */}
-                <div className="absolute top-6 left-6 lg:hidden z-20">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-800 text-[13px] font-semibold bg-slate-100 border border-slate-200 px-3 py-2 rounded-full shadow-sm">
+                {/* Mobile Back Link & Logo */}
+                <div className="absolute top-4 left-4 right-4 sm:top-5 sm:left-5 sm:right-5 lg:hidden z-20 flex justify-between items-center">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 text-[13px] font-semibold bg-white/50 backdrop-blur border border-slate-200 px-3 py-2 rounded-full shadow-sm hover:bg-white/80 transition-all">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
+                    <div className="bg-white/50 p-2 rounded-xl backdrop-blur-md border border-slate-200 shadow-sm flex items-center justify-center">
+                        <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow" onError={e => e.currentTarget.style.display='none'} />
+                    </div>
                 </div>
 
                 <div className="relative z-10 w-full max-w-md mx-auto my-auto pt-16 lg:pt-0">
                     <div className="mb-8">
-                        <div className="bg-slate-50 p-3 rounded-2xl shadow-sm border border-slate-200 inline-block mb-6">
-                            <img src="/logo.png" alt="JYNM" className="h-8 sm:h-10 w-auto" onError={e => e.currentTarget.style.display = 'none'} />
-                        </div>
                         <h2 className="text-[26px] font-black tracking-tight text-slate-900 mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {mode === 'signup' ? 'List Your Junkyard' : 'Vendor Sign In'}
                         </h2>

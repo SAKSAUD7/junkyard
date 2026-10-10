@@ -50,10 +50,18 @@ const VendorLogin = () => {
 
                 {/* Top section */}
                 <div className="relative z-10">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] font-semibold mb-12 group bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20">
-                        <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        Back Home
-                    </Link>
+                    {/* Header elements: Unified Header */}
+                    <div className="w-full flex items-center justify-between mb-8">
+                        <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white transition-colors text-sm font-semibold group bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
+                            <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            Back Home
+                        </Link>
+                        
+                        <div className="bg-white/10 p-2 sm:px-4 sm:py-2 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl flex items-center justify-center">
+                            <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow-lg" onError={e => e.currentTarget.style.display='none'} />
+                        </div>
+                    </div>
+                    
                     <div className="inline-flex items-center gap-2 bg-blue-500/25 border border-blue-400/40 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-blue-300 mb-5">
                         🏪 Yard Partner Portal
                     </div>
@@ -91,20 +99,19 @@ const VendorLogin = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-800/80" />
                 </div>
 
-                {/* Mobile — back link */}
-                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 lg:hidden z-20">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-3 py-2 rounded-full shadow-sm hover:bg-white/20 transition-all">
+                {/* Mobile — back link & Logo */}
+                <div className="absolute top-4 left-4 right-4 sm:top-5 sm:left-5 sm:right-5 lg:hidden z-20 flex justify-between items-center">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-3 py-2 rounded-full shadow-sm hover:bg-white/20 transition-all">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
+                    <div className="bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20 shadow-sm flex items-center justify-center">
+                        <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow" onError={e => e.currentTarget.style.display='none'} />
+                    </div>
                 </div>
 
                 <div className="w-full max-w-[420px] px-5 sm:px-6 py-6 sm:py-10 relative z-10 bg-white lg:bg-transparent rounded-3xl lg:rounded-none shadow-2xl lg:shadow-none m-4 mt-24 sm:mt-16 md:m-0 my-auto lg:my-0 lg:mx-0">
-                    {/* Logo */}
                     <div className="text-center mb-6">
-                        <Link to="/" className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 inline-block mb-4">
-                            <img src="/logo.png" alt="JYNM" className="h-10 w-auto" onError={e => e.currentTarget.style.display = 'none'} />
-                        </Link>
                         {/* Mobile portal badge */}
                         <div className="lg:hidden inline-flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-700 mb-3 mx-auto">
                             🏪 Yard Partner Portal

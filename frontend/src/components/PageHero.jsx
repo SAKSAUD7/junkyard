@@ -36,7 +36,7 @@ export default function PageHero({
             {/* Background Image Engine */}
             <div 
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] ease-linear scale-110"
-                style={{ backgroundImage: `url(${resolvedBg})` }}
+                style={{ backgroundImage: `url('${resolvedBg}')` }}
             />
             
             {/* Core Dark Overlay */}
