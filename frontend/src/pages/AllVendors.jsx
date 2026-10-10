@@ -12,6 +12,7 @@ import { useCMS } from '../hooks/useCMS';
 import VendorCard from '../components/VendorCard';
 import PromoBanner from '../components/PromoBanner';
 import { getCollectionPageSchema } from '../utils/structuredData';
+import PageHero from '../components/PageHero';
 
 const US_STATES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
 
@@ -90,92 +91,78 @@ const AllVendors = () => {
             <Navbar />
 
             {/* ── HERO ── */}
-            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
-                {/* Decorative blobs */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
-
-                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col items-center gap-10">
-                    <div className="text-center w-full max-w-3xl flex flex-col items-center">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
-                            <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">
-                                {get('hero', 'badge', '50 States • Verified Yards').replace('Verified Yards', totalCount > 0 ? `${totalCount.toLocaleString()}+ Verified Yards` : '6,500+ Verified Yards')}
-                            </span>
-                        </div>
-
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            {get('hero', 'heading', 'Find Trusted Junkyards')} <span className="text-blue-600">{get('hero', 'heading_accent', 'Near You')}</span>
-                        </h1>
-                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-                            {get('hero', 'subheading', 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.')}
-                        </p>
-
-                        {/* Search Bar */}
-                        <div className="max-w-3xl mx-auto w-full">
-                            <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-2xl p-2 flex flex-col sm:flex-row gap-2">
-                                {/* Name/ZIP input */}
-                                <div className="flex-[2] relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                    </div>
-                                    <input
-                                        id="vendor-search"
-                                        type="text"
-                                        value={searchTerm}
-                                        onChange={handleSearchChange}
-                                        placeholder={get('hero', 'search_placeholder', 'Search by name, city, or ZIP...')}
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white rounded-xl border border-slate-100 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all"
-                                    />
-                                </div>
-                                {/* State dropdown */}
-                                <div className="flex-1 relative" style={{ minWidth: '220px' }}>
-                                    <JYNMSelect
-                                        value={selectedState}
-                                        onChange={(val) => handleStateChange({ target: { value: val } })}
-                                        options={[
-                                            { value: "", label: "All States" },
-                                            ...US_STATES.map(s => ({ value: s, label: STATE_NAMES[s] || s }))
-                                        ]}
-                                        placeholder="All States"
-                                        searchable={true}
-                                    />
-                                </div>
-                                {/* Search Button */}
-                                <button className="px-7 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.25)] whitespace-nowrap text-[14px]">
-                                    {get('hero', 'search_btn', 'Search Yards')}
-                                </button>
+            <PageHero
+                page="vendors"
+                tag={get('hero', 'badge', '50 States • Verified Yards').replace('Verified Yards', totalCount > 0 ? `${totalCount.toLocaleString()}+ Verified Yards` : '6,500+ Verified Yards')}
+                title={get('hero', 'heading', 'Find Trusted Junkyards')}
+                titleAccent={get('hero', 'heading_accent', 'Near You')}
+                subtitle={get('hero', 'subheading', 'Connect with verified salvage yards across the U.S. and find the exact auto parts you need — fast.')}
+                backgroundImage="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1920"
+                height="large"
+            >
+                {/* Search Bar Inner */}
+                <div className="max-w-3xl mx-auto w-full mt-4">
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl p-2 flex flex-col sm:flex-row gap-2">
+                        {/* Name/ZIP input */}
+                        <div className="flex-[2] relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
-                            {/* Active filters */}
-                            {(searchTerm || selectedState) && (
-                                <div className="flex items-center justify-center lg:justify-start gap-3 mt-4 flex-wrap">
-                                    {searchTerm && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-100 text-blue-700 rounded-full text-[12px] font-bold">
-                                            "{searchTerm}"
-                                            <button onClick={() => setSearchParams({ search: '', state: selectedState, page: 1 })} className="hover:text-blue-900">✕</button>
-                                        </span>
-                                    )}
-                                    {selectedState && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-full text-[12px] font-bold">
-                                            {STATE_NAMES[selectedState] || selectedState}
-                                            <button onClick={() => setSearchParams({ search: searchTerm, state: '', page: 1 })} className="hover:text-indigo-900">✕</button>
-                                        </span>
-                                    )}
-                                    <button onClick={handleClearFilters} className="text-[12px] font-bold text-red-500 hover:text-red-700 transition">
-                                        Clear all
-                                    </button>
-                                </div>
-                            )}
+                            <input
+                                id="vendor-search"
+                                type="text"
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                                placeholder={get('hero', 'search_placeholder', 'Search by name, city, or ZIP...')}
+                                className="w-full pl-12 pr-4 py-3.5 bg-white shadow-inner rounded-xl border border-transparent text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            />
                         </div>
+                        {/* State dropdown */}
+                        <div className="flex-1 relative" style={{ minWidth: '220px' }}>
+                            <JYNMSelect
+                                value={selectedState}
+                                onChange={(val) => handleStateChange({ target: { value: val } })}
+                                options={[
+                                    { value: "", label: "All States" },
+                                    ...US_STATES.map(s => ({ value: s, label: STATE_NAMES[s] || s }))
+                                ]}
+                                placeholder="All States"
+                                searchable={true}
+                            />
+                        </div>
+                        {/* Search Button */}
+                        <button className="px-7 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-[0_8px_20px_rgb(37,99,235,0.4)] whitespace-nowrap text-[14px]">
+                            {get('hero', 'search_btn', 'Search Yards')}
+                        </button>
                     </div>
 
-                    {/* Promo Banner Bottom */}
-                    <div className="w-full">
-                        <PromoBanner />
-                    </div>
+                    {/* Active filters */}
+                    {(searchTerm || selectedState) && (
+                        <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
+                            {searchTerm && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/20 border border-blue-400/30 text-blue-100 rounded-full text-[12px] font-bold backdrop-blur-md">
+                                    "{searchTerm}"
+                                    <button onClick={() => setSearchParams({ search: '', state: selectedState, page: 1 })} className="hover:text-white">✕</button>
+                                </span>
+                            )}
+                            {selectedState && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-500/20 border border-indigo-400/30 text-indigo-100 rounded-full text-[12px] font-bold backdrop-blur-md">
+                                    {STATE_NAMES[selectedState] || selectedState}
+                                    <button onClick={() => setSearchParams({ search: searchTerm, state: '', page: 1 })} className="hover:text-white">✕</button>
+                                </span>
+                            )}
+                            <button onClick={handleClearFilters} className="text-[12px] font-bold text-slate-300 hover:text-white transition drop-shadow-sm">
+                                Clear all
+                            </button>
+                        </div>
+                    )}
                 </div>
-            </section>
+            </PageHero>
+
+            {/* Promo Banner */}
+            <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-30">
+                <PromoBanner />
+            </div>
 
             {/* ── MAIN CONTENT ── */}
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-10">

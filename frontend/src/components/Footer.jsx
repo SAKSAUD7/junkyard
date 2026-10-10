@@ -51,7 +51,7 @@ export default function Footer() {
     )
 
     return (
-        <footer className="bg-white border-t border-slate-100 pt-10 pb-6"
+        <footer id="site-footer" className="bg-white border-t border-slate-100 pt-10 pb-6"
             style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 

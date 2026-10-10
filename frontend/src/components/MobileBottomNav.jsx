@@ -6,7 +6,31 @@ export default function MobileBottomNav() {
     const location = useLocation();
     const { isAuthenticated } = useContext(AuthContext);
     const [moreOpen, setMoreOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
     const moreMenuRef = useRef(null);
+
+    // Hide navigation when footer comes into view
+    useEffect(() => {
+        const checkFooter = () => {
+            const footer = document.getElementById('site-footer');
+            if (!footer) return;
+            
+            const observer = new IntersectionObserver((entries) => {
+                setIsVisible(!entries[0].isIntersecting);
+            }, { rootMargin: "50px", threshold: 0.01 });
+            
+            observer.observe(footer);
+            return observer;
+        };
+        
+        // Small delay to ensure DOM is ready after navigation
+        const timer = setTimeout(() => {
+            const observer = checkFooter();
+            return () => observer && observer.disconnect();
+        }, 300);
+        
+        return () => clearTimeout(timer);
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -48,7 +72,7 @@ export default function MobileBottomNav() {
             
             {/* iOS/Android style bottom tab bar */}
             {/* Ultra-transparent frosted glass so content below is still visible */}
-            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/40 backdrop-blur-3xl border-t border-white/30 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitBackdropFilter: 'blur(24px)' }}>
+            <div className={`fixed bottom-0 left-0 right-0 z-[100] bg-white/40 backdrop-blur-3xl border-t border-white/30 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ease-out ${isVisible ? 'translate-y-0' : 'translate-y-full opacity-0'}`} style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitBackdropFilter: 'blur(24px)' }}>
                 
                 {/* Expandable "More" Menu overlay */}
                 {moreOpen && (
@@ -98,7 +122,7 @@ export default function MobileBottomNav() {
                         <span className="text-[10px] font-bold tracking-tight">Home</span>
                     </Link>
                     
-                    <Link to="/junkyards-by-location" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/junkyards') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>
+                    <Link to="/junkyards" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/junkyards') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}>
                         <svg className="w-[22px] h-[22px]" fill={isActive('/junkyards') ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive('/junkyards') ? 0 : 2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <span className="text-[10px] font-bold tracking-tight">Yards</span>
                     </Link>

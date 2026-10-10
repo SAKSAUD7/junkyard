@@ -1130,10 +1130,251 @@ function MediaLibrary({ onToast }) {
     );
 }
 
+// ─── Hero Images Panel ───────────────────────────────────────────────────────
+const HERO_PAGES = [
+    { key: 'home',          label: 'Home',            bgDefault: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'about',         label: 'About Us',        bgDefault: 'https://images.unsplash.com/photo-1590240974864-8eff38640196?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'contact',       label: 'Contact',         bgDefault: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'how_it_works',  label: 'How It Works',    bgDefault: 'https://images.unsplash.com/photo-1600705593881-229f3458bf51?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'vendors',       label: 'All Junkyards',   bgDefault: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'browse',        label: 'Browse by State', bgDefault: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'faq',           label: 'FAQ',             bgDefault: 'https://images.unsplash.com/photo-1507208882008-8422709e3e3b?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'quote_request', label: 'Quote Request',   bgDefault: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'sell_your_car', label: 'Sell Your Car',   bgDefault: 'https://images.unsplash.com/photo-1581266064-4dce3e2af8a3?auto=format&fit=crop&q=80&w=1920' },
+];
+
+function HeroImagesPanel({ onToast }) {
+    // State: map from page_key → { id, value (URL) }
+    const [heroData, setHeroData] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState({});
+    const [uploading, setUploading] = useState({});
+    const fileRefs = useRef({});
+
+    const fetchHeroImages = useCallback(async () => {
+        setLoading(true);
+        try {
+            const promises = HERO_PAGES.map(p =>
+                api.cms.getContent(p.key).then(res => ({ key: p.key, entries: res?.data || [] }))
+            );
+            const results = await Promise.allSettled(promises);
+            const map = {};
+            results.forEach(r => {
+                if (r.status !== 'fulfilled') return;
+                const { key, entries } = r.value;
+                const heroEntry = entries.find(e => e.section === 'hero' && e.key === 'background_image');
+                map[key] = { id: heroEntry?.id || null, value: heroEntry?.value || '' };
+            });
+            setHeroData(map);
+        } catch (e) {
+            onToast('Failed to load hero images', 'error');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { fetchHeroImages(); }, [fetchHeroImages]);
+
+    const handleUpload = async (pageKey, file) => {
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) { onToast('File too large (max 10 MB)', 'error'); return; }
+        setUploading(prev => ({ ...prev, [pageKey]: true }));
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', `hero_${pageKey}`);
+            const baseURL = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${baseURL}/api/cms/admin/media/`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+                body: formData,
+            });
+            if (!res.ok) throw new Error('Upload failed');
+            const data = await res.json();
+            const url = data.resolved_url || data.url || data.file || '';
+            setHeroData(prev => ({ ...prev, [pageKey]: { ...prev[pageKey], value: url, dirty: true } }));
+        } catch (e) {
+            onToast(`Upload failed: ${e.message}`, 'error');
+        } finally {
+            setUploading(prev => ({ ...prev, [pageKey]: false }));
+        }
+    };
+
+    const handleSave = async (pageKey) => {
+        const entry = heroData[pageKey];
+        if (!entry) return;
+        setSaving(prev => ({ ...prev, [pageKey]: true }));
+        try {
+            const payload = {
+                page: pageKey,
+                section: 'hero',
+                key: 'background_image',
+                value: entry.value,
+                content_type: 'image',
+                label: `Hero Background Image`,
+            };
+            let updatedEntry;
+            if (entry.id) {
+                updatedEntry = await api.cms.updateContent(entry.id, payload);
+            } else {
+                updatedEntry = await api.cms.createContent(payload);
+            }
+            setHeroData(prev => ({
+                ...prev,
+                [pageKey]: { id: updatedEntry?.id || entry.id, value: entry.value, dirty: false },
+            }));
+            onToast('Hero image saved', 'success');
+        } catch (e) {
+            onToast('Save failed. Check that CMS API supports create/update.', 'error');
+        } finally {
+            setSaving(prev => ({ ...prev, [pageKey]: false }));
+        }
+    };
+
+    const handleReset = (pageKey) => {
+        const page = HERO_PAGES.find(p => p.key === pageKey);
+        setHeroData(prev => ({
+            ...prev,
+            [pageKey]: { ...prev[pageKey], value: page?.bgDefault || '', dirty: true },
+        }));
+    };
+
+    return (
+        <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-200 px-6 py-5 flex items-center justify-between flex-shrink-0">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex-shrink-0">
+                            <PhotoIcon className="w-4 h-4" />
+                        </span>
+                        Page Hero Images
+                    </h1>
+                    <p className="text-sm text-slate-400 mt-1">Upload custom background images for each public page header</p>
+                </div>
+                <button
+                    onClick={fetchHeroImages}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-all"
+                >
+                    <ArrowPathIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    Refresh
+                </button>
+            </div>
+
+            {/* Grid */}
+            <div className="flex-1 overflow-y-auto p-6">
+                {loading ? (
+                    <div className="flex items-center justify-center h-64 gap-3">
+                        <ArrowPathIcon className="w-6 h-6 text-indigo-400 animate-spin" />
+                        <span className="text-slate-500 text-sm">Loading hero images…</span>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {HERO_PAGES.map(page => {
+                            const entry = heroData[page.key] || { value: '', dirty: false };
+                            const previewUrl = entry.value || page.bgDefault;
+                            const isDirty = !!entry.dirty;
+
+                            return (
+                                <div key={page.key} className={`bg-white rounded-2xl border overflow-hidden shadow-sm transition-all ${
+                                    isDirty ? 'border-indigo-300 shadow-indigo-100' : 'border-slate-200'
+                                }`}>
+                                    {/* Preview Area */}
+                                    <div
+                                        className="relative h-48 bg-slate-900 overflow-hidden cursor-pointer group"
+                                        onClick={() => fileRefs.current[page.key]?.click()}
+                                    >
+                                        <img
+                                            src={previewUrl}
+                                            alt={page.label + ' hero'}
+                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+                                            onError={e => { e.target.style.display = 'none'; }}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                                        {/* Page Label */}
+                                        <div className="absolute bottom-3 left-3">
+                                            {isDirty && <span className="inline-flex items-center gap-1 mb-1 px-2 py-0.5 bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider rounded-full">Unsaved</span>}
+                                            <h3 className="text-white font-black text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>{page.label}</h3>
+                                        </div>
+
+                                        {/* Upload overlay */}
+                                        {uploading[page.key] ? (
+                                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                <ArrowPathIcon className="w-8 h-8 text-white animate-spin" />
+                                            </div>
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="bg-white/90 backdrop-blur-sm text-slate-900 text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2">
+                                                    <ArrowUpTrayIcon className="w-4 h-4" />
+                                                    Click to upload new image
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <input
+                                            ref={el => fileRefs.current[page.key] = el}
+                                            type="file"
+                                            accept="image/png,image/jpeg,image/webp"
+                                            className="hidden"
+                                            onChange={e => handleUpload(page.key, e.target.files?.[0])}
+                                        />
+                                    </div>
+
+                                    {/* Card Footer */}
+                                    <div className="p-4 space-y-3">
+                                        {/* URL Input */}
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Background URL</label>
+                                            <input
+                                                type="text"
+                                                value={entry.value}
+                                                placeholder={page.bgDefault}
+                                                onChange={e => setHeroData(prev => ({
+                                                    ...prev,
+                                                    [page.key]: { ...prev[page.key], value: e.target.value, dirty: true },
+                                                }))}
+                                                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-700 font-mono focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                                            />
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handleReset(page.key)}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded-lg hover:bg-slate-200 transition-all"
+                                            >
+                                                <ArrowPathIcon className="w-3.5 h-3.5" /> Default
+                                            </button>
+                                            <button
+                                                onClick={() => handleSave(page.key)}
+                                                disabled={saving[page.key] || !isDirty}
+                                                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                                                    isDirty
+                                                        ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/20'
+                                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                }`}
+                                            >
+                                                {saving[page.key]
+                                                    ? <><ArrowPathIcon className="w-3.5 h-3.5 animate-spin" /> Saving…</>
+                                                    : <><CheckIcon className="w-3.5 h-3.5" /> Save Image</>}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 // ─── Main CMS Component ───────────────────────────────────────────────────────
 export default function CMS() {
     const { invalidatePage } = useCMSContext();
-    const [tab, setTab]           = useState('content'); // 'content' | 'media'
+    const [tab, setTab]           = useState('content'); // 'content' | 'media' | 'hero'
     const [activePage, setActivePage] = useState('dashboard');
     const [allEntries, setAllEntries] = useState([]);
     const [loading, setLoading]   = useState(true);
@@ -1270,8 +1511,16 @@ export default function CMS() {
                             <button onClick={() => { setActivePage('dashboard'); setTab('content'); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === 'dashboard' && tab === 'content' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
                                 <GlobeAltIcon className="w-4 h-4 flex-shrink-0" /> Website Content
                             </button>
+                            <button onClick={() => setTab('media')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${tab === 'media' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
+                                <PhotoIcon className="w-4 h-4 flex-shrink-0" /> Media Library
+                            </button>
+                            <button onClick={() => setTab('hero')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${tab === 'hero' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
+                                <FilmIcon className="w-4 h-4 flex-shrink-0" /> Hero Images
+                                <span className="ml-auto text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">New</span>
+                            </button>
                         </nav>
                     </div>
+
 
                     {/* PAGES */}
                     <div>
@@ -1323,6 +1572,8 @@ export default function CMS() {
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {tab === 'media' ? (
                     <MediaLibrary onToast={addToast} />
+                ) : tab === 'hero' ? (
+                    <HeroImagesPanel onToast={addToast} />
                 ) : activePage === 'dashboard' ? (
                     <div className="flex-1 overflow-y-auto p-8 bg-[#f8fafc]">
                         <div className="max-w-6xl mx-auto">

@@ -70,27 +70,6 @@ export default function AdminSettings() {
     });
     const [passwordLoading, setPasswordLoading] = useState(false);
 
-    // Initialize dark mode from localStorage
-    const [darkMode, setDarkMode] = useState(() => {
-        const saved = localStorage.getItem('darkMode');
-        return saved === 'true';
-    });
-
-    // Apply dark mode to document when state changes
-    useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('darkMode', 'true');
-            showToast('Dark mode enabled', 'success');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('darkMode', 'false');
-            if (localStorage.getItem('darkMode') !== null) {
-                showToast('Dark mode disabled', 'success');
-            }
-        }
-    }, [darkMode]);
-
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 3000);
@@ -306,34 +285,10 @@ export default function AdminSettings() {
                             <div className="p-2 bg-gradient-to-br from-slate-500 to-pink-500 rounded-lg">
                                 <PaintBrushIcon className="h-5 w-5 text-slate-900" />
                             </div>
-                            <h3 className="text-lg font-bold text-[#1f2937]">Appearance</h3>
+                            <h3 className="text-lg font-bold text-[#1f2937]">System Settings</h3>
                         </div>
                     </div>
                     <div className="p-6 space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl hover:border-blue-600 transition-colors">
-                            <div className="flex items-center gap-3">
-                                {darkMode ? (
-                                    <MoonIcon className="h-5 w-5 text-[#6b7280]" />
-                                ) : (
-                                    <SunIcon className="h-5 w-5 text-[#6b7280]" />
-                                )}
-                                <div>
-                                    <p className="text-sm font-semibold text-[#1f2937]">Dark Mode</p>
-                                    <p className="text-xs text-[#6b7280]">Toggle dark theme</p>
-                                </div>
-                            </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="sr-only peer"
-                                    checked={darkMode}
-                                    onChange={(e) => setDarkMode(e.target.checked)}
-                                />
-                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-[#6366f1] peer-checked:to-[#8b5cf6]"></div>
-                            </label>
-                        </div>
-
-                        <div className="pt-4 border-t border-slate-100">
                             <label className="block text-xs font-bold text-[#6b7280] mb-3 uppercase tracking-wide">System Information</label>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
@@ -350,7 +305,6 @@ export default function AdminSettings() {
                         </div>
                     </div>
                 </div>
-            </div>
 
             {/* Danger Zone */}
             <div className="bg-white rounded-xl shadow-sm border-2 border-red-200 overflow-hidden">

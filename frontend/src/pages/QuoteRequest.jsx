@@ -10,6 +10,7 @@ import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaire
 import LoginModal from '../components/auth/LoginModal'
 import SignupModal from '../components/auth/SignupModal'
 import JYNMSelect from '../components/JYNMSelect'
+import PageHero from '../components/PageHero'
 
 const US_STATES = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
 
@@ -205,38 +206,23 @@ export default function QuoteRequest() {
             />
             <Navbar />
 
-            <div className="flex-1 pt-12 md:pt-16 pb-20">
-                <div className="max-w-xl mx-auto px-4 sm:px-6">
-                    {/* Header Banner */}
-                    <div className="text-center mb-10">
-                        <div className="inline-flex items-center px-4 py-1.5 rounded-full mb-6 bg-blue-50 text-blue-600 text-[13px] font-bold border border-blue-100">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse" />
-                            Getting Quotes For
-                        </div>
-                        
-                        {make && model && year ? (
-                            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {year} {make} {model} <br/>
-                                <span className="text-blue-600">{part}</span>
-                            </h1>
-                        ) : (
-                            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {cmsData.hero_heading ? (
-                                    <span dangerouslySetInnerHTML={{ __html: cmsData.hero_heading }} />
-                                ) : (
-                                    <>Request an <span className="text-blue-600">Instant Quote</span></>
-                                )}
-                            </h1>
-                        )}
-                        <p className="mt-4 text-slate-500 font-medium">
-                            {cmsData.instruction_text ? (
-                                <span dangerouslySetInnerHTML={{ __html: cmsData.instruction_text }} />
-                            ) : (
-                                'Complete the fields below to connect with verified auto salvage yards nationwide.'
-                            )}
-                        </p>
-                    </div>
+            <PageHero
+                page="quote_request"
+                tag={
+                    <span className="flex items-center">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+                        Getting Quotes For
+                    </span>
+                }
+                title={make && model && year ? `${year} ${make} ${model}` : (cmsData.hero_heading ? cmsData.hero_heading.replace(/<[^>]*>?/gm, '') : 'Request an')}
+                titleAccent={make && model && year ? part : (cmsData.hero_heading ? '' : 'Instant Quote')}
+                subtitle={cmsData.instruction_text ? cmsData.instruction_text.replace(/<[^>]*>?/gm, '') : 'Complete the fields below to connect with verified auto salvage yards nationwide.'}
+                backgroundImage="https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920"
+                height="large"
+            />
 
+            <div className="flex-1 pb-20 relative bg-slate-50">
+                <div className="relative max-w-xl mx-auto px-4 sm:px-6 z-20 -mt-24">
                     {/* Main Form Container */}
                     <div className="bg-white rounded-3xl shadow-[0_8px_40px_rgba(37,99,235,0.06)] border border-blue-100 overflow-hidden">
                         

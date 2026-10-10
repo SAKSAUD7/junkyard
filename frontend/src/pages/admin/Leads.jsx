@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Toast from '../../components/Toast';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import { TableToolbar } from '../../components/admin/TableToolbar';
 
 export default function AdminLeads() {
     const { token } = useContext(AuthContext);
@@ -254,18 +255,11 @@ export default function AdminLeads() {
             </div>
 
             {/* ── Filters ───────────────────────────────────────────────────── */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
-                <div className="relative max-w-md">
-                    <input
-                        type="text"
-                        placeholder="Search leads, vendors, messages..."
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
-                </div>
-            </div>
+            <TableToolbar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+                searchPlaceholder="Search leads, models, forms..."
+            />
 
             {/* ── Bulk Actions ──────────────────────────────────────────────── */}
             {selectedIds.length > 0 && (
@@ -348,13 +342,13 @@ export default function AdminLeads() {
                                             <td className="px-4 py-3 text-xs text-slate-500">
                                                 {new Date(lead.created_at).toLocaleDateString()}
                                             </td>
-                                            <td className="px-4 py-3 text-right">
+                                            <td className="px-4 py-3 text-right sticky right-0 bg-white/95 backdrop-blur-sm border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50/95 transition-colors z-0">
                                                 <button
                                                     onClick={() => setSelectedLead(lead)}
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-md text-xs font-semibold hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 shadow-sm transition-all"
+                                                    className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                                    title="View Lead"
                                                 >
-                                                    <EyeIcon className="h-3.5 w-3.5" />
-                                                    View
+                                                    <EyeIcon className="h-6 w-6" />
                                                 </button>
                                             </td>
                                         </tr>

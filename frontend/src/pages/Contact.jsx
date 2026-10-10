@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import SEO from '../components/SEO'
 import { api } from '../services/api'
 import JYNMSelect from '../components/JYNMSelect'
+import PageHero from '../components/PageHero'
 
 // Floating animated orb background
 function Orb({ className }) {
@@ -131,34 +132,28 @@ export default function Contact() {
 
 
 
-            {/* ─── MAIN OVERHAUL SPLIT LAYOUT ─── */}
-            <div className="relative overflow-hidden bg-slate-50 min-h-[calc(100vh-72px)] pb-24">
+            {/* ─── NEW PAGE HERO ─── */}
+            <PageHero
+                page="contact"
+                tag="24/7 Nationwide Support"
+                title="How can we"
+                titleAccent="help you?"
+                subtitle="Whether you're looking for a rare auto part, need help with your vendor account, or want to partner with us, our USA-based team is ready to assist."
+                backgroundImage="https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920"
+                height="large"
+            />
+
+            {/* ─── SPLIT LAYOUT FORM & INFO CARDS (OVERLAPPING HERO) ─── */}
+            <div className="relative bg-slate-50 pb-24">
                 
                 {/* Premium Background Elements */}
                 <Orb className="top-0 left-0 w-[600px] h-[600px] bg-blue-200/40 -translate-x-1/2 -translate-y-1/4 animate-pulse duration-10000" />
                 <Orb className="bottom-0 right-0 w-[500px] h-[500px] bg-indigo-200/40 translate-x-1/4 translate-y-1/4" />
                 
-                <section className="relative z-10 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 md:mt-24 grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-24 items-center">
+                <section className="relative z-20 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 -mt-24 grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-24 items-start">
                     
-                    {/* LEFT COLUMN - TEXT & PREMIUM INFO BOARDS */}
-                    <div className="order-2 lg:order-1 flex flex-col pt-4 lg:pt-0">
-                        
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-blue-100/50 border border-blue-200/50 w-fit">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-                            </span>
-                            <span className="text-blue-700 text-[11px] font-black uppercase tracking-widest">24/7 Nationwide Support</span>
-                        </div>
-
-                        <h2 className="text-4xl sm:text-5xl lg:text-[56px] leading-[1.1] font-black text-slate-900 mb-6 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            How can we <br className="hidden lg:block"/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">help you?</span>
-                        </h2>
-                        
-                        <p className="text-[17px] text-slate-500 mb-12 leading-relaxed max-w-lg font-medium">
-                            Whether you're looking for a rare auto part, need help with your vendor account, or want to partner with us, our USA-based team is ready to assist.
-                        </p>
+                    {/* LEFT COLUMN - PREMIUM INFO BOARDS */}
+                    <div className="order-2 lg:order-1 flex flex-col space-y-6 pt-4 lg:pt-0">
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                             {/* Contact Items Re-imagined */}

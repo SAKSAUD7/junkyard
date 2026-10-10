@@ -41,7 +41,7 @@ const VendorLogin = () => {
                 {/* Background image */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1400&auto=format&fit=crop"
+                        src={get('hero', 'background_image') || "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1400&auto=format&fit=crop"}
                         alt="Vendor at junkyard"
                         className="w-full h-full object-cover object-center"
                     />
@@ -87,7 +87,7 @@ const VendorLogin = () => {
             <div className="w-full lg:w-[460px] shrink-0 flex flex-col items-center justify-center relative bg-slate-900 lg:bg-white min-h-screen">
                 {/* Mobile background */}
                 <div className="absolute inset-0 z-0 lg:hidden block">
-                    <img src="https://images.unsplash.com/photo-1549317336-206569e8475c?auto=format&fit=crop&q=80&w=1400" alt="Vendor Mobile Background" className="w-full h-full object-cover object-center opacity-70" />
+                    <img src={get('hero', 'background_image') || "https://images.unsplash.com/photo-1549317336-206569e8475c?auto=format&fit=crop&q=80&w=1400"} alt="Vendor Mobile Background" className="w-full h-full object-cover object-center opacity-70" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-800/80" />
                 </div>
 

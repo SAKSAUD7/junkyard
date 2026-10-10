@@ -62,17 +62,17 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-hidden">
+        <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 overflow-hidden">
             <SEO title="Admin Login – JYNM" description="Restricted area." noindex={true} />
 
-            {/* Background Image - Bright Luxury Car */}
+            {/* Background Image - Bright Luxury Car with dark overlay */}
             <div className="absolute inset-0 z-0">
                 <img
                     src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2000&auto=format&fit=crop"
                     alt="Luxury Auto Background"
-                    className="w-full h-full object-cover opacity-30"
+                    className="w-full h-full object-cover opacity-50"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-slate-50/90 to-white/95"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/80 to-slate-900/95"></div>
             </div>
 
             {/* Content Container */}
@@ -80,13 +80,13 @@ export default function AdminLogin() {
                 
                 {/* Header elements: Logo & Title */}
                 <div className="text-center w-full">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors text-[13px] font-semibold mb-6 group bg-white/80 px-4 py-2 rounded-full backdrop-blur-md border border-slate-200 shadow-sm">
+                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-[13px] font-semibold mb-6 group bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
                         <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Back Home
                     </Link>
                     
-                    <div className="bg-white p-4 rounded-3xl backdrop-blur-md border border-slate-200 inline-block mb-6 shadow-xl">
-                        <img src="/logo.png" alt="JYNM" className="h-10 sm:h-12 w-auto drop-shadow-sm" onError={e => e.currentTarget.style.display='none'} />
+                    <div className="bg-white/10 p-4 rounded-3xl backdrop-blur-md border border-white/20 inline-block mb-6 shadow-xl">
+                        <img src="/logo.png" alt="JYNM" className="h-10 sm:h-12 w-auto drop-shadow-lg brightness-0 invert" onError={e => e.currentTarget.style.display='none'} />
                     </div>
                 </div>
 
@@ -173,9 +173,9 @@ export default function AdminLogin() {
                 </div>
 
                 {/* Footer Links */}
-                <div className="flex items-center justify-center gap-3 text-[13px] font-medium text-white/60">
+                <div className="flex items-center justify-center gap-3 text-[13px] font-medium text-white/50">
                     <Link to="/signin" className="hover:text-white transition-colors">User Login</Link>
-                    <span className="w-1 h-1 rounded-full bg-white/30"></span>
+                    <span className="w-1 h-1 rounded-full bg-white/20"></span>
                     <Link to="/vendor/login" className="hover:text-white transition-colors">Vendor Login</Link>
                 </div>
             </div>

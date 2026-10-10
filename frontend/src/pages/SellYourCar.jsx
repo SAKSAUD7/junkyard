@@ -8,6 +8,7 @@ import { api } from "../services/api";
 import AcceptJsCheckout from "../components/vendor/AcceptJsCheckout";
 import PostSubmissionFeedback from "../components/PostSubmissionFeedback";
 import JYNMSelect from "../components/JYNMSelect";
+import PageHero from "../components/PageHero";
 
 const SELL_VEHICLE_FEE = "9.99";
 
@@ -773,21 +774,19 @@ export default function SellYourCar() {
       <SEO title="Sell Your Vehicle | Junkyards Near Me" description="Submit your vehicle details." canonicalUrl="/sell-your-car" />
       <Navbar />
 
-      <div className="flex-1 w-full relative">
-        {/* Simple Page Header in JYNM style */}
-        <div className="bg-white border-b border-slate-100 py-8 md:py-16 text-center">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Sell Your Vehicle
-            </h1>
-            <p className="mt-4 text-slate-500 font-medium text-lg max-w-2xl mx-auto">
-              Tell us about your vehicle to request a quote. Provide your VIN or enter details manually below.
-            </p>
-          </div>
-        </div>
+      <PageHero
+          page="sell_your_car"
+        tag="Cash Offer Today"
+        title="Sell Your"
+        titleAccent="Vehicle"
+        subtitle="Tell us about your vehicle to request an instant cash offer. Use your VIN for autofill or enter details manually — it only takes 2 minutes."
+        backgroundImage="https://images.unsplash.com/photo-1581266064-4dce3e2af8a3?auto=format&fit=crop&q=80&w=1920"
+        height="large"
+      />
 
-        {/* Form Container (resembles homepage spacing) */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+      <div className="flex-1 w-full relative bg-slate-50">
+        {/* Form Container negative margin to overlap hero */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 -mt-20">
           {submitted ? (
             <SuccessScreen 
               vehicle={data} 

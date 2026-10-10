@@ -10,6 +10,7 @@ import SEO from '../components/SEO';
 import { getCollectionPageSchema, getBreadcrumbSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
 import AdCarousel from '../components/AdCarousel';
+import PageHero from '../components/PageHero';
 
 export default function BrowseStates() {
     const { get } = useCMS('browse');
@@ -90,29 +91,15 @@ export default function BrowseStates() {
             <Navbar />
 
             {/* ── HERO ── */}
-            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
-
-                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="text-center mb-4">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">{get('hero', 'badge', 'Interactive Map')}</span>
-                        </div>
-
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            {get('hero', 'heading', null)
-                                ? <span dangerouslySetInnerHTML={{ __html: get('hero', 'heading', '') }} />
-                                : <>Browse Junkyards <span className="text-blue-600">By State</span></>
-                            }
-                        </h1>
-                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
-                            {get('hero', 'subheading', 'Explore our interactive map. Find verified junkyards nationwide.')}
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <PageHero
+                page="browse"
+                tag={get('hero', 'badge', 'Interactive Map')}
+                title="Browse Junkyards"
+                titleAccent="By State"
+                subtitle={get('hero', 'subheading', 'Explore our interactive map. Find verified junkyards nationwide.')}
+                backgroundImage="https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&q=80&w=1920"
+                height="medium"
+            />
 
             <div className="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col-reverse lg:flex-row-reverse gap-6 lg:h-[calc(100vh-100px)] min-h-[600px] overflow-hidden">
                 

@@ -7,6 +7,7 @@ import { api } from '../services/api'
 
 import { useCMS } from '../hooks/useCMS'
 import AdCarousel from '../components/AdCarousel'
+import PageHero from '../components/PageHero'
 
 export default function About() {
     const { get } = useCMS('about')
@@ -102,37 +103,29 @@ export default function About() {
             />
             <Navbar />
 
-            {/* Clean Hero Section */}
-            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
+            <PageHero
+                page="about"
+                tag="About JunkYardsNearMe.com"
+                title="Expediting"
+                titleAccent="Your Search"
+                subtitle="Welcome to Junkyards Near Me — your source for listings, information and reviews of local junk yards and auto recyclers near you. We offer one of the most comprehensive listings of salvage yards across the United States and Canada."
+                backgroundImage="https://images.unsplash.com/photo-1590240974864-8eff38640196?auto=format&fit=crop&q=80&w=1920"
+                height="large"
+            />
 
-                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="text-center max-w-4xl mx-auto">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100 animate-fade-in-up">
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">About JunkYardsNearMe.com</span>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-6 tracking-tight animate-fade-in-up" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.05 }}>
-                            Expediting <span className="text-blue-600">Your Search</span>
-                        </h1>
-                        <p className="text-[17px] md:text-[20px] text-slate-500 font-medium max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-100">
-                            Welcome to Junkyards Near Me — your source for listings, information and reviews of local junk yards and auto recyclers near you. We offer one of the most comprehensive listings of salvage yards across the United States and Canada.
-                        </p>
-                    </div>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 animate-fade-in-up delay-200">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="p-8 rounded-2xl text-center bg-white border border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.15)] hover:-translate-y-1 hover:border-blue-600 hover:bg-blue-600 active:bg-blue-700 active:border-blue-700 active:scale-[0.98] transition-all duration-300 group cursor-default">
-                                <div className="text-4xl md:text-5xl font-black mb-2 text-slate-900 group-hover:text-white transition-colors" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-                                    {stat.value}
-                                </div>
-                                <div className="text-sm font-bold text-slate-500 group-hover:text-blue-100 uppercase tracking-widest transition-colors">{stat.label}</div>
+            {/* Stats Grid (Pulled up to overlap hero using negative margin) */}
+            <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-30 -mt-20 mb-12">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 animate-fade-in-up delay-200">
+                    {stats.map((stat, index) => (
+                        <div key={index} className="px-4 py-6 sm:p-8 rounded-2xl text-center bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_40px_rgb(37,99,235,0.15)] hover:-translate-y-1 hover:border-blue-600 hover:bg-blue-600 active:bg-blue-700 active:border-blue-700 active:scale-[0.98] transition-all duration-300 group cursor-default">
+                            <div className="text-3xl md:text-5xl font-black mb-1 sm:mb-2 text-slate-900 group-hover:text-white transition-colors" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                                {stat.value}
                             </div>
-                        ))}
-                    </div>
+                            <div className="text-[10px] sm:text-sm font-bold text-slate-500 group-hover:text-blue-100 uppercase tracking-widest transition-colors">{stat.label}</div>
+                        </div>
+                    ))}
                 </div>
-            </section>
+            </div>
 
             <div className="bg-white">
                 <AdCarousel slotGroup="carousel_1" page="about" title="Promoted Partners" />

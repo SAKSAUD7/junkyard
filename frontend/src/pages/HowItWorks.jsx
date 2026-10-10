@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { getHowToSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
+import PageHero from '../components/PageHero';
 
 const HowItWorks = () => {
     const navigate = useNavigate();
@@ -55,21 +56,16 @@ const HowItWorks = () => {
             />
             <Navbar />
 
-            {/* Pristine Light Hero */}
-            <section className="relative pt-32 pb-20 bg-white border-b border-slate-100 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50/80 rounded-full blur-[120px] pointer-events-none transform translate-x-1/3 -translate-y-1/4" />
-                <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-orange-50 border border-orange-100">
-                        <span className="text-orange-500 text-[11px] font-black uppercase tracking-widest">Simple Process</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-5" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}
-                        dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'How It <span class="text-blue-600">Works</span>') }}
-                    />
-                    <p className="text-lg text-slate-600 font-medium max-w-2xl mx-auto">
-                        {get('hero', 'subheading', "Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide.")}
-                    </p>
-                </div>
-            </section>
+            {/* Dynamic CMS Page Hero */}
+            <PageHero
+                page="how_it_works"
+                tag="Simple Process"
+                title="How It"
+                titleAccent="Works"
+                subtitle={get('hero', 'subheading', "Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide.")}
+                backgroundImage="https://images.unsplash.com/photo-1600705593881-229f3458bf51?auto=format&fit=crop&q=80&w=1920"
+                height="large"
+            />
 
             {/* Steps Grid */}
             <section className="py-20">

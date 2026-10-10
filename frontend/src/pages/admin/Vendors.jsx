@@ -32,6 +32,7 @@ import ImportVendorsModal from '../../components/admin/ImportVendorsModal';
 import ImportHistoryModal from '../../components/admin/ImportHistoryModal';
 import CopyButton from '../../components/common/CopyButton';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import { TableToolbar, TablePagination } from '../../components/admin/TableToolbar';
 
 // Enhanced Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -146,6 +147,7 @@ export default function AdminVendors() {
 
             const count = data.count || 0;
             setTotalVendors(count);
+            // Don't modify pageSize from state unless we need to reset it.
             setTotalPages(Math.ceil(count / pageSize));
 
             const [allVendorsData, activeVendorsData, inactiveVendorsData] = await Promise.all([
@@ -431,90 +433,60 @@ export default function AdminVendors() {
                 </div>
             </div>
 
-            {/* Filters & Actions Card */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
-                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                    {/* Status Filter Tabs */}
-                    <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-sm font-medium text-[#6b7280]">Filter:</span>
-                        {['all', 'active', 'inactive'].map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === tab
-                                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                                    }`}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Search & Action Buttons */}
-                    <div className="flex gap-3 w-full lg:w-auto flex-wrap">
-                        <div className="relative flex-1 lg:w-64">
-                            <input
-                                type="text"
-                                placeholder="Search vendors..."
-                                className="w-full pl-11 pr-4 py-2.5 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white text-sm transition-all"
-                                value={searchTerm}
-                                onChange={handleSearch}
-                            />
-                            <MagnifyingGlassIcon className="h-5 w-5 text-[#9ca3af] absolute left-3.5 top-3" />
-                        </div>
-
+            <TableToolbar
+                tabs={[
+                    { id: 'all', label: 'All' },
+                    { id: 'active', label: 'Active' },
+                    { id: 'inactive', label: 'Inactive' }
+                ]}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                searchTerm={searchTerm}
+                onSearchChange={handleSearch}
+                searchPlaceholder="Search vendors..."
+                actions={
+                    <>
                         <button
                             onClick={handleCreateClick}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center gap-2 whitespace-nowrap"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2 flex-1 lg:flex-none whitespace-nowrap"
                         >
                             <PlusIcon className="h-5 w-5" />
-                            Add Vendor
+                            <span className="hidden sm:inline">Add Vendor</span>
                         </button>
-
                         <button
                             onClick={() => setShowImportModal(true)}
-                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold shadow-sm transition-all flex items-center gap-2 whitespace-nowrap"
+                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2 flex-1 lg:flex-none whitespace-nowrap"
                         >
                             <ArrowUpTrayIcon className="h-5 w-5" />
-                            Import
+                            <span className="hidden sm:inline">Import</span>
                         </button>
-
                         <button
                             onClick={() => setShowHistoryModal(true)}
-                            className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+                            className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all flex-shrink-0"
                             title="Import History"
                         >
                             <ClockIcon className="h-5 w-5 text-[#6b7280]" />
                         </button>
-
                         <button
                             onClick={handleExport}
                             disabled={exporting}
-                            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap disabled:opacity-50 shadow-sm"
+                            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 text-sm font-semibold transition-all flex items-center justify-center gap-2 flex-1 lg:flex-none whitespace-nowrap disabled:opacity-50 shadow-sm"
                         >
                             {exporting ? (
                                 <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                    Exporting...
+                                    <span className="hidden sm:inline">Exporting...</span>
                                 </>
                             ) : (
                                 <>
                                     <ArrowDownTrayIcon className="h-5 w-5" />
-                                    Export CSV
+                                    <span className="hidden sm:inline">Export CSV</span>
                                 </>
                             )}
                         </button>
-                    </div>
-                </div>
-
-                {/* Results Count */}
-                <div className="mt-4 pt-4 border-t border-slate-100">
-                    <p className="text-sm text-[#6b7280]">
-                        Showing <span className="font-semibold text-[#1f2937]">{((page - 1) * 50) + 1}</span>–<span className="font-semibold text-[#1f2937]">{Math.min(page * 50, totalVendors)}</span> of <span className="font-semibold text-[#1f2937]">{totalVendors}</span> vendors
-                    </p>
-                </div>
-            </div>
+                    </>
+                }
+            />
 
             {/* Modern Table Card */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col relative w-full">
@@ -667,18 +639,18 @@ export default function AdminVendors() {
                                                 {/* Edit */}
                                                 <button
                                                     onClick={() => handleEditClick(vendor)}
-                                                    className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                                    className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-100"
                                                     title="Edit Vendor"
                                                     aria-label="Edit Vendor"
                                                 >
-                                                    <PencilSquareIcon className="h-4 w-4" />
+                                                    <PencilSquareIcon className="h-6 w-6" />
                                                 </button>
 
                                                 {/* Reset Password */}
                                                 <button
                                                     onClick={() => handleResetPassword(vendor)}
                                                     disabled={!vendor.is_active}
-                                                    className={`p-1.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-amber-100 ${
+                                                    className={`p-2.5 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-amber-100 ${
                                                         vendor.is_active
                                                             ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
                                                             : 'text-slate-200 cursor-not-allowed'
@@ -686,13 +658,13 @@ export default function AdminVendors() {
                                                     title={vendor.is_active ? 'Reset Password' : 'Activate vendor first'}
                                                     aria-label="Reset Password"
                                                 >
-                                                    <KeyIcon className="h-4 w-4" />
+                                                    <KeyIcon className="h-6 w-6" />
                                                 </button>
 
                                                 {/* Activate / Deactivate */}
                                                 <button
                                                     onClick={() => toggleStatus(vendor)}
-                                                    className={`p-1.5 rounded-lg transition-all focus:outline-none focus:ring-2 ${
+                                                    className={`p-2.5 rounded-xl transition-all focus:outline-none focus:ring-2 ${
                                                         vendor.is_active
                                                             ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 focus:ring-rose-100'
                                                             : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 focus:ring-emerald-100'
@@ -700,7 +672,7 @@ export default function AdminVendors() {
                                                     title={vendor.is_active ? 'Deactivate' : 'Activate'}
                                                     aria-label={vendor.is_active ? 'Deactivate' : 'Activate'}
                                                 >
-                                                    {vendor.is_active ? <PowerIcon className="h-4 w-4" /> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" /></svg>}
+                                                    {vendor.is_active ? <PowerIcon className="h-6 w-6" /> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" /></svg>}
                                                 </button>
                                             </div>
                                         </td>
@@ -713,75 +685,17 @@ export default function AdminVendors() {
 
                 {/* Pagination */}
                 {!loading && vendors.length > 0 && (
-                    <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
-                        <div className="flex items-center gap-4 text-sm text-slate-500">
-                            <div>
-                                Showing <span className="font-semibold text-slate-900">{((page - 1) * pageSize) + 1}</span>–<span className="font-semibold text-slate-900">{Math.min(page * pageSize, totalVendors)}</span> of <span className="font-semibold text-slate-900">{totalVendors}</span> vendors
-                            </div>
-                            <div className="hidden sm:block w-px h-4 bg-slate-200"></div>
-                            <div className="flex items-center gap-2">
-                                <label htmlFor="pageSize" className="hidden sm:block">Rows per page:</label>
-                                <select 
-                                    id="pageSize" 
-                                    value={pageSize} 
-                                    onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-                                    className="border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 bg-slate-50 py-1.5 pl-3 pr-8 shadow-sm"
-                                >
-                                    <option value={25}>25</option>
-                                    <option value={50}>50</option>
-                                    <option value={100}>100</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setPage(page - 1)}
-                                disabled={page === 1}
-                                className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-slate-100 text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
-                            >
-                                Previous
-                            </button>
-
-                            <div className="hidden sm:flex items-center gap-1">
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                    let pageNum;
-                                    if (totalPages <= 5) {
-                                        pageNum = i + 1;
-                                    } else if (page <= 3) {
-                                        pageNum = i + 1;
-                                    } else if (page >= totalPages - 2) {
-                                        pageNum = totalPages - 4 + i;
-                                    } else {
-                                        pageNum = page - 2 + i;
-                                    }
-                                    return (
-                                        <button
-                                            key={pageNum}
-                                            onClick={() => setPage(pageNum)}
-                                            className={`px-3 py-2 text-sm font-bold rounded-xl transition-all ${page === pageNum
-                                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-slate-900 shadow-sm shadow-blue-200'
-                                                : 'border-2 border-slate-100 text-[#374151] hover:bg-[#f9fafb]'
-                                                }`}
-                                        >
-                                            {pageNum}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="sm:hidden text-sm text-[#6b7280] px-3">
-                                Page {page} of {totalPages}
-                            </div>
-
-                            <button
-                                onClick={() => setPage(page + 1)}
-                                disabled={page === totalPages}
-                                className="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-slate-100 text-[#374151] hover:bg-[#f9fafb] disabled:hover:bg-white"
-                            >
-                                Next
-                            </button>
-                        </div>
-                    </div>
+                    <TablePagination
+                        page={page}
+                        totalItems={totalVendors}
+                        totalPages={totalPages}
+                        pageSize={pageSize}
+                        onPageChange={setPage}
+                        onPageSizeChange={(newSize) => {
+                            setPageSize(newSize);
+                            setPage(1);
+                        }}
+                    />
                 )}
             </div>
 

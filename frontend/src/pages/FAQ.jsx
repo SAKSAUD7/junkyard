@@ -5,6 +5,7 @@ import SEO from '../components/SEO';
 import { getFAQSchema } from '../utils/structuredData';
 import { useCMS } from '../hooks/useCMS';
 import AdCarousel from '../components/AdCarousel';
+import PageHero from '../components/PageHero';
 
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(null);
@@ -108,27 +109,15 @@ const FAQ = () => {
             <Navbar />
 
             {/* Clean Light Hero */}
-            <section className="relative pt-20 md:pt-28 pb-14 bg-white border-b border-slate-100 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none translate-x-1/3 -translate-y-1/4" />
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-50 rounded-full blur-[80px] opacity-40 pointer-events-none -translate-x-1/3 translate-y-1/4" />
-
-                <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 z-10">
-                    <div className="text-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-100">
-                            <span className="text-blue-600 text-[12px] font-bold uppercase tracking-widest">Help Center</span>
-                        </div>
-
-                        <h1 
-                            className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight" 
-                            style={{ fontFamily: "'Outfit', sans-serif" }}
-                            dangerouslySetInnerHTML={{ __html: get('hero', 'heading', 'Frequently Asked <span class="text-blue-600">Questions</span>') }}
-                        />
-                        <p className="text-[17px] text-slate-500 font-medium max-w-2xl mx-auto mb-2 leading-relaxed">
-                            {get('hero', 'subheading', 'Everything you need to know about finding and buying used auto parts through our platform.')}
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <PageHero
+                page="faq"
+                tag="Help Center"
+                title="Frequently Asked"
+                titleAccent="Questions"
+                subtitle={get('hero', 'subheading', 'Everything you need to know about finding and buying used auto parts through our platform.')}
+                backgroundImage="https://images.unsplash.com/photo-1507208882008-8422709e3e3b?auto=format&fit=crop&q=80&w=1920"
+                height="medium"
+            />
 
             <div className="bg-white">
                 <AdCarousel slotGroup="carousel_1" page="faq" title="Promoted Partners" />
