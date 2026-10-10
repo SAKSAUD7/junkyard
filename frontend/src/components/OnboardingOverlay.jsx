@@ -54,7 +54,6 @@ export default function OnboardingOverlay({ onOpenLogin, onOpenSignup }) {
         if (!done && !isAuthenticated && location.pathname === '/') {
             const t = setTimeout(() => {
                 setVisible(true);
-                localStorage.setItem(STORAGE_KEY, 'true'); // Immediately mark as done to prevent repeating
             }, 350);
             return () => clearTimeout(t);
         }

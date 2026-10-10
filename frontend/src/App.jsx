@@ -159,6 +159,7 @@ function App() {
       <Suspense fallback={<PageSpinner />}>
         <FeedbackWidget externalOpen={feedbackOpen} onExternalClose={() => setFeedbackOpen(false)} />
         <PageTransition>
+          <div className="pb-20 md:pb-0">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
@@ -285,6 +286,7 @@ function App() {
             {/* Catch-all 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </div>
         </PageTransition>
       </Suspense>
     </MotionConfig>

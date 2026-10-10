@@ -93,9 +93,9 @@ export function TablePagination({
                         onChange={(e) => onPageSizeChange(Number(e.target.value))}
                         className="border border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 bg-slate-50 py-1.5 pl-3 pr-8 shadow-sm outline-none cursor-pointer"
                     >
-                        <option value={20}>20</option>
                         <option value={25}>25</option>
                         <option value={50}>50</option>
+                        <option value={75}>75</option>
                         <option value={100}>100</option>
                     </select>
                 </div>

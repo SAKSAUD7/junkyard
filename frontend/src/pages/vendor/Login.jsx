@@ -33,155 +33,115 @@ const VendorLogin = () => {
     };
 
     return (
-        <div className="min-h-screen w-full flex font-inter overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center font-inter bg-slate-900">
             <SEO title="Vendor Login – JYNM" description="Sign in to your JYNM Vendor account." noindex={true} />
 
-            {/* ===== LEFT PANEL — dark junkyard-worker image (desktop only) ===== */}
-            <div className="hidden lg:flex flex-col justify-between flex-1 relative overflow-hidden p-10">
-                {/* Background image */}
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src={get('hero', 'background_image') || "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1400&auto=format&fit=crop"}
-                        alt="Vendor at junkyard"
-                        className="w-full h-full object-cover object-center"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/65 to-slate-800/85" />
-                </div>
-
-                {/* Top section */}
-                <div className="relative z-10">
-                    {/* Header elements: Unified Header */}
-                    <div className="w-full flex items-center justify-between mb-8">
-                        <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white transition-colors text-sm font-semibold group bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-sm">
-                            <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                            Back Home
-                        </Link>
-                        
-                        <div className="bg-white/10 p-2 sm:px-4 sm:py-2 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl flex items-center justify-center">
-                            <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow-lg" onError={e => e.currentTarget.style.display='none'} />
-                        </div>
-                    </div>
-                    
-                    <div className="inline-flex items-center gap-2 bg-blue-500/25 border border-blue-400/40 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-blue-300 mb-5">
-                        🏪 Yard Partner Portal
-                    </div>
-                    <h1 className="text-4xl font-black leading-tight tracking-tight text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                        Vendor <span className="text-blue-400">Sign In</span>
-                    </h1>
-                    <p className="text-white/70 text-[15px] mt-4 max-w-sm leading-relaxed font-medium">
-                        Sign in to access your yard listing tools and manage your inventory.
-                    </p>
-                </div>
-
-                {/* Bottom feature cards */}
-                <div className="relative z-10 space-y-4">
-                    {[
-                        { icon: '📦', title: 'Manage Your Inventory', desc: 'Add, edit and manage your parts & listings.' },
-                        { icon: '📈', title: 'Receive More Leads', desc: 'Real-time buyer notifications.' },
-                        { icon: '⚡', title: 'Grow Your Business', desc: 'Boost visibility & increase yard revenue.' },
-                    ].map(f => (
-                        <div key={f.title} className="flex items-center gap-4 bg-white/10 p-3.5 rounded-2xl border border-white/15 backdrop-blur-sm hover:bg-white/15 transition-colors cursor-default">
-                            <div className="w-11 h-11 rounded-xl bg-blue-500/25 border border-blue-400/30 flex items-center justify-center text-xl shrink-0">{f.icon}</div>
-                            <div>
-                                <div className="text-[14px] font-bold text-white">{f.title}</div>
-                                <div className="text-[12px] text-white/60 font-medium">{f.desc}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            {/* Backdrop Image */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={get('hero', 'background_image') || "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1920&auto=format&fit=crop"}
+                    alt=""
+                    className="w-full h-full object-cover opacity-60 backdrop-blur-sm"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
             </div>
 
-            {/* ===== RIGHT PANEL — white form ===== */}
-            <div className="w-full lg:w-[460px] shrink-0 flex flex-col items-center justify-center relative bg-slate-900 lg:bg-white min-h-screen">
-                {/* Mobile background */}
-                <div className="absolute inset-0 z-0 lg:hidden block">
-                    <img src={get('hero', 'background_image') || "https://images.unsplash.com/photo-1549317336-206569e8475c?auto=format&fit=crop&q=80&w=1400"} alt="Vendor Mobile Background" className="w-full h-full object-cover object-center opacity-70" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-800/80" />
+            {/* Back to Home Button at Top */}
+            <Link to="/" className="absolute top-5 left-5 z-20 inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-4 py-2 rounded-full shadow-sm hover:bg-white/20 transition-all">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                Back Home
+            </Link>
+
+            {/* Modal Card */}
+            <div className="relative z-10 w-full max-w-[380px] mx-4 rounded-3xl overflow-hidden shadow-2xl bg-transparent mt-8" style={{ maxHeight: '95vh', overflowY: 'auto' }}>
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop"
+                        alt=""
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/80" />
                 </div>
 
-                {/* Mobile — back link & Logo */}
-                <div className="absolute top-4 left-4 right-4 sm:top-5 sm:left-5 sm:right-5 lg:hidden z-20 flex justify-between items-center">
-                    <Link to="/" className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-semibold bg-white/10 backdrop-blur border border-white/20 px-3 py-2 rounded-full shadow-sm hover:bg-white/20 transition-all">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        Back Home
-                    </Link>
-                    <div className="bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20 shadow-sm flex items-center justify-center">
-                        <img src="/logo.png" alt="JYNM" className="h-6 w-auto object-contain drop-shadow" onError={e => e.currentTarget.style.display='none'} />
-                    </div>
-                </div>
-
-                <div className="w-full max-w-[420px] px-5 sm:px-6 py-6 sm:py-10 relative z-10 bg-white lg:bg-transparent rounded-3xl lg:rounded-none shadow-2xl lg:shadow-none m-4 mt-24 sm:mt-16 md:m-0 my-auto lg:my-0 lg:mx-0">
-                    <div className="text-center mb-6">
-                        {/* Mobile portal badge */}
-                        <div className="lg:hidden inline-flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-700 mb-3 mx-auto">
-                            🏪 Yard Partner Portal
-                        </div>
-                        <h2 className="text-2xl font-black text-slate-800 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            Vendor <span className="text-blue-600">Sign In</span>
-                        </h2>
-                        <p className="text-slate-500 text-[13px] mt-1 font-medium">
+                <div className="relative z-10 flex flex-col">
+                    {/* Top section — Logo + Title */}
+                    <div className="flex flex-col items-center pt-8 pb-6 px-6 text-center">
+                        <img
+                            src="/logo.png"
+                            alt="JYNM"
+                            className="h-16 w-auto object-contain mb-4 drop-shadow-2xl"
+                            onError={e => e.currentTarget.style.display = 'none'}
+                        />
+                        <h1 className="text-2xl font-black text-white leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            Vendor <span className="text-yellow-400">Sign In</span>
+                        </h1>
+                        <p className="text-white/70 text-[13px] mt-1.5 font-medium leading-snug">
                             Sign in to access your yard listing tools and manage your inventory.
                         </p>
                     </div>
 
-                    {/* Error */}
-                    {error && (
-                        <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[13px] font-semibold flex items-start gap-2.5">
-                            <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                            {error}
-                        </div>
-                    )}
-
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label htmlFor="vl-email" className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Email Address</label>
-                            <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                </span>
-                                <input id="vl-email" type="email" required value={email}
-                                    onChange={e => { setEmail(e.target.value); setError(''); }}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                                    placeholder="vendor@example.com" autoComplete="email" />
+                    {/* White Form Card */}
+                    <div className="bg-white mx-3 mb-3 rounded-2xl px-5 py-5 shadow-2xl">
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-[12px] font-semibold text-center">
+                                {error}
                             </div>
-                        </div>
-
-                        <div>
-                            <div className="flex justify-between items-center mb-1.5">
-                                <label htmlFor="vl-pw" className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                                <Link to="/vendor/forgot-password" className="text-[12px] text-blue-600 font-bold hover:text-blue-700 transition-all">Forgot password?</Link>
+                        )}
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Email Address</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                    </span>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        placeholder="vendor@example.com"
+                                        required
+                                        className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-slate-50"
+                                    />
+                                </div>
                             </div>
-                            <PasswordInput id="vl-pw" required value={password}
-                                onChange={e => { setPassword(e.target.value); setError(''); }}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                                placeholder="••••••••••" autoComplete="current-password" />
-                        </div>
 
-                        <button type="submit" disabled={loading || failCount >= 5}
-                            className="w-full mt-1 py-3.5 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] transition-all shadow-[0_4px_14px_rgba(37,99,235,0.35)] disabled:opacity-60 flex items-center justify-center gap-2 text-[15px]">
-                            {loading && <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>}
-                            {loading ? 'Signing in…' : 'Sign In →'}
-                        </button>
-                    </form>
-
-                    {/* Feature strip */}
-                    <div className="flex items-center justify-around mt-8 pt-6 border-t border-slate-100">
-                        {[{ icon: '📦', label: 'Manage Inventory' }, { icon: '📈', label: 'Receive Leads' }, { icon: '⚡', label: 'Grow Business' }].map(f => (
-                            <div key={f.label} className="flex flex-col items-center gap-1.5 text-center flex-1">
-                                <span className="text-2xl">{f.icon}</span>
-                                <span className="text-[10px] font-bold text-slate-500 leading-tight">{f.label}</span>
+                            <div>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">Password</label>
+                                    <Link to="/vendor/forgot-password" className="text-[12px] text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+                                        Forgot Password?
+                                    </Link>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                    </span>
+                                    <PasswordInput
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        className="w-full pl-9 py-2.5 border border-slate-200 rounded-xl text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-slate-50"
+                                    />
+                                </div>
                             </div>
-                        ))}
+
+                            <button
+                                type="submit"
+                                disabled={!email || !password || loading}
+                                className="w-full py-3 rounded-xl font-black text-[15px] bg-blue-600 hover:bg-blue-500 text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                {loading ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : null}
+                                Sign In <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            </button>
+
+                            <p className="text-center text-[13px] text-slate-500 font-medium pb-2">
+                                New to JYNM?{' '}
+                                <Link to="/vendor/signup" className="text-blue-600 hover:text-blue-700 font-bold transition-colors">
+                                    Create Free Vendor Account
+                                </Link>
+                            </p>
+                        </form>
                     </div>
-
-                    {/* Sign Up link */}
-                    <p className="text-center text-[13px] text-slate-500 font-medium mt-5">
-                        New to JYNM?{' '}
-                        <Link to={`/vendor/signup?redirect=${encodeURIComponent(redirectAfter)}`} className="font-bold text-blue-600 hover:text-blue-700 transition-colors">
-                            Create Free Vendor Account
-                        </Link>
-                    </p>
                 </div>
             </div>
         </div>

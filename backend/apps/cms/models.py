@@ -37,6 +37,8 @@ class SiteContent(models.Model):
         ('seo_browse', 'SEO – Browse'),
         ('seo_blog', 'SEO – Blog'),
         ('seo_vendors', 'SEO – Vendors'),
+        ('quote_request', 'Quote Request'),
+        ('sell_your_car', 'Sell Your Car'),
     ]
 
     page = models.CharField(max_length=60, choices=PAGE_CHOICES, db_index=True)
