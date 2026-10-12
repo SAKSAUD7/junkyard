@@ -8,6 +8,7 @@ import BlogSkeletonCard from '../../components/BlogSkeletonCard';
 import { blogApi } from '../../services/blogApi';
 import { useCMS } from '../../hooks/useCMS';
 import PageHero from '../../components/PageHero';
+import AdCarousel from '../../components/AdCarousel';
 
 const SAMPLE_POSTS = [
   {
@@ -327,6 +328,11 @@ export default function BlogList() {
 
           </div>
         </div>
+      </div>
+
+      {/* Featured Salvage Partners Carousel */}
+      <div className="bg-slate-50 border-t border-slate-200/80 py-8">
+        <AdCarousel slotGroup="carousel_1" page="blog" title="Featured Salvage Partners" autoRotateSeconds={2} />
       </div>
 
       <Footer />

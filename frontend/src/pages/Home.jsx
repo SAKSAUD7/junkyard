@@ -99,10 +99,37 @@ export default function Home() {
 
             <Suspense fallback={<div className="h-32 bg-slate-50 animate-pulse"></div>}>
 
+                {/* 5-Card Stats Ribbon / Block */}
+                <StatsSection get={get} />
+
+                {/* FEATURED SALVAGE PARTNERS — 2-SECOND AUTO-ROTATING CAROUSEL (Mobile 1-card swipe with 4 dots, Desktop 4 cards) */}
+                <AdCarousel 
+                    slotGroup="carousel_1" 
+                    page="home" 
+                    title="Featured Salvage Partners" 
+                    subtitle="Trusted junkyards and auto recyclers offering quality used auto parts."
+                    autoRotateSeconds={2} 
+                />
+
+                {/* RECOMMENDED YARDS (Verified 4-card ecosystem) */}
+                <SponsoredYardsSection
+                    title="Recommended Yards"
+                    badgeText="Verified"
+                    viewAllLink="/junkyards"
+                    viewAllText="View All"
+                />
+
+                {/* TOP DEALS NEAR YOU CAROUSEL */}
+                <AdCarousel 
+                    slotGroup="carousel_2" 
+                    page="home" 
+                    title="Top Deals Near You" 
+                    autoRotateSeconds={3}
+                />
+
                 {/* ============================================================
                     SERVICE DISCOVERY WIDGET — "What Can We Help With?"
-                    4-card JYNM-native service menu, placed BELOW hero.
-                    DO NOT redesign, DO NOT change visual identity.
+                    4-card JYNM-native service menu.
                 ============================================================ */}
                 <section className="bg-white border-b border-slate-100 py-8 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-[1400px] mx-auto">
@@ -155,21 +182,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* 4-SLOT SPONSORED YARDS / FEATURED PARTNERS ECOSYSTEM (Mockup 1) */}
-                <SponsoredYardsSection
-                    title="Featured Partners"
-                    badgeText="Sponsored"
-                    viewAllLink="/junkyards"
-                    viewAllText="View All"
-                />
-
-                {/* AD SLIDER 1 */}
-                <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />
-
-
-                {/* 5-Card Stats Block */}
-                <StatsSection get={get} />
-
                 {/* ============================================================
                     3-COLUMN FEATURE PANELS (How It Works, Vendor CTA, Why JYNM)
                 ============================================================ */}
@@ -185,9 +197,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* AD SLIDER 2 */}
-                <AdCarousel slotGroup="carousel_2" page="home" title="Recommended Yards" />
-
                 {/* ============================================================
                     AD STRIP — Backend-connected ads (slot: strip_home_mid)
                 ============================================================ */}
@@ -197,15 +206,12 @@ export default function Home() {
                     </div>
                 </div>
 
-
-
-
-                {/* REPLACED 3RD IMAGE / CTABANNER WITH HIGH-IMPACT PROMOTED ADS SECTION */}
+                {/* EXCLUSIVE DEALS & VERIFIED SALVAGE NETWORKS */}
                 <div className="bg-slate-50/70 border-t border-b border-slate-200/80 py-8">
                     <AdCarousel slotGroup="carousel_deal" page="home" title="Exclusive Deals & Verified Salvage Networks" />
                 </div>
 
-                {/* AD SLIDER 5 */}
+                {/* PROMOTED PARTNERS */}
                 <div className="bg-white pt-8">
                     <AdCarousel slotGroup="carousel_5" page="home" title="Promoted Partners" />
                 </div>

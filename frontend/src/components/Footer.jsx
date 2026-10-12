@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCMS } from '../hooks/useCMS'
 
@@ -6,6 +7,16 @@ export default function Footer() {
     const { get: getFooter } = useCMS('footer')
     const { get: getGlobal } = useCMS('global')
     const logoUrl = getGlobal('brand', 'logo');
+
+    // State for mobile accordion collapse/expand
+    const [openSections, setOpenSections] = useState({})
+
+    const toggleSection = (id) => {
+        setOpenSections(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }))
+    }
 
     const quickLinks = [
         { name: getFooter('quick_links', 'link_home', 'Home'), path: '/' },
@@ -35,89 +46,258 @@ export default function Footer() {
         { key: 'youtube', href: getFooter('social', 'youtube', 'https://www.youtube.com/@junkyardsnearme'), icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 00-2.122 2.136C0 8.084 0 12 0 12s0 3.916.501 5.814a3.016 3.016 0 002.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 002.122-2.136C24 15.916 24 12 24 12s0-3.916-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg> },
     ]
 
-    const LinkGroup = ({ heading, links }) => (
-        <div>
-            <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">{heading}</p>
-            <ul className="space-y-2.5">
-                {links.map(item => (
-                    <li key={item.path}>
-                        <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
-                            {item.name}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
-
     return (
-        <footer id="site-footer" className="bg-white border-t border-slate-100 pt-10 pb-6"
+        <footer id="site-footer" className="bg-white border-t border-slate-100 pt-8 sm:pt-10 pb-6"
             style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 
-                {/* Top section: Brand + Links */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 mb-8">
-
-                    {/* Brand */}
-                    <div className="lg:col-span-1">
-                        <div className="flex items-center gap-2.5 mb-4">
-                            <img src={logoUrl || '/logo.png'} alt="JYNM Logo" width="28" height="28" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                            <div>
-                                <div className="text-base font-black text-slate-900 leading-none">{getGlobal('brand', 'name_short', 'JYNM')}</div>
-                                <div className="text-[8px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">{getGlobal('brand', 'name_long', 'Junkyards Near Me')}</div>
+                {/* Top Brand Section */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 mb-6">
+                    <div className="flex items-center gap-3">
+                        <img 
+                            src={logoUrl || '/logo.png'} 
+                            alt="JYNM Logo" 
+                            width="32" 
+                            height="32" 
+                            className="w-8 h-8 object-contain" 
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                        />
+                        <div>
+                            <div className="text-base font-black text-slate-900 leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                {getGlobal('brand', 'name_short', 'JYNM')}
+                            </div>
+                            <div className="text-[9px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">
+                                {getGlobal('brand', 'name_long', 'Junkyards Near Me')}
                             </div>
                         </div>
-                        <p className="text-[12px] text-slate-500 leading-relaxed max-w-[240px] mb-5">
-                            {getFooter('brand', 'description', "The nation's most trusted marketplace for verified used auto parts.")}
-                        </p>
-                        <div className="flex gap-2.5">
-                            {socials.map(s => (
-                                <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
-                                    aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
-                                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors">
-                                    {s.icon}
-                                </a>
-                            ))}
-                        </div>
                     </div>
-
-                    {/* Link columns — 2×2 on mobile, 4 across on md+ */}
-                    <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                        <LinkGroup heading={getFooter('quick_links', 'heading', 'Quick Links')} links={quickLinks} />
-                        <LinkGroup heading={getFooter('buyers', 'heading', 'For Buyers')} links={buyerLinks} />
-                        <LinkGroup heading={getFooter('vendors', 'heading', 'For Vendors')} links={vendorLinks} />
-                        {/* Contact */}
-                        <div>
-                            <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">{getFooter('contact', 'heading', 'Contact')}</p>
-                            <ul className="space-y-3">
-                                <li>
-                                    <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
-                                        <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02C8.76 8.2 8.57 7 8.57 5.77c0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                                        {getFooter('contact', 'phone', '1-866-293-3731')}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href={`mailto:${getFooter('contact', 'email', 'info@jynm.com')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
-                                        <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                                        {getFooter('contact', 'email', 'info@jynm.com')}
-                                    </a>
-                                </li>
-                                <li className="flex items-center gap-2 text-[13px] font-medium text-slate-500">
-                                    <svg className="w-4 h-4 shrink-0 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                                    {getFooter('contact', 'location', 'Nationwide Service')}
-                                </li>
-                            </ul>
-                        </div>
+                    
+                    <div className="flex items-center gap-2">
+                        {socials.map(s => (
+                            <a 
+                                key={s.key} 
+                                href={s.href} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                aria-label={`Follow us on ${s.key.charAt(0).toUpperCase() + s.key.slice(1)}`}
+                                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors"
+                            >
+                                {s.icon}
+                            </a>
+                        ))}
                     </div>
                 </div>
 
-                {/* Bottom bar */}
+                {/* ============================================================
+                    MOBILE VIEW (< md): Expandable Accordion Groups
+                ============================================================ */}
+                <div className="md:hidden divide-y divide-slate-100 mb-8">
+                    {/* 1. For Buyers */}
+                    <div className="py-3">
+                        <button
+                            type="button"
+                            onClick={() => toggleSection('buyers')}
+                            className="w-full flex items-center justify-between py-1 text-left font-black text-xs uppercase tracking-wider text-slate-800"
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
+                        >
+                            <span>For Buyers</span>
+                            <svg 
+                                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${openSections['buyers'] ? 'rotate-180 text-blue-600' : ''}`} 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {openSections['buyers'] && (
+                            <ul className="mt-2.5 space-y-2 pl-1 animate-fade-in">
+                                {buyerLinks.map(item => (
+                                    <li key={item.path}>
+                                        <Link to={item.path} className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors block py-1">
+                                            {item.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {/* 2. For Junkyards */}
+                    <div className="py-3">
+                        <button
+                            type="button"
+                            onClick={() => toggleSection('vendors')}
+                            className="w-full flex items-center justify-between py-1 text-left font-black text-xs uppercase tracking-wider text-slate-800"
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
+                        >
+                            <span>For Junkyards</span>
+                            <svg 
+                                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${openSections['vendors'] ? 'rotate-180 text-blue-600' : ''}`} 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {openSections['vendors'] && (
+                            <ul className="mt-2.5 space-y-2 pl-1 animate-fade-in">
+                                {vendorLinks.map(item => (
+                                    <li key={item.path}>
+                                        <Link to={item.path} className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors block py-1">
+                                            {item.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {/* 3. Resources */}
+                    <div className="py-3">
+                        <button
+                            type="button"
+                            onClick={() => toggleSection('resources')}
+                            className="w-full flex items-center justify-between py-1 text-left font-black text-xs uppercase tracking-wider text-slate-800"
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
+                        >
+                            <span>Resources</span>
+                            <svg 
+                                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${openSections['resources'] ? 'rotate-180 text-blue-600' : ''}`} 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {openSections['resources'] && (
+                            <ul className="mt-2.5 space-y-2 pl-1 animate-fade-in">
+                                {quickLinks.map(item => (
+                                    <li key={item.path}>
+                                        <Link to={item.path} className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors block py-1">
+                                            {item.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {/* 4. Support & Contact */}
+                    <div className="py-3">
+                        <button
+                            type="button"
+                            onClick={() => toggleSection('contact')}
+                            className="w-full flex items-center justify-between py-1 text-left font-black text-xs uppercase tracking-wider text-slate-800"
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
+                        >
+                            <span>Support &amp; Contact</span>
+                            <svg 
+                                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${openSections['contact'] ? 'rotate-180 text-blue-600' : ''}`} 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {openSections['contact'] && (
+                            <ul className="mt-2.5 space-y-2 pl-1 animate-fade-in">
+                                <li>
+                                    <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 py-1">
+                                        <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02C8.76 8.2 8.57 7 8.57 5.77c0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                                        <span>{getFooter('contact', 'phone', '1-866-293-3731')}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href={`mailto:${getFooter('contact', 'email', 'info@jynm.com')}`} className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 py-1">
+                                        <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                        <span>{getFooter('contact', 'email', 'info@jynm.com')}</span>
+                                    </a>
+                                </li>
+                                <li className="flex items-center gap-2 text-xs font-semibold text-slate-500 py-1">
+                                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span>{getFooter('contact', 'location', 'Nationwide Service')}</span>
+                                </li>
+                            </ul>
+                        )}
+                    </div>
+                </div>
+
+                {/* ============================================================
+                    DESKTOP VIEW (>= md): Full Multi-Column Grid
+                ============================================================ */}
+                <div className="hidden md:grid grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">Quick Links</p>
+                        <ul className="space-y-2.5">
+                            {quickLinks.map(item => (
+                                <li key={item.path}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">For Buyers</p>
+                        <ul className="space-y-2.5">
+                            {buyerLinks.map(item => (
+                                <li key={item.path}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">For Vendors</p>
+                        <ul className="space-y-2.5">
+                            {vendorLinks.map(item => (
+                                <li key={item.path}>
+                                    <Link to={item.path} className="text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3">Contact</p>
+                        <ul className="space-y-3">
+                            <li>
+                                <a href={`tel:${getFooter('contact', 'phone', '18662933731')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                    <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02C8.76 8.2 8.57 7 8.57 5.77c0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                                    {getFooter('contact', 'phone', '1-866-293-3731')}
+                                </a>
+                            </li>
+                            <li>
+                                <a href={`mailto:${getFooter('contact', 'email', 'info@jynm.com')}`} className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                                    <svg className="w-4 h-4 shrink-0 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                    {getFooter('contact', 'email', 'info@jynm.com')}
+                                </a>
+                            </li>
+                            <li className="flex items-center gap-2 text-[13px] font-medium text-slate-500">
+                                <svg className="w-4 h-4 shrink-0 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                {getFooter('contact', 'location', 'Nationwide Service')}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Bottom Bar: Copyright & Legal */}
                 <div className="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <p className="text-[11px] font-medium text-slate-400">
+                    <p className="text-[11px] font-medium text-slate-400 text-center sm:text-left">
                         © {currentYear} {getFooter('brand', 'copyright_name', 'JYNM')}. {getFooter('brand', 'copyright_text', 'All rights reserved.')}
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4">
-                        <span className="text-[11px] font-medium text-slate-400">Sponsored by <a href="https://www.qualityautoparts.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-500 hover:text-blue-600 transition-colors">Quality Auto Parts</a></span>
+                        <span className="text-[11px] font-medium text-slate-400">
+                            Sponsored by <a href="https://www.qualityautoparts.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-500 hover:text-blue-600 transition-colors">Quality Auto Parts</a>
+                        </span>
                         <span className="hidden sm:inline text-slate-300">|</span>
                         <Link to="/privacy" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Privacy Policy</Link>
                         <Link to="/terms" className="text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors">Terms &amp; Conditions</Link>
