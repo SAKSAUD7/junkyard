@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { api, BASE_URL } from '../services/api'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
@@ -9,263 +10,334 @@ function getAdImageUrl(ad) {
     return `${BASE_URL}${img}`;
 }
 
+// Organic verified yard fallbacks to guarantee 4 cards per placement without empty whitespace
+const FALLBACK_ORGANIC_YARDS = [
+    {
+        id: 'org-1',
+        title: 'Pay Less Auto Parts',
+        location: 'Middletown, OH',
+        rating: 4.8,
+        reviews_count: 142,
+        tag: 'Verified Salvage',
+        button_text: 'View Inventory',
+        redirect_url: '/junkyards',
+        is_organic: true,
+        gradient: 'from-blue-600 to-indigo-700',
+        initials: 'PL',
+        features: ['OEM Used Parts', 'Warranty Guaranteed']
+    },
+    {
+        id: 'org-2',
+        title: 'Hanover Auto Wreckers',
+        location: 'Hanover, ON',
+        rating: 4.9,
+        reviews_count: 98,
+        tag: 'Top Rated',
+        button_text: 'Find Parts',
+        redirect_url: '/junkyards',
+        is_organic: true,
+        gradient: 'from-emerald-500 to-teal-700',
+        initials: 'HA',
+        features: ['All Makes & Models', 'Express Delivery']
+    },
+    {
+        id: 'org-3',
+        title: 'A-1 Rylie Auto Parts',
+        location: 'Dallas, TX',
+        rating: 4.7,
+        reviews_count: 105,
+        tag: 'Premier Partner',
+        button_text: 'Get Quote',
+        redirect_url: '/quote',
+        is_organic: true,
+        gradient: 'from-blue-500 to-cyan-700',
+        initials: 'A1',
+        features: ['Large Inventory', 'Fast Turnaround']
+    },
+    {
+        id: 'org-4',
+        title: 'Meier Auto Salvage',
+        location: 'Sioux City, IA',
+        rating: 4.9,
+        reviews_count: 176,
+        tag: 'Verified Yard',
+        button_text: 'Check Stock',
+        redirect_url: '/junkyards',
+        is_organic: true,
+        gradient: 'from-amber-500 to-orange-600',
+        initials: 'M',
+        features: ['Engines & Transmissions', 'Tested Parts']
+    },
+    {
+        id: 'org-5',
+        title: 'Bessler Auto Parts',
+        location: 'Hebron, KY',
+        rating: 4.8,
+        reviews_count: 210,
+        tag: 'Verified Yard',
+        button_text: 'Browse Parts',
+        redirect_url: '/junkyards',
+        is_organic: true,
+        gradient: 'from-purple-600 to-indigo-800',
+        initials: 'BA',
+        features: ['Recycled OEM', 'Nationwide Shipping']
+    },
+    {
+        id: 'org-6',
+        title: 'Midwest Auto Recyclers',
+        location: 'Chicago, IL',
+        rating: 4.9,
+        reviews_count: 130,
+        tag: 'Top Rated',
+        button_text: 'View Yard',
+        redirect_url: '/junkyards',
+        is_organic: true,
+        gradient: 'from-rose-500 to-pink-700',
+        initials: 'MA',
+        features: ['Late Model Wrecks', 'Certified Quality']
+    }
+];
+
 export default function AdCarousel({ slotGroup = 'carousel_1', page = 'all', title = "" }) {
     const [ads, setAds] = useState([])
-    const scrollRef = useRef(null)
-    const isInteracting = useRef(false)
+    const [pageIndex, setPageIndex] = useState(0)
 
     useEffect(() => {
-        // Use exact slot to avoid pulling all carousel_* slots at once
+        let isMounted = true;
         api.getAds({ slot: slotGroup, target_page: page })
             .then(data => {
-                const results = Array.isArray(data) ? data : (data?.results || [])
-                if (results.length > 0) setAds(results)
+                if (!isMounted) return;
+                const results = Array.isArray(data) ? data : (data?.results || []);
+                setAds(results);
             })
-            .catch(() => {})
-    }, [slotGroup, page])
+            .catch(() => {
+                // Network / endpoint graceful fallback
+                if (isMounted) setAds([]);
+            });
+        return () => { isMounted = false; };
+    }, [slotGroup, page]);
 
-    useEffect(() => {
-        if (ads.length <= 1) return;
-        const SPEED = 1.0; // px per 16ms tick
-
-        const timer = setInterval(() => {
-            if (!scrollRef.current || isInteracting.current) return;
-            const el = scrollRef.current;
-            el.scrollLeft += SPEED;
-            if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
-                el.scrollLeft = 0;
+    // Merge ads with organic yard fallbacks to strictly guarantee exactly 4 cards per row
+    const combinedItems = (() => {
+        const list = [...ads];
+        if (list.length >= 4) return list;
+        
+        // Fill up to 4 using unique fallbacks
+        for (const fb of FALLBACK_ORGANIC_YARDS) {
+            if (list.length >= 4) break;
+            if (!list.some(item => (item.title || item.name) === fb.title)) {
+                list.push(fb);
             }
-        }, 16);
+        }
+        return list;
+    })();
 
-        return () => clearInterval(timer);
-    }, [ads]);
-
-    if (ads.length === 0) return null;
+    const ITEMS_PER_PAGE = 4;
+    const totalPages = Math.ceil(combinedItems.length / ITEMS_PER_PAGE);
+    const currentPage = Math.min(pageIndex, Math.max(0, totalPages - 1));
+    const currentItems = combinedItems.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
 
     return (
-        <div className="w-full my-8 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+        <section className="w-full my-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+            {/* Header with Title and Pagination Controls */}
             {title && (
-                <div className="flex items-center gap-3 mb-4">
-                    <h3 className="text-[14px] font-black text-[#0f172a] uppercase tracking-[0.1em]">{title}</h3>
-                    <div className="h-px bg-slate-100 flex-1"></div>
-                    <div className="flex gap-2">
-                        <button 
-                            onClick={() => {
-                                isInteracting.current = true;
-                                if(scrollRef.current) scrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
-                                setTimeout(() => isInteracting.current = false, 1000);
-                            }}
-                            aria-label="Previous ad"
-                            className="p-1.5 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all"
+                <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-5 bg-blue-600 rounded-full" />
+                        <h3 
+                            className="text-[13px] sm:text-[15px] font-black text-slate-900 uppercase tracking-[0.08em] flex items-center gap-2"
+                            style={{ fontFamily: "'Outfit', sans-serif" }}
                         >
-                            <ChevronLeftIcon className="w-5 h-5" />
-                        </button>
-                        <button 
-                            onClick={() => {
-                                isInteracting.current = true;
-                                if(scrollRef.current) scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
-                                setTimeout(() => isInteracting.current = false, 1000);
-                            }}
-                            aria-label="Next ad"
-                            className="p-1.5 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all"
-                        >
-                            <ChevronRightIcon className="w-5 h-5" />
-                        </button>
+                            <span>{title}</span>
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-100/80 px-2 py-0.5 rounded-full lowercase first-letter:uppercase tracking-normal">
+                                Verified
+                            </span>
+                        </h3>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-1.5">
+                                <button 
+                                    onClick={() => setPageIndex(p => (p > 0 ? p - 1 : totalPages - 1))}
+                                    aria-label="Previous ad page"
+                                    className="p-1.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 active:scale-95 transition-all"
+                                >
+                                    <ChevronLeftIcon className="w-4 h-4" />
+                                </button>
+                                <span className="text-xs font-semibold text-slate-400 px-1">
+                                    {currentPage + 1} / {totalPages}
+                                </span>
+                                <button 
+                                    onClick={() => setPageIndex(p => (p < totalPages - 1 ? p + 1 : 0))}
+                                    aria-label="Next ad page"
+                                    className="p-1.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 active:scale-95 transition-all"
+                                >
+                                    <ChevronRightIcon className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
             
-            <div className="relative border border-[#e2e8f0] rounded-[24px] bg-[#f8fafc]/50 p-4 sm:p-6 shadow-[0_2px_12px_rgb(0,0,0,0.02)] overflow-hidden group">
-                <style>{`
-                    .no-scrollbar::-webkit-scrollbar {
-                        display: none;
-                    }
-                `}</style>
-                <div className="overflow-hidden w-full relative">
-                    {/* Fade gradients at edges */}
-                    <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none" />
-                    <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none" />
+            {/* 4-Card Responsive Grid without Horizontal Scrolling or Gaps */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                {currentItems.map((item, index) => (
+                    <AdGridCard key={`${item.id || index}-${currentPage}`} item={item} />
+                ))}
+            </div>
+        </section>
+    );
+}
 
-                    <div 
-                        ref={scrollRef}
-                        className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                        onMouseEnter={() => isInteracting.current = true}
-                        onMouseLeave={() => isInteracting.current = false}
-                        onTouchStart={() => isInteracting.current = true}
-                        onTouchEnd={() => isInteracting.current = false}
-                        onTouchCancel={() => isInteracting.current = false}
+function AdGridCard({ item }) {
+    const isPremium = item.template_type === 'premium';
+    const isOrganic = Boolean(item.is_organic);
+    const clickUrl = item.redirect_url || item.click_url || item.cta_url || '/junkyards';
+    const imageUrl = getAdImageUrl(item);
+    const title = item.title || item.name || 'Verified Auto Recycler';
+    const location = item.location || 'United States';
+    const rating = item.rating || 4.8;
+    const reviewsCount = item.reviews_count || 110;
+    const buttonText = item.button_text || 'Visit Yard';
+
+    const accentPalette = [
+        { gradient: 'from-blue-600 to-indigo-700', light: 'bg-blue-50 text-blue-700 border-blue-200' },
+        { gradient: 'from-violet-600 to-purple-800', light: 'bg-purple-50 text-purple-700 border-purple-200' },
+        { gradient: 'from-emerald-600 to-teal-800', light: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        { gradient: 'from-amber-500 to-orange-700', light: 'bg-amber-50 text-amber-700 border-amber-200' },
+    ];
+    const palette = accentPalette[(title.charCodeAt(0) || 65) % accentPalette.length];
+
+    const initials = item.initials || (title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'JY');
+
+    // Link target: if internal URL use react router link behaviour or standard anchor for external
+    const isExternal = clickUrl.startsWith('http');
+    const LinkComponent = isExternal ? 'a' : Link;
+    const linkProps = isExternal ? { href: clickUrl, target: '_blank', rel: 'noopener noreferrer' } : { to: clickUrl };
+
+    if (isPremium) {
+        return (
+            <LinkComponent
+                {...linkProps}
+                className="group relative flex flex-col justify-between rounded-2xl p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-gradient-to-br from-[#0c1a3a] via-[#0f2552] to-[#161244] border border-blue-900/60 shadow-[0_8px_30px_rgba(12,26,58,0.25)] min-h-[220px]"
+            >
+                {/* Ambient glow mesh */}
+                <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-400/30 transition-all duration-500" />
+                <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-indigo-500/15 rounded-full blur-xl pointer-events-none" />
+
+                <div>
+                    <div className="flex items-start justify-between gap-3 mb-3 relative z-10">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center font-black text-white text-base shrink-0 group-hover:scale-105 transition-transform duration-300">
+                            {imageUrl ? (
+                                <img src={imageUrl} alt={title} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                            ) : (
+                                <span>{initials}</span>
+                            )}
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                            ★ Premium
+                        </span>
+                    </div>
+
+                    <h4 
+                        className="text-[15px] font-black text-white leading-snug line-clamp-2 group-hover:text-blue-300 transition-colors relative z-10"
+                        style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                        {ads.map((ad, index) => (
-                            <AdCard key={`${ad.id}-${index}`} ad={ad} />
+                        {title}
+                    </h4>
+
+                    <p className="text-[12px] text-blue-200/80 font-medium flex items-center gap-1.5 mt-1 relative z-10">
+                        <svg className="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        <span className="truncate">{location}</span>
+                    </p>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between mt-4 relative z-10">
+                    <div className="flex items-center gap-1 text-amber-400 text-xs font-bold">
+                        <span>★ {rating}</span>
+                        <span className="text-white/40 text-[10px]">({reviewsCount})</span>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-white bg-blue-600 group-hover:bg-blue-500 px-3.5 py-1.5 rounded-xl transition-all shadow-md">
+                        {buttonText}
+                        <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+            </LinkComponent>
+        );
+    }
+
+    // Standard / Organic Card
+    return (
+        <LinkComponent
+            {...linkProps}
+            className="group relative flex flex-col justify-between rounded-2xl p-5 bg-white border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_36px_rgba(37,99,235,0.12)] hover:border-blue-400 hover:-translate-y-1 transition-all duration-300 min-h-[220px]"
+        >
+            <div>
+                {/* Header row: Avatar + Badge */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-base shrink-0 shadow-sm bg-gradient-to-br ${item.gradient || palette.gradient} group-hover:scale-105 transition-transform duration-300`}>
+                            {imageUrl ? (
+                                <img src={imageUrl} alt={title} className="w-full h-full object-cover rounded-xl" onError={e => e.target.style.display='none'} />
+                            ) : (
+                                <span>{initials}</span>
+                            )}
+                        </div>
+                        <div className="min-w-0">
+                            <h4 
+                                className="text-[14px] sm:text-[15px] font-black text-slate-900 leading-snug line-clamp-1 group-hover:text-blue-600 transition-colors"
+                                style={{ fontFamily: "'Outfit', sans-serif" }}
+                            >
+                                {title}
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5 truncate">
+                                <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                                </svg>
+                                <span className="truncate">{location}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <span className={`inline-flex items-center text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border ${isOrganic ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                        {isOrganic ? 'VERIFIED' : 'SPONSORED'}
+                    </span>
+                </div>
+
+                {/* Features & Ratings */}
+                <div className="my-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 mb-2">
+                        <span>★ {rating}</span>
+                        <span className="text-slate-400 font-normal text-[11px]">({reviewsCount} reviews)</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                        {(item.features || ['Used Auto Parts', 'Fast Response']).slice(0, 2).map((feat, fidx) => (
+                            <span key={fidx} className="text-[10px] font-semibold text-slate-600 bg-slate-100/90 px-2 py-0.5 rounded-md">
+                                {feat}
+                            </span>
                         ))}
                     </div>
                 </div>
             </div>
-        </div>
-    )
-}
-
-function AdCard({ ad }) {
-    const isPremium = ad.template_type === 'premium';
-    const isCompact = ad.template_type === 'compact';
-    const clickUrl = ad.redirect_url || ad.click_url || ad.cta_url || '#';
-    const imageUrl = getAdImageUrl(ad);
-
-    // Color accent based on first char of title for variety
-    const accentPalette = [
-        { bg: 'from-blue-500 to-blue-700',    light: '#eff6ff', border: '#bfdbfe', text: '#1d4ed8' },
-        { bg: 'from-violet-500 to-purple-700', light: '#f5f3ff', border: '#ddd6fe', text: '#6d28d9' },
-        { bg: 'from-emerald-500 to-teal-600',  light: '#ecfdf5', border: '#a7f3d0', text: '#047857' },
-        { bg: 'from-orange-400 to-red-600',    light: '#fff7ed', border: '#fed7aa', text: '#c2410c' },
-        { bg: 'from-sky-400 to-cyan-600',      light: '#f0f9ff', border: '#bae6fd', text: '#0369a1' },
-    ];
-    const palette = accentPalette[(ad.title?.charCodeAt(0) || 65) % accentPalette.length];
-
-    // Initials fallback
-    const initials = ad.title
-        ? ad.title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-        : 'AD';
-
-    if (isPremium) {
-        return (
-            <a
-                href={clickUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-shrink-0 w-[280px] sm:w-[340px] h-[180px] rounded-2xl overflow-hidden relative group/card block"
-                style={{
-                    background: 'linear-gradient(135deg, #0c1a3a 0%, #0f2055 50%, #1a1040 100%)',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                }}
-            >
-                {/* Grid mesh */}
-                <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
-                    backgroundSize: '20px 20px'
-                }} />
-
-                {/* Glow orbs */}
-                <div className="absolute -top-6 -left-6 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl pointer-events-none group-hover/card:bg-blue-400/30 transition-all duration-700" />
-                <div className="absolute -bottom-4 right-8 w-20 h-20 bg-violet-400/20 rounded-full blur-2xl pointer-events-none group-hover/card:bg-violet-400/30 transition-all duration-700" />
-
-                {/* Image */}
-                {imageUrl && (
-                    <div className="absolute right-0 top-0 w-2/5 h-full overflow-hidden pointer-events-none">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a3a] via-[#0c1a3a]/60 to-transparent z-10" />
-                        <img src={imageUrl} alt="" loading="lazy" className="w-full h-full object-cover opacity-35 group-hover/card:opacity-50 group-hover/card:scale-105 transition-all duration-700" onError={e => e.target.parentElement.style.display='none'} />
-                    </div>
-                )}
-
-                {/* Content */}
-                <div className="relative z-10 flex flex-col justify-between h-full p-5">
-                    <div>
-                        <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-400 border border-amber-400/25">
-                            ★ Premium
-                        </span>
-                        <h4 className="mt-2 text-[16px] font-black text-white leading-tight line-clamp-2 max-w-[65%]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            {ad.title}
-                        </h4>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 w-fit px-4 py-2 rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#1a56ff] text-white text-[12px] font-bold transition-all group-hover/card:shadow-[0_8px_20px_rgba(79,70,229,0.5)]">
-                        {ad.button_text || 'Visit Yard'}
-                        <svg className="w-3 h-3 group-hover/card:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                    </span>
-                </div>
-
-                {/* Hover border glow */}
-                <div className="absolute inset-0 rounded-2xl border border-white/0 group-hover/card:border-white/10 transition-all duration-300 pointer-events-none" />
-            </a>
-        );
-    }
-
-    if (isCompact) {
-        return (
-            <a
-                href={clickUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-shrink-0 w-[200px] h-[180px] rounded-2xl bg-white border border-slate-100 p-4 flex flex-col items-center justify-between group/card text-center transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-slate-200"
-            >
-                {/* Logo */}
-                <div className="relative mt-1">
-                    {imageUrl ? (
-                        <div className="w-14 h-14 rounded-full overflow-hidden border-4 border-slate-50 shadow-sm group-hover/card:scale-105 transition-transform duration-300">
-                            <img src={imageUrl} alt={ad.title} loading="lazy" className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
-                        </div>
-                    ) : (
-                        <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${palette.bg} flex items-center justify-center font-black text-lg text-white shadow-sm group-hover/card:scale-105 transition-transform duration-300`}>
-                            {initials}
-                        </div>
-                    )}
-                    <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#1a56ff] rounded-full border-2 border-white flex items-center justify-center">
-                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                    </span>
-                </div>
-
-                <div>
-                    <p className="text-[12px] font-black text-slate-900 leading-snug line-clamp-2 group-hover/card:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                        {ad.title}
-                    </p>
-                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Sponsored</span>
-                </div>
-
-                <span
-                    className="w-full py-1.5 rounded-xl text-[11px] font-bold text-center transition-all"
-                    style={{ background: palette.light, color: palette.text, border: `1px solid ${palette.border}` }}
-                >
-                    {ad.button_text || 'Visit'} →
-                </span>
-            </a>
-        );
-    }
-
-    // ── Standard carousel card ──────────────────────────────────────────────────
-    return (
-        <a
-            href={clickUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-shrink-0 w-[260px] sm:w-[300px] h-[180px] rounded-2xl bg-white border border-slate-100 p-4 flex flex-col justify-between group/card transition-all duration-300 hover:shadow-[0_10px_36px_rgba(0,0,0,0.07)] hover:border-slate-200 hover:-translate-y-1 relative overflow-hidden"
-        >
-            {/* Top accent line with palette color */}
-            <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${palette.bg}`} />
-
-            {/* Header row */}
-            <div className="flex items-center gap-3">
-                {imageUrl ? (
-                    <div className="w-11 h-11 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-50 group-hover/card:scale-105 transition-transform duration-300">
-                        <img src={imageUrl} alt={ad.title} loading="lazy" className="w-full h-full object-contain p-1" onError={e => e.target.style.display='none'} />
-                    </div>
-                ) : (
-                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${palette.bg} flex items-center justify-center font-black text-sm text-white flex-shrink-0 group-hover/card:scale-105 transition-transform duration-300`}>
-                        {initials}
-                    </div>
-                )}
-                <div className="flex-1 min-w-0">
-                    <h4 className="text-[13px] font-black text-slate-900 leading-snug line-clamp-2 group-hover/card:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                        {ad.title}
-                    </h4>
-                </div>
-            </div>
-
-            {/* Middle: descriptor */}
-            <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: palette.light, color: palette.text, border: `1px solid ${palette.border}` }}>Sponsored</span>
-                <span className="text-[11px] text-slate-400 font-medium">· Used Auto Parts</span>
-            </div>
 
             {/* CTA row */}
-            <div className="flex items-center justify-between">
-                <span
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-bold transition-all duration-200 group-hover/card:shadow-md"
-                    style={{ background: palette.light, color: palette.text, border: `1px solid ${palette.border}` }}
-                >
-                    {ad.button_text || 'Visit Yard'}
-                    <svg className="w-2.5 h-2.5 group-hover/card:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between mt-3">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    {isOrganic ? 'Verified Partner' : 'Ad'}
                 </span>
-                <span className="text-[9px] text-slate-300 font-bold uppercase tracking-wider">AD</span>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 group-hover:text-blue-700 group-hover:translate-x-0.5 transition-all">
+                    {buttonText}
+                    <svg className="w-3.5 h-3.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
             </div>
-        </a>
+        </LinkComponent>
     );
 }

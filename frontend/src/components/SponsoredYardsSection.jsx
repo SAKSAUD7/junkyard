@@ -162,19 +162,9 @@ export default function SponsoredYardsSection({
                 )}
             </div>
 
-            {/* Mobile Snap Carousel & Desktop 4-Card Grid */}
+            {/* Responsive 4-Card Grid across Desktop, Tablet and Mobile without Cutoff */}
             <div className="relative">
-                {/* Container: horizontally scrollable on mobile (1 card visible at a time with snap), 4-col grid on lg */}
-                <div
-                    className="flex lg:grid lg:grid-cols-4 gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory no-scrollbar pb-3 -mx-4 px-4 sm:mx-0 sm:px-0"
-                    onScroll={(e) => {
-                        const scrollLeft = e.currentTarget.scrollLeft;
-                        const width = e.currentTarget.offsetWidth;
-                        if (width > 0) {
-                            setActiveIndex(Math.round(scrollLeft / width));
-                        }
-                    }}
-                >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {DEFAULT_SPONSORED_YARDS.map((yard) => {
                         const isFav = favorites.includes(yard.id);
                         const isDark = yard.isPremium;
@@ -182,7 +172,7 @@ export default function SponsoredYardsSection({
                         return (
                             <div
                                 key={yard.id}
-                                className={`shrink-0 w-[86vw] max-w-[340px] lg:w-auto snap-center rounded-3xl transition-all duration-300 flex flex-col justify-between overflow-hidden relative group border ${
+                                className={`w-full rounded-3xl transition-all duration-300 flex flex-col justify-between overflow-hidden relative group border ${
                                     isDark
                                         ? 'bg-[#0B1528] text-white border-slate-800 shadow-[0_8px_30px_rgba(11,21,40,0.25)] hover:border-blue-500/40 hover:-translate-y-1'
                                         : 'bg-white text-slate-900 border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:border-slate-300 hover:-translate-y-1'
@@ -366,17 +356,7 @@ export default function SponsoredYardsSection({
                     })}
                 </div>
 
-                {/* Mobile Pagination Dot Indicator (1 card visible at a time) */}
-                <div className="flex lg:hidden justify-center items-center gap-1.5 mt-3">
-                    {DEFAULT_SPONSORED_YARDS.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${
-                                activeIndex === i ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300'
-                            }`}
-                        />
-                    ))}
-                </div>
+
             </div>
         </section>
     );

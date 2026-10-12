@@ -200,8 +200,10 @@ export default function Home() {
 
 
 
-                {/* CTA BANNER — blue gradient section with image panel */}
-                <CTABanner get={get} />
+                {/* REPLACED 3RD IMAGE / CTABANNER WITH HIGH-IMPACT PROMOTED ADS SECTION */}
+                <div className="bg-slate-50/70 border-t border-b border-slate-200/80 py-8">
+                    <AdCarousel slotGroup="carousel_deal" page="home" title="Exclusive Deals & Verified Salvage Networks" />
+                </div>
 
                 {/* AD SLIDER 5 */}
                 <div className="bg-white pt-8">
