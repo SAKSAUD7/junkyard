@@ -4,10 +4,20 @@ import { useNavigate } from 'react-router-dom';
 
 const VendorAuthContext = createContext(null);
 
+const fallbackAuth = {
+    user: null,
+    vendorProfile: null,
+    loading: false,
+    register: async () => ({ success: false, error: 'Vendor auth not initialized' }),
+    login: async () => ({ success: false, error: 'Vendor auth not initialized' }),
+    logout: async () => {},
+    isAuthenticated: () => false,
+};
+
 export const useVendorAuth = () => {
     const context = useContext(VendorAuthContext);
     if (!context) {
-        throw new Error('useVendorAuth must be used within VendorAuthProvider');
+        return fallbackAuth;
     }
     return context;
 };

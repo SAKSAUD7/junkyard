@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
+import { VendorAuthProvider } from './contexts/VendorAuthContext'
 import { CMSProvider } from './contexts/CMSContext'
 import { PermissionProvider } from './contexts/PermissionContext'
 import { NotificationProvider } from './components/common/EnterpriseNotifications'
@@ -37,15 +38,17 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <NotificationProvider>
             <AuthProvider>
-              <CMSProvider>
-                <PermissionProvider>
-                  <FavoritesProvider>
-                    <CartProvider>
-                      <App />
-                    </CartProvider>
-                  </FavoritesProvider>
-                </PermissionProvider>
-              </CMSProvider>
+              <VendorAuthProvider>
+                <CMSProvider>
+                  <PermissionProvider>
+                    <FavoritesProvider>
+                      <CartProvider>
+                        <App />
+                      </CartProvider>
+                    </FavoritesProvider>
+                  </PermissionProvider>
+                </CMSProvider>
+              </VendorAuthProvider>
             </AuthProvider>
           </NotificationProvider>
         </BrowserRouter>
