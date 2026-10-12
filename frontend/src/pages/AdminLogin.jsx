@@ -5,11 +5,20 @@ import SEO from '../components/SEO';
 import PasswordInput from '../components/PasswordInput';
 
 const ROLES = [
-    { id: 'super_admin', label: 'Super Admin', desc: 'Full system access', icon: '👑' },
-    { id: 'staff', label: 'Staff / Moderator', desc: 'Content and user management', icon: '🛡️' },
-    { id: 'vendor', label: 'Vendor / Junkyard', desc: 'Yard dashboard access', icon: '🏪' },
-    { id: 'user', label: 'Standard User', desc: 'Buyer account', icon: '👤' },
-    { id: 'none', label: 'No Authorized Role', desc: 'Return to homepage', icon: '⬅️' },
+    {
+        id: 'super_admin',
+        label: 'Super Admin',
+        desc: 'Full system access — platform management',
+        icon: '👑',
+        color: 'from-blue-600 to-indigo-700'
+    },
+    {
+        id: 'staff',
+        label: 'Staff / Moderator',
+        desc: 'Content, leads and user management',
+        icon: '🛡️',
+        color: 'from-slate-600 to-slate-700'
+    },
 ];
 
 // Provide an automotive background from Unsplash for Admin Access
@@ -33,12 +42,6 @@ export default function AdminLogin() {
     const handleRoleSelect = (roleId) => {
         if (roleId === 'super_admin' || roleId === 'staff') {
             setStep('login');
-        } else if (roleId === 'vendor') {
-            navigate('/vendor/login');
-        } else if (roleId === 'user') {
-            navigate('/signin');
-        } else {
-            navigate('/');
         }
     };
 

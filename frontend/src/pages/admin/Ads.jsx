@@ -34,6 +34,7 @@ export default function AdminAds() {
     const [adPlansRecordId, setAdPlansRecordId] = useState(null);
     const [editingAd, setEditingAd] = useState(null);
     const [fetchError, setFetchError] = useState(null);
+    const [summaryStats, setSummaryStats] = useState(null);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -65,8 +66,12 @@ export default function AdminAds() {
     const fetchAds = async () => {
         try {
             setFetchError(null);
-            const data = await api.getAdminAds(token);
+            const [data, summary] = await Promise.all([
+                api.getAdminAds(token),
+                api.getAdsSummary().catch(() => null)
+            ]);
             setAds(data.results || data);
+            if (summary) setSummaryStats(summary);
         } catch (error) {
             console.error('Error fetching ads:', error);
             const status = error?.response?.status;
@@ -163,6 +168,7 @@ export default function AdminAds() {
         { key: 'strip_top',      label: 'Strip — Top',           color: 'bg-orange-500 text-white',              dimColor: 'bg-orange-50 text-orange-600 border border-orange-200',     match: (s) => s === 'strip_top' },
         { key: 'strip_bottom',   label: 'Strip — Bottom',        color: 'bg-teal-500 text-white',                dimColor: 'bg-teal-50 text-teal-600 border border-teal-200',           match: (s) => s === 'strip_bottom' },
         { key: 'strip_home_mid', label: 'Strip — Home Middle',   color: 'bg-sky-500 text-white',                 dimColor: 'bg-sky-50 text-sky-600 border border-sky-200',             match: (s) => s === 'strip_home_mid' },
+        { key: 'carousel_deal',  label: 'Carousel Deal',          color: 'bg-indigo-600 text-white',              dimColor: 'bg-indigo-50 text-indigo-600 border border-indigo-200',    match: (s) => s === 'carousel_deal' },
         { key: 'carousel_1',     label: 'Carousel 1 (Top)',       color: 'bg-blue-600 text-white',                dimColor: 'bg-blue-50 text-blue-600 border border-blue-200',           match: (s) => s === 'carousel_1' },
         { key: 'carousel_2',     label: 'Carousel 2',             color: 'bg-violet-600 text-white',              dimColor: 'bg-violet-50 text-violet-600 border border-violet-200',     match: (s) => s === 'carousel_2' },
         { key: 'carousel_3',     label: 'Carousel 3 (Middle)',    color: 'bg-emerald-600 text-white',             dimColor: 'bg-emerald-50 text-emerald-600 border border-emerald-200', match: (s) => s === 'carousel_3' },
@@ -316,6 +322,7 @@ export default function AdminAds() {
         if (slot === 'strip_top')      return { label: `${page} Strip Top`,    color: 'bg-orange-50 text-orange-600' };
         if (slot === 'strip_bottom')   return { label: `${page} Strip Bottom`, color: 'bg-teal-50 text-teal-600' };
         if (slot === 'strip_home_mid') return { label: 'Home Strip Mid',        color: 'bg-sky-50 text-sky-600' };
+        if (slot === 'carousel_deal')  return { label: `${page} Deal`,          color: 'bg-indigo-50 text-indigo-600' };
         if (slot === 'carousel_1')     return { label: 'Carousel 1 (Top)',      color: 'bg-blue-50 text-blue-600' };
         if (slot === 'carousel_2')     return { label: 'Carousel 2',            color: 'bg-violet-50 text-violet-600' };
         if (slot === 'carousel_3')     return { label: 'Carousel 3 (Mid)',      color: 'bg-emerald-50 text-emerald-600' };
@@ -387,6 +394,43 @@ export default function AdminAds() {
                         <PlusIcon className="h-4 w-4" />
                         Create Ad
                     </button>
+                </div>
+            </div>
+
+            {/* ── Summary KPI Cards ─────────────────────────────────────── */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Ads</p>
+                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        {summaryStats?.total_ads ?? ads.length}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">All registered campaigns</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Active</p>
+                    <p className="text-2xl font-black text-emerald-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        {summaryStats?.active_ads ?? ads.filter(a => a.is_active).length}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">Live in marketplace</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Total Impressions</p>
+                    <p className="text-2xl font-black text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        {(summaryStats?.total_impressions ?? ads.reduce((acc, a) => acc + (a.impressions || 0), 0)).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">Verified unique views</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <p className="text-xs font-bold text-violet-600 uppercase tracking-wider mb-1">Total Clicks (CTR)</p>
+                    <div className="flex items-baseline gap-2">
+                        <p className="text-2xl font-black text-violet-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            {(summaryStats?.total_clicks ?? ads.reduce((acc, a) => acc + (a.clicks || 0), 0)).toLocaleString()}
+                        </p>
+                        <span className="text-xs font-bold text-violet-500">
+                            {summaryStats?.ctr ? `${summaryStats.ctr}%` : '0%'}
+                        </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">Engagement rate</p>
                 </div>
             </div>
 
@@ -665,6 +709,7 @@ export default function AdminAds() {
                                         <option value="contact">Contact Page</option>
                                         <option value="blog">Blog Page</option>
                                         <option value="faq">FAQ Page</option>
+                                        <option value="sell_your_car">Sell Your Car Page</option>
                                     </select>
                                 </div>
                                 <div>
@@ -682,6 +727,7 @@ export default function AdminAds() {
                                         </optgroup>
                                         {/* Carousel Slots */}
                                         <optgroup label="Carousel Sliders (Multiple Ads)">
+                                            <option value="carousel_deal">Carousel Deal (Featured Deals)</option>
                                             <option value="carousel_1">Carousel Slider 1 (Top)</option>
                                             <option value="carousel_2">Carousel Slider 2</option>
                                             <option value="carousel_3">Carousel Slider 3 (Middle)</option>

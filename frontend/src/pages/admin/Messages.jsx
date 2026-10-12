@@ -9,19 +9,28 @@ import {
     MagnifyingGlassIcon,
     FunnelIcon,
     XMarkIcon,
-    CheckCircleIcon
+    CheckCircleIcon,
+    ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import Toast from '../../components/Toast';
+import AdminTable, { ActionBtn, StatusBadge, ConfirmDialog } from '../../components/AdminTable';
 
 export default function AdminMessages() {
-    const { token, isAdmin, user } = useContext(AuthContext);
+    const { token, isAdmin } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [filter, setFilter] = useState('all'); 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedIds, setSelectedIds] = useState([]);
     const [toast, setToast] = useState(null);
+    const [deleteTargetId, setDeleteTargetId] = useState(null);
+    const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+
+    // Pagination
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
 
     useEffect(() => {
         if (token && isAdmin) {
@@ -39,17 +48,15 @@ export default function AdminMessages() {
         }
 
         setLoading(true);
+        setError(null);
         try {
             const data = await api.getContactMessages(token);
             const list = data.results || (Array.isArray(data) ? data : []);
             setMessages(list);
-        } catch (error) {
-            console.error('Failed to fetch messages:', error);
-            if (error.message.includes('401')) {
-                showToast('Authentication failed. Please log in again.', 'error');
-            } else {
-                showToast('Failed to load messages', 'error');
-            }
+        } catch (err) {
+            console.error('Failed to fetch messages:', err);
+            setError('Failed to load messages. Please try again.');
+            showToast('Failed to load messages', 'error');
         } finally {
             setLoading(false);
         }
@@ -60,46 +67,37 @@ export default function AdminMessages() {
         if (!message.is_read) {
             try {
                 await api.markMessageAsRead(token, message.id);
-                setMessages(messages.map(m =>
+                setMessages(prev => prev.map(m =>
                     m.id === message.id ? { ...m, is_read: true } : m
                 ));
-            } catch (error) {
-                console.error('Failed to mark as read:', error);
+            } catch (err) {
+                console.error('Failed to mark as read:', err);
             }
         }
     };
 
-    const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
-
-    const handleDeleteClick = (id) => {
-        setDeleteConfirmId(id);
-    };
-
     const handleDeleteConfirm = async () => {
-        const id = deleteConfirmId;
-        setDeleteConfirmId(null);
+        if (!deleteTargetId) return;
+        const id = deleteTargetId;
+        setDeleteTargetId(null);
         try {
             await api.deleteContactMessage(token, id);
-            setMessages(messages.filter(m => m.id !== id));
+            setMessages(prev => prev.filter(m => m.id !== id));
+            setSelectedIds(prev => prev.filter(i => i !== id));
             showToast('Message deleted successfully', 'success');
-        } catch (error) {
+        } catch (err) {
             showToast('Failed to delete message', 'error');
         }
     };
 
-    const handleDeleteCancel = () => setDeleteConfirmId(null);
-    const handleBulkDeleteClick = () => setShowBulkDeleteConfirm(true);
-    const handleBulkDeleteCancel = () => setShowBulkDeleteConfirm(false);
-
     const handleBulkDeleteConfirm = async () => {
-        setShowBulkDeleteConfirm(false);
+        setShowBulkConfirm(false);
         try {
             await Promise.all(selectedIds.map(id => api.deleteContactMessage(token, id)));
-            setMessages(messages.filter(m => !selectedIds.includes(m.id)));
+            setMessages(prev => prev.filter(m => !selectedIds.includes(m.id)));
             setSelectedIds([]);
             showToast(`${selectedIds.length} message(s) deleted`, 'success');
-        } catch (error) {
+        } catch (err) {
             showToast('Failed to delete some messages', 'error');
         }
     };
@@ -109,29 +107,100 @@ export default function AdminMessages() {
         setTimeout(() => setToast(null), 3000);
     };
 
-    const toggleSelect = (id) => setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-    const toggleSelectAll = () => {
-        if (selectedIds.length === filteredMessages.length) setSelectedIds([]);
-        else setSelectedIds(filteredMessages.map(m => m.id));
+    const toggleSelect = (id) => {
+        setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
     };
 
     const filteredMessages = messages.filter(msg => {
         const matchesFilter = filter === 'all' || (filter === 'read' && msg.is_read) || (filter === 'unread' && !msg.is_read);
+        const term = searchTerm.toLowerCase();
         const matchesSearch = searchTerm === '' ||
-            msg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            msg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            msg.message.toLowerCase().includes(searchTerm.toLowerCase());
+            (msg.name && msg.name.toLowerCase().includes(term)) ||
+            (msg.email && msg.email.toLowerCase().includes(term)) ||
+            (msg.subject && msg.subject.toLowerCase().includes(term)) ||
+            (msg.message && msg.message.toLowerCase().includes(term));
         return matchesFilter && matchesSearch;
     });
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <div className="w-8 h-8 border-2 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-            </div>
-        );
-    }
+    const paginatedMessages = filteredMessages.slice((page - 1) * pageSize, page * pageSize);
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === paginatedMessages.length && paginatedMessages.length > 0) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(paginatedMessages.map(m => m.id));
+        }
+    };
+
+    const columns = [
+        {
+            key: 'select',
+            label: (
+                <input 
+                    type="checkbox" 
+                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    checked={paginatedMessages.length > 0 && selectedIds.length === paginatedMessages.length}
+                    onChange={toggleSelectAll}
+                />
+            ),
+            className: 'w-10',
+            render: (row) => (
+                <input 
+                    type="checkbox" 
+                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    checked={selectedIds.includes(row.id)}
+                    onChange={() => toggleSelect(row.id)}
+                />
+            )
+        },
+        {
+            key: 'is_read',
+            label: 'Status',
+            render: (row) => (
+                <StatusBadge status={row.is_read ? 'read' : 'unread'} />
+            )
+        },
+        {
+            key: 'name',
+            label: 'Sender',
+            render: (row) => (
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs flex-shrink-0">
+                        {(row.name || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p className={`text-sm ${!row.is_read ? 'font-bold text-slate-900' : 'font-semibold text-slate-700'}`}>
+                            {row.name || 'Anonymous'}
+                        </p>
+                        <p className="text-[11px] text-slate-400 font-mono">{row.email || '—'}</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            key: 'subject',
+            label: 'Subject & Excerpt',
+            render: (row) => (
+                <div className="max-w-xs md:max-w-md">
+                    <p className={`text-sm truncate ${!row.is_read ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>
+                        {row.subject || '(No Subject)'}
+                    </p>
+                    <p className="text-[12px] text-slate-500 truncate mt-0.5">
+                        {row.message}
+                    </p>
+                </div>
+            )
+        },
+        {
+            key: 'created_at',
+            label: 'Date',
+            render: (row) => (
+                <span className="text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {row.created_at ? new Date(row.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                </span>
+            )
+        }
+    ];
 
     if (!token || !isAdmin) {
         return (
@@ -146,215 +215,141 @@ export default function AdminMessages() {
     }
 
     return (
-        <div className="max-w-[1600px] mx-auto space-y-6">
+        <div className="max-w-[1400px] mx-auto space-y-6">
             {/* ── Header ────────────────────────────────────────────────────── */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Messages</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage customer inquiries and feedback.</p>
+                    <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        Messages
+                    </h1>
+                    <p className="text-sm text-slate-500 mt-0.5 font-medium">Manage customer inquiries and contact submissions.</p>
                 </div>
-                <div className="flex gap-4">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Total</span>
-                        <span className="text-lg font-bold text-slate-900">{messages.length}</span>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total</span>
+                            <span className="text-base font-black text-slate-900">{messages.length}</span>
+                        </div>
+                        <div className="w-px h-5 bg-slate-200"></div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Unread</span>
+                            <span className="text-base font-black text-rose-600">{messages.filter(m => !m.is_read).length}</span>
+                        </div>
                     </div>
-                    <div className="w-px h-8 bg-slate-200"></div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Unread</span>
-                        <span className="text-lg font-bold text-rose-500">{messages.filter(m => !m.is_read).length}</span>
-                    </div>
+                    <button
+                        onClick={fetchMessages}
+                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-colors"
+                        title="Refresh"
+                    >
+                        <ArrowPathIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    </button>
                 </div>
             </div>
 
-            {/* ── Filters ───────────────────────────────────────────────────── */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
-                <div className="flex flex-col sm:flex-row gap-4">
+            {/* ── Filter & Search Toolbar ────────────────────────────────────── */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
                     <div className="relative flex-1 max-w-md">
                         <input
                             type="text"
-                            placeholder="Search messages..."
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm"
+                            placeholder="Search by sender, email, subject, message..."
+                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-sm font-medium"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
                         />
                         <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
                     </div>
-                    <div className="relative w-40">
-                        <select
-                            className="w-full appearance-none pl-10 pr-8 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 text-sm text-slate-700 bg-white"
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
-                        >
-                            <option value="all">All Messages</option>
-                            <option value="unread">Unread Only</option>
-                            <option value="read">Read Only</option>
-                        </select>
-                        <FunnelIcon className="h-4 w-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <select
+                                className="appearance-none pl-9 pr-8 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white focus:outline-none focus:border-blue-400 shadow-sm cursor-pointer"
+                                value={filter}
+                                onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+                            >
+                                <option value="all">All Messages</option>
+                                <option value="unread">Unread Only</option>
+                                <option value="read">Read Only</option>
+                            </select>
+                            <FunnelIcon className="h-4 w-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* ── Bulk Actions ──────────────────────────────────────────────── */}
+            {/* ── Bulk Actions Bar ────────────────────────────────────────── */}
             {selectedIds.length > 0 && (
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between">
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center justify-between shadow-sm animate-in fade-in duration-200">
                     <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-900">{selectedIds.length} messages selected</span>
+                        <span className="text-sm font-bold text-blue-900">{selectedIds.length} message(s) selected</span>
                     </div>
                     <button
-                        onClick={handleBulkDeleteClick}
-                        className="px-3 py-1.5 bg-white border border-slate-200 text-rose-600 rounded-md text-xs font-semibold hover:bg-rose-50 flex items-center gap-1 shadow-sm"
+                        onClick={() => setShowBulkConfirm(true)}
+                        className="px-3.5 py-1.5 bg-white border border-rose-200 text-rose-600 rounded-xl text-xs font-bold hover:bg-rose-50 flex items-center gap-1.5 shadow-sm transition-colors"
                     >
-                        <TrashIcon className="h-3 w-3" /> Delete
+                        <TrashIcon className="h-4 w-4" /> Delete Selected
                     </button>
                 </div>
             )}
 
-            {/* Bulk Delete Confirm */}
-            {showBulkDeleteConfirm && (
-                <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 shadow-sm">
-                    <p className="text-sm font-bold text-rose-900 mb-2">Delete {selectedIds.length} messages?</p>
-                    <p className="text-xs text-rose-700 mb-3">This action cannot be undone.</p>
-                    <div className="flex gap-2">
-                        <button onClick={handleBulkDeleteConfirm} className="px-3 py-1.5 bg-rose-600 text-white rounded-md text-xs font-semibold shadow-sm hover:bg-rose-700">Confirm Delete</button>
-                        <button onClick={handleBulkDeleteCancel} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-md text-xs font-semibold shadow-sm hover:bg-slate-50">Cancel</button>
-                    </div>
-                </div>
-            )}
-
-            {/* ── Table ─────────────────────────────────────────────────────── */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                {filteredMessages.length === 0 ? (
-                    <div className="text-center py-16">
-                        <EnvelopeIcon className="h-10 w-10 mx-auto text-slate-300 mb-3" />
-                        <p className="text-slate-500 text-sm">No messages found</p>
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse whitespace-nowrap">
-                            <thead>
-                                <tr className="border-b border-slate-100 bg-slate-50/50">
-                                    <th className="px-4 py-3 w-10">
-                                        <input 
-                                            type="checkbox" 
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                            checked={selectedIds.length === filteredMessages.length && filteredMessages.length > 0}
-                                            onChange={toggleSelectAll}
-                                        />
-                                    </th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sender</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Subject</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {filteredMessages.map((message) => {
-                                    const isSelected = selectedIds.includes(message.id);
-                                    return (
-                                        <tr key={message.id} className={`hover:bg-slate-50/50 transition-colors ${!message.is_read ? 'bg-blue-50/10' : ''} ${isSelected ? 'bg-blue-50/30' : ''}`}>
-                                            {deleteConfirmId === message.id ? (
-                                                <td colSpan="6" className="px-4 py-3 bg-rose-50/50">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-semibold text-rose-700">Delete this message?</span>
-                                                        <div className="flex gap-2">
-                                                            <button onClick={handleDeleteConfirm} className="px-2 py-1 bg-rose-600 text-white rounded text-[10px] font-semibold">Delete</button>
-                                                            <button onClick={handleDeleteCancel} className="px-2 py-1 bg-white border border-slate-200 text-slate-600 rounded text-[10px] font-semibold">Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            ) : (
-                                                <>
-                                                    <td className="px-4 py-3">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                            checked={isSelected}
-                                                            onChange={() => toggleSelect(message.id)}
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        {message.is_read ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500">
-                                                                Read
-                                                            </span>
-                                                        ) : (
-                                                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600">
-                                                                New
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs flex-shrink-0">
-                                                                {message.name.charAt(0).toUpperCase()}
-                                                            </div>
-                                                            <div>
-                                                                <p className={`text-sm ${!message.is_read ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>{message.name}</p>
-                                                                <p className="text-[11px] text-slate-500">{message.email}</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-4 py-3 max-w-xs">
-                                                        <p className={`text-sm truncate ${!message.is_read ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>{message.subject}</p>
-                                                        <p className="text-[11px] text-slate-500 truncate mt-0.5">{message.message}</p>
-                                                    </td>
-                                                    <td className="px-4 py-3 text-xs text-slate-500">
-                                                        {new Date(message.created_at).toLocaleDateString()}
-                                                    </td>
-                                                    <td className="px-4 py-3 text-right">
-                                                        <div className="flex gap-2 justify-end">
-                                                            <button onClick={() => handleViewMessage(message)} className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-md text-xs font-semibold hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 shadow-sm transition-all" title="View">
-                                                                <EyeIcon className="h-3.5 w-3.5" />
-                                                                View
-                                                            </button>
-                                                            <button onClick={() => handleDeleteClick(message.id)} className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-md text-xs font-semibold hover:bg-rose-100 shadow-sm transition-all" title="Delete">
-                                                                <TrashIcon className="h-3.5 w-3.5" />
-                                                                Delete
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </>
-                                            )}
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+            {/* ── AdminTable Component ─────────────────────────────────────── */}
+            <AdminTable
+                columns={columns}
+                data={paginatedMessages}
+                loading={loading}
+                error={error}
+                onRetry={fetchMessages}
+                emptyIcon="✉️"
+                emptyTitle="No messages found"
+                emptyDesc={searchTerm || filter !== 'all' ? 'Try clearing your filters or search keywords.' : 'No contact messages have been submitted yet.'}
+                pageSize={pageSize}
+                onPageSizeChange={setPageSize}
+                currentPage={page}
+                totalCount={filteredMessages.length}
+                onPageChange={setPage}
+                renderActions={(row) => (
+                    <>
+                        <ActionBtn color="blue" title="View Message" onClick={() => handleViewMessage(row)}>
+                            <EyeIcon className="w-4 h-4" />
+                        </ActionBtn>
+                        <ActionBtn color="red" title="Delete Message" onClick={() => setDeleteTargetId(row.id)}>
+                            <TrashIcon className="w-4 h-4" />
+                        </ActionBtn>
+                    </>
                 )}
-            </div>
+            />
 
             {/* ── View Modal ────────────────────────────────────────────────── */}
             {selectedMessage && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[400]">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/70">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-sm">
-                                    {selectedMessage.name.charAt(0).toUpperCase()}
+                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-black text-sm">
+                                    {(selectedMessage.name || 'U').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>{selectedMessage.name}</h3>
-                                    <p className="text-xs text-slate-500">{selectedMessage.email}</p>
+                                    <h3 className="text-base font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        {selectedMessage.name || 'Anonymous Sender'}
+                                    </h3>
+                                    <p className="text-xs text-slate-500 font-mono">{selectedMessage.email || 'No email'}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setSelectedMessage(null)} className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+                            <button onClick={() => setSelectedMessage(null)} className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
                                 <XMarkIcon className="h-5 w-5" />
                             </button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
+                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-5">
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</label>
-                                <p className="text-base font-semibold text-slate-900">{selectedMessage.subject}</p>
+                                <p className="text-base font-bold text-slate-900">{selectedMessage.subject || '(No Subject)'}</p>
                             </div>
 
                             <div>
-                                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Message</label>
-                                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                    <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Message Body</label>
+                                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                    <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-medium">
                                         {selectedMessage.message}
                                     </p>
                                 </div>
@@ -362,27 +357,55 @@ export default function AdminMessages() {
 
                             <div className="flex gap-6 pt-2">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Received</label>
-                                    <p className="text-xs font-semibold text-slate-700">{new Date(selectedMessage.created_at).toLocaleString()}</p>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Date Received</label>
+                                    <p className="text-xs font-semibold text-slate-700">
+                                        {selectedMessage.created_at ? new Date(selectedMessage.created_at).toLocaleString() : '—'}
+                                    </p>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
-                                    <p className="text-xs font-semibold text-slate-700">Read</p>
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Status</label>
+                                    <StatusBadge status="read" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
-                            <button onClick={() => setSelectedMessage(null)} className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 shadow-sm">
+                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/70 flex justify-end gap-3">
+                            <button onClick={() => setSelectedMessage(null)} className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-100 shadow-sm transition-colors">
                                 Close
                             </button>
-                            <button onClick={() => { handleDeleteClick(selectedMessage.id); setSelectedMessage(null); }} className="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-semibold hover:bg-rose-700 shadow-sm flex items-center gap-2">
-                                <TrashIcon className="h-4 w-4" /> Delete
+                            <button 
+                                onClick={() => {
+                                    setDeleteTargetId(selectedMessage.id);
+                                    setSelectedMessage(null);
+                                }} 
+                                className="px-4 py-2 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 shadow-sm flex items-center gap-2 transition-colors"
+                            >
+                                <TrashIcon className="h-4 w-4" /> Delete Message
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* ── Single Delete Confirm Dialog ─────────────────────────────── */}
+            <ConfirmDialog
+                open={!!deleteTargetId}
+                title="Delete Message"
+                message="Are you sure you want to delete this message? This action cannot be undone."
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeleteTargetId(null)}
+                confirmLabel="Delete Message"
+            />
+
+            {/* ── Bulk Delete Confirm Dialog ──────────────────────────────── */}
+            <ConfirmDialog
+                open={showBulkConfirm}
+                title="Delete Selected Messages"
+                message={`Are you sure you want to permanently delete ${selectedIds.length} selected message(s)? This action cannot be undone.`}
+                onConfirm={handleBulkDeleteConfirm}
+                onCancel={() => setShowBulkConfirm(false)}
+                confirmLabel={`Delete ${selectedIds.length} Messages`}
+            />
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>

@@ -52,6 +52,7 @@ const Toast = ({ message, type, onClose }) => {
 
 export default function AdminSettings() {
     const { user, logout } = useContext(AuthContext);
+    const [activeTab, setActiveTab] = useState('general');
     const [toast, setToast] = useState(null);
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [pushNotifications, setPushNotifications] = useState(false);
@@ -137,158 +138,192 @@ export default function AdminSettings() {
                 </div>
             </div>
 
-            {/* Settings Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Profile Information */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white border border-slate-100 rounded-lg">
-                                <UserCircleIcon className="h-5 w-5 text-slate-900" />
-                            </div>
-                            <h3 className="text-lg font-bold text-[#1f2937]">Profile Information</h3>
-                        </div>
-                    </div>
-                    <div className="p-6 space-y-4">
-                        <div>
-                            <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Username</label>
-                            <div className="px-4 py-3 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl text-[#1f2937] font-medium">
-                                {user?.username || 'N/A'}
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide flex items-center gap-2">
-                                <EnvelopeIcon className="h-4 w-4" />
-                                Email Address
-                            </label>
-                            <div className="px-4 py-3 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl text-[#1f2937] font-medium">
-                                {user?.email || 'N/A'}
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide flex items-center gap-2">
-                                <ShieldCheckIcon className="h-4 w-4" />
-                                Account Type
-                            </label>
-                            <div className="px-4 py-3 bg-gradient-to-br from-blue-50 to-slate-50 border-2 border-blue-200 rounded-xl">
-                                <span className="inline-flex items-center gap-2 text-sm font-bold text-blue-600">
-                                    <SparklesIcon className="h-4 w-4" />
-                                    {user?.is_superuser ? 'Super Administrator' : user?.user_type === 'admin' ? 'Administrator' : 'Staff Member'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            {/* ── Navigation Tabs ────────────────────────────────────────── */}
+            <div className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-px">
+                {[
+                    { id: 'general', label: 'Profile & Account', icon: UserCircleIcon },
+                    { id: 'security', label: 'Security & Access', icon: ShieldCheckIcon },
+                    { id: 'notifications', label: 'Notifications', icon: BellIcon },
+                    { id: 'system', label: 'System & Status', icon: Cog6ToothIcon },
+                ].map(tab => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.id;
+                    return (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all ${
+                                isActive
+                                    ? 'border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl'
+                                    : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
+                            }`}
+                        >
+                            <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                            {tab.label}
+                        </button>
+                    );
+                })}
+            </div>
 
-                {/* Security Settings */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg">
-                                <ShieldCheckIcon className="h-5 w-5 text-slate-900" />
-                            </div>
-                            <h3 className="text-lg font-bold text-[#1f2937]">Security</h3>
-                        </div>
-                    </div>
-                    <div className="p-6 space-y-4">
-                        <div>
-                            <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Password</label>
-                            <button
-                                onClick={() => setShowPasswordModal(true)}
-                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2"
-                            >
-                                <KeyIcon className="h-5 w-5" />
-                                Change Password
-                            </button>
-                        </div>
-                        <div className="pt-4 border-t border-slate-100">
-                            <label className="block text-xs font-bold text-[#6b7280] mb-3 uppercase tracking-wide">Session Management</label>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
-                                    <span className="text-sm text-[#6b7280]">Last Login</span>
-                                    <span className="text-sm font-semibold text-[#1f2937]">Today</span>
+            {/* ── Tab Content Panels ───────────────────────────────────────── */}
+            <div>
+                {/* Profile Information Tab */}
+                {activeTab === 'general' && (
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
+                        <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-white border border-slate-100 rounded-lg">
+                                    <UserCircleIcon className="h-5 w-5 text-slate-900" />
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
-                                    <span className="text-sm text-[#6b7280]">Active Sessions</span>
-                                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200">
-                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        1 Active
+                                <h3 className="text-lg font-bold text-[#1f2937]">Profile Information</h3>
+                            </div>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Username</label>
+                                <div className="px-4 py-3 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl text-[#1f2937] font-medium">
+                                    {user?.username || 'N/A'}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide flex items-center gap-2">
+                                    <EnvelopeIcon className="h-4 w-4" />
+                                    Email Address
+                                </label>
+                                <div className="px-4 py-3 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl text-[#1f2937] font-medium">
+                                    {user?.email || 'N/A'}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide flex items-center gap-2">
+                                    <ShieldCheckIcon className="h-4 w-4" />
+                                    Account Type
+                                </label>
+                                <div className="px-4 py-3 bg-gradient-to-br from-blue-50 to-slate-50 border-2 border-blue-200 rounded-xl">
+                                    <span className="inline-flex items-center gap-2 text-sm font-bold text-blue-600">
+                                        <SparklesIcon className="h-4 w-4" />
+                                        {user?.is_superuser ? 'Super Administrator' : user?.user_type === 'admin' ? 'Administrator' : 'Staff Member'}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
 
-                {/* Notification Preferences */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg">
-                                <BellIcon className="h-5 w-5 text-slate-900" />
+                {/* Security Tab */}
+                {activeTab === 'security' && (
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
+                        <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg">
+                                    <ShieldCheckIcon className="h-5 w-5 text-white" />
+                                </div>
+                                <h3 className="text-lg font-bold text-[#1f2937]">Security & Password</h3>
                             </div>
-                            <h3 className="text-lg font-bold text-[#1f2937]">Notifications</h3>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[#6b7280] mb-2 uppercase tracking-wide">Password</label>
+                                <button
+                                    onClick={() => setShowPasswordModal(true)}
+                                    className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
+                                >
+                                    <KeyIcon className="h-5 w-5" />
+                                    Change Password
+                                </button>
+                            </div>
+                            <div className="pt-4 border-t border-slate-100">
+                                <label className="block text-xs font-bold text-[#6b7280] mb-3 uppercase tracking-wide">Session Management</label>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
+                                        <span className="text-sm text-[#6b7280]">Last Login</span>
+                                        <span className="text-sm font-semibold text-[#1f2937]">Today</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
+                                        <span className="text-sm text-[#6b7280]">Active Sessions</span>
+                                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200">
+                                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            1 Active
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="p-6 space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl hover:border-blue-600 transition-colors">
-                            <div className="flex items-center gap-3">
-                                <EnvelopeIcon className="h-5 w-5 text-[#6b7280]" />
-                                <div>
-                                    <p className="text-sm font-semibold text-[#1f2937]">Email Notifications</p>
-                                    <p className="text-xs text-[#6b7280]">Receive updates via email</p>
-                                </div>
-                            </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="sr-only peer"
-                                    checked={emailNotifications}
-                                    onChange={(e) => setEmailNotifications(e.target.checked)}
-                                />
-                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-[#6366f1] peer-checked:to-[#8b5cf6]"></div>
-                            </label>
-                        </div>
+                )}
 
-                        <div className="flex items-center justify-between p-4 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl hover:border-blue-600 transition-colors">
+                {/* Notifications Tab */}
+                {activeTab === 'notifications' && (
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
+                        <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
                             <div className="flex items-center gap-3">
-                                <BellIcon className="h-5 w-5 text-[#6b7280]" />
-                                <div>
-                                    <p className="text-sm font-semibold text-[#1f2937]">Push Notifications</p>
-                                    <p className="text-xs text-[#6b7280]">Browser notifications</p>
+                                <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg">
+                                    <BellIcon className="h-5 w-5 text-white" />
                                 </div>
+                                <h3 className="text-lg font-bold text-[#1f2937]">Notification Preferences</h3>
                             </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="sr-only peer"
-                                    checked={pushNotifications}
-                                    onChange={(e) => setPushNotifications(e.target.checked)}
-                                />
-                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-[#6366f1] peer-checked:to-[#8b5cf6]"></div>
-                            </label>
                         </div>
+                        <div className="p-6 space-y-4">
+                            <div className="flex items-center justify-between p-4 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl hover:border-blue-600 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <EnvelopeIcon className="h-5 w-5 text-[#6b7280]" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-[#1f2937]">Email Notifications</p>
+                                        <p className="text-xs text-[#6b7280]">Receive updates and lead submissions via email</p>
+                                    </div>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={emailNotifications}
+                                        onChange={(e) => setEmailNotifications(e.target.checked)}
+                                    />
+                                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-indigo-600"></div>
+                                </label>
+                            </div>
+
+                            <div className="flex items-center justify-between p-4 bg-gradient-to-br from-[#f9fafb] to-white border-2 border-slate-100 rounded-xl hover:border-blue-600 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <BellIcon className="h-5 w-5 text-[#6b7280]" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-[#1f2937]">Push Notifications</p>
+                                        <p className="text-xs text-[#6b7280]">Real-time in-browser alerts</p>
+                                    </div>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={pushNotifications}
+                                        onChange={(e) => setPushNotifications(e.target.checked)}
+                                    />
+                                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-200 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-indigo-600"></div>
+                                </label>
+                            </div>
 
                             <button
                                 onClick={handleSavePreferences}
-                                className="w-full mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-semibold shadow-sm transition-all"
+                                className="w-full mt-4 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 text-sm font-semibold shadow-sm transition-all"
                             >
                                 Save Preferences
                             </button>
-                    </div>
-                </div>
-
-                {/* Appearance & System */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-slate-500 to-pink-500 rounded-lg">
-                                <PaintBrushIcon className="h-5 w-5 text-slate-900" />
-                            </div>
-                            <h3 className="text-lg font-bold text-[#1f2937]">System Settings</h3>
                         </div>
                     </div>
-                    <div className="p-6 space-y-4">
+                )}
+
+                {/* System Settings Tab */}
+                {activeTab === 'system' && (
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-2xl">
+                        <div className="bg-gradient-to-r from-[#f9fafb] to-white px-6 py-4 border-b-2 border-slate-100">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gradient-to-br from-slate-500 to-indigo-600 rounded-lg">
+                                    <Cog6ToothIcon className="h-5 w-5 text-white" />
+                                </div>
+                                <h3 className="text-lg font-bold text-[#1f2937]">System Settings</h3>
+                            </div>
+                        </div>
+                        <div className="p-6 space-y-4">
                             <label className="block text-xs font-bold text-[#6b7280] mb-3 uppercase tracking-wide">System Information</label>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
@@ -298,13 +333,21 @@ export default function AdminSettings() {
                                 <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
                                     <span className="text-sm text-[#6b7280]">Environment</span>
                                     <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200">
-                                        Development
+                                        Production / VPS
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-gradient-to-br from-[#f9fafb] to-white border border-slate-100 rounded-lg">
+                                    <span className="text-sm text-[#6b7280]">API Status</span>
+                                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Connected & Operational
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
+            </div>
 
             {/* Danger Zone */}
             <div className="bg-white rounded-xl shadow-sm border-2 border-red-200 overflow-hidden">

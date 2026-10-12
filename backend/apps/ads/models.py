@@ -8,6 +8,7 @@ class Advertisement(models.Model):
         ('strip_bottom',    'Strip — Bottom (before footer)'),
         ('strip_home_mid',  'Strip — Home Middle'),
         # Carousel slots
+        ('carousel_deal',   'Carousel Deal'),
         ('carousel_1',      'Carousel Slider 1 (Top)'),
         ('carousel_2',      'Carousel Slider 2'),
         ('carousel_3',      'Carousel Slider 3 (Middle)'),
@@ -16,14 +17,15 @@ class Advertisement(models.Model):
     )
 
     PAGE_CHOICES = (
-        ('all',     'All Pages'),
-        ('home',    'Home Page'),
-        ('vendors', 'Vendors Page'),
-        ('browse',  'Browse Page'),
-        ('about',   'About Page'),
-        ('contact', 'Contact Page'),
-        ('blog',    'Blog Page'),
-        ('faq',     'FAQ Page'),
+        ('all',           'All Pages'),
+        ('home',          'Home Page'),
+        ('vendors',       'Vendors Page'),
+        ('browse',        'Browse Page'),
+        ('about',         'About Page'),
+        ('contact',       'Contact Page'),
+        ('blog',          'Blog Page'),
+        ('faq',           'FAQ Page'),
+        ('sell_your_car', 'Sell Your Car Page'),
     )
 
     title = models.CharField(max_length=255)

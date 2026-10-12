@@ -247,6 +247,29 @@ export const api = {
     return response.data;
   },
 
+  trackAdImpression: async (id) => {
+    try {
+      const response = await axiosInstance.post(`/ads/${id}/impression/`);
+      return response.data;
+    } catch {
+      return null;
+    }
+  },
+
+  trackAdClick: async (id) => {
+    try {
+      const response = await axiosInstance.post(`/ads/${id}/click/`);
+      return response.data;
+    } catch {
+      return null;
+    }
+  },
+
+  getAdsSummary: async () => {
+    const response = await axiosInstance.get('/ads/summary/');
+    return response.data;
+  },
+
   // Admin Management
   getAdminLeads: async (token, params = {}) => {
     const queryString = new URLSearchParams(params).toString();

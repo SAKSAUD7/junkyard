@@ -51,11 +51,19 @@ function RoleCard({ role, onEdit, onDelete }) {
                         <p className="text-xs text-slate-400 mt-0.5">{role.description}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-1">
-                    <button onClick={() => onEdit(role)} className="p-2 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                <div className="flex items-center gap-1.5">
+                    <button 
+                        onClick={() => onEdit(role)} 
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 border border-slate-200 transition-all shadow-sm"
+                        title="Edit Role"
+                    >
                         <PencilIcon className="w-4 h-4" />
                     </button>
-                    <button onClick={() => onDelete(role)} className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                    <button 
+                        onClick={() => onDelete(role)} 
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 border border-slate-200 transition-all shadow-sm"
+                        title="Delete Role"
+                    >
                         <TrashIcon className="w-4 h-4" />
                     </button>
                 </div>
@@ -473,19 +481,25 @@ function StaffTab({ toast }) {
                                     </td>
                                     <td className="px-5 py-4 text-xs text-slate-400">{member.invited_by_email || '—'}</td>
                                     <td className="px-5 py-4">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <button onClick={() => handleToggleActive(member)}
-                                                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${member.is_active ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}>
+                                        <div className="flex items-center justify-end gap-1.5">
+                                            <button 
+                                                onClick={() => handleToggleActive(member)}
+                                                className={`text-xs font-bold px-3 py-2 rounded-xl transition-all border shadow-sm ${member.is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200'}`}
+                                            >
                                                 {member.is_active ? 'Deactivate' : 'Activate'}
                                             </button>
-                                            <button onClick={() => setResetMemberModal(member)}
+                                            <button 
+                                                onClick={() => setResetMemberModal(member)}
                                                 title="Reset Password"
-                                                className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-indigo-50 transition-colors">
+                                                className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 border border-slate-200 transition-all shadow-sm"
+                                            >
                                                 <KeyIcon className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(member)}
+                                            <button 
+                                                onClick={() => handleDelete(member)}
                                                 title="Remove Staff"
-                                                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                                className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 border border-slate-200 transition-all shadow-sm"
+                                            >
                                                 <TrashIcon className="w-4 h-4" />
                                             </button>
                                         </div>

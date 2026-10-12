@@ -583,23 +583,42 @@ class SiteAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint for viewing site analytics.
     GET: Admin only (IsAdminUser)
+    Supports ?event_type=login|signup|lead_submit and ?days=7|30|90
     """
     queryset = SiteAnalytics.objects.all().order_by('-created_at')
     serializer_class = SiteAnalyticsSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        from datetime import datetime, timedelta
+        qs = SiteAnalytics.objects.all().order_by('-created_at')
+
+        event_type = self.request.query_params.get('event_type')
+        if event_type:
+            qs = qs.filter(event_type=event_type)
+
+        try:
+            days = int(self.request.query_params.get('days', 0))
+        except (ValueError, TypeError):
+            days = 0
+        if days > 0:
+            cutoff = datetime.now() - timedelta(days=days)
+            qs = qs.filter(created_at__gte=cutoff)
+
+        return qs
 
     @action(detail=False, methods=['get'])
     def summary(self, request):
         """Returns aggregated counts of different analytics events"""
         from django.db.models import Count
         from django.core.cache import cache
-        
+
         cached = cache.get('site_analytics_summary')
         if cached:
             return Response(cached)
-            
+
         summary_qs = SiteAnalytics.objects.values('event_type').annotate(count=Count('id'))
-        
+
         counts = {
             'login': 0,
             'signup': 0,
@@ -608,8 +627,44 @@ class SiteAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
         for item in summary_qs:
             if item['event_type'] in counts:
                 counts[item['event_type']] = item['count']
-                
+
         cache.set('site_analytics_summary', counts, 60)
         return Response(counts)
 
 
+# ─── Analytics detail alias (used by frontend Analytics.jsx) ──────────────────
+class AnalyticsDetailView(APIView):
+    """
+    Paginated analytics detail endpoint.
+    GET /api/admin/analytics/detail/?event_type=login&days=30&page=1&page_size=25
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from datetime import datetime, timedelta
+        from rest_framework.pagination import PageNumberPagination
+
+        event_type = request.query_params.get('event_type')
+        qs = SiteAnalytics.objects.all().order_by('-created_at')
+
+        if event_type:
+            qs = qs.filter(event_type=event_type)
+
+        try:
+            days = int(request.query_params.get('days', 0))
+        except (ValueError, TypeError):
+            days = 0
+        if days > 0:
+            cutoff = datetime.now() - timedelta(days=days)
+            qs = qs.filter(created_at__gte=cutoff)
+
+        paginator = PageNumberPagination()
+        paginator.page_size_query_param = 'page_size'
+        try:
+            paginator.page_size = int(request.query_params.get('page_size', 25))
+        except (ValueError, TypeError):
+            paginator.page_size = 25
+
+        page = paginator.paginate_queryset(qs, request)
+        serializer = SiteAnalyticsSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)

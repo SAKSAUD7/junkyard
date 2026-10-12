@@ -112,12 +112,12 @@ export default function AdminDashboard() {
     }));
 
     const statCards = [
-        { label: 'Total Leads', value: totalLeads.toLocaleString(), icon: UserGroupIcon, bg: 'bg-indigo-500' },
-        { label: 'New Leads', value: newLeads.toLocaleString(), icon: FireIcon, bg: 'bg-emerald-500' },
-        { label: 'Active Vendors', value: activeVendors.toLocaleString(), icon: BuildingStorefrontIcon, bg: 'bg-orange-500' },
-        { label: 'Total Vendors', value: totalVendors.toLocaleString(), icon: CubeIcon, bg: 'bg-blue-500' },
-        { label: 'Unread Messages', value: unreadMessages.toLocaleString(), icon: EnvelopeIcon, bg: 'bg-purple-500' },
-        { label: 'Total Ads', value: totalAds.toLocaleString(), icon: MegaphoneIcon, bg: 'bg-pink-500' },
+        { label: 'Total Leads', value: totalLeads.toLocaleString(), icon: UserGroupIcon, bg: 'bg-indigo-500', path: '/admin-portal/leads' },
+        { label: 'New Leads', value: newLeads.toLocaleString(), icon: FireIcon, bg: 'bg-emerald-500', path: '/admin-portal/leads?status=new' },
+        { label: 'Active Vendors', value: activeVendors.toLocaleString(), icon: BuildingStorefrontIcon, bg: 'bg-orange-500', path: '/admin-portal/vendors?status=active' },
+        { label: 'Total Vendors', value: totalVendors.toLocaleString(), icon: CubeIcon, bg: 'bg-blue-500', path: '/admin-portal/vendors' },
+        { label: 'Unread Messages', value: unreadMessages.toLocaleString(), icon: EnvelopeIcon, bg: 'bg-purple-500', path: '/admin-portal/messages?status=unread' },
+        { label: 'Total Ads', value: totalAds.toLocaleString(), icon: MegaphoneIcon, bg: 'bg-pink-500', path: '/admin-portal/ads' },
     ];
 
     const today = new Date();
@@ -183,20 +183,25 @@ export default function AdminDashboard() {
             {/* ── Stat Cards ────────────────────────────────────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
                 {statCards.map((stat, i) => (
-                    <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div 
+                        key={i} 
+                        onClick={() => stat.path && navigate(stat.path)}
+                        className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 group"
+                    >
                         <div className="flex items-center gap-4 mb-4">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${stat.bg}`}>
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${stat.bg} group-hover:scale-105 transition-transform`}>
                                 <stat.icon className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{stat.label}</p>
+                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide group-hover:text-slate-600 transition-colors">{stat.label}</p>
                                 <p className="text-xl font-bold text-slate-900 mt-0.5" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {stat.value}
                                 </p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-600 bg-blue-50 w-fit px-2 py-1 rounded-md">
-                            Live data
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-blue-600 bg-blue-50 w-full px-2.5 py-1 rounded-md group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <span>Live data</span>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
                         </div>
                     </div>
                 ))}
@@ -347,8 +352,12 @@ export default function AdminDashboard() {
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
                                     {recentActivity.map((row) => (
-                                        <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-3 text-sm font-bold text-slate-900">{row.name || '—'}</td>
+                                        <tr 
+                                            key={row.id} 
+                                            onClick={() => navigate('/admin-portal/leads')}
+                                            className="hover:bg-blue-50/40 cursor-pointer transition-colors group"
+                                        >
+                                            <td className="py-3 text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{row.name || '—'}</td>
                                             <td className="py-3 text-xs font-medium text-slate-500 truncate max-w-[140px]">{row.email || '—'}</td>
                                             <td className="py-3 text-xs font-medium text-slate-600">
                                                 {[row.year, row.make, row.model].filter(Boolean).join(' ')}

@@ -102,6 +102,24 @@ export default function AdCarousel({
         return () => { isMounted = false; };
     }, [slotGroup, page]);
 
+    // Track ad impression once per browser session per ad
+    useEffect(() => {
+        if (!ads || ads.length === 0) return;
+        ads.forEach(ad => {
+            if (ad.id && !ad.is_organic) {
+                const sessionKey = `ad_imp_${ad.id}`;
+                try {
+                    if (!sessionStorage.getItem(sessionKey)) {
+                        sessionStorage.setItem(sessionKey, '1');
+                        api.trackAdImpression(ad.id);
+                    }
+                } catch {
+                    // sessionStorage may fail in private mode; ignore
+                }
+            }
+        });
+    }, [ads]);
+
     // Merge ads with fallback organic yards to guarantee exactly 4 cards
     const combinedItems = (() => {
         const list = [...ads];
