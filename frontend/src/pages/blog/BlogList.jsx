@@ -7,6 +7,7 @@ import BlogCard from '../../components/BlogCard';
 import BlogSkeletonCard from '../../components/BlogSkeletonCard';
 import { blogApi } from '../../services/blogApi';
 import { useCMS } from '../../hooks/useCMS';
+import PageHero from '../../components/PageHero';
 
 const SAMPLE_POSTS = [
   {
@@ -144,28 +145,16 @@ export default function BlogList() {
       />
       <Navbar />
 
-      {/* Clean Light Hero */}
-      <div className="pt-32 pb-20 overflow-hidden relative border-b border-slate-100 bg-white">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-blue-50/80 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-orange-50/80 rounded-full blur-[60px] pointer-events-none" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 text-center text-slate-900">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-slate-50 border border-slate-200">
-            <span className="text-blue-600 text-xs font-bold uppercase tracking-wider">Automotive Knowledge Base</span>
-          </div>
-          <h1 className="font-black mb-6 text-5xl md:text-6xl" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
-            {get('hero', 'heading', 'The Junkyard')} <br className="md:hidden" />
-            <span className="text-blue-600">
-              {get('hero', 'heading_accent', 'Journal')}
-            </span>
-          </h1>
-          <p className="leading-relaxed text-lg max-w-2xl mx-auto text-slate-600 font-medium">
-            {get('hero', 'subheading', 'Expert guides on pulling parts, salvaging tips, and the latest news from the used auto parts industry.')}
-          </p>
-        </div>
-      </div>
+      {/* Dynamic Automotive PageHero */}
+      <PageHero
+        page="blog"
+        tag="Automotive Knowledge Base"
+        title={get('hero', 'heading', 'The Junkyard')}
+        titleAccent={get('hero', 'heading_accent', 'Journal')}
+        subtitle={get('hero', 'subheading', 'Expert guides on pulling parts, salvaging tips, and the latest news from the used auto parts industry.')}
+        backgroundImage="/heroes/salvage-sunset.png"
+        height="medium"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         

@@ -15,6 +15,7 @@ const WhyChooseJynmSection = React.lazy(() => import('../components/WhyChooseJyn
 const CTABanner = React.lazy(() => import('../components/home/CTABanner'))
 const StatsSection = React.lazy(() => import('../components/home/StatsSection'))
 const HowItWorksSection = React.lazy(() => import('../components/home/HowItWorksSection'))
+const SponsoredYardsSection = React.lazy(() => import('../components/SponsoredYardsSection'))
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -153,6 +154,14 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
+
+                {/* 4-SLOT SPONSORED YARDS / FEATURED PARTNERS ECOSYSTEM (Mockup 1) */}
+                <SponsoredYardsSection
+                    title="Featured Partners"
+                    badgeText="Sponsored"
+                    viewAllLink="/junkyards"
+                    viewAllText="View All"
+                />
 
                 {/* AD SLIDER 1 */}
                 <AdCarousel slotGroup="carousel_1" page="home" title="Top Deals Near You" />

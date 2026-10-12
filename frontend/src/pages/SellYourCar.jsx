@@ -575,6 +575,12 @@ function SuccessScreen({ vehicle, onReset }) {
 }
 
 const STEPS = ["Vehicle", "Condition", "Contact", "Review"];
+const STEP_CARDS = [
+  { step: 1, title: 'Vehicle Info', desc: 'VIN decode or manual selection', icon: '🚗' },
+  { step: 2, title: 'Condition', desc: 'Mechanical, tires & drivability', icon: '⚙️' },
+  { step: 3, title: 'Contact', desc: 'Pickup location & contact info', icon: '📍' },
+  { step: 4, title: 'Review & Pay', desc: 'Instant cash offer & submission', icon: '💵' }
+];
 const INITIAL = {
   vin: "", year: "", make: "", model: "", makeName: "", modelName: "", trim: "",
   fuelType: "", driveType: "", vehicleType: "",
@@ -775,18 +781,18 @@ export default function SellYourCar() {
       <Navbar />
 
       <PageHero
-          page="sell_your_car"
+        page="sell_your_car"
         tag="Cash Offer Today"
         title="Sell Your"
         titleAccent="Vehicle"
         subtitle="Tell us about your vehicle to request an instant cash offer. Use your VIN for autofill or enter details manually — it only takes 2 minutes."
-        backgroundImage="https://images.unsplash.com/photo-1581266064-4dce3e2af8a3?auto=format&fit=crop&q=80&w=1920"
+        backgroundImage="/heroes/stacked-cars.png"
         height="large"
       />
 
       <div className="flex-1 w-full relative bg-slate-50">
-        {/* Form Container negative margin to overlap hero */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 -mt-20">
+        {/* Form Container: clean positive spacing with zero hero overlap */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
           {submitted ? (
             <SuccessScreen 
               vehicle={data} 
@@ -799,20 +805,50 @@ export default function SellYourCar() {
             />
           ) : (
             <>
-              {/* Stepper Navigation */}
-              <div className="flex justify-center mb-10 w-full overflow-x-auto hide-scrollbar">
-                <div className="flex items-center gap-2 sm:gap-4 bg-white px-2 sm:px-6 py-3 rounded-full border border-slate-200 shadow-sm min-w-max">
-                  {STEPS.map((label, i) => (
-                    <div key={label} className="flex items-center">
-                      <div className={`flex items-center justify-center text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-3 sm:px-4 py-1.5 rounded-full transition-colors ${
-                        step === i ? "bg-blue-600 text-white shadow-md" : step > i ? "bg-emerald-100 text-emerald-700" : "bg-transparent text-slate-400"
-                      }`}>
-                        {step > i ? "✓" : `${i + 1}.`} {label}
+              {/* Modern 4-Card Step Lane (No Negative Margin Collisions) */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10 w-full">
+                {STEP_CARDS.map((item, i) => {
+                  const isActive = step === i;
+                  const isDone = step > i;
+                  return (
+                    <button
+                      key={item.title}
+                      type="button"
+                      disabled={!isDone && !isActive}
+                      onClick={() => { if (isDone) setStep(i); }}
+                      className={`text-left p-4 sm:p-5 rounded-2xl sm:rounded-3xl transition-all duration-300 border relative overflow-hidden flex flex-col justify-between ${
+                        isActive
+                          ? 'bg-white border-blue-500 shadow-[0_10px_30px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/20 scale-[1.01]'
+                          : isDone
+                          ? 'bg-white/80 hover:bg-white border-emerald-300 hover:border-emerald-400 cursor-pointer shadow-xs'
+                          : 'bg-white/50 border-slate-200/70 opacity-60 cursor-not-allowed'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3 w-full">
+                        <span className="text-xl sm:text-2xl">{item.icon}</span>
+                        <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full ${
+                          isActive
+                            ? 'bg-blue-600 text-white'
+                            : isDone
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}>
+                          {isDone ? '✓ Done' : `Step ${i + 1}`}
+                        </span>
                       </div>
-                      {i < STEPS.length - 1 && <div className="w-4 sm:w-8 border-t-2 border-slate-100 mx-1 sm:mx-2 border-dotted"></div>}
-                    </div>
-                  ))}
-                </div>
+                      <div>
+                        <h4 className={`text-sm sm:text-base font-black tracking-tight mb-0.5 ${
+                          isActive ? 'text-blue-600' : isDone ? 'text-slate-900' : 'text-slate-500'
+                        }`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+                          {item.title}
+                        </h4>
+                        <p className="text-[11px] sm:text-[12px] text-slate-400 font-medium hidden sm:block line-clamp-1">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
              <div className="pb-20">

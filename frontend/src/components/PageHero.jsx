@@ -8,27 +8,42 @@ import { useCMS } from '../hooks/useCMS';
  * the background image from the CMS (hero › background_image).
  * The `backgroundImage` prop is used as a fallback.
  */
+const PAGE_FALLBACK_IMAGES = {
+    faq: '/heroes/parts-warehouse.png',
+    blog: '/heroes/salvage-sunset.png',
+    how_it_works: '/heroes/mechanic-parts.png',
+    quote_request: '/heroes/junkyard-aerial.webp',
+    sell_your_car: '/heroes/stacked-cars.png',
+    about: '/heroes/junkyard-aerial.webp',
+    contact: '/heroes/aerial-night.png',
+};
+
 export default function PageHero({
     page,                // CMS page key (e.g. 'about', 'faq'). Optional.
     tag,
     title,
     titleAccent,
     subtitle,
-    backgroundImage = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920',
-    overlayOpacity = 0.6,
+    backgroundImage,
+    overlayOpacity = 0.65,
     height = 'medium',
     children
 }) {
     // Always call the hook — pass null when page not provided so it's a no-op.
     const { get } = useCMS(page || null);
 
-    // CMS override wins; falls back to the prop, then hardcoded default.
-    const resolvedBg = (page ? get('hero', 'background_image', backgroundImage) : backgroundImage) || backgroundImage;
+    const defaultImage = (page && PAGE_FALLBACK_IMAGES[page]) 
+        || backgroundImage 
+        || '/heroes/junkyard-aerial.webp';
+
+    // CMS override wins if it is a non-empty string; otherwise fallback
+    const cmsBg = page ? get('hero', 'background_image', '') : '';
+    const resolvedBg = (cmsBg && typeof cmsBg === 'string' && cmsBg.trim() !== '') ? cmsBg : defaultImage;
 
     const heights = {
         small: 'py-16 md:py-24',
-        medium: 'py-20 md:py-32',
-        large: 'py-28 md:py-40'
+        medium: 'py-20 md:py-32 min-h-[380px]',
+        large: 'py-28 md:py-40 min-h-[460px]'
     };
 
     return (

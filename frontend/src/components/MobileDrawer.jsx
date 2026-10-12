@@ -198,15 +198,15 @@ export default function MobileDrawer({
                                 {/* Section: For Partners */}
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-3 pb-1">For Partners</p>
 
-                                <Link
-                                    to="/add-a-yard"
-                                    onClick={onClose}
-                                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 min-h-[52px] transition-colors border border-slate-100"
+                                <button
+                                    type="button"
+                                    onClick={() => { onClose(); window.dispatchEvent(new CustomEvent('jynm:open-add-yard')); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 min-h-[52px] transition-colors border border-slate-100 text-left cursor-pointer"
                                 >
                                     <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                                     Join as a Vendor
                                     <span className="ml-auto text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">Free</span>
-                                </Link>
+                                </button>
 
                                 <Link
                                     to="/vendor/login"

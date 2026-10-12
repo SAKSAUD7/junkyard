@@ -16,6 +16,7 @@ import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaire
 import SignupModal from '../components/auth/SignupModal';
 import LoginModal from '../components/auth/LoginModal';
 import SaveJunkyardButton from '../components/SaveJunkyardButton';
+import SponsoredYardsSection from '../components/SponsoredYardsSection';
 
 const VendorDetail = () => {
     const params = useParams();
@@ -214,6 +215,53 @@ const VendorDetail = () => {
                                     {vendor.address}, {vendor.city}, {vendor.state} {vendor.zipcode}
                                 </p>
                                 <SaveJunkyardButton vendor={vendor} className="w-10 h-10 rounded-full border border-slate-200" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Trust Pillars Strip (Mockup 4 & 7) ── */}
+            <div className="bg-white border-b border-slate-100 py-4">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            </div>
+                            <div>
+                                <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">20,000+ Used Parts</p>
+                                <p className="text-[11px] text-slate-500 font-medium">In Live Inventory</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l1 1h11l2-6H7" /></svg>
+                            </div>
+                            <div>
+                                <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">All Makes & Models</p>
+                                <p className="text-[11px] text-slate-500 font-medium">Domestic & Foreign</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                            </div>
+                            <div>
+                                <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">Nationwide Shipping</p>
+                                <p className="text-[11px] text-slate-500 font-medium">Direct Freight Delivery</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            </div>
+                            <div>
+                                <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">Quality Tested</p>
+                                <p className="text-[11px] text-slate-500 font-medium">Verified Yard Partner</p>
                             </div>
                         </div>
                     </div>
@@ -425,6 +473,16 @@ const VendorDetail = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* ── OTHER RECOMMENDED YARDS (Mockup 4 & 7) ── */}
+            <div className="bg-white border-t border-slate-100 py-10">
+                <SponsoredYardsSection
+                    title={`Other Recommended Yards Near ${vendor.city || 'You'}, ${vendor.state || ''}`}
+                    badgeText="Sponsored"
+                    viewAllLink="/junkyards"
+                    viewAllText="View More Yards"
+                />
             </div>
 
             <Footer />

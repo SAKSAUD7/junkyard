@@ -13,6 +13,7 @@ import Rating from '../components/Rating';
 import VendorBadges from '../components/VendorBadges';
 import VendorCard from '../components/VendorCard';
 import { generateVendorUrl } from '../utils/urlHelpers';
+import SponsoredYardsSection from '../components/SponsoredYardsSection';
 
 const BADGE_COLORS = ['text-blue-700 bg-blue-50 border-blue-100','text-purple-700 bg-purple-50 border-purple-100','text-orange-700 bg-orange-50 border-orange-100','text-emerald-700 bg-emerald-50 border-emerald-100'];
 
@@ -175,8 +176,24 @@ export default function BrowseState() {
                 </div>
             </section>
 
+            {/* FEATURED JUNKYARDS IN [STATE] — 4-Slot Sponsored Ecosystem (Mockup 3 & 6) */}
+            <div className="bg-white border-b border-slate-100">
+                <SponsoredYardsSection
+                    title={`Featured Junkyards in ${stateName}`}
+                    badgeText="Sponsored"
+                    viewAllLink="/junkyards-by-location"
+                    viewAllText={`View All in ${stateName}`}
+                    className="py-10"
+                />
+            </div>
+
             {/* Grid Section */}
-            <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+            <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200/80">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                        All Junkyards in {stateName} <span className="text-sm font-bold text-slate-400 font-normal">({totalCount} results)</span>
+                    </h2>
+                </div>
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                         <svg className="animate-spin h-10 w-10 text-blue-600 mb-6" fill="none" viewBox="0 0 24 24">

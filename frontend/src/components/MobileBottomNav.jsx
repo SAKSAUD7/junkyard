@@ -108,10 +108,14 @@ export default function MobileBottomNav() {
                         </Link>
                         
                         <div className="h-px bg-slate-100 my-1 mx-2 shrink-0"></div>
-                        <Link to="/add-a-yard" onClick={() => setMoreOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-[13px] text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 shrink-0`}>
+                        <button
+                            type="button"
+                            onClick={() => { setMoreOpen(false); window.dispatchEvent(new CustomEvent('jynm:open-add-yard')); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-[13px] text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 shrink-0 text-left cursor-pointer`}
+                        >
                             Are you a Junkyard?
                             <svg className="w-4 h-4 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </Link>
+                        </button>
                     </div>
                 )}
 

@@ -145,16 +145,30 @@ else:
     ]
 
 
-# Email settings - SendGrid SMTP (Production)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # SendGrid SMTP
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-# Timeout settings to prevent hanging connections and retries
-EMAIL_TIMEOUT = 10  # 10 seconds timeout
-EMAIL_USE_SSL = False  # Use TLS on port 587, not SSL
+# Email settings
+# In development (DEBUG=True), route through local Mailpit sandbox (localhost:1025)
+# In production or when a valid SENDGRID_API_KEY is configured, route through SendGrid
+_sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+_has_valid_sendgrid = bool(_sendgrid_key and not _sendgrid_key.startswith('your_') and len(_sendgrid_key) > 20)
+
+if DEBUG and not _has_valid_sendgrid:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 1025))
+    EMAIL_USE_TLS = False
+    EMAIL_USE_SSL = False
+    EMAIL_HOST_USER = None
+    EMAIL_HOST_PASSWORD = None
+    EMAIL_TIMEOUT = 5
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+    EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') == 'True'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')
+    EMAIL_HOST_PASSWORD = _sendgrid_key or os.environ.get('EMAIL_HOST_PASSWORD', '')
+    EMAIL_TIMEOUT = 10
 
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@example.com')
 LEAD_NOTIFICATION_EMAIL = os.environ.get('LEAD_NOTIFICATION_EMAIL', 'leads@example.com')

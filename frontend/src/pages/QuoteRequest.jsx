@@ -217,7 +217,7 @@ export default function QuoteRequest() {
                 title={make && model && year ? `${year} ${make} ${model}` : (cmsData.hero_heading ? cmsData.hero_heading.replace(/<[^>]*>?/gm, '') : 'Request an')}
                 titleAccent={make && model && year ? part : (cmsData.hero_heading ? '' : 'Instant Quote')}
                 subtitle={cmsData.instruction_text ? cmsData.instruction_text.replace(/<[^>]*>?/gm, '') : 'Complete the fields below to connect with verified auto salvage yards nationwide.'}
-                backgroundImage="https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920"
+                backgroundImage="/heroes/junkyard-aerial.webp"
                 height="large"
             />
 

@@ -59,28 +59,76 @@ const HowItWorks = () => {
             {/* Dynamic CMS Page Hero */}
             <PageHero
                 page="how_it_works"
-                tag="Simple Process"
+                tag="Simple & Transparent Process"
                 title="How It"
                 titleAccent="Works"
-                subtitle={get('hero', 'subheading', "Finding quality used auto parts has never been easier. We connect you with verified junkyards nationwide.")}
-                backgroundImage="https://images.unsplash.com/photo-1600705593881-229f3458bf51?auto=format&fit=crop&q=80&w=1920"
+                subtitle={get('hero', 'subheading', "Finding quality used auto parts has never been easier. We connect your request with verified junkyards and auto recyclers nationwide.")}
+                backgroundImage="/heroes/mechanic-parts.png"
                 height="large"
-            />
+            >
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
+                    <button
+                        onClick={() => navigate('/quote')}
+                        className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 text-sm md:text-base"
+                    >
+                        <span>Start Free Quote</span>
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => navigate('/sell-your-car')}
+                        className="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl border border-white/25 backdrop-blur-md transition-all text-sm md:text-base"
+                    >
+                        Selling a Car?
+                    </button>
+                </div>
+            </PageHero>
 
-            {/* Steps Grid */}
-            <section className="py-20">
+            {/* Connected Steps Grid */}
+            <section className="py-20 relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="text-center mb-14">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/60 text-blue-700 text-xs font-black uppercase tracking-wider mb-3">
+                            Fast 4-Step Process
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            From Search to Your Doorstep in Days
+                        </h2>
+                        <p className="text-slate-500 text-base max-w-2xl mx-auto mt-2 font-medium">
+                            No endless calling or scouring sketchy classifieds. One verified network does the work for you.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
                         {steps.map((step, index) => (
-                            <div key={index} className="bg-white rounded-2xl p-7 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:border-blue-300 hover:shadow-[0_8px_30px_rgba(26,86,255,0.12)] hover:bg-blue-50/50 active:scale-[0.98] hover:-translate-y-1 transition-all duration-300 cursor-default">
-                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5" style={{ background: index % 2===0 ? 'rgba(37,99,235,0.08)' : 'rgba(234,88,12,0.08)' }}>
-                                    <span className="font-black text-xl" style={{ color: index % 2===0 ? '#2563eb' : '#ea580c', fontFamily: "'Outfit', sans-serif" }}>{step.number}</span>
+                            <div 
+                                key={index} 
+                                className="relative bg-white rounded-3xl p-7 border border-slate-200/80 shadow-[0_4px_25px_rgb(0,0,0,0.03)] hover:border-blue-400 hover:shadow-[0_12px_35px_rgba(37,99,235,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group"
+                            >
+                                {/* Step number badge */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner" style={{ 
+                                        background: index % 2 === 0 ? 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(79,70,229,0.15))' : 'linear-gradient(135deg, rgba(249,115,22,0.12), rgba(234,88,12,0.15))',
+                                        color: index % 2 === 0 ? '#2563eb' : '#ea580c',
+                                        fontFamily: "'Outfit', sans-serif"
+                                    }}>
+                                        {step.number}
+                                    </div>
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
+                                        Step {index + 1}
+                                    </span>
                                 </div>
-                                <div className="inline-flex p-2.5 rounded-xl mb-4" style={{ background: index % 2===0 ? 'rgba(37,99,235,0.06)' : 'rgba(234,88,12,0.06)' }}>
+
+                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-slate-50 group-hover:bg-blue-50 text-blue-600 transition-colors">
                                     {step.icon}
                                 </div>
-                                <h3 className="font-black text-slate-900 mb-2 text-[17px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{step.title}</h3>
-                                <p className="text-[14px] text-slate-500 leading-relaxed">{step.description}</p>
+                                <h3 className="font-black text-slate-900 mb-2.5 text-lg group-hover:text-blue-600 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                    {step.title}
+                                </h3>
+                                <p className="text-[14px] text-slate-500 leading-relaxed font-medium">
+                                    {step.description}
+                                </p>
                             </div>
                         ))}
                     </div>

@@ -116,6 +116,8 @@ logs.zip
 fresh_logs.zip
 backend_deploy.zip
 backend_clean.zip
+*.zip
+backend/*.csv
 
 # ── Media files (images) — transfer to VPS via scp, NOT via git ──────────────
 # 137MB / 2,700+ files — too large for git. Use deploy_media.ps1 to upload.

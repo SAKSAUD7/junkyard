@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { api } from '../services/api';
 import VendorCard from '../components/VendorCard';
 import SEO from '../components/SEO';
+import SponsoredYardsSection from '../components/SponsoredYardsSection';
 
 export default function Search() {
     const [searchParams] = useSearchParams();
@@ -74,6 +75,16 @@ export default function Search() {
                     </p>
                 </div>
             </section>
+
+            {/* SPONSORED YARDS (Mockup 2) */}
+            <div className="bg-white border-b border-slate-100">
+                <SponsoredYardsSection
+                    title="Sponsored Yards"
+                    badgeText="Featured"
+                    viewAllLink="/junkyards"
+                    viewAllText="View All Yards"
+                />
+            </div>
 
             {/* Results */}
             <section className="py-14">

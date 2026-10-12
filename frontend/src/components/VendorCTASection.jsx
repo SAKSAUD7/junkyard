@@ -37,12 +37,13 @@ export default function VendorCTASection() {
 
             {/* Buttons */}
             <div className="flex flex-col xl:flex-row gap-2 relative z-10">
-                <Link
-                    to="/add-a-yard"
-                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all text-[13px] shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:-translate-y-0.5 flex-1 text-center"
+                <button
+                    type="button"
+                    onClick={() => window.dispatchEvent(new CustomEvent('jynm:open-add-yard'))}
+                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all text-[13px] shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:-translate-y-0.5 flex-1 text-center cursor-pointer"
                 >
                     Add Junkyard
-                </Link>
+                </button>
                 <Link
                     to="/vendor/login"
                     className="inline-flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold px-4 py-2.5 rounded-xl transition-all text-[13px] hover:-translate-y-0.5 flex-1 text-center"
