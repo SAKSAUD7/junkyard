@@ -4,13 +4,19 @@ import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import PasswordInput from '../PasswordInput';
 
-export default function AddYardModal({ isOpen, onClose }) {
+export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }) {
     const navigate = useNavigate();
     const { isAuthenticated: isVendorAuthenticated, loading: vendorLoading, register, login } = useVendorAuth();
     const { isAuthenticated: isCustomerAuthenticated, user: customerUser } = useContext(AuthContext);
 
     // Mode: 'signup' | 'login'
-    const [mode, setMode] = useState('signup');
+    const [mode, setMode] = useState(initialMode);
+
+    useEffect(() => {
+        if (isOpen && initialMode) {
+            setMode(initialMode);
+        }
+    }, [isOpen, initialMode]);
 
     // Form fields
     const [email, setEmail] = useState('');

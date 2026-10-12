@@ -196,6 +196,18 @@ export default function QuoteRequest() {
         }
     }
 
+    // Autofill user contact info when logged in
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            setFormData(prev => ({
+                ...prev,
+                name: prev.name || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.email?.split('@')[0] || ''),
+                email: prev.email || user.email || '',
+                phone: prev.phone || user.phone || ''
+            }));
+        }
+    }, [isAuthenticated, user]);
+
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
             <SEO
@@ -222,9 +234,29 @@ export default function QuoteRequest() {
             />
 
             <div className="flex-1 pb-20 relative bg-slate-50">
-                <div className="relative max-w-xl mx-auto px-4 sm:px-6 z-20 -mt-24">
+                <div className="relative max-w-xl mx-auto px-4 sm:px-6 z-20 pt-8 sm:pt-10">
+                    {/* Vehicle Part Summary Card if query params exist */}
+                    {(make || model || part || year) && (
+                        <div className="mb-6 p-4 sm:p-5 bg-white rounded-2xl border border-blue-200/80 shadow-sm flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3.5">
+                                <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xl">
+                                    🚗
+                                </div>
+                                <div>
+                                    <p className="text-xs font-black uppercase tracking-wider text-blue-600">Selected Vehicle & Part</p>
+                                    <h4 className="text-base font-black text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        {year} {make} {model} {part ? `• ${part}` : ''}
+                                    </h4>
+                                </div>
+                            </div>
+                            <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200 shrink-0">
+                                Free Match
+                            </span>
+                        </div>
+                    )}
+
                     {/* Main Form Container */}
-                    <div className="bg-white rounded-3xl shadow-[0_8px_40px_rgba(37,99,235,0.06)] border border-blue-100 overflow-hidden">
+                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-900/5 border border-slate-200/80 overflow-hidden">
                         
                         {submitSuccess ? (
                             <div className="p-12 text-center">

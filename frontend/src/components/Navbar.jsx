@@ -12,17 +12,20 @@ import { AuthContext } from '../contexts/AuthContext'
 import { useCMS } from '../hooks/useCMS'
 import { useCart } from '../contexts/CartContext'
 import { api } from '../services/api'
+import { useNotifications } from './common/EnterpriseNotifications'
 import JYNMAvatar from './JYNMAvatar'
 
 export default function Navbar() {
     const { get } = useCMS('navbar')
     const { get: getGlobal } = useCMS('global')
+    const { showToast } = useNotifications()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const [signupModalOpen, setSignupModalOpen] = useState(false)
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [forgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false)
     const [addYardModalOpen, setAddYardModalOpen] = useState(false)
+    const [addYardModalInitialMode, setAddYardModalInitialMode] = useState('signup')
     const [accountDropdownOpen, setAccountDropdownOpen] = useState(false)
     const [mobileAccountOpen, setMobileAccountOpen] = useState(false)
     // Drawers
@@ -84,20 +87,57 @@ export default function Navbar() {
         window.dispatchEvent(new CustomEvent('jynm:logout-feedback', { detail: { role: 'customer' } }));
     }
 
-    // Allow outside components (e.g. OnboardingOverlay) to open modals via global events
+    // Global auth and navigation events
     useEffect(() => {
         const handleLogin = () => setLoginModalOpen(true)
         const handleSignup = () => setSignupModalOpen(true)
-        const handleAddYard = () => setAddYardModalOpen(true)
+        const handleAddYard = () => {
+            setAddYardModalInitialMode('signup')
+            setAddYardModalOpen(true)
+        }
+        const handleVendorLogin = () => {
+            setAddYardModalInitialMode('login')
+            setAddYardModalOpen(true)
+        }
+        const handleUserLoggedIn = (e) => {
+            const isNew = e.detail?.isNew
+            if (isNew) {
+                showToast({
+                    type: 'success',
+                    title: "Welcome to USA's Junkyards!",
+                    message: "Your account is active. Connect with thousands of auto parts suppliers across America."
+                })
+            } else {
+                showToast({
+                    type: 'info',
+                    title: "Welcome back to USA's Junkyards!",
+                    message: "Good to see you again! Your saved junkyards and parts quotes are ready."
+                })
+            }
+        }
+        const handleUserLoggedOut = () => {
+            navigate('/', { replace: true })
+            setTimeout(() => {
+                setLoginModalOpen(true)
+            }, 120)
+        }
+
         window.addEventListener('jynm:open-login', handleLogin)
         window.addEventListener('jynm:open-signup', handleSignup)
         window.addEventListener('jynm:open-add-yard', handleAddYard)
+        window.addEventListener('jynm:open-vendor-login', handleVendorLogin)
+        window.addEventListener('jynm:user-logged-in', handleUserLoggedIn)
+        window.addEventListener('jynm:user-logged-out', handleUserLoggedOut)
+
         return () => {
             window.removeEventListener('jynm:open-login', handleLogin)
             window.removeEventListener('jynm:open-signup', handleSignup)
             window.removeEventListener('jynm:open-add-yard', handleAddYard)
+            window.removeEventListener('jynm:open-vendor-login', handleVendorLogin)
+            window.removeEventListener('jynm:user-logged-in', handleUserLoggedIn)
+            window.removeEventListener('jynm:user-logged-out', handleUserLoggedOut)
         }
-    }, [])
+    }, [navigate, showToast])
 
     const isAuthRoute = () => {
         const authRoutes = ['/admin-portal/login', '/admin-portal', '/vendor/login', '/signin', '/signup']
@@ -285,18 +325,12 @@ export default function Navbar() {
                                                     </>
                                                 )}
 
-                                                {/* Notifications & Cart quick-links in dropdown */}
+                                                {/* Notifications quick-link in dropdown */}
                                                 <ModernDropdownButton
                                                     onClick={() => { setAccountDropdownOpen(false); openNotifDrawer(); }}
                                                     icon={<svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>}
                                                     label="Notifications"
                                                     description={unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
-                                                />
-                                                <ModernDropdownButton
-                                                    onClick={() => { setAccountDropdownOpen(false); openCartSlider(); }}
-                                                    icon={<svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>}
-                                                    label="My Quotes"
-                                                    description={cartCount > 0 ? `${cartCount} request${cartCount !== 1 ? 's' : ''} pending` : 'No active requests'}
                                                 />
                                                 
                                                 <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-1" />
@@ -338,16 +372,15 @@ export default function Navbar() {
                                                 </div>
                                                 
                                                 <ModernDropdownButton 
-                                                    onClick={() => { setAccountDropdownOpen(false); setAddYardModalOpen(true); }}
+                                                    onClick={() => { setAccountDropdownOpen(false); setAddYardModalInitialMode('signup'); setAddYardModalOpen(true); }}
                                                     icon={<svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>}
                                                     label="Add Your Yard"
                                                     description="List inventory & get leads"
                                                     gradient={true}
                                                 />
                                                 
-                                                <ModernDropdownLink 
-                                                    to="/vendor/login" 
-                                                    onClick={() => setAccountDropdownOpen(false)}
+                                                <ModernDropdownButton 
+                                                    onClick={() => { setAccountDropdownOpen(false); setAddYardModalInitialMode('login'); setAddYardModalOpen(true); }}
                                                     icon={<svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
                                                     label="Vendor Login"
                                                     description="Manage business dashboard"
@@ -524,14 +557,14 @@ export default function Navbar() {
                                                 Create Free Account
                                             </button>
                                             <div className="h-px bg-slate-100 my-1" />
-                                            <button type="button" onClick={() => { setMobileAccountOpen(false); setAddYardModalOpen(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-600 hover:bg-emerald-50 text-left">
+                                            <button type="button" onClick={() => { setMobileAccountOpen(false); setAddYardModalInitialMode('signup'); setAddYardModalOpen(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-600 hover:bg-emerald-50 text-left">
                                                 <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                                                 Add Your Yard
                                             </button>
-                                            <Link to="/vendor/login" onClick={() => setMobileAccountOpen(false)} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50">
+                                            <button type="button" onClick={() => { setMobileAccountOpen(false); setAddYardModalInitialMode('login'); setAddYardModalOpen(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 text-left">
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                                                 Vendor Login
-                                            </Link>
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -578,6 +611,7 @@ export default function Navbar() {
             />
             <AddYardModal
                 isOpen={addYardModalOpen}
+                initialMode={addYardModalInitialMode}
                 onClose={() => setAddYardModalOpen(false)}
             />
 

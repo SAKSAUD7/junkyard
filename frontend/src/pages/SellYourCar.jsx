@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import { api } from "../services/api";
+import { AuthContext } from "../contexts/AuthContext";
 import AcceptJsCheckout from "../components/vendor/AcceptJsCheckout";
 import PostSubmissionFeedback from "../components/PostSubmissionFeedback";
 import JYNMSelect from "../components/JYNMSelect";
@@ -590,6 +591,7 @@ const INITIAL = {
 };
 
 export default function SellYourCar() {
+  const { user, isAuthenticated } = useContext(AuthContext);
   const [step, setStep] = useState(0);
   const [data, setData] = useState(() => {
     try {
@@ -599,6 +601,28 @@ export default function SellYourCar() {
       return INITIAL;
     }
   });
+
+  // Prompt on-screen login modal once if unauthenticated so seller leads are tracked
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const timer = setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('jynm:open-login'));
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
+
+  // Autofill user contact info when logged in
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setData(prev => ({
+        ...prev,
+        name: prev.name || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.email?.split('@')[0] || ''),
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     localStorage.setItem('jynm_sell_vehicle_draft', JSON.stringify(data));

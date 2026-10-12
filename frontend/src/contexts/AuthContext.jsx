@@ -59,6 +59,9 @@ export const AuthProvider = ({ children }) => {
             setUser(response.user);
             setToken(response.tokens.access);
             setIsAuthenticated(true);
+            window.dispatchEvent(new CustomEvent('jynm:user-logged-in', { 
+                detail: { isNew: true, user: response.user } 
+            }));
             return response;
         } catch (error) {
             throw error;
@@ -72,6 +75,9 @@ export const AuthProvider = ({ children }) => {
             setToken(response.tokens.access);
             setVendorProfile(response.vendor_profile || null);
             setIsAuthenticated(true);
+            window.dispatchEvent(new CustomEvent('jynm:user-logged-in', { 
+                detail: { isNew: false, user: response.user } 
+            }));
             return response;
         } catch (error) {
             throw error;
@@ -82,13 +88,13 @@ export const AuthProvider = ({ children }) => {
         try {
             await authService.logout();
         } finally {
-            // Defering state nullification so the router can unmount protected children first. 
-            // Avoids null reference errors (blank screen) on logout.
+            // Deferring state nullification so the router can unmount protected children first. 
             setTimeout(() => {
                 setUser(null);
                 setToken(null);
                 setVendorProfile(null);
                 setIsAuthenticated(false);
+                window.dispatchEvent(new CustomEvent('jynm:user-logged-out'));
             }, 50);
         }
     };
