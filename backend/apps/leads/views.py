@@ -157,8 +157,27 @@ class LeadViewSet(viewsets.ModelViewSet):
         return []
 
     def perform_create(self, serializer):
+        # ── Phase 7: Duplicate Lead Detection ──────────────────────────────────
+        # Reject if same email + make + model + year + part submitted within 24h
+        from django.utils import timezone
+        from datetime import timedelta
+        incoming = serializer.validated_data
+        window = timezone.now() - timedelta(hours=24)
+        dup = Lead.objects.filter(
+            email__iexact=incoming.get('email', ''),
+            make__iexact=incoming.get('make', ''),
+            model__iexact=incoming.get('model', ''),
+            year=incoming.get('year'),
+            part__iexact=incoming.get('part', ''),
+            created_at__gte=window,
+        ).exists()
+        if dup:
+            from rest_framework.exceptions import Throttled
+            raise Throttled(detail="Duplicate request: a matching lead was submitted within the last 24 hours.")
+
         # 1. Save the initial lead (includes the frontend-supplied hollander_number)
         lead = serializer.save()
+
         logger.info(f"Saved Lead ID {lead.id} with Hollander '{lead.hollander_number}' | make={lead.make} part={lead.part} year={lead.year}")
 
         # Track Analytics

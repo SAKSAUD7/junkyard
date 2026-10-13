@@ -184,6 +184,10 @@ export default function QuoteRequest() {
             })
 
             setSubmitSuccess(true)
+            window.dispatchEvent(new CustomEvent('jynm:lead-submitted', {
+                detail: { source_type: 'JUNKYARD_DIRECTORY_QUOTE', page: window.location.pathname }
+            }))
+
             
             // Auto-reset form after 10 seconds
             setTimeout(() => {

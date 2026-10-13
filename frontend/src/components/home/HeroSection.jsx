@@ -564,6 +564,10 @@ export default function HeroSection({ get, ready = false }) {
         source_component: "HeroSection",
       });
       setHeroSuccess(true);
+      window.dispatchEvent(new CustomEvent('jynm:lead-submitted', {
+        detail: { source_type: 'HOMEPAGE_QUOTE', page: window.location.pathname }
+      }));
+
     } catch {
       setHeroError("Submission failed. Please try again.");
     } finally {

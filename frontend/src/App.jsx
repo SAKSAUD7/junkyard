@@ -144,6 +144,16 @@ function RedirectBrowseState() {
 
 function App() {
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [postLeadCtx, setPostLeadCtx] = useState({ active: false, ctx: {} })
+
+  // Listen for post-lead-submit event dispatched by HeroSection / QuoteRequest
+  useEffect(() => {
+    const handler = (e) => {
+      setPostLeadCtx({ active: true, ctx: e.detail || {} })
+    }
+    window.addEventListener('jynm:lead-submitted', handler)
+    return () => window.removeEventListener('jynm:lead-submitted', handler)
+  }, [])
   return (
     <MotionConfig reducedMotion="user">
       <ScrollToTop />
@@ -157,7 +167,12 @@ function App() {
         onOpenSignup={() => window.dispatchEvent(new CustomEvent('jynm:open-signup'))}
       />
       <Suspense fallback={<PageSpinner />}>
-        <FeedbackWidget externalOpen={feedbackOpen} onExternalClose={() => setFeedbackOpen(false)} />
+        <FeedbackWidget
+          externalOpen={feedbackOpen || postLeadCtx.active}
+          postLeadMode={postLeadCtx.active}
+          leadContext={postLeadCtx.ctx}
+          onExternalClose={() => { setFeedbackOpen(false); setPostLeadCtx({ active: false, ctx: {} }) }}
+        />
         <PageTransition>
           <div className="pb-20 md:pb-0">
           <Routes>

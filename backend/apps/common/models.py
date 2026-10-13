@@ -98,6 +98,8 @@ class Feedback(models.Model):
     
     topic = models.CharField(max_length=50, choices=TOPIC_CHOICES)
     description = models.TextField()
+    rating = models.PositiveSmallIntegerField(null=True, blank=True, help_text="1-5 star rating")
+    lead_context = models.JSONField(default=dict, blank=True, help_text="Optional lead ID / source for attribution")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unread', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
