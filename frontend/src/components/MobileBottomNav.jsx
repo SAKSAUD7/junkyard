@@ -82,9 +82,9 @@ export default function MobileBottomNav() {
                     
                     {/* 2. SEARCH */}
                     <Link 
-                        to="/quote" 
+                        to="/search" 
                         className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors ${
-                            isActive('/quote') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+                            isActive('/search') ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
                         }`}
                     >
                         <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

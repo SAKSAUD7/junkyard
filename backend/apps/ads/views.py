@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import models
@@ -96,7 +96,16 @@ class AdImpressionView(APIView):
         from django.core.cache import cache
         from django.db.models import F
 
-        ad = get_object_or_404(Advertisement, pk=pk)
+        # Guard against malformed pk values (e.g. -1 sent by frontend before an ad ID is available)
+        if pk <= 0:
+            return Response({'status': 'ignored', 'reason': 'invalid ad id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Return 404 gracefully (no 500) for ads that no longer exist
+        try:
+            ad = Advertisement.objects.get(pk=pk)
+        except Advertisement.DoesNotExist:
+            return Response({'status': 'not_found'}, status=status.HTTP_404_NOT_FOUND)
+
         session_key = request.headers.get('X-Ad-Session', '')
         cache_key = f'ad_imp_{pk}_{session_key}' if session_key else None
 
@@ -106,6 +115,8 @@ class AdImpressionView(APIView):
             if cache_key:
                 cache.set(cache_key, True, 3600)  # 1 hour dedup window
 
+        # Refresh from DB to get updated count
+        ad.refresh_from_db(fields=['impressions'])
         return Response({'status': 'ok', 'impressions': ad.impressions}, status=status.HTTP_200_OK)
 
 

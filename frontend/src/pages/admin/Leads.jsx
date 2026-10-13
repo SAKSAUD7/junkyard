@@ -203,8 +203,16 @@ export default function AdminLeads() {
         setShowAssignModal(true);
         if (vendors.length === 0) {
             try {
-                const data = await api.getAdminVendors(token, { limit: 100 });
-                setVendors(data.results || data);
+                const data = await api.getAdminVendors(token, { limit: 500 });
+                const raw = data.results || data;
+                // Deduplicate by vendor ID (prevents client-side rendering duplicates)
+                const seen = new Set();
+                const unique = raw.filter(v => {
+                    if (seen.has(v.id)) return false;
+                    seen.add(v.id);
+                    return true;
+                });
+                setVendors(unique);
             } catch (err) {
                 console.error('Failed to load vendors', err);
             }
@@ -574,18 +582,29 @@ export default function AdminLeads() {
                                 <MagnifyingGlassIcon className="h-4 w-4 text-slate-400 absolute left-3 top-2.5" />
                             </div>
                             <div className="max-h-64 overflow-y-auto space-y-2 border border-slate-100 rounded-lg p-2 bg-slate-50">
-                                {vendors.filter(v => v.name?.toLowerCase().includes(vendorSearch.toLowerCase())).map(vendor => (
+                                {vendors
+                                    .filter(v => v.name?.toLowerCase().includes(vendorSearch.toLowerCase()) ||
+                                                 String(v.id).includes(vendorSearch))
+                                    .map(vendor => (
                                     <button
                                         key={vendor.id}
                                         onClick={() => handleAssignToVendor(vendor.id)}
                                         disabled={assigning}
                                         className="w-full text-left p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-colors group flex items-center justify-between"
                                     >
-                                        <div>
-                                            <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-700">{vendor.name}</p>
-                                            <p className="text-xs text-slate-500">{vendor.city}, {vendor.state}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-700 truncate">{vendor.name}</p>
+                                                <span className="shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded">#{vendor.id}</span>
+                                                {vendor.is_active === false && (
+                                                    <span className="shrink-0 text-[10px] font-bold px-1.5 py-0.5 bg-red-50 text-red-500 rounded">Inactive</span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-slate-500">
+                                                {[vendor.city, vendor.state].filter(Boolean).join(', ') || 'No location'}
+                                            </p>
                                         </div>
-                                        <div className="text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">Assign</div>
+                                        <div className="text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">Assign →</div>
                                     </button>
                                 ))}
                                 {vendors.length === 0 && <p className="text-center text-slate-500 text-sm py-4">Loading vendors...</p>}
