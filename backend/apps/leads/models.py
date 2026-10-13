@@ -54,6 +54,25 @@ class Lead(models.Model):
     # REMOVED: assigned_vendors field - leads should NOT be assigned to vendors
     # Leads are only stored in database and emailed to admin
 
+    # Phase 2 — Lead Origin Tracking
+    SOURCE_TYPE_CHOICES = [
+        ('HOMEPAGE_QUOTE', 'Homepage Quote'),
+        ('JUNKYARD_DIRECTORY_QUOTE', 'Junkyard Directory Quote'),
+        ('VENDOR_LISTING_INQUIRY', 'Vendor Listing Inquiry'),
+        ('VENDOR_PROFILE_INQUIRY', 'Vendor Profile Inquiry'),
+        ('SIDEBAR_QUOTE', 'Sidebar Quote'),
+        ('SEARCH_RESULTS_QUOTE', 'Search Results Quote'),
+        ('SELL_VEHICLE', 'Sell Vehicle'),
+        ('OTHER', 'Other'),
+    ]
+    source_type = models.CharField(max_length=50, choices=SOURCE_TYPE_CHOICES, default='OTHER', blank=True)
+    source_page_url = models.URLField(max_length=500, blank=True, default='')
+    source_component = models.CharField(max_length=100, blank=True, default='')
+    originating_vendor = models.ForeignKey(
+        'hollander.Vendor', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='originated_leads'
+    )
+
     class Meta:
         ordering = ['-created_at']
 

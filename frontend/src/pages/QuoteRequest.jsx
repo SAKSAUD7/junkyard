@@ -178,7 +178,11 @@ export default function QuoteRequest() {
                 state: formData.state,
                 zip: formData.zip,
                 lead_type: 'quality_auto_parts',
+                source_type: 'JUNKYARD_DIRECTORY_QUOTE',
+                source_page_url: window.location.href,
+                source_component: 'QuoteRequest',
             })
+
             setSubmitSuccess(true)
             
             // Auto-reset form after 10 seconds

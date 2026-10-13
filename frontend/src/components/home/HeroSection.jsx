@@ -559,6 +559,9 @@ export default function HeroSection({ get, ready = false }) {
         state: heroState,
         zip: heroZip,
         lead_type: "quality_auto_parts",
+        source_type: "HOMEPAGE_QUOTE",
+        source_page_url: window.location.href,
+        source_component: "HeroSection",
       });
       setHeroSuccess(true);
     } catch {

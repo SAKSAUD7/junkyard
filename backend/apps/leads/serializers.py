@@ -20,9 +20,11 @@ class LeadSerializer(serializers.ModelSerializer):
             'name', 'email', 'phone',
             'state', 'zip', 'location',
             'options', 'hollander_number',
-            'lead_type', 'vendor', 'status', 'created_at'
+            'lead_type', 'vendor', 'status', 'created_at',
+            'source_type', 'source_page_url', 'source_component', 'originating_vendor',
         ]
         read_only_fields = ['id', 'created_at', 'status']
+
 
 
 class VehicleSubmissionSerializer(serializers.ModelSerializer):
