@@ -8,6 +8,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 
+from apps.hollander.models import Vendor
 from apps.leads.models import Lead
 from apps.leads.serializers import LeadSerializer
 
@@ -196,3 +197,45 @@ class LeadSubmissionRegressionTests(TestCase):
         admin_mails = [m for m in mail.outbox if 'leads@test.local' in m.to]
         self.assertEqual(len(admin_mails), 1)
         self.assertIn('NEW LEAD', admin_mails[0].subject)
+
+
+class LeadPublicContractTests(TestCase):
+    """What a public POST /api/leads/ is allowed to decide for itself."""
+
+    def setUp(self):
+        self.client = APIClient()
+        cache.clear()
+        self.vendor = Vendor.objects.create(yard_id=501, name="Contract Yard", state="TX")
+
+    def test_public_submission_cannot_assign_its_lead_to_a_vendor(self):
+        """Lead.vendor is the admin-side assignment column."""
+        response = self.client.post(
+            '/api/leads/',
+            hero_payload(email='no-assign@example.com', vendor=self.vendor.pk),
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        lead = Lead.objects.get(pk=response.data['id'])
+        self.assertIsNone(lead.vendor)
+
+    def test_hollander_candidates_are_stored(self):
+        """LeadForm sends them; the serializer used to drop them silently."""
+        response = self.client.post(
+            '/api/leads/',
+            hero_payload(
+                email='with-candidates@example.com',
+                hollander_number='100-10138A',
+                hollander_candidates=['100-10138A', '100-10138B'],
+            ),
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        lead = Lead.objects.get(pk=response.data['id'])
+        self.assertEqual(lead.hollander_candidates, ['100-10138A', '100-10138B'])
+
+    def test_lead_without_candidates_defaults_to_empty_list(self):
+        response = self.client.post(
+            '/api/leads/', hero_payload(email='no-candidates@example.com'), format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Lead.objects.get(pk=response.data['id']).hollander_candidates, [])
