@@ -18,7 +18,7 @@ register_converter(SignedIntConverter, 'signedint')
 
 urlpatterns = [
     path('', AdvertisementListView.as_view(), name='ad-list'),
-    path('<int:pk>/click/', AdClickView.as_view(), name='ad-click'),
+    path('<signedint:pk>/click/', AdClickView.as_view(), name='ad-click'),
     path('<signedint:pk>/impression/', AdImpressionView.as_view(), name='ad-impression'),
     path('summary/', AdSummaryView.as_view(), name='ad-summary'),
 ]

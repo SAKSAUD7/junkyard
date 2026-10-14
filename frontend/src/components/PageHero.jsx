@@ -18,7 +18,7 @@ const PAGE_FALLBACK_IMAGES = {
     contact: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=1920&auto=format&fit=crop',
 };
 
-const LOCAL_PAGE_HEROES = {
+export const LOCAL_PAGE_HEROES = {
     faq: '/heroes/parts-warehouse.png',
     blog: '/heroes/salvage-sunset.png',
     how_it_works: '/heroes/mechanic-parts.png',

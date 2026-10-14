@@ -4,8 +4,7 @@ from .views import (
     MakeViewSet, ModelViewSet, PartViewSet,
     StateViewSet, ContactMessageViewSet, FeedbackViewSet, AdminStatsView,
     SiteStatsView, UploadAndMigrateLeadDataView, SitemapView,
-    CityListView, AdminNotificationViewSet, SiteAnalyticsViewSet,
-    AnalyticsDetailView
+    CityListView, AdminNotificationViewSet, SiteAnalyticsViewSet
 )
 
 router = DefaultRouter()
@@ -23,7 +22,6 @@ urlpatterns = [
     path('admin-stats/', AdminStatsView.as_view(), name='admin-stats'),
     path('site-stats/', SiteStatsView.as_view(), name='site-stats'),
     path('cities/', CityListView.as_view(), name='cities'),
-    path('analytics/detail/', AnalyticsDetailView.as_view(), name='analytics-detail'),
     path('migrate-lead-data/', UploadAndMigrateLeadDataView.as_view(), name='migrate-lead-data'),
     path('sitemap.xml', SitemapView.as_view(), name='sitemap-xml'),
 ]

@@ -10,9 +10,6 @@ import {
     CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
-const ANALYTICS_DETAIL_URL = `${API_BASE}/api/common/analytics/detail/`;
-
 const DATE_RANGES = [
     { label: '7 Days', value: 7 },
     { label: '30 Days', value: 30 },
@@ -86,6 +83,22 @@ function BadgeType({ type }) {
     );
 }
 
+function describeError(err, fallback) {
+    const status = err?.response?.status;
+    if (status === 401 || status === 403) {
+        return 'Your session no longer has access to analytics. Sign in as an administrator.';
+    }
+    if (status === 404) {
+        return `${fallback} (HTTP 404: this server does not expose the analytics endpoint.)`;
+    }
+    if (status === 429) {
+        return 'Too many requests. Wait a minute and retry.';
+    }
+    if (status) return `${fallback} (HTTP ${status})`;
+    if (err?.code === 'ERR_NETWORK') return `${fallback} The server did not respond.`;
+    return `${fallback} ${err?.message || ''}`.trim();
+}
+
 export default function AdminAnalytics() {
     const { token } = useContext(AuthContext);
     const [summary, setSummary] = useState(null);
@@ -107,10 +120,10 @@ export default function AdminAnalytics() {
         setSummaryLoading(true);
         setSummaryError(null);
         try {
-            const data = await api.getSiteAnalyticsSummary(token);
+            const data = await api.getSiteAnalyticsSummary(daysRange);
             setSummary(data);
         } catch (err) {
-            setSummaryError('Could not load analytics summary.');
+            setSummaryError(describeError(err, 'Could not load analytics summary.'));
         } finally {
             setSummaryLoading(false);
         }
@@ -119,7 +132,7 @@ export default function AdminAnalytics() {
     useEffect(() => {
         if (token) fetchSummary();
         else setSummaryLoading(false);
-    }, [token]);
+    }, [token, daysRange]);
 
     // ── Fetch detail rows ────────────────────────────────────────────────────
     const fetchDetail = async (eventType, page, days) => {
@@ -127,21 +140,13 @@ export default function AdminAnalytics() {
         setDetailLoading(true);
         setDetailError(null);
         try {
-            const params = new URLSearchParams({
-                event_type: eventType,
-                page,
-                page_size: PAGE_SIZE,
+            const { results, total } = await api.getSiteAnalyticsEvents({
+                eventType, days, page, pageSize: PAGE_SIZE,
             });
-            if (days > 0) params.append('days', days);
-            const res = await fetch(`${ANALYTICS_DETAIL_URL}?${params}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            setDetail(data.results || data);
-            setDetailTotal(data.count !== undefined ? data.count : (data.results?.length || 0));
+            setDetail(results);
+            setDetailTotal(total);
         } catch (err) {
-            setDetailError('Could not load detail data.');
+            setDetailError(describeError(err, 'Could not load detail data.'));
             setDetail([]);
             setDetailTotal(0);
         } finally {
@@ -163,10 +168,8 @@ export default function AdminAnalytics() {
     const totalPages = Math.ceil(detailTotal / PAGE_SIZE);
     const activeConfig = METRICS.find(m => m.key === activeMetric);
 
-    const summaryCount = (key) => {
-        if (!summary) return '—';
-        return (summary[key] ?? summary[key === 'lead_submit' ? 'lead_submit' : key] ?? 0).toLocaleString();
-    };
+    const summaryCount = (key) => summary ? (summary[key] ?? 0).toLocaleString() : '—';
+    const rangeLabel = daysRange > 0 ? `the last ${daysRange} days` : 'all time';
 
     return (
         <div className="max-w-[1300px] mx-auto space-y-8">
@@ -179,6 +182,8 @@ export default function AdminAnalytics() {
                     </h1>
                     <p className="text-sm text-slate-500 mt-0.5 font-medium">
                         Track key engagement events across the platform. Click a card to drill down.
+                        Both the counts and the rows below cover{' '}
+                        <strong className="text-slate-700">{rangeLabel}</strong>.
                     </p>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">

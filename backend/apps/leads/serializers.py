@@ -26,11 +26,13 @@ class LeadSerializer(serializers.ModelSerializer):
             'id', 'make', 'model', 'part', 'year',
             'name', 'email', 'phone',
             'state', 'zip', 'location',
-            'options', 'hollander_number',
+            'options', 'hollander_number', 'hollander_candidates',
             'lead_type', 'vendor', 'status', 'created_at',
             'source_type', 'source_page_url', 'source_component', 'originating_vendor',
         ]
-        read_only_fields = ['id', 'created_at', 'status']
+        # vendor is admin-side assignment (the distribution flow is disabled);
+        # leaving it writable let a public submission decide which yard owns it.
+        read_only_fields = ['id', 'created_at', 'status', 'vendor']
 
     def validate_make(self, value):
         return self._required_text(value, 'make')

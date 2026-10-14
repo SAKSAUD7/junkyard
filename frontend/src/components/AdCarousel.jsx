@@ -279,18 +279,19 @@ export default function AdCarousel({
 
 // ── Reusable Ad Card Component (Sponsored & Premium variants) ────────────────
 function AdCard({ item, onCardClick }) {
+    const isOrganic = !!item.is_organic;
     const isPremium = item.template_type === 'premium';
     const clickUrl = item.redirect_url || item.click_url || item.cta_url || '/junkyards';
     const imageUrl = getAdImageUrl(item);
     const title = item.title || item.name || 'Verified Auto Recycler';
     const location = item.location || 'United States';
-    const rating = item.rating || 4.8;
-    const reviewsCount = item.reviews_count || 110;
+    const rating = item.rating || null;
+    const reviewsCount = item.reviews_count || null;
     const initials = item.initials || title.substring(0, 2).toUpperCase();
     const buttonText = item.button_text || (isPremium ? 'Call Now' : 'Visit Website');
     const features = item.features || ['Used Auto Parts', 'Fast Response'];
 
-    if (isPremium) {
+    if (isPremium && !isOrganic) {
         return (
             <div 
                 className="w-full rounded-2xl bg-[#0B1528] text-white border border-slate-800 shadow-[0_8px_30px_rgba(11,21,40,0.35)] p-4 sm:p-5 flex flex-col justify-between relative group hover:border-amber-500/50 hover:shadow-[0_12px_36px_rgba(245,158,11,0.15)] transition-all duration-300"
@@ -308,6 +309,7 @@ function AdCard({ item, onCardClick }) {
                             <div className="min-w-0 flex-1">
                                 <h4 
                                     className="font-black text-sm sm:text-[15px] text-white truncate leading-tight group-hover:text-amber-400 transition-colors"
+                                    title={title}
                                     style={{ fontFamily: "'Outfit', sans-serif" }}
                                 >
                                     {title}
@@ -317,7 +319,7 @@ function AdCard({ item, onCardClick }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <span className="truncate">{location}</span>
+                                    <span className="truncate" title={location}>{location}</span>
                                 </div>
                             </div>
                         </div>
@@ -329,13 +331,17 @@ function AdCard({ item, onCardClick }) {
                     </div>
 
                     {/* Rating Bar */}
+                    {rating && (
                     <div className="flex items-center gap-1 text-[12px] font-bold text-amber-400 mb-3">
                         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span>{rating}</span>
-                        <span className="text-slate-400 font-normal">({reviewsCount} reviews)</span>
+                        {reviewsCount && (
+                            <span className="text-slate-400 font-normal">({reviewsCount} reviews)</span>
+                        )}
                     </div>
+                    )}
 
                     {/* Features Tag Pills */}
                     <div className="flex flex-wrap gap-1.5 mb-4">
@@ -390,6 +396,7 @@ function AdCard({ item, onCardClick }) {
                         <div className="min-w-0 flex-1">
                             <h4 
                                 className="font-black text-sm sm:text-[15px] text-slate-900 truncate leading-tight group-hover:text-blue-600 transition-colors"
+                                title={title}
                                 style={{ fontFamily: "'Outfit', sans-serif" }}
                             >
                                 {title}
@@ -399,25 +406,35 @@ function AdCard({ item, onCardClick }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <span className="truncate">{location}</span>
+                                <span className="truncate" title={location}>{location}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Sponsored Badge */}
-                    <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-200/80 px-2 py-0.5 rounded-full shrink-0">
-                        SPONSORED
-                    </span>
+                    {isOrganic ? (
+                        <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full shrink-0">
+                            Recommended
+                        </span>
+                    ) : (
+                        <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-200/80 px-2 py-0.5 rounded-full shrink-0">
+                            SPONSORED
+                        </span>
+                    )}
                 </div>
 
                 {/* Rating Bar */}
+                {rating && (
                 <div className="flex items-center gap-1 text-[12px] font-bold text-amber-500 mb-3">
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                     <span>{rating}</span>
-                    <span className="text-slate-400 font-normal">({reviewsCount} reviews)</span>
+                    {reviewsCount && (
+                        <span className="text-slate-400 font-normal">({reviewsCount} reviews)</span>
+                    )}
                 </div>
+                )}
 
                 {/* Features Tag Pills */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -435,7 +452,7 @@ function AdCard({ item, onCardClick }) {
             {/* Bottom Row: AD Disclosure + CTA Link */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                 <span className="text-[9px] font-bold tracking-widest text-slate-400 uppercase">
-                    AD
+                    {isOrganic ? '' : 'AD'}
                 </span>
                 <a
                     href={clickUrl}

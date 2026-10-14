@@ -51,20 +51,39 @@ else
 fi
 echo "  manage.py interpreter: $PY"
 
-# Auto-install / update as a global command in /usr/local/bin
-if [ -w "/usr/local/bin" ]; then
-    cp "$REPO_DIR/deploy_hpanel.sh" /usr/local/bin/deploy-jynm 2>/dev/null || true
-    chmod +x /usr/local/bin/deploy-jynm 2>/dev/null || true
-    echo "✓ Global command 'deploy-jynm' installed. You can run 'deploy-jynm' from anywhere."
-fi
+# Auto-install / update as a global command in /usr/local/bin.
+# Never `cp` over the file that is currently executing: bash reads a script
+# lazily, so truncating it mid-run makes the shell resume at a stale byte
+# offset inside the new content and parse half a line. That is exactly how a
+# deploy aborted with "deploy-jynm: line 29: =/home/junkyard/backend: No such
+# file or directory" before it reached step 1. Rename instead - rename swaps
+# the directory entry and leaves the inode the running shell holds untouched.
+install_wrapper() {
+    [ -w "/usr/local/bin" ] || return 0
+    if cmp -s "$REPO_DIR/deploy_hpanel.sh" /usr/local/bin/deploy-jynm 2>/dev/null; then
+        echo "  wrapper /usr/local/bin/deploy-jynm is already up to date"
+        return 0
+    fi
+    tmp="/usr/local/bin/.deploy-jynm.$$.tmp"
+    if cp "$REPO_DIR/deploy_hpanel.sh" "$tmp" && chmod +x "$tmp" && mv -f "$tmp" /usr/local/bin/deploy-jynm; then
+        echo "✓ Global command 'deploy-jynm' installed. You can run 'deploy-jynm' from anywhere."
+    else
+        rm -f "$tmp" 2>/dev/null || true
+        echo "  ! could not update /usr/local/bin/deploy-jynm - this run continues with $REPO_DIR/deploy_hpanel.sh"
+    fi
+}
+install_wrapper
 
 echo "▶ 1. Syncing latest changes from GitHub ($REPO_DIR)..."
 git fetch origin main
 # git reset --hard discards uncommitted work. Refuse rather than lose an
 # operator's hotfix silently; --force is the explicit opt-out.
-DIRTY="$(git status --porcelain || true)"
+# Untracked files are excluded on purpose: MEDIA_ROOT uploads and collected
+# staticfiles live in the working tree on every healthy deploy, reset --hard
+# leaves them untouched, and counting them made the guard reject every run.
+DIRTY="$(git status --porcelain --untracked-files=no || true)"
 if [ -n "$DIRTY" ] && [ "$FORCE" -eq 0 ]; then
-    echo "✗ Working tree has uncommitted changes:"
+    echo "✗ Working tree has uncommitted changes to tracked files:"
     echo "$DIRTY" | head -20
     echo "  Commit or stash them, or re-run with --force to discard."
     exit 1

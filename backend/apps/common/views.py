@@ -1,5 +1,11 @@
+from datetime import timedelta
+
+from django.core.cache import cache
+from django.db.models import Count
+from django.utils import timezone
 from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from apps.hollander.models import Make, Model, PartType, State
 from .models import ContactMessage, Feedback, AdminNotification, SiteAnalytics
@@ -579,92 +585,70 @@ class SitemapView(APIView):
         return HttpResponse(xml_declaration + xml_str, content_type='application/xml')
 
 
+def analytics_days(raw):
+    """?days= is a window in days; 0 or anything unparsable means all time."""
+    try:
+        days = int(raw)
+    except (TypeError, ValueError):
+        return 0
+    return days if days > 0 else 0
+
+
+def filter_analytics_events(queryset, params):
+    """One filter path for every analytics read, so the summary cards and the
+    drill-down table cannot report different numbers for the same period.
+    Returns (queryset, days)."""
+    event_type = params.get('event_type')
+    if event_type:
+        queryset = queryset.filter(event_type=event_type)
+
+    days = analytics_days(params.get('days'))
+    if days:
+        # timezone.now() is the USE_TZ-correct form; it does not depend on the
+        # database connection resolving a naive datetime through TIME_ZONE.
+        queryset = queryset.filter(created_at__gte=timezone.now() - timedelta(days=days))
+    return queryset, days
+
+
+class SiteAnalyticsPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
 class SiteAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint for viewing site analytics.
     GET: Admin only (IsAdminUser)
-    Supports ?event_type=login|signup|lead_submit and ?days=7|30|90
+    List: ?event_type=login|signup|lead_submit, ?days=7|30|90 (0 = all time),
+    ?page= and ?page_size= (max 100) for the drill-down table.
     """
     queryset = SiteAnalytics.objects.all().order_by('-created_at')
     serializer_class = SiteAnalyticsSerializer
     permission_classes = [permissions.IsAdminUser]
+    pagination_class = SiteAnalyticsPagination
 
     def get_queryset(self):
-        from datetime import datetime, timedelta
-        qs = SiteAnalytics.objects.all().order_by('-created_at')
-
-        event_type = self.request.query_params.get('event_type')
-        if event_type:
-            qs = qs.filter(event_type=event_type)
-
-        try:
-            days = int(self.request.query_params.get('days', 0))
-        except (ValueError, TypeError):
-            days = 0
-        if days > 0:
-            cutoff = datetime.now() - timedelta(days=days)
-            qs = qs.filter(created_at__gte=cutoff)
-
+        qs, _days = filter_analytics_events(
+            SiteAnalytics.objects.all().order_by('-created_at'),
+            self.request.query_params)
         return qs
 
     @action(detail=False, methods=['get'])
     def summary(self, request):
-        """Returns aggregated counts of different analytics events"""
-        from django.db.models import Count
-        from django.core.cache import cache
+        """Counts per event type, for the same window the drill-down uses."""
+        qs, days = filter_analytics_events(SiteAnalytics.objects.all(),
+                                           request.query_params)
 
-        cached = cache.get('site_analytics_summary')
-        if cached:
-            return Response(cached)
+        cache_key = f'site_analytics_summary:{days or "all"}'
+        counts = cache.get(cache_key)
+        if counts is None:
+            counts = {code: 0 for code, _label in SiteAnalytics.EVENT_TYPES}
+            # order_by() keeps the GROUP BY explicitly on event_type alone.
+            grouped = qs.order_by().values('event_type').annotate(count=Count('id'))
+            for item in grouped:
+                if item['event_type'] in counts:
+                    counts[item['event_type']] = item['count']
+            cache.set(cache_key, counts, 60)
 
-        summary_qs = SiteAnalytics.objects.values('event_type').annotate(count=Count('id'))
-
-        counts = {
-            'login': 0,
-            'signup': 0,
-            'lead_submit': 0
-        }
-        for item in summary_qs:
-            if item['event_type'] in counts:
-                counts[item['event_type']] = item['count']
-
-        cache.set('site_analytics_summary', counts, 60)
-        return Response(counts)
-
-
-# ─── Analytics detail alias (used by frontend Analytics.jsx) ──────────────────
-class AnalyticsDetailView(APIView):
-    """
-    Paginated analytics detail endpoint.
-    GET /api/admin/analytics/detail/?event_type=login&days=30&page=1&page_size=25
-    """
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        from datetime import datetime, timedelta
-        from rest_framework.pagination import PageNumberPagination
-
-        event_type = request.query_params.get('event_type')
-        qs = SiteAnalytics.objects.all().order_by('-created_at')
-
-        if event_type:
-            qs = qs.filter(event_type=event_type)
-
-        try:
-            days = int(request.query_params.get('days', 0))
-        except (ValueError, TypeError):
-            days = 0
-        if days > 0:
-            cutoff = datetime.now() - timedelta(days=days)
-            qs = qs.filter(created_at__gte=cutoff)
-
-        paginator = PageNumberPagination()
-        paginator.page_size_query_param = 'page_size'
-        try:
-            paginator.page_size = int(request.query_params.get('page_size', 25))
-        except (ValueError, TypeError):
-            paginator.page_size = 25
-
-        page = paginator.paginate_queryset(qs, request)
-        serializer = SiteAnalyticsSerializer(page, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        return Response({**counts, 'days': days})

@@ -55,6 +55,26 @@ class AdClickView(APIView):
         
         return redirect(ad.redirect_url)
 
+    def post(self, request, pk):
+        """JSON counter for in-app clicks.
+
+        The carousel reports clicks with a background POST, where the
+        redirecting GET body is unusable; without this route every one of
+        those reports failed with 405 and clicks were never counted.
+        """
+        from django.db.models import F
+
+        if pk <= 0:
+            return Response({'status': 'ignored', 'reason': 'invalid ad id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not Advertisement.objects.filter(pk=pk).exists():
+            return Response({'status': 'not_found'}, status=status.HTTP_404_NOT_FOUND)
+
+        Advertisement.objects.filter(pk=pk).update(clicks=F('clicks') + 1)
+        clicks = Advertisement.objects.filter(pk=pk).values_list('clicks', flat=True).first()
+
+        return Response({'status': 'recorded', 'clicks': clicks})
+
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 

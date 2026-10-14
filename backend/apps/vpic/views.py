@@ -12,7 +12,10 @@ class VinDecodeView(APIView):
     permission_classes = []
 
     def post(self, request):
-        vin = request.data.get('vin', '').strip().upper()
+        # A VIN may arrive as any JSON value; anything that is not a
+        # 17-character alphanumeric string is rejected as a 400, not a 500.
+        raw_vin = request.data.get('vin', '') if isinstance(request.data, dict) else ''
+        vin = str(raw_vin).strip().upper()
 
         # 1. Validation
         if not vin:
