@@ -184,9 +184,20 @@ export const api = {
     return response.data;
   },
 
-  getSiteAnalyticsSummary: async () => {
-    const response = await axiosInstance.get('/common/site-analytics/summary/');
+  getSiteAnalyticsSummary: async (days = 0) => {
+    const response = await axiosInstance.get('/common/site-analytics/summary/', {
+      params: { days },
+    });
     return response.data;
+  },
+
+  getSiteAnalyticsEvents: async ({ eventType, days = 0, page = 1, pageSize = 25 }) => {
+    const response = await axiosInstance.get('/common/site-analytics/', {
+      params: { event_type: eventType, days, page, page_size: pageSize },
+    });
+    const data = response.data;
+    const results = data.results || (Array.isArray(data) ? data : []);
+    return { results, total: data.count !== undefined ? data.count : results.length };
   },
 
   getContactMessages: async (token) => {
