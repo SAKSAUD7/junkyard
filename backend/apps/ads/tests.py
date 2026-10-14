@@ -43,6 +43,13 @@ class AdImpressionViewTests(TestCase):
         response = self.client.post(self._url(999999))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_impression_404_body_is_the_client_contract(self):
+        """AdCarousel drops the stale card only when this exact JSON is returned."""
+        response = self.client.post(self._url(999999))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json(), {"status": "not_found"})
+        self.assertEqual(self.ad.impressions, 0)
+
     # ── Happy path ────────────────────────────────────────────────────────
     def test_impression_valid_ad_increments_counter(self):
         """Successful impression increments the counter and returns 200."""

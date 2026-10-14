@@ -1,6 +1,8 @@
 import csv
+import uuid
 from django.http import HttpResponse  # type: ignore
 from rest_framework.decorators import action
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions, status as drf_status
 from .models import Lead, VendorLead, VehicleSubmission, LeadDistribution
@@ -163,20 +165,35 @@ class LeadViewSet(viewsets.ModelViewSet):
         from datetime import timedelta
         incoming = serializer.validated_data
         window = timezone.now() - timedelta(hours=24)
-        dup = Lead.objects.filter(
-            email__iexact=incoming.get('email', ''),
-            make__iexact=incoming.get('make', ''),
-            model__iexact=incoming.get('model', ''),
-            year=incoming.get('year'),
-            part__iexact=incoming.get('part', ''),
-            created_at__gte=window,
-        ).exists()
+        try:
+            dup = Lead.objects.filter(
+                email__iexact=incoming.get('email', ''),
+                make__iexact=incoming.get('make', ''),
+                model__iexact=incoming.get('model', ''),
+                year=incoming.get('year'),
+                part__iexact=incoming.get('part', ''),
+                created_at__gte=window,
+            ).exists()
+        except Exception:
+            # A broken duplicate check must not cost the customer a lead.
+            dup = False
+            logger.exception('Duplicate-lead check failed; continuing without it')
         if dup:
             from rest_framework.exceptions import Throttled
             raise Throttled(detail="Duplicate request: a matching lead was submitted within the last 24 hours.")
 
         # 1. Save the initial lead (includes the frontend-supplied hollander_number)
-        lead = serializer.save()
+        try:
+            lead = serializer.save()
+        except Exception:
+            ref = uuid.uuid4().hex[:8]
+            logger.exception('Lead insert failed (ref=%s) payload=%s', ref, {
+                k: incoming.get(k) for k in ('make', 'model', 'year', 'part', 'lead_type', 'source_type')
+            })
+            raise APIException(
+                detail=(f'Your request could not be saved right now. Reference {ref} '
+                        f'- our team has been notified and can recover the submission.')
+            )
 
         logger.info(f"Saved Lead ID {lead.id} with Hollander '{lead.hollander_number}' | make={lead.make} part={lead.part} year={lead.year}")
 
@@ -320,6 +337,12 @@ class LeadViewSet(viewsets.ModelViewSet):
             admin_email = getattr(settings, 'LEAD_NOTIFICATION_EMAIL', 'leads@junkyardsnearme.net')
             
             # --- EMAIL 1: Notify the JYNM Client/Admin ---
+            # apps.leads.signals already delivers the HTML admin notification on
+            # save and flips notification_sent; this plain copy is the fallback so
+            # the client does not receive every lead twice.
+            admin_notified = Lead.objects.filter(
+                pk=lead.pk, notification_sent=True
+            ).exists()
             admin_subject = f"NEW LEAD: {lead.year} {lead.make} {lead.model} - {lead.part}"
             admin_msg = f"New Lead # {lead.id} received!\n\n" \
                         f"Customer: {lead.name} ({lead.email})\n" \
@@ -328,13 +351,14 @@ class LeadViewSet(viewsets.ModelViewSet):
                         f"Hollander Assigned: {lead.hollander_number or 'None'}\n\n" \
                         f"Please login to the admin to action this lead."
             
-            send_mail(
-                subject=admin_subject,
-                message=admin_msg,
-                from_email=sender_email,
-                recipient_list=[admin_email],
-                fail_silently=True
-            )
+            if not admin_notified:
+                send_mail(
+                    subject=admin_subject,
+                    message=admin_msg,
+                    from_email=sender_email,
+                    recipient_list=[admin_email],
+                    fail_silently=True
+                )
 
             # --- EMAIL 2: Confirmation Auto-Reply to the End-User ---
             user_subject = f"We've Received Your Part Request - {lead.year} {lead.make} {lead.model}!"

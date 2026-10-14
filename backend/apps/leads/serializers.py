@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 from .models import Lead, VendorLead, VehicleSubmission, LeadDistribution
 
@@ -13,6 +15,11 @@ class VendorLeadSerializer(serializers.ModelSerializer):
 
 
 class LeadSerializer(serializers.ModelSerializer):
+    # Explicit bounds: Lead.year is a plain IntegerField, so an out-of-range value
+    # that passes model validation reaches Postgres and fails the INSERT with a
+    # 500 instead of a 400.
+    year = serializers.IntegerField(min_value=1900, max_value=datetime.date.today().year + 5)
+
     class Meta:
         model = Lead
         fields = [
@@ -24,6 +31,22 @@ class LeadSerializer(serializers.ModelSerializer):
             'source_type', 'source_page_url', 'source_component', 'originating_vendor',
         ]
         read_only_fields = ['id', 'created_at', 'status']
+
+    def validate_make(self, value):
+        return self._required_text(value, 'make')
+
+    def validate_model(self, value):
+        return self._required_text(value, 'model')
+
+    def validate_part(self, value):
+        return self._required_text(value, 'part')
+
+    @staticmethod
+    def _required_text(value, field):
+        cleaned = (value or '').strip()
+        if not cleaned:
+            raise serializers.ValidationError(f"A {field} is required.")
+        return cleaned
 
 
 

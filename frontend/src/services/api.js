@@ -251,7 +251,11 @@ export const api = {
     try {
       const response = await axiosInstance.post(`/ads/${id}/impression/`);
       return response.data;
-    } catch {
+    } catch (err) {
+      // The server answers 404 JSON for an ad that no longer exists or went
+      // inactive after this carousel payload was fetched. Report it so the
+      // caller can drop the stale card instead of retrying forever.
+      if (err?.response?.status === 404) return { status: 'not_found' };
       return null;
     }
   },

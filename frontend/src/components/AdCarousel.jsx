@@ -111,7 +111,13 @@ export default function AdCarousel({
                 try {
                     if (!sessionStorage.getItem(sessionKey)) {
                         sessionStorage.setItem(sessionKey, '1');
-                        api.trackAdImpression(ad.id);
+                        api.trackAdImpression(ad.id).then(result => {
+                            // The ad was replaced or deactivated after this payload was
+                            // fetched; drop the stale card rather than retrying it.
+                            if (result?.status === 'not_found') {
+                                setAds(current => current.filter(item => item.id !== ad.id));
+                            }
+                        });
                     }
                 } catch {
                     // sessionStorage may fail in private mode; ignore

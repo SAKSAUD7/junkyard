@@ -509,8 +509,26 @@ export default function HeroSection({ get, ready = false }) {
     setCaptchaInput("");
   };
 
+  const describeLeadError = (err) => {
+    const data = err?.response?.data;
+    if (typeof data === 'string' && data.trim()) return data.trim().slice(0, 200);
+    if (data && typeof data === 'object') {
+      if (typeof data.detail === 'string') return data.detail;
+      const messages = Object.entries(data)
+        .filter(([key]) => key !== 'id')
+        .flatMap(([, value]) => (Array.isArray(value) ? value : [value]))
+        .map((value) => (typeof value === 'string' ? value : String(value)))
+        .filter(Boolean);
+      if (messages.length) return messages.join(' ');
+    }
+    return err?.code === 'ERR_NETWORK'
+      ? 'Cannot reach the server. Check your connection and try again.'
+      : "Submission failed. Please try again.";
+  };
+
   const handleHeroSubmit = async (e) => {
     e.preventDefault();
+    if (heroSubmitting) return;
     if (!heroName || !heroEmail || !heroPhone || !heroState || !heroZip) {
       setHeroError("Please fill in all contact fields.");
       return;
@@ -543,10 +561,20 @@ export default function HeroSection({ get, ready = false }) {
         heroPartId ||
         "";
 
+      /* The API requires make/model/part/year. parseInt('') is NaN, which
+         serialises to null and comes back as a 400, so catch it here and send
+         the shopper back to the step that is actually missing. */
+      const finalYear = Number.parseInt(heroYear, 10);
+      if (!finalMake || !finalModel || !finalPart || !Number.isFinite(finalYear)) {
+        setHeroError("Please complete the vehicle selection first.");
+        setHeroStep(1);
+        return;
+      }
+
       await api.createLead({
         make: finalMake,
         model: finalModel,
-        year: parseInt(heroYear),
+        year: finalYear,
         part: finalPart.split(" (")[0].trim(),
         hollander_number:
           hollanderNumber && hollanderNumber !== "Not Found"
@@ -568,8 +596,10 @@ export default function HeroSection({ get, ready = false }) {
         detail: { source_type: 'HOMEPAGE_QUOTE', page: window.location.pathname }
       }));
 
-    } catch {
-      setHeroError("Submission failed. Please try again.");
+    } catch (err) {
+      setHeroError(describeLeadError(err));
+      setCaptchaCode(generateCaptcha());
+      setCaptchaInput("");
     } finally {
       setHeroSubmitting(false);
     }
