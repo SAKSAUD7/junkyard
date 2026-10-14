@@ -78,9 +78,12 @@ echo "▶ 1. Syncing latest changes from GitHub ($REPO_DIR)..."
 git fetch origin main
 # git reset --hard discards uncommitted work. Refuse rather than lose an
 # operator's hotfix silently; --force is the explicit opt-out.
-DIRTY="$(git status --porcelain || true)"
+# Untracked files are excluded on purpose: MEDIA_ROOT uploads and collected
+# staticfiles live in the working tree on every healthy deploy, reset --hard
+# leaves them untouched, and counting them made the guard reject every run.
+DIRTY="$(git status --porcelain --untracked-files=no || true)"
 if [ -n "$DIRTY" ] && [ "$FORCE" -eq 0 ]; then
-    echo "✗ Working tree has uncommitted changes:"
+    echo "✗ Working tree has uncommitted changes to tracked files:"
     echo "$DIRTY" | head -20
     echo "  Commit or stash them, or re-run with --force to discard."
     exit 1
