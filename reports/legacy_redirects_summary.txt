@@ -1,0 +1,19 @@
+legacy distinct URLs inspected: 33206
+artifact_normalised: 0
+verified: 22819
+skip_already_canonical: 1
+skip_alias_family: 6
+skip_other_family: 15
+skip_home: 1
+skip_empty: 1
+reject_homepage_dump: 0
+--- flagged reasons ---
+vendor_not_found: 8873
+vendor_ambiguous: 1372
+unknown_state: 112
+ambiguous_id: 5
+unhandled_shape: 1
+verified rules (incl. trailing-slash variants in CSV): 22819
+prior redirect_map.csv destinations confirmed: 0
+prior redirect_map.csv destinations corrected: 5175
+invariant check: PASS (0 self-redirects, 0 chains, 0 homepage dumps)

@@ -1,0 +1,12 @@
+rows_read: 7698
+artifact_sources_normalised: 2443
+verified: 3
+no_op: 0
+alias_source: 3
+source_already_live: 7691
+list_dump: 1
+unknown_dest: 0
+unknown_slug: 0
+normalisation_conflict: 0
+verified unique sources: 3
+known vendor slugs loaded: 6567

@@ -21,8 +21,9 @@
   <!-- <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" /> -->
   <!-- <meta name="msvalidate.01" content="PASTE_YOUR_BING_CODE_HERE" /> -->
 
-  <!-- Canonical domain (fallback before React loads) -->
-  <link rel="canonical" href="https://junkyardsnearme.com/" />
+  <!-- Canonical is emitted per-route by components/SEO.jsx (Helmet). A static
+       canonical here would ship a second, homepage-pointing <link rel="canonical">
+       on every deep page, which Google may honour instead of the page's own. -->
 
   <!-- Open Graph — crawled by social bots before JS executes -->
   <meta property="og:site_name" content="Junkyards Near Me" />

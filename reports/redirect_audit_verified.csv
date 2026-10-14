@@ -1,0 +1,4 @@
+Source Path,Destination Path,HTTP Status
+/error,/,301
+/error-feedback,/contact,301
+/feedback,/contact,301
