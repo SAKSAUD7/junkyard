@@ -105,6 +105,8 @@ class AdminCMSViewSet(viewsets.ModelViewSet):
                 updated_ids.append(content_id)
             except SiteContent.DoesNotExist:
                 errors.append({'id': content_id, 'error': 'Not found'})
+            except (ValueError, TypeError):
+                errors.append({'id': content_id, 'error': 'Invalid id'})
 
         return Response({
             'updated': len(updated_ids),

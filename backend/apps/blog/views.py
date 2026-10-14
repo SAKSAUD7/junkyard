@@ -84,7 +84,7 @@ class PublicBlogViewSet(viewsets.ReadOnlyModelViewSet):
 
         # Author filter
         author = self.request.query_params.get('author', '')
-        if author:
+        if author.isdigit():
             qs = qs.filter(author__id=author)
 
         return qs.order_by('-published_at', '-created_at')
