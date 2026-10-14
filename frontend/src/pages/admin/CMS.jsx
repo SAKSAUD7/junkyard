@@ -9,6 +9,7 @@ QuillSize.whitelist = ['10px','12px','14px','16px','18px','20px','24px','28px','
 Quill.register(QuillSize, true);
 import { api } from '../../services/api';
 import { useCMSContext } from '../../contexts/CMSContext';
+import { LOCAL_PAGE_HEROES } from '../../components/PageHero';
 import {
     PencilSquareIcon, CheckIcon, MagnifyingGlassIcon,
     PhotoIcon, ArrowUpTrayIcon, LinkIcon, DocumentTextIcon,
@@ -1131,16 +1132,20 @@ function MediaLibrary({ onToast }) {
 }
 
 // ─── Hero Images Panel ───────────────────────────────────────────────────────
+// Defaults here must be the image the public page actually renders.
+// PageHero reads hero › background_image and falls back to LOCAL_PAGE_HEROES,
+// so the CMS preview and the "Default" action follow the same source.
+// (The five remote IDs this replaced were verified 404s on 2026-10-14.)
 const HERO_PAGES = [
     { key: 'home',          label: 'Home',            bgDefault: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'about',         label: 'About Us',        bgDefault: 'https://images.unsplash.com/photo-1590240974864-8eff38640196?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'contact',       label: 'Contact',         bgDefault: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'how_it_works',  label: 'How It Works',    bgDefault: 'https://images.unsplash.com/photo-1600705593881-229f3458bf51?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'about',         label: 'About Us',        bgDefault: LOCAL_PAGE_HEROES.about },
+    { key: 'contact',       label: 'Contact',         bgDefault: LOCAL_PAGE_HEROES.contact },
+    { key: 'how_it_works',  label: 'How It Works',    bgDefault: LOCAL_PAGE_HEROES.how_it_works },
     { key: 'vendors',       label: 'All Junkyards',   bgDefault: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1920' },
     { key: 'browse',        label: 'Browse by State', bgDefault: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'faq',           label: 'FAQ',             bgDefault: 'https://images.unsplash.com/photo-1507208882008-8422709e3e3b?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'quote_request', label: 'Quote Request',   bgDefault: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=1920' },
-    { key: 'sell_your_car', label: 'Sell Your Car',   bgDefault: 'https://images.unsplash.com/photo-1581266064-4dce3e2af8a3?auto=format&fit=crop&q=80&w=1920' },
+    { key: 'faq',           label: 'FAQ',             bgDefault: LOCAL_PAGE_HEROES.faq },
+    { key: 'quote_request', label: 'Quote Request',   bgDefault: LOCAL_PAGE_HEROES.quote_request },
+    { key: 'sell_your_car', label: 'Sell Your Car',   bgDefault: LOCAL_PAGE_HEROES.sell_your_car },
 ];
 
 function HeroImagesPanel({ onToast }) {
@@ -1149,6 +1154,8 @@ function HeroImagesPanel({ onToast }) {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState({});
     const [uploading, setUploading] = useState({});
+    const [failedUrls, setFailedUrls] = useState(() => new Set());
+    const [brokenUrls, setBrokenUrls] = useState(() => new Set());
     const fileRefs = useRef({});
 
     const fetchHeroImages = useCallback(async () => {
@@ -1273,6 +1280,7 @@ function HeroImagesPanel({ onToast }) {
                         {HERO_PAGES.map(page => {
                             const entry = heroData[page.key] || { value: '', dirty: false };
                             const previewUrl = entry.value || page.bgDefault;
+                            const previewBroken = !!previewUrl && failedUrls.has(previewUrl);
                             const isDirty = !!entry.dirty;
 
                             return (
@@ -1284,12 +1292,26 @@ function HeroImagesPanel({ onToast }) {
                                         className="relative h-48 bg-slate-900 overflow-hidden cursor-pointer group"
                                         onClick={() => fileRefs.current[page.key]?.click()}
                                     >
-                                        <img
-                                            src={previewUrl}
-                                            alt={page.label + ' hero'}
-                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
-                                            onError={e => { e.target.style.display = 'none'; }}
-                                        />
+                                        {previewUrl && !previewBroken ? (
+                                            <img
+                                                src={previewUrl}
+                                                alt={page.label + ' hero'}
+                                                className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+                                                onError={() => setFailedUrls(prev => (
+                                                    prev.has(previewUrl) ? prev : new Set(prev).add(previewUrl)
+                                                ))}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center">
+                                                <PhotoIcon className="w-6 h-6 text-slate-500" />
+                                                <span className="text-[11px] font-bold text-slate-300">
+                                                    {previewBroken ? 'This image could not be loaded' : 'No image set'}
+                                                </span>
+                                                {previewUrl && (
+                                                    <span className="text-[9px] text-slate-500 font-mono break-all line-clamp-2">{previewUrl}</span>
+                                                )}
+                                            </div>
+                                        )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
                                         {/* Page Label */}
@@ -1487,12 +1509,44 @@ export default function CMS() {
     const currentPage = PAGES.find(p => p.key === activePage);
     const contentTypes = ['all', ...new Set(allEntries.map(e => e.content_type))];
 
+    // One list drives both the desktop sidebar and the small-screen selector, so
+    // the two can never drift into different sets of sections.
+    const SECTION_GROUPS = ['Overview', 'Pages', 'Global Settings'];
+    const sectionItems = [
+        {
+            id: 'content', group: 'Overview', label: 'Website Content', icon: GlobeAltIcon, primary: true,
+            active: activePage === 'dashboard' && tab === 'content',
+            select: () => { setActivePage('dashboard'); setTab('content'); },
+        },
+        {
+            id: 'media', group: 'Overview', label: 'Media Library', icon: PhotoIcon, primary: true,
+            active: tab === 'media',
+            select: () => setTab('media'),
+        },
+        {
+            id: 'hero', group: 'Overview', label: 'Hero Images', icon: FilmIcon, primary: true, badge: 'New',
+            active: tab === 'hero',
+            select: () => setTab('hero'),
+        },
+        ...PAGES.filter(p => !['navbar', 'footer', 'global'].includes(p.key)).map(page => ({
+            id: `page-${page.key}`, group: 'Pages', label: page.label, icon: page.icon,
+            active: activePage === page.key && tab === 'content',
+            dirty: activePage === page.key && tab === 'content' && dirtyIds.size > 0,
+            select: () => { setActivePage(page.key); setTab('content'); },
+        })),
+        ...PAGES.filter(p => ['navbar', 'footer', 'global'].includes(p.key)).map(page => ({
+            id: `global-${page.key}`, group: 'Global Settings', label: page.label, icon: page.icon,
+            active: activePage === page.key && tab === 'content',
+            select: () => { setActivePage(page.key); setTab('content'); },
+        })),
+    ];
+
     return (
         <div className="flex h-full bg-slate-50 font-['Inter',sans-serif]" style={{ minHeight: 0 }}>
             <Toast toasts={toasts} />
 
             {/* ── Sidebar ─────────────────────────────────────────────────── */}
-            <aside className="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 overflow-y-auto">
+            <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex-col flex-shrink-0 overflow-y-auto">
                 <div className="px-5 py-5 border-b border-slate-100 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/30">
                         <PencilSquareIcon className="w-5 h-5 text-white" />
@@ -1504,60 +1558,44 @@ export default function CMS() {
                 </div>
 
                 <div className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
-                    {/* OVERVIEW */}
-                    <div>
-                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Overview</h3>
-                        <nav className="space-y-0.5">
-                            <button onClick={() => { setActivePage('dashboard'); setTab('content'); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === 'dashboard' && tab === 'content' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
-                                <GlobeAltIcon className="w-4 h-4 flex-shrink-0" /> Website Content
-                            </button>
-                            <button onClick={() => setTab('media')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${tab === 'media' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
-                                <PhotoIcon className="w-4 h-4 flex-shrink-0" /> Media Library
-                            </button>
-                            <button onClick={() => setTab('hero')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${tab === 'hero' ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}>
-                                <FilmIcon className="w-4 h-4 flex-shrink-0" /> Hero Images
-                                <span className="ml-auto text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">New</span>
-                            </button>
-                        </nav>
-                    </div>
-
-
-                    {/* PAGES */}
-                    <div>
-                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Pages</h3>
-                        <nav className="space-y-0.5">
-                            {PAGES.filter(p => !['navbar','footer','global'].includes(p.key)).map(page => (
-                                <button
-                                    key={page.key}
-                                    onClick={() => { setActivePage(page.key); setTab('content'); }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
-                                >
-                                    {(() => { const Icon = page.icon; return <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}><Icon className="w-4 h-4" /></span>; })()}
-                                    {page.label}
-                                    {activePage === page.key && tab === 'content' && dirtyIds.size > 0 && (
-                                        <span className="ml-auto w-2 h-2 rounded-full bg-indigo-500 animate-pulse flex-shrink-0" />
-                                    )}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
-
-                    {/* GLOBAL */}
-                    <div>
-                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">Global Settings</h3>
-                        <nav className="space-y-0.5">
-                            {PAGES.filter(p => ['navbar','footer','global'].includes(p.key)).map(page => (
-                                <button
-                                    key={page.key}
-                                    onClick={() => { setActivePage(page.key); setTab('content'); }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${activePage === page.key && tab === 'content' ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:bg-slate-100 font-medium'}`}
-                                >
-                                    {(() => { const Icon = page.icon; return <span className={`flex-shrink-0 ${activePage === page.key && tab === 'content' ? 'text-indigo-600' : 'text-slate-400'}`}><Icon className="w-4 h-4" /></span>; })()}
-                                    {page.label}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
+                    {SECTION_GROUPS.map(group => (
+                        <div key={group}>
+                            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-2">{group}</h3>
+                            <nav className="space-y-0.5">
+                                {sectionItems.filter(item => item.group === group).map(item => {
+                                    const Icon = item.icon;
+                                    const iconTone = item.primary
+                                        ? ''
+                                        : (item.active ? 'text-indigo-600' : 'text-slate-400');
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            onClick={item.select}
+                                            title={item.label}
+                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${
+                                                item.active
+                                                    ? (item.primary
+                                                        ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-500/20'
+                                                        : 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200')
+                                                    : 'text-slate-600 hover:bg-slate-100 font-medium'
+                                            }`}
+                                        >
+                                            <Icon className={`w-4 h-4 flex-shrink-0 ${iconTone}`} />
+                                            <span className="truncate">{item.label}</span>
+                                            {item.badge && (
+                                                <span className="ml-auto text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">
+                                                    {item.badge}
+                                                </span>
+                                            )}
+                                            {item.dirty && (
+                                                <span className={`${item.badge ? '' : 'ml-auto'} w-2 h-2 rounded-full bg-indigo-500 animate-pulse flex-shrink-0`} />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </nav>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Seed button */}
@@ -1570,6 +1608,34 @@ export default function CMS() {
 
             {/* ── Main Panel ──────────────────────────────────────────────── */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                {/* Section selector for small screens: the sidebar above cannot
+                    share a narrow viewport with the editor. */}
+                <div className="lg:hidden flex-shrink-0 bg-white border-b border-slate-200 flex items-center gap-2 pl-3 pr-2 py-2 overflow-x-auto">
+                    <span className="flex items-center gap-1.5 flex-shrink-0 pr-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        <PencilSquareIcon className="w-3.5 h-3.5" /> CMS
+                    </span>
+                    {sectionItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={item.select}
+                            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                                item.active
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                            }`}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                    <button
+                        onClick={handleSeed}
+                        disabled={seeding}
+                        className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 border border-slate-200 text-slate-700 disabled:opacity-50"
+                    >
+                        <ArrowPathIcon className={`w-3.5 h-3.5 ${seeding ? 'animate-spin' : ''}`} /> Seed Defaults
+                    </button>
+                </div>
+
                 {tab === 'media' ? (
                     <MediaLibrary onToast={addToast} />
                 ) : tab === 'hero' ? (
