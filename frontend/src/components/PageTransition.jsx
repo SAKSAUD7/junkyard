@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
+import { hasBottomNav } from '../utils/mobileNav'
 
 const variants = {
   initial: { opacity: 0, y: 16 },
@@ -9,6 +10,9 @@ const variants = {
 
 export default function PageTransition({ children }) {
   const location = useLocation()
+  // Height-locked shells (admin portal) manage their own viewport; 100vh exceeds
+  // the mobile layout viewport and would add a second, phantom page scrollbar.
+  const fillsViewport = hasBottomNav(location.pathname)
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -17,7 +21,7 @@ export default function PageTransition({ children }) {
         initial="initial"
         animate="animate"
         exit="exit"
-        style={{ minHeight: '100vh' }}
+        style={fillsViewport ? { minHeight: '100vh' } : { height: '100%' }}
       >
         {children}
       </motion.div>

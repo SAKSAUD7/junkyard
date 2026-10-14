@@ -406,11 +406,11 @@ export default function AdminVendors() {
     }
 
     return (
-        <div className="space-y-6 pb-8">
+        <div className="flex h-full min-h-0 flex-col">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* ── Header ────────────────────────────────────────────────────── */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-shrink-0 flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Vendor Management</h1>
                     <p className="text-sm text-slate-500 mt-1">Manage automotive recyclers and their portal access.</p>
@@ -488,11 +488,11 @@ export default function AdminVendors() {
                 }
             />
 
-            {/* Modern Table Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col relative w-full">
-                <div className="overflow-x-auto overflow-y-hidden max-w-full">
+            {/* Modern Table Card — the card owns scrolling so the header can stick */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex-1 min-h-[360px] flex flex-col relative w-full">
+                <div className="flex-1 min-h-0 overflow-auto">
                     <table className="w-full text-left border-collapse min-w-[1000px]">
-                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-100 shadow-sm">
+                        <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-100 shadow-sm">
                             <tr>
                                 <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Logo</th>
                                 <th className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Vendor</th>
@@ -503,7 +503,7 @@ export default function AdminVendors() {
                                 <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Ad Plan</th>
                                 <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Leads</th>
                                 <th className="px-5 py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap bg-slate-50">Status</th>
-                                <th className="px-5 py-3 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap sticky right-0 z-20 bg-slate-50/95 shadow-[-4px_0_12px_rgba(0,0,0,0.03)] border-l border-slate-100 backdrop-blur-sm">Actions</th>
+                                <th className="px-5 py-3 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap sticky right-0 z-30 bg-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.03)] border-l border-slate-100">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -521,7 +521,7 @@ export default function AdminVendors() {
                                 vendors.map((vendor) => (
                                     <tr key={vendor.id} className="group hover:bg-slate-50 transition-colors">
                                         {/* Logo */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <div className="h-12 w-12 flex-shrink-0 bg-gradient-to-br from-[#f9fafb] to-white rounded-xl flex items-center justify-center overflow-hidden border-2 border-slate-100 shadow-sm">
                                                 {vendor.logo ? (
                                                     <img
@@ -537,9 +537,9 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Vendor Name & Username */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <div>
-                                                <p className="text-sm font-bold text-[#1f2937] group-hover:text-blue-600 transition-colors">
+                                                <p className="text-sm font-bold text-[#1f2937] max-w-[220px] truncate group-hover:text-blue-600 transition-colors" title={vendor.name}>
                                                     {vendor.name}
                                                 </p>
                                                 <div className="flex items-center gap-1.5 mt-1">
@@ -550,7 +550,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Location */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <div className="flex items-center gap-1.5">
                                                 <MapPinIcon className="h-4 w-4 text-[#6b7280]" />
                                                 <div>
@@ -561,7 +561,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Contact */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-1.5">
                                                     <EnvelopeIcon className="h-3.5 w-3.5 text-[#6b7280]" />
@@ -575,14 +575,14 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Description */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <p className="text-sm text-[#6b7280] line-clamp-2 max-w-[200px]">
                                                 {vendor.description || <span className="italic text-[#9ca3af]">No description</span>}
                                             </p>
                                         </td>
 
                                         {/* Rating */}
-                                        <td className="px-6 py-4">
+                                        <td className="px-5 py-3">
                                             <div className="flex flex-col items-center gap-1">
                                                 <div className="flex items-center gap-0.5">
                                                     {[...Array(5)].map((_, i) => (
@@ -597,7 +597,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Ad Plan */}
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-5 py-3 text-center">
                                             {vendor.ad_plan ? (
                                                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-slate-50 to-fuchsia-50 text-fuchsia-600 border border-fuchsia-200">
                                                     {vendor.ad_plan.charAt(0).toUpperCase() + vendor.ad_plan.slice(1)}
@@ -608,7 +608,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Leads Count */}
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-5 py-3 text-center">
                                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 border border-blue-200 shadow-sm">
                                                 {vendor.leads_count || 0}
                                             </span>
@@ -634,7 +634,7 @@ export default function AdminVendors() {
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-4 py-3 text-right sticky right-0 bg-white/95 backdrop-blur-sm border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50/95 transition-colors z-[15]">
+                                        <td className="px-4 py-3 text-right sticky right-0 bg-white border-l border-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.015)] group-hover:bg-slate-50 transition-colors z-[15]">
                                             <div className="flex items-center justify-end gap-1">
                                                 {/* Edit */}
                                                 <button

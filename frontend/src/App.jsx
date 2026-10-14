@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import FloatingLeadWidget from './components/FloatingLeadWidget'
 import GlobalFAB from './components/GlobalFAB'
 import MobileBottomNav from './components/MobileBottomNav'
+import { hasBottomNav } from './utils/mobileNav'
 import ScrollToTop from './components/ScrollToTop'
 import OnboardingOverlay from './components/OnboardingOverlay'
 import LogoutFeedbackModal from './components/LogoutFeedbackModal'
@@ -143,6 +144,7 @@ function RedirectBrowseState() {
 }
 
 function App() {
+  const location = useLocation()
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [postLeadCtx, setPostLeadCtx] = useState({ active: false, ctx: {} })
 
@@ -174,7 +176,7 @@ function App() {
           onExternalClose={() => { setFeedbackOpen(false); setPostLeadCtx({ active: false, ctx: {} }) }}
         />
         <PageTransition>
-          <div className="pb-20 md:pb-0">
+          <div className={hasBottomNav(location.pathname) ? "pb-20 md:pb-0" : ""}>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />

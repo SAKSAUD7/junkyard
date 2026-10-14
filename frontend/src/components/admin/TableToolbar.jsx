@@ -10,7 +10,7 @@ export function TableToolbar({
     actions
 }) {
     return (
-        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-slate-100 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-slate-100 mb-6 flex-shrink-0">
             <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                 {tabs.length > 0 && (
                     <div className="flex items-center gap-3 flex-wrap">
@@ -79,7 +79,7 @@ export function TablePagination({
     const endItem = Math.min(page * pageSize, totalItems);
 
     return (
-        <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
+        <div className="flex-shrink-0 px-6 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
             <div className="flex items-center gap-4 text-sm text-slate-500">
                 <div>
                     Showing <span className="font-semibold text-slate-900">{startItem}</span>–<span className="font-semibold text-slate-900">{endItem}</span> of <span className="font-semibold text-slate-900">{totalItems}</span> rows

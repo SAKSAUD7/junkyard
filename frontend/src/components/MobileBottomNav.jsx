@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import MobileMoreMenu from './MobileMoreMenu';
+import { hasBottomNav } from '../utils/mobileNav';
 
 export default function MobileBottomNav() {
     const location = useLocation();
@@ -34,16 +35,7 @@ export default function MobileBottomNav() {
         setMoreOpen(false);
     }, [location.pathname]);
 
-    // Hide on excluded routes (admin portal, vendor portal, auth pages)
-    const EXCLUDED_PREFIXES = [
-        '/admin-portal',
-        '/admin',
-        '/vendor',
-        '/signin',
-        '/signup',
-        '/forgot-password'
-    ];
-    if (EXCLUDED_PREFIXES.some(p => location.pathname.startsWith(p))) {
+    if (!hasBottomNav(location.pathname)) {
         return null;
     }
 
