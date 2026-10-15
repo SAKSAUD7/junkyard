@@ -6,11 +6,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from .models import User, VendorProfile
 from apps.common.models import SiteAnalytics
 from .serializers import (
-    UserSerializer, 
-    RegisterSerializer, 
+    UserSerializer,
+    RegisterSerializer,
     ChangePasswordSerializer,
     VendorProfileSerializer
 )
@@ -190,22 +193,141 @@ class ChangePasswordView(APIView):
 
 class VendorProfileView(generics.RetrieveAPIView):
     """Get vendor profile for current user"""
-    
+
     permission_classes = [IsAuthenticated]
     serializer_class = VendorProfileSerializer
-    
+
     def get_object(self):
         try:
             return self.request.user.vendor_profile
         except VendorProfile.DoesNotExist:
             return None
-    
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance is None:
             return Response({
                 'message': 'No vendor profile found'
             }, status=status.HTTP_404_NOT_FOUND)
-        
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class CustomerPasswordResetRequestView(APIView):
+    """
+    Request password reset for customer users
+    """
+    permission_classes = [AllowAny]
+    throttle_scope = 'auth'
+    throttle_classes = [ScopedRateThrottle]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({
+                'error': 'Email is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email, user_type='customer')
+        except User.DoesNotExist:
+            # For security, don't reveal if email exists
+            return Response({
+                'message': 'If an account exists with this email, you will receive password reset instructions.'
+            }, status=status.HTTP_200_OK)
+
+        # Generate reset token
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Create reset link using configured frontend URL
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
+        reset_link = f"{frontend_url}/reset-password/{uid}/{token}/"
+
+        # Send email
+        subject = 'Reset Your JYNM Password'
+        message = f"""
+Hello {user.first_name or 'Customer'},
+
+You requested to reset your password for Junkyards Near Me.
+
+Click the link below to reset your password:
+{reset_link}
+
+This link will expire in 24 hours.
+
+If you didn't request this, please ignore this email.
+
+---
+Junkyards Near Me Team
+        """
+
+        def _send_reset_async():
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.com'),
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+                print(f"[OK] Customer password reset email sent to {user.email}")
+                print(f"Reset link: {reset_link}")  # For testing
+            except Exception as e:
+                print(f"[ERROR] Failed to send email: {str(e)}")
+                # Still return success for security in the main thread anyway
+
+        import threading
+        email_thread = threading.Thread(target=_send_reset_async)
+        email_thread.start()
+
+        return Response({
+            'message': 'If an account exists with this email, you will receive password reset instructions.'
+        }, status=status.HTTP_200_OK)
+
+
+class CustomerPasswordResetConfirmView(APIView):
+    """
+    Confirm password reset with token for customers
+    """
+    permission_classes = [AllowAny]
+    throttle_scope = 'auth'
+    throttle_classes = [ScopedRateThrottle]
+
+    def post(self, request):
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+
+        if not all([uid, token, new_password]):
+            return Response({
+                'error': 'Missing required fields'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Decode user ID
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_id, user_type='customer')
+
+            # Verify token
+            if not default_token_generator.check_token(user, token):
+                return Response({
+                    'error': 'Invalid or expired reset link'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Set new password
+            user.set_password(new_password)
+            user.save()
+
+            print(f"[OK] Customer password reset successful for {user.email}")
+
+            return Response({
+                'message': 'Password reset successful. You can now login with your new password.'
+            }, status=status.HTTP_200_OK)
+
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({
+                'error': 'Invalid reset link'
+            }, status=status.HTTP_400_BAD_REQUEST)

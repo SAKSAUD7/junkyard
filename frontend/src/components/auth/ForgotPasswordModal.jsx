@@ -1,13 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCMS } from '../../hooks/useCMS';
+import axios from 'axios';
 
-const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
+const API_BASE_URL = `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api`;
+
+const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'customer' }) => {
     const { get: getGlobal } = useCMS('global');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [touched, setTouched] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+
+    // Escape key handler
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                handleClose();
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, [isOpen]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
     const validateEmail = (value) => {
         if (!value) {
@@ -38,15 +64,22 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
         setError('');
 
         try {
-            // Simulate API call for password reset
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            let endpoint;
+            if (userType === 'vendor') {
+                endpoint = `${API_BASE_URL}/vendor/password-reset/`;
+            } else if (userType === 'admin') {
+                endpoint = `${API_BASE_URL}/auth/admin-password-reset/`;
+            } else {
+                endpoint = `${API_BASE_URL}/auth/password-reset/`;
+            }
 
-            // For now, just show success message
-            // In production, this would call the backend API
+            await axios.post(endpoint, { email });
             setSubmitted(true);
-
         } catch (err) {
-            setError('Failed to send reset email. Please try again.');
+            // For security, show generic error even if email doesn't exist
+            // Backend should return generic response for non-existent accounts
+            const errorMsg = err.response?.data?.error || 'Failed to send reset email. Please try again.';
+            setError(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -57,12 +90,12 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
         setError('');
         setTouched(false);
         setSubmitted(false);
-        onClose();
+        onClose?.();
     };
 
     const handleBackToLogin = () => {
         handleClose();
-        onBackToLogin();
+        onBackToLogin?.();
     };
 
     const isValid = !validateEmail(email);
@@ -192,8 +225,8 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
 
                                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                                     <p className="text-sm text-blue-800">
-                                        <strong>Note:</strong> Password reset functionality is currently in development.
-                                        For immediate assistance, please contact support.
+                                        <strong>Note:</strong> Please check your inbox and spam folder for the reset link.
+                                        The link will expire in 24 hours.
                                     </p>
                                 </div>
 
