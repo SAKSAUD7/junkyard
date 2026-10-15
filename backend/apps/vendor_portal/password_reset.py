@@ -41,7 +41,7 @@ class VendorPasswordResetRequestView(APIView):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         
         # Create reset link
-        reset_link = f"{settings.FRONTEND_URL}/vendor/reset-password/{uid}/{token}/"
+        reset_link = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password/vendor/{uid}/{token}"
         
         # Send email
         subject = 'Reset Your Vendor Portal Password'
@@ -61,25 +61,21 @@ If you didn't request this, please ignore this email.
 JYNM Vendor Portal
         """
         
-        def _send_reset_async():
-            try:
-                send_mail(
-                    subject=subject,
-                    message=message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False,
-                )
-                print(f"[OK] Password reset email sent to {user.email}")
-                print(f"Reset link: {reset_link}")  # For testing
-            except Exception as e:
-                print(f"[ERROR] Failed to send email: {str(e)}")
-                # Still return success for security in the main thread anyway
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception:
+            # Do not log reset links or tokens. Report provider failure without
+            # exposing account details in the response body.
+            return Response({
+                'error': 'We could not send reset instructions right now. Please try again later.'
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        import threading
-        email_thread = threading.Thread(target=_send_reset_async)
-        email_thread.start()
-        
         return Response({
             'message': 'If a vendor account exists with this email, you will receive password reset instructions.'
         }, status=status.HTTP_200_OK)
@@ -115,8 +111,6 @@ class VendorPasswordResetConfirmView(APIView):
             # Set new password
             user.set_password(new_password)
             user.save()
-            
-            print(f"[OK] Password reset successful for {user.email}")
             
             return Response({
                 'message': 'Password reset successful. You can now login with your new password.'

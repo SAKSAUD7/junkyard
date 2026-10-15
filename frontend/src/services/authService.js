@@ -52,7 +52,7 @@ api.interceptors.response.use(
 
                 originalRequest.headers.Authorization = `Bearer ${access}`;
                 return api(originalRequest);
-            } catch (refreshError) {
+            } catch {
                 // Refresh failed — clear auth context
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
@@ -112,8 +112,12 @@ const authService = {
     },
 
     // Login user
-    login: async (email, password) => {
-        const response = await api.post('/auth/login/', { email, password });
+    login: async (email, password, accountType = '') => {
+        const response = await api.post('/auth/login/', {
+            email,
+            password,
+            ...(accountType ? { account_type: accountType } : {}),
+        });
         if (response.data.tokens) {
             localStorage.setItem('access_token', response.data.tokens.access);
             localStorage.setItem('refresh_token', response.data.tokens.refresh);
@@ -122,6 +126,24 @@ const authService = {
                 localStorage.setItem('vendor_profile', JSON.stringify(response.data.vendor_profile));
             }
         }
+        return response.data;
+    },
+
+    requestPasswordReset: async (email, accountType = 'customer') => {
+        const response = await api.post('/auth/password-reset/', {
+            email: email.trim().toLowerCase(),
+            account_type: accountType,
+        });
+        return response.data;
+    },
+
+    confirmPasswordReset: async (accountType, uid, token, newPassword) => {
+        const response = await api.post('/auth/password-reset-confirm/', {
+            account_type: accountType,
+            uid,
+            token,
+            new_password: newPassword,
+        });
         return response.data;
     },
 

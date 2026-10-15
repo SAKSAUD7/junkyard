@@ -16,7 +16,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, onSwitchToForgotPasswor
         setLoading(true);
         setServerError('');
         try {
-            await login(email, password);
+            await login(email, password, 'customer');
             handleClose();
         } catch (error) {
             const d = error.response?.data;

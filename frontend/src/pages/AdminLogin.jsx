@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 import PasswordInput from '../components/PasswordInput';
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 
 const ROLES = [
     {
@@ -32,6 +33,7 @@ export default function AdminLogin() {
     const [formData, setFormData] = useState({ email: '', password: '', remember: false });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -56,7 +58,7 @@ export default function AdminLogin() {
         setError(''); 
         setLoading(true);
         try {
-            await login(formData.email, formData.password);
+            await login(formData.email, formData.password, 'admin');
         } catch (err) {
             const errMessage = err.response?.data?.error || err.response?.data?.detail || err.message || 'Invalid credentials.';
             setError(errMessage);
@@ -65,6 +67,7 @@ export default function AdminLogin() {
     };
 
     return (
+        <>
         <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 overflow-hidden">
             <SEO title="Admin Login – JYNM" description="Restricted area." noindex={true} />
 
@@ -148,7 +151,7 @@ export default function AdminLogin() {
                                 <div className="mt-4">
                                     <div className="flex justify-between items-center mb-1.5">
                                         <label className="text-[12px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                                        <Link to="/forgot-password" className="text-[12px] text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all">Forgot password?</Link>
+                                        <button type="button" onClick={() => setForgotPasswordOpen(true)} className="text-[12px] text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all">Forgot password?</button>
                                     </div>
                                     <PasswordInput name="password" required value={formData.password} onChange={handleChange} 
                                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
@@ -183,5 +186,12 @@ export default function AdminLogin() {
                 </div>
             </div>
         </div>
+            <ForgotPasswordModal
+                isOpen={forgotPasswordOpen}
+                userType="admin"
+                onClose={() => setForgotPasswordOpen(false)}
+                onBackToLogin={() => setForgotPasswordOpen(false)}
+            />
+        </>
     );
 }

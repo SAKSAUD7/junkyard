@@ -9,8 +9,8 @@ from django.conf import settings
 from .models import User, VendorProfile
 from apps.common.models import SiteAnalytics
 from .serializers import (
-    UserSerializer, 
-    RegisterSerializer, 
+    UserSerializer,
+    RegisterSerializer,
     ChangePasswordSerializer,
     VendorProfileSerializer
 )
@@ -89,16 +89,24 @@ class LoginView(APIView):
                 'error': 'Please provide both email and password'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Authenticate user
-        print(f"Login attempt for: {email}")
-        user = authenticate(request=request, email=email, password=password)
-        print(f"Auth result: {user}")
-        
+        # Authenticate user. A caller may provide an expected account type so a
+        # customer token can never be silently reused as a vendor/admin session.
+        user = authenticate(request=request, email=str(email).strip().lower(), password=password)
+
         if not user:
-            print("Authentication failed")
             return Response({
                 'error': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
+
+        account_type = str(request.data.get('account_type') or '').strip().lower()
+        is_admin = user.is_staff or user.is_superuser or user.user_type == 'admin'
+        type_matches = (
+            not account_type
+            or (account_type == 'admin' and is_admin)
+            or (account_type in {'customer', 'vendor'} and user.user_type == account_type)
+        )
+        if not type_matches:
+            return Response({'error': 'This account is not authorized for that sign-in area.'}, status=status.HTTP_403_FORBIDDEN)
         
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)

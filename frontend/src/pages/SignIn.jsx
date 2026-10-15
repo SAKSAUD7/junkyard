@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 import PasswordInput from '../components/PasswordInput';
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 
 const BG_IMAGE_URL = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2000&auto=format&fit=crop';
 
@@ -16,6 +17,7 @@ export default function SignIn() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [failCount, setFailCount] = useState(0);
+    const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -36,7 +38,7 @@ export default function SignIn() {
         if (failCount >= 5) { setError('Too many failed attempts. Please wait before trying again.'); return; }
         setError(''); setLoading(true);
         try {
-            await login(formData.email, formData.password);
+            await login(formData.email, formData.password, 'customer');
         } catch {
             setFailCount(c => c + 1);
             setError('Invalid credentials. Please check your email and password.');
@@ -45,6 +47,7 @@ export default function SignIn() {
     };
 
     return (
+        <>
         <div className="min-h-screen w-full relative flex font-inter items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-hidden">
             <SEO title="Sign In – JYNM" description="Sign in to your JYNM account." noindex={true} />
 
@@ -117,7 +120,7 @@ export default function SignIn() {
                             <div>
                                 <div className="flex justify-between items-center mb-1.5">
                                     <label htmlFor="signin-password" className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                                    <Link to="/forgot-password" className="text-[12px] text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all">Forgot Password?</Link>
+                                    <button type="button" onClick={() => setForgotPasswordOpen(true)} className="text-[12px] text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all">Forgot Password?</button>
                                 </div>
                                 <PasswordInput
                                     id="signin-password"
@@ -169,5 +172,12 @@ export default function SignIn() {
                 </div>
             </div>
         </div>
+            <ForgotPasswordModal
+                isOpen={forgotPasswordOpen}
+                userType="customer"
+                onClose={() => setForgotPasswordOpen(false)}
+                onBackToLogin={() => setForgotPasswordOpen(false)}
+            />
+        </>
     );
 }

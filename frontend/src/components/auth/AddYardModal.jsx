@@ -4,7 +4,7 @@ import { useVendorAuth } from '../../contexts/VendorAuthContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import PasswordInput from '../PasswordInput';
 
-export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }) {
+export default function AddYardModal({ isOpen, onClose, initialMode = 'signup', onForgotPassword, successPath = '/add-a-yard/form', authenticatedPath = '/add-a-yard/form' }) {
     const navigate = useNavigate();
     const { isAuthenticated: isVendorAuthenticated, loading: vendorLoading, register, login } = useVendorAuth();
     const { isAuthenticated: isCustomerAuthenticated, user: customerUser } = useContext(AuthContext);
@@ -12,11 +12,6 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }
     // Mode: 'signup' | 'login'
     const [mode, setMode] = useState(initialMode);
 
-    useEffect(() => {
-        if (isOpen && initialMode) {
-            setMode(initialMode);
-        }
-    }, [isOpen, initialMode]);
 
     // Form fields
     const [email, setEmail] = useState('');
@@ -38,9 +33,9 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }
     useEffect(() => {
         if (isOpen && !vendorLoading && isVendor) {
             onClose?.();
-            navigate('/add-a-yard/form');
+            navigate(authenticatedPath);
         }
-    }, [isOpen, isVendor, vendorLoading, navigate, onClose]);
+    }, [isOpen, isVendor, vendorLoading, navigate, onClose, authenticatedPath]);
 
     const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
     const isStrongPassword = (p) => p.length >= 8 && /\d/.test(p);
@@ -62,7 +57,7 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }
         } else {
             setSubmitLoading(false);
             onClose?.();
-            navigate('/add-a-yard/form');
+            navigate(successPath);
         }
     };
 
@@ -113,7 +108,7 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }
                 onClose?.();
                 navigate('/add-a-yard/form');
             }
-        } catch (err) {
+        } catch {
             setError('An error occurred during partner registration.');
             setSubmitLoading(false);
         }
@@ -319,13 +314,13 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup' }
                                 <div>
                                     <div className="flex justify-between items-center mb-1">
                                         <label className="block text-[10px] font-black uppercase tracking-wider text-slate-700">Password</label>
-                                        <Link
-                                            to="/vendor/forgot-password"
-                                            onClick={handleClose}
+                                        <button
+                                            type="button"
+                                            onClick={onForgotPassword}
                                             className="text-[10px] font-bold text-blue-600 hover:underline"
                                         >
                                             Forgot?
-                                        </Link>
+                                        </button>
                                     </div>
                                     <PasswordInput
                                         required

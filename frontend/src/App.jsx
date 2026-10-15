@@ -32,7 +32,8 @@ const HowItWorks   = lazy(() => import('./pages/HowItWorks'))
 const FAQ          = lazy(() => import('./pages/FAQ'))
 const SignIn       = lazy(() => import('./pages/SignIn'))
 const SignUp       = lazy(() => import('./pages/SignUp'))
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPasswordRoute'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const SellYourCar    = lazy(() => import('./pages/SellYourCar'))
 const Profile        = lazy(() => import('./pages/Profile'))
 const QuotesCart     = lazy(() => import('./pages/QuotesCart'))
@@ -189,6 +190,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:accountType/:uid/:token" element={<ResetPassword />} />
             {/* Protected Public Routes (Uses Modal for auth instead of redirect) */}
             <Route path="/add-a-yard" element={
               <VendorAuthProvider>
