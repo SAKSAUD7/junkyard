@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SignupStep1 from './SignupStep1';
 import SignupStep2 from './SignupStep2';
 
@@ -7,6 +7,29 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const [formData, setFormData] = useState({
         name: '', phone: '', countryCode: '+1', email: '', password: '', confirmPassword: ''
     });
+
+    // Escape key handler
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                handleClose();
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, [isOpen]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
     const handleStep1Next = (step1Data) => { setFormData({ ...formData, ...step1Data }); setStep(2); };
     const handleStep2Back = () => setStep(1);

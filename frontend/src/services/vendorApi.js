@@ -11,12 +11,11 @@ const vendorApi = axios.create({
 });
 
 // Request interceptor to add auth token
-// Falls back to the general access_token if vendor_access_token is not set.
-// This bridges the dual-token-store gap: users who log in via the general
-// auth flow (authService.js) still have a valid JWT, just under 'access_token'.
+// Only use vendor_access_token - do not fall back to customer access_token
+// This prevents customer tokens from being used for vendor API calls
 vendorApi.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('vendor_access_token') || localStorage.getItem('access_token');
+        const token = localStorage.getItem('vendor_access_token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

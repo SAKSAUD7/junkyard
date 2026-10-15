@@ -12,9 +12,6 @@ import { getLogoUrl } from '../utils/imageUrl';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
-import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal';
-import SignupModal from '../components/auth/SignupModal';
-import LoginModal from '../components/auth/LoginModal';
 import SaveJunkyardButton from '../components/SaveJunkyardButton';
 import SponsoredYardsSection from '../components/SponsoredYardsSection';
 
@@ -30,13 +27,10 @@ const VendorDetail = () => {
     const { vendorProfile } = useVendorAuth();
     const isOwnProfile = vendorProfile && vendor && (
         String(vendorProfile.id) === String(vendor.id) ||
-        String(vendorProfile.vendor?.id) === String(vendor.id) || 
+        String(vendorProfile.vendor?.id) === String(vendor.id) ||
         String(vendorProfile.vendor_id) === String(vendor.id) ||
         String(vendorProfile.vendor?.yard_id) === String(vendor.id)
     );
-    const [showSecurityCheck, setShowSecurityCheck] = useState(false);
-    const [showSignup, setShowSignup] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const fetchVendor = async () => {
@@ -70,16 +64,6 @@ const VendorDetail = () => {
     // Enforce Auth Wall
     useEffect(() => {
         if (!loading && !error && vendor && !isAuthenticated) {
-            setShowSecurityCheck(true);
-        } else {
-            setShowSecurityCheck(false);
-            setShowSignup(false);
-            setShowLogin(false);
-        }
-    }, [loading, error, vendor, isAuthenticated]);
-
-    if (loading) {
-        return (
             <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -499,29 +483,3 @@ const VendorDetail = () => {
             />
             <SignupModal
                 isOpen={showSignup}
-                onClose={() => {
-                    if (!isAuthenticated) navigate('/junkyards');
-                    setShowSignup(false);
-                }}
-                onSwitchToLogin={() => {
-                    setShowSignup(false);
-                    setShowLogin(true);
-                }}
-            />
-            <LoginModal
-                isOpen={showLogin}
-                onClose={() => {
-                    if (!isAuthenticated) navigate('/junkyards');
-                    setShowLogin(false);
-                }}
-                onSwitchToSignup={() => {
-                    setShowLogin(false);
-                    setShowSignup(true);
-                }}
-                onSwitchToForgotPassword={() => navigate('/forgot-password')}
-            />
-        </div>
-    );
-};
-
-export default VendorDetail;
