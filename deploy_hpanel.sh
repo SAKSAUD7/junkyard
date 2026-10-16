@@ -96,18 +96,26 @@ cd "$REPO_DIR/frontend"
 npm install --legacy-peer-deps --silent
 npm run build
 
-echo "▶ 3. Database backup + schema sync..."
+echo "▶ 3. Database preflight, backup + schema sync..."
 cd "$BACKEND_DIR"
+if ! sudo -u "$APP_USER" -n "$PY" manage.py shell -c 'from django.db import connection; connection.ensure_connection(); print("Database connection: OK")'; then
+    echo "✗ Database connection failed. No backup, migration, or service restart was attempted."
+    echo "  Check the DB_* settings in backend/.env and the database service/network before retrying."
+    exit 1
+fi
+
 if [ "$SKIP_BACKUP" -eq 0 ]; then
-    sudo -u "$APP_USER" -n "$PY" manage.py backup_db \
-        || echo "  ! backup failed - fix it or re-run with --skip-backup"
+    if ! sudo -u "$APP_USER" -n "$PY" manage.py backup_db; then
+        echo "✗ Database backup failed; stopping before migrations. Fix the backup or explicitly use --skip-backup."
+        exit 1
+    fi
 else
     echo "  backup skipped (--skip-backup)"
 fi
 
-# Migrations are part of deployment: a model column that never reaches the
-# schema makes every INSERT that touches it fail with a 500 in production.
-UNAPPLIED="$(sudo -u "$APP_USER" -n "$PY" manage.py showmigrations --plan 2>/dev/null | grep -c '^\[ \]' || true)"
+# Do not interpret a failed showmigrations command as an up-to-date schema.
+MIGRATION_PLAN="$(sudo -u "$APP_USER" -n "$PY" manage.py showmigrations --plan)"
+UNAPPLIED="$(printf '%s\n' "$MIGRATION_PLAN" | grep -c '^\[ \]' || true)"
 echo "  Unapplied migrations: ${UNAPPLIED:-unknown}"
 if [ "${UNAPPLIED:-0}" -gt 0 ]; then
     sudo -u "$APP_USER" -n "$PY" manage.py migrate --noinput
@@ -121,13 +129,21 @@ touch /var/log/jynm_gunicorn_access.log /var/log/jynm_gunicorn_error.log 2>/dev/
 chown junkyard:junkyard /var/log/jynm_gunicorn_*.log 2>/dev/null || true
 
 echo "▶ 5. Restarting services..."
-systemctl restart junkyard.service 2>/dev/null || true
-systemctl reload nginx 2>/dev/null || true
+systemctl restart junkyard.service
+systemctl reload nginx
 
 echo "▶ 6. Verifying health..."
 sleep 1
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/admin/login/ || echo "ERR")
-echo "  Backend API status: $HTTP_STATUS"
+HTTP_STATUS=$(curl -sS --max-time 10 -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/admin/login/ || echo "ERR")
+echo "  Backend admin route status: $HTTP_STATUS"
+HEALTH_STATUS=$(curl -sS --max-time 10 -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/health/ || echo "ERR")
+if [ "$HEALTH_STATUS" != "200" ]; then
+    echo "✗ /api/health/ returned $HEALTH_STATUS (expected 200). The API or a required dependency is unhealthy:"
+    curl -sS --max-time 10 http://127.0.0.1:8000/api/health/ || true
+    echo
+    exit 1
+fi
+echo "  ✓ API, database, and cache health check passed"
 # A lead POST that 500s is the failure this step exists to catch; an empty body
 # is rejected by validation (400) before any DB write, so it creates nothing.
 LEAD_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
