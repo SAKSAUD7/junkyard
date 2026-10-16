@@ -189,12 +189,12 @@ export default function LeadDistribution() {
                         <p className="text-sm text-slate-400 mt-1">Assign a lead to a vendor to get started</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                    <div className="max-h-[70vh] overflow-auto overscroll-contain">
+                        <table className="w-full min-w-max text-sm">
                             <thead className="bg-slate-50 border-b border-slate-100">
                                 <tr>
                                     {['Lead', 'Part & Vehicle', 'Assigned Vendor', 'Status', 'Revenue', 'Assigned', 'Actions'].map(h => (
-                                        <th key={h} className="text-left px-4 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider">{h}</th>
+                                        <th key={h} className="sticky top-0 z-10 bg-slate-50 text-left px-4 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider">{h}</th>
                                     ))}
                                 </tr>
                             </thead>

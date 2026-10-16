@@ -210,9 +210,9 @@ export default function AdminBlogList() {
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-slate-100 bg-slate-50/80">
+          <div className="max-h-[70vh] overflow-auto overscroll-contain">
+            <table className="w-full min-w-max text-sm">
+              <thead className="sticky top-0 z-20 border-b border-slate-100 bg-slate-50/80">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Article Details</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>

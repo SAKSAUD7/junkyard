@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "JYNM Sell Vehicle",
+    "slug": "jynm-sell-vehicle",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.jynm.sellvehicle"
+    },
+    "android": {
+      "package": "com.jynm.sellvehicle"
+    }
+  }
+}

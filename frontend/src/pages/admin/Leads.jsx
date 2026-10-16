@@ -291,11 +291,11 @@ export default function AdminLeads() {
                         <p className="text-slate-500 text-sm">No leads found matching your criteria</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse whitespace-nowrap">
+                    <div className="max-h-[70vh] overflow-auto overscroll-contain">
+                        <table className="w-full min-w-max text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/50">
-                                    <th className="px-4 py-3 w-10">
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 w-10">
                                         <input 
                                             type="checkbox" 
                                             className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -303,11 +303,11 @@ export default function AdminLeads() {
                                             onChange={toggleSelectAll}
                                         />
                                     </th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contact</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vehicle / Part</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                                    <th className="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer</th>
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contact</th>
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vehicle / Part</th>
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
+                                    <th className="sticky top-0 z-10 bg-slate-50 px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">

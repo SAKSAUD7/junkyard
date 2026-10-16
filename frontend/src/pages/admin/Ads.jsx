@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
 import {
@@ -53,23 +53,15 @@ export default function AdminAds() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
 
-    useEffect(() => {
-        const storedToken = token || localStorage.getItem('access_token');
-        if (storedToken) {
-            fetchAds();
-        } else {
-            setLoading(false);
-            setFetchError('session_expired');
-        }
-    }, [token]);
+    const storedToken = token || localStorage.getItem('access_token');
 
-    const fetchAds = async () => {
+    const fetchAds = useCallback(async () => {
         try {
-            setFetchError(null);
             const [data, summary] = await Promise.all([
                 api.getAdminAds(token),
                 api.getAdsSummary().catch(() => null)
             ]);
+            setFetchError(null);
             setAds(data.results || data);
             if (summary) setSummaryStats(summary);
         } catch (error) {
@@ -83,7 +75,11 @@ export default function AdminAds() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        if (storedToken) fetchAds();
+    }, [fetchAds, storedToken]);
 
     const DEFAULT_AD_PLANS = [
         { id: 'minimal',  type: 'minimal',  name: 'Minimal Plan',  pricing: 19, is_popular: false, features: ['Basic marketplace visibility', 'Standard SEO indexing', 'Base catalog linkage'] },
@@ -103,7 +99,7 @@ export default function AdminAds() {
                 try {
                     const parsed = JSON.parse(plansRecord.value);
                     setAdPlans(Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_AD_PLANS);
-                } catch (e) {
+                } catch {
                     setAdPlans(DEFAULT_AD_PLANS);
                 }
             } else {
@@ -310,7 +306,7 @@ export default function AdminAds() {
                     await api.deleteAd(token, id);
                     showToast({ type: 'success', message: 'Ad deleted successfully' });
                     fetchAds();
-                } catch (error) {
+                } catch {
                     showToast({ type: 'error', message: 'Failed to delete ad' });
                 }
             },
@@ -331,7 +327,13 @@ export default function AdminAds() {
         return { label: `${page} - ${slot}`, color: 'bg-slate-50 text-slate-600' };
     };
 
-    if (loading) {
+    const placementHelp = formData.slot.startsWith('strip')
+        ? 'This is a horizontal sponsored banner inserted in the page flow. It is not a left- or right-sidebar placement.'
+        : formData.slot === 'carousel_1'
+            ? 'Inline vendor carousel: up to four cards appear together on desktop; mobile shows one card at a time with swipe/rotation. Organic cards can fill unused spots, so this is not an exclusive four-ad guarantee.'
+            : 'Inline vendor carousel in the selected page section. On desktop, up to four cards are shown; on mobile, one card is shown at a time. Organic cards may fill unused spots.';
+
+    if (loading && storedToken) {
         return (
             <div className="flex justify-center items-center h-96">
                 <div className="text-center">
@@ -342,7 +344,7 @@ export default function AdminAds() {
         );
     }
 
-    if (fetchError === 'session_expired') {
+    if (!storedToken || fetchError === 'session_expired') {
         return (
             <div className="flex flex-col items-center justify-center h-96 text-center">
                 <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-md">
@@ -366,7 +368,7 @@ export default function AdminAds() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>Ad Management</h1>
                     <p className="text-sm text-slate-500 mt-1">
-                        {ads.length} active campaigns
+                        {ads.filter(ad => ad.is_active).length} enabled · {ads.length} total campaigns
                     </p>
                 </div>
 
@@ -411,14 +413,14 @@ export default function AdminAds() {
                     <p className="text-2xl font-black text-emerald-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
                         {summaryStats?.active_ads ?? ads.filter(a => a.is_active).length}
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">Live in marketplace</p>
+                    <p className="text-xs text-slate-400 mt-1">Enabled campaigns</p>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                     <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Total Impressions</p>
                     <p className="text-2xl font-black text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
                         {(summaryStats?.total_impressions ?? ads.reduce((acc, a) => acc + (a.impressions || 0), 0)).toLocaleString()}
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">Verified unique views</p>
+                    <p className="text-xs text-slate-400 mt-1">Tracked impressions</p>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                     <p className="text-xs font-bold text-violet-600 uppercase tracking-wider mb-1">Total Clicks (CTR)</p>
@@ -433,6 +435,23 @@ export default function AdminAds() {
                     <p className="text-xs text-slate-400 mt-1">Engagement rate</p>
                 </div>
             </div>
+
+            {/* Current placement behavior, based on the live frontend slot components. */}
+            <section className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5" aria-labelledby="ad-placement-guide-title">
+                <div className="flex items-start gap-3">
+                    <div className="rounded-xl bg-white p-2 text-blue-600 shadow-sm"><MegaphoneIcon className="h-5 w-5" /></div>
+                    <div className="min-w-0">
+                        <h2 id="ad-placement-guide-title" className="text-sm font-bold text-slate-900">Choose an in-page placement</h2>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                            JYNM currently uses horizontal sponsor strips and inline vendor carousels—there are no left/right sidebar placements in the active ad setup.
+                            The home <span className="font-semibold">Carousel 1</span> renders up to four cards on desktop and rotates one card at a time on mobile. When fewer than four campaign ads are available, the site may fill remaining cards with organic yard listings.
+                        </p>
+                        <p className="mt-2 text-xs font-medium text-slate-500">
+                            Standard, Minimal, Premium, and Compact change the ad card presentation; they do not by themselves guarantee position, impressions, four paid listings, or performance.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             {/* ── Filter Bar ───────────────────────────────────────── */}
             <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 space-y-3">
@@ -737,6 +756,9 @@ export default function AdminAds() {
                                     </select>
                                 </div>
                             </div>
+                            <p className="-mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800" role="status">
+                                <span className="font-bold">Placement preview:</span> {placementHelp}
+                            </p>
 
                             {/* URL */}
                             <div>
