@@ -9,12 +9,7 @@ import SEO from '../components/SEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { getLocalBusinessSchema } from '../utils/structuredData';
 import { getLogoUrl } from '../utils/imageUrl';
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
-import SecurityQuestionnaireModal from '../components/auth/SecurityQuestionnaireModal';
-import SignupModal from '../components/auth/SignupModal';
-import LoginModal from '../components/auth/LoginModal';
 import SaveJunkyardButton from '../components/SaveJunkyardButton';
 import SponsoredYardsSection from '../components/SponsoredYardsSection';
 
@@ -26,17 +21,13 @@ const VendorDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { isAuthenticated } = useContext(AuthContext);
     const { vendorProfile } = useVendorAuth();
     const isOwnProfile = vendorProfile && vendor && (
         String(vendorProfile.id) === String(vendor.id) ||
-        String(vendorProfile.vendor?.id) === String(vendor.id) || 
+        String(vendorProfile.vendor?.id) === String(vendor.id) ||
         String(vendorProfile.vendor_id) === String(vendor.id) ||
         String(vendorProfile.vendor?.yard_id) === String(vendor.id)
     );
-    const [showSecurityCheck, setShowSecurityCheck] = useState(false);
-    const [showSignup, setShowSignup] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const fetchVendor = async () => {
@@ -58,25 +49,14 @@ const VendorDetail = () => {
                 } else {
                     setError('Invalid vendor ID');
                 }
-            } catch (err) {
+            } catch {
                 setError('Failed to load vendor');
             } finally {
                 setLoading(false);
             }
         };
         fetchVendor();
-    }, [id, params.slug]);
-
-    // Enforce Auth Wall
-    useEffect(() => {
-        if (!loading && !error && vendor && !isAuthenticated) {
-            setShowSecurityCheck(true);
-        } else {
-            setShowSecurityCheck(false);
-            setShowSignup(false);
-            setShowLogin(false);
-        }
-    }, [loading, error, vendor, isAuthenticated]);
+    }, [id, params.slug, params.vendorSlug]);
 
     if (loading) {
         return (
@@ -487,39 +467,6 @@ const VendorDetail = () => {
 
             <Footer />
 
-            {/* Auth Wall Modals */}
-            <SecurityQuestionnaireModal 
-                isOpen={showSecurityCheck}
-                onClose={() => navigate('/junkyards')}
-                onComplete={(answers) => {
-                    localStorage.setItem('temp_security_answers', JSON.stringify(answers));
-                    setShowSecurityCheck(false);
-                    setShowSignup(true);
-                }}
-            />
-            <SignupModal
-                isOpen={showSignup}
-                onClose={() => {
-                    if (!isAuthenticated) navigate('/junkyards');
-                    setShowSignup(false);
-                }}
-                onSwitchToLogin={() => {
-                    setShowSignup(false);
-                    setShowLogin(true);
-                }}
-            />
-            <LoginModal
-                isOpen={showLogin}
-                onClose={() => {
-                    if (!isAuthenticated) navigate('/junkyards');
-                    setShowLogin(false);
-                }}
-                onSwitchToSignup={() => {
-                    setShowLogin(false);
-                    setShowSignup(true);
-                }}
-                onSwitchToForgotPassword={() => navigate('/forgot-password')}
-            />
         </div>
     );
 };

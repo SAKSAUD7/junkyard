@@ -13,6 +13,29 @@ export default function AddYardModal({ isOpen, onClose, initialMode = 'signup', 
     const [mode, setMode] = useState(initialMode);
 
 
+    // Escape key handler
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                handleClose();
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, [isOpen]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
     // Form fields
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
