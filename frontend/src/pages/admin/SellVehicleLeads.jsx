@@ -270,9 +270,9 @@ export default function AdminSellVehicleLeads() {
 
             {/* Modern Table Card */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
+                <div className="max-h-[70vh] overflow-auto overscroll-contain">
+                    <table className="w-full min-w-max">
+                        <thead className="sticky top-0 z-20 bg-white">
                             <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-slate-100">
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Date</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-[#6b7280] uppercase tracking-wider">Status</th>

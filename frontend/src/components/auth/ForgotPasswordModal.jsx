@@ -4,65 +4,71 @@ import axios from 'axios';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api`;
 
+const CONTEXTS = {
+    customer: { title: 'Reset Your Password', description: "Enter your email and we'll send secure reset instructions.", placeholder: 'your.email@example.com' },
+    vendor: { title: 'Recover Vendor Access', description: "Enter your vendor email and we'll send secure reset instructions.", placeholder: 'vendor@example.com' },
+    admin: { title: 'Recover Admin Access', description: "Enter your administrator email and we'll send secure reset instructions.", placeholder: 'admin@example.com' },
+};
+
 const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'customer' }) => {
     const { get: getGlobal } = useCMS('global');
+    const context = CONTEXTS[userType] || CONTEXTS.customer;
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
-    const [touched, setTouched] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    // Escape key handler
     useEffect(() => {
-        const handleEscape = (e) => {
-            if (e.key === 'Escape' && isOpen) {
-                handleClose();
+        if (!isOpen) return undefined;
+        const previousOverflow = document.body.style.overflow;
+        const handleEscape = (event) => {
+            if (event.key === 'Escape' && !loading) {
+                setEmail('');
+                setError('');
+                setSubmitted(false);
+                onClose?.();
             }
         };
+        document.body.style.overflow = 'hidden';
         document.addEventListener('keydown', handleEscape);
-        return () => document.removeEventListener('keydown', handleEscape);
-    }, [isOpen]);
-
-    // Prevent body scroll when modal is open
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
         return () => {
-            document.body.style.overflow = '';
+            document.body.style.overflow = previousOverflow;
+            document.removeEventListener('keydown', handleEscape);
         };
-    }, [isOpen]);
+    }, [isOpen, loading, onClose]);
 
     const validateEmail = (value) => {
-        if (!value) {
-            return 'Please enter your email address';
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            return 'Please enter a valid email address';
-        }
+        if (!value.trim()) return 'Please enter your email address.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Please enter a valid email address.';
         return '';
     };
 
-    const handleBlur = () => {
-        setTouched(true);
-        setError(validateEmail(email));
+    const handleClose = () => {
+        if (loading) return;
+        setEmail('');
+        setError('');
+        setSubmitted(false);
+        onClose?.();
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleBackToLogin = () => {
+        if (loading) return;
+        setEmail('');
+        setError('');
+        setSubmitted(false);
+        (onBackToLogin || onClose)?.();
+    };
 
-        const emailError = validateEmail(email);
-        if (emailError) {
-            setError(emailError);
-            setTouched(true);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const validationError = validateEmail(email);
+        if (validationError) {
+            setError(validationError);
             return;
         }
 
         setLoading(true);
         setError('');
-
         try {
             let endpoint;
             if (userType === 'vendor') {
@@ -73,172 +79,50 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'custo
                 endpoint = `${API_BASE_URL}/auth/password-reset/`;
             }
 
-            await axios.post(endpoint, { email });
+            await axios.post(endpoint, { email: email.trim().toLowerCase() });
             setSubmitted(true);
-        } catch (err) {
-            // For security, show generic error even if email doesn't exist
-            // Backend should return generic response for non-existent accounts
-            const errorMsg = err.response?.data?.error || 'Failed to send reset email. Please try again.';
-            setError(errorMsg);
+        } catch (requestError) {
+            setError(requestError.response?.data?.error || 'We could not send reset instructions right now. Please try again later.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleClose = () => {
-        setEmail('');
-        setError('');
-        setTouched(false);
-        setSubmitted(false);
-        onClose?.();
-    };
-
-    const handleBackToLogin = () => {
-        handleClose();
-        onBackToLogin?.();
-    };
-
-    const isValid = !validateEmail(email);
-
     if (!isOpen) return null;
-
     const logoUrl = getGlobal('brand', 'logo');
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-            onClick={handleClose}
-        >
-            <div
-                className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Close Button */}
-                <button
-                    onClick={handleClose}
-                    className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
-                    aria-label="Close"
-                >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                <div className="flex flex-col md:flex-row">
-                    {/* Left Panel - Blue Visual */}
-                    <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-blue-700 to-blue-500 p-10 flex-col justify-center items-center">
-                        <div className="text-center">
-                            <div className="bg-white rounded-2xl shadow-xl px-8 py-6 mb-8 inline-flex items-center justify-center">
-                                <img
-                                    src={logoUrl || '/logo.png'}
-                                    alt="JYNM"
-                                    className="h-16 w-auto object-contain"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                />
-                            </div>
-                            <p className="text-xl font-bold text-white mb-2">Forgot Password?</p>
-                            <p className="text-blue-100 text-sm">No worries! We'll send you reset instructions.</p>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && handleClose()}>
+            <div className="relative w-full max-w-[420px] max-h-[92vh] overflow-y-auto rounded-3xl border border-slate-100 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.18)]" role="dialog" aria-modal="true" aria-labelledby="forgot-password-title">
+                <div className="absolute left-0 right-0 top-0 z-10 h-1 bg-gradient-to-r from-blue-500 to-indigo-600" />
+                <button type="button" onClick={handleClose} disabled={loading} aria-label="Close password reset dialog" className="absolute right-4 top-4 z-20 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50">×</button>
+                <div className="border-b border-slate-100 bg-slate-50/50 px-6 pb-5 pt-8 text-center">
+                    <div className="mb-4 inline-block rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                        <img src={logoUrl || '/logo.png'} alt="JYNM" className="h-8 w-auto" onError={(event) => { event.currentTarget.style.display = 'none'; }} />
+                    </div>
+                    <h2 className="font-outfit text-2xl font-black tracking-tight text-slate-800" id="forgot-password-title">{context.title}</h2>
+                    <p className="mt-1 text-[13px] font-medium text-slate-500">{context.description}</p>
+                </div>
+                <div className="p-6">
+                    {submitted ? (
+                        <div className="py-4 text-center">
+                            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-2xl text-green-700">✓</div>
+                            <h3 className="text-xl font-bold text-slate-900">Check your email</h3>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">If an account exists for <strong>{email.trim().toLowerCase()}</strong>, reset instructions have been sent.</p>
+                            <p className="mt-3 text-xs text-slate-500">The link expires automatically and can only be used once.</p>
+                            <button type="button" onClick={handleBackToLogin} className="mt-6 w-full rounded-xl bg-blue-700 px-4 py-3 font-bold text-white hover:bg-blue-800">Back to sign in</button>
                         </div>
-                    </div>
-
-                    {/* Right Panel - Form */}
-                    <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto max-h-[90vh]">
-                        {!submitted ? (
-                            <>
-                                <div className="text-center mb-8">
-                                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                                        Reset Your <span className="text-blue-600">Password</span>
-                                    </h1>
-                                    <p className="text-sm text-gray-600">
-                                        Enter your email address and we'll send you instructions to reset your password.
-                                    </p>
-                                </div>
-
-                                {error && !touched && (
-                                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                        <p className="text-sm text-red-600">{error}</p>
-                                    </div>
-                                )}
-
-                                <form onSubmit={handleSubmit} className="space-y-5">
-                                    {/* Email Input */}
-                                    <div>
-                                        <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 mb-1">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            id="reset-email"
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            onBlur={handleBlur}
-                                            placeholder="your.email@example.com"
-                                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${touched && error ? 'border-red-500' : 'border-gray-300'
-                                                }`}
-                                        />
-                                        {touched && error && (
-                                            <p className="mt-1 text-sm text-red-600">{error}</p>
-                                        )}
-                                    </div>
-
-                                    {/* Submit Button */}
-                                    <button
-                                        type="submit"
-                                        disabled={!isValid || loading}
-                                        className={`w-full py-3 px-4 rounded-lg font-semibold text-slate-800 transition-all ${isValid && !loading
-                                                ? 'bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg'
-                                                : 'bg-gray-300 cursor-not-allowed'
-                                            }`}
-                                    >
-                                        {loading ? 'Sending...' : 'Send Reset Instructions'}
-                                    </button>
-
-                                    {/* Back to Login */}
-                                    <div className="mt-6 text-center">
-                                        <p className="text-sm text-gray-600">
-                                            Remember your password?{' '}
-                                            <button
-                                                type="button"
-                                                onClick={handleBackToLogin}
-                                                className="text-blue-600 hover:text-blue-700 font-semibold"
-                                            >
-                                                Back to Sign In
-                                            </button>
-                                        </p>
-                                    </div>
-                                </form>
-                            </>
-                        ) : (
-                            <div className="text-center py-8">
-                                {/* Success Icon */}
-                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-
-                                <h2 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email!</h2>
-                                <p className="text-gray-600 mb-6">
-                                    We've sent password reset instructions to<br />
-                                    <span className="font-semibold text-gray-900">{email}</span>
-                                </p>
-
-                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                                    <p className="text-sm text-blue-800">
-                                        <strong>Note:</strong> Please check your inbox and spam folder for the reset link.
-                                        The link will expire in 24 hours.
-                                    </p>
-                                </div>
-
-                                <button
-                                    onClick={handleBackToLogin}
-                                    className="w-full py-3 px-4 rounded-lg font-semibold text-slate-800 bg-blue-700 hover:bg-blue-800 shadow-md hover:shadow-lg transition-all"
-                                >
-                                    Back to Sign In
-                                </button>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+                            <div>
+                                <label htmlFor="forgot-password-email" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide text-slate-700">Email Address</label>
+                                <input id="forgot-password-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder={context.placeholder} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-[14px] font-medium text-slate-900 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10" />
                             </div>
-                        )}
-                    </div>
+                            <button type="submit" disabled={loading} className="w-full rounded-xl bg-blue-600 px-4 py-3.5 text-[15px] font-bold text-white shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Sending…' : 'Send reset instructions'}</button>
+                            <button type="button" onClick={handleBackToLogin} disabled={loading} className="w-full text-sm font-semibold text-slate-500 transition-colors hover:text-slate-800">Back to sign in</button>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>

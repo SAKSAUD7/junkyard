@@ -7,7 +7,9 @@ export function TableToolbar({
     searchTerm,
     onSearchChange,
     searchPlaceholder = "Search...",
-    actions
+    actions,
+    pageSize,
+    onPageSizeChange
 }) {
     return (
         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-slate-100 mb-6 flex-shrink-0">
@@ -48,6 +50,20 @@ export function TableToolbar({
                     {actions}
                 </div>
             </div>
+            {pageSize !== undefined && onPageSizeChange && (
+                <div className="mt-4 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
+                    <label htmlFor="table-page-size" className="text-xs font-semibold text-slate-500">Rows per page</label>
+                    <select
+                        id="table-page-size"
+                        aria-label="Rows per page"
+                        value={pageSize}
+                        onChange={event => onPageSizeChange(Number(event.target.value))}
+                        className="rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-8 text-sm font-semibold text-slate-700 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    >
+                        {[25, 50, 75, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                    </select>
+                </div>
+            )}
         </div>
     );
 }
@@ -86,7 +102,7 @@ export function TablePagination({
                 </div>
                 <div className="hidden sm:block w-px h-4 bg-slate-200"></div>
                 <div className="flex items-center gap-2">
-                    <label htmlFor="pageSize" className="hidden sm:block">Rows per flex:</label>
+                    <label htmlFor="pageSize" className="hidden sm:block">Rows per page:</label>
                     <select 
                         id="pageSize" 
                         value={pageSize} 

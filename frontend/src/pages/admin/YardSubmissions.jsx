@@ -327,9 +327,9 @@ export default function YardSubmissions() {
                 </div>
 
                 {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
+                <div className="max-h-[70vh] overflow-auto overscroll-contain">
+                    <table className="w-full min-w-max">
+                        <thead className="sticky top-0 z-20 bg-white">
                             <tr className="bg-gradient-to-r from-[#f9fafb] to-white border-b-2 border-slate-100">
                                 <th className="px-6 py-4 text-left w-12">
                                     <input

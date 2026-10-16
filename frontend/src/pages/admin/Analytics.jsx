@@ -313,12 +313,12 @@ export default function AdminAnalytics() {
                             <p className="text-xs text-slate-400 font-medium">Try extending the date range above.</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
+                        <div className="max-h-[70vh] overflow-auto overscroll-contain">
+                            <table className="w-full min-w-max text-sm">
                                 <thead>
                                     <tr className="bg-slate-50 border-b border-slate-100">
                                         {activeConfig.columns.map((col, i) => (
-                                            <th key={i} className="px-5 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th key={i} className="sticky top-0 z-10 bg-slate-50 px-5 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">
                                                 {col}
                                             </th>
                                         ))}

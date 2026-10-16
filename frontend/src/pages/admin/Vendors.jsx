@@ -444,6 +444,8 @@ export default function AdminVendors() {
                 searchTerm={searchTerm}
                 onSearchChange={handleSearch}
                 searchPlaceholder="Search vendors..."
+                pageSize={pageSize}
+                onPageSizeChange={(size) => { setPageSize(size); setPage(1); }}
                 actions={
                     <>
                         <button
@@ -490,7 +492,7 @@ export default function AdminVendors() {
 
             {/* Modern Table Card — the card owns scrolling so the header can stick */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex-1 min-h-[360px] flex flex-col relative w-full">
-                <div className="flex-1 min-h-0 overflow-auto">
+                <div className="max-h-[70vh] min-h-0 flex-1 overflow-auto overscroll-contain">
                     <table className="w-full text-left border-collapse min-w-[1000px]">
                         <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-100 shadow-sm">
                             <tr>
@@ -639,7 +641,7 @@ export default function AdminVendors() {
                                                 {/* Edit */}
                                                 <button
                                                     onClick={() => handleEditClick(vendor)}
-                                                    className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                                    className="h-11 w-11 text-blue-600 bg-blue-50 hover:text-white hover:bg-blue-600 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1"
                                                     title="Edit Vendor"
                                                     aria-label="Edit Vendor"
                                                 >
@@ -650,10 +652,10 @@ export default function AdminVendors() {
                                                 <button
                                                     onClick={() => handleResetPassword(vendor)}
                                                     disabled={!vendor.is_active}
-                                                    className={`p-2.5 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-amber-100 ${
+                                                    className={`h-11 w-11 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-1 ${
                                                         vendor.is_active
-                                                            ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
-                                                            : 'text-slate-200 cursor-not-allowed'
+                                                            ? 'text-amber-700 bg-amber-50 hover:text-white hover:bg-amber-600'
+                                                            : 'text-slate-300 bg-slate-50 cursor-not-allowed'
                                                     }`}
                                                     title={vendor.is_active ? 'Reset Password' : 'Activate vendor first'}
                                                     aria-label="Reset Password"
@@ -664,10 +666,10 @@ export default function AdminVendors() {
                                                 {/* Activate / Deactivate */}
                                                 <button
                                                     onClick={() => toggleStatus(vendor)}
-                                                    className={`p-2.5 rounded-xl transition-all focus:outline-none focus:ring-2 ${
+                                                    className={`h-11 w-11 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 ${
                                                         vendor.is_active
-                                                            ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 focus:ring-rose-100'
-                                                            : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 focus:ring-emerald-100'
+                                                            ? 'text-rose-700 bg-rose-50 hover:text-white hover:bg-rose-600 focus:ring-rose-300'
+                                                            : 'text-emerald-700 bg-emerald-50 hover:text-white hover:bg-emerald-600 focus:ring-emerald-300'
                                                     }`}
                                                     title={vendor.is_active ? 'Deactivate' : 'Activate'}
                                                     aria-label={vendor.is_active ? 'Deactivate' : 'Activate'}
