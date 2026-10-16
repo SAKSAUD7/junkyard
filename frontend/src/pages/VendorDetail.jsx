@@ -9,8 +9,6 @@ import SEO from '../components/SEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { getLocalBusinessSchema } from '../utils/structuredData';
 import { getLogoUrl } from '../utils/imageUrl';
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
 import { useVendorAuth } from '../contexts/VendorAuthContext';
 import SaveJunkyardButton from '../components/SaveJunkyardButton';
 import SponsoredYardsSection from '../components/SponsoredYardsSection';
@@ -23,7 +21,6 @@ const VendorDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { isAuthenticated } = useContext(AuthContext);
     const { vendorProfile } = useVendorAuth();
     const isOwnProfile = vendorProfile && vendor && (
         String(vendorProfile.id) === String(vendor.id) ||
@@ -52,18 +49,17 @@ const VendorDetail = () => {
                 } else {
                     setError('Invalid vendor ID');
                 }
-            } catch (err) {
+            } catch {
                 setError('Failed to load vendor');
             } finally {
                 setLoading(false);
             }
         };
         fetchVendor();
-    }, [id, params.slug]);
+    }, [id, params.slug, params.vendorSlug]);
 
-    // Enforce Auth Wall
-    useEffect(() => {
-        if (!loading && !error && vendor && !isAuthenticated) {
+    if (loading) {
+        return (
             <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -471,15 +467,8 @@ const VendorDetail = () => {
 
             <Footer />
 
-            {/* Auth Wall Modals */}
-            <SecurityQuestionnaireModal 
-                isOpen={showSecurityCheck}
-                onClose={() => navigate('/junkyards')}
-                onComplete={(answers) => {
-                    localStorage.setItem('temp_security_answers', JSON.stringify(answers));
-                    setShowSecurityCheck(false);
-                    setShowSignup(true);
-                }}
-            />
-            <SignupModal
-                isOpen={showSignup}
+        </div>
+    );
+};
+
+export default VendorDetail;
