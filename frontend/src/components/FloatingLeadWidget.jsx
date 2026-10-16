@@ -40,36 +40,34 @@ export default function FloatingLeadWidget() {
                         exit={{ scale: 0.5, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                         onClick={() => setIsOpen(true)}
-                        aria-label="Find a Part Fast"
-                        title="Find a Part Fast"
+                        aria-label="Request a free part quote"
+                        title="Request a free part quote"
+                        data-floating-control="lead-cta"
                         className="flex fixed z-[400] group
-                            top-[65%] right-0 -translate-y-1/2 rounded-l-2xl pl-3 pr-2 py-3
-                            lg:bottom-auto lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-3 lg:rounded-r-none lg:rounded-l-2xl lg:pr-3
-                            w-auto h-auto px-3 py-3.5
+                            bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] right-3 lg:bottom-auto lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-3 lg:rounded-r-none lg:rounded-l-2xl lg:pr-3
+                            w-auto h-auto px-4 py-3.5
                             items-center justify-center gap-2
                             bg-gradient-to-br from-[#1a56ff] to-[#4f46e5]
-                            rounded-full shadow-[0_6px_30px_rgba(26,86,255,0.5)]
-                            hover:shadow-[0_8px_40px_rgba(26,86,255,0.7)]
+                            rounded-full shadow-lg
                             lg:hover:scale-100 lg:hover:translate-x-0
                             transition-all duration-200 cursor-pointer"
                     >
-                        {/* Pulse ring */}
-                        <span className="absolute inset-0 rounded-l-2xl bg-blue-400/40 animate-ping pointer-events-none" />
 
                         {/* Wrench icon */}
                         <svg className="relative w-5 h-5 lg:w-6 lg:h-6 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
+                        <span className="text-xs font-bold text-white whitespace-nowrap lg:hidden">Free part quote</span>
 
                         {/* Desktop label (hidden on mobile) */}
                         <span className="hidden lg:block text-[10px] font-black tracking-[0.2em] uppercase text-white whitespace-nowrap" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
-                            Find a Part
+                            Request a Quote
                         </span>
 
                         {/* Tooltip (mobile only) */}
                         <span className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none lg:hidden shadow-lg">
-                            Find a Part Fast
+                            Request a free part quote
                             <span className="absolute top-full right-4 border-4 border-transparent border-t-slate-900" />
                         </span>
                     </motion.button>

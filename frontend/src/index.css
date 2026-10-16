@@ -1327,3 +1327,7 @@ html, body {
     line-height: 1.15 !important;
   }
 }
+
+body.mobile-more-open [data-floating-control] {
+  display: none !important;
+}
