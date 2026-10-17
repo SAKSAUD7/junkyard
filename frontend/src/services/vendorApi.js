@@ -10,9 +10,8 @@ const vendorApi = axios.create({
     },
 });
 
-// Request interceptor to add auth token
-// Only use vendor_access_token - do not fall back to customer access_token
-// This prevents customer tokens from being used for vendor API calls
+// Vendor API requests must use a server-issued vendor session only. A customer
+// access token is never valid for vendor actions.
 vendorApi.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('vendor_access_token');
@@ -89,6 +88,7 @@ export const vendorAuth = {
         const response = await axios.post(`${API_BASE_URL}/auth/login/`, {
             email,
             password,
+            account_type: 'vendor',
         });
 
         // Check if user is a vendor
@@ -141,7 +141,10 @@ export const vendorAuth = {
     },
 
     requestPasswordReset: async (email) => {
-        const response = await axios.post(`${API_BASE_URL}/vendor/password-reset/`, { email });
+        const response = await axios.post(`${API_BASE_URL}/auth/password-reset/`, {
+            email: email.trim().toLowerCase(),
+            account_type: 'vendor',
+        });
         return response.data;
     },
 };

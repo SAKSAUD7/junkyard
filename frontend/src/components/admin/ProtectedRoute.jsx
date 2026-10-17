@@ -12,7 +12,7 @@ const AdminProtectedRoute = ({ children }) => {
 
     // Check if authenticated
     if (!isAuthenticated) {
-        return <Navigate to="/signin" state={{ from: location }} replace />;
+        return <Navigate to="/admin-portal/login" state={{ from: location }} replace />;
     }
 
     // Check if admin (staff or superuser)

@@ -1,16 +1,20 @@
-import React, { useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useContext, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
 
 export default function MobileMoreMenu({ isOpen, onClose }) {
     const { isAuthenticated, user, logout } = useContext(AuthContext)
-    const navigate = useNavigate()
+    useLayoutEffect(() => {
+        document.body.classList.toggle('mobile-more-open', isOpen)
+        return () => document.body.classList.remove('mobile-more-open')
+    }, [isOpen])
 
     if (!isOpen) return null
 
     const navItems = [
         {
-            label: 'Browse States',
+            label: 'Browse Junkyards by State',
             path: '/junkyards-by-location',
             icon: (
                 <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +24,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
             )
         },
         {
-            label: 'Junkyards',
+            label: 'Find Junkyards',
             path: '/junkyards',
             icon: (
                 <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -29,7 +33,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
             )
         },
         {
-            label: 'Search Parts',
+            label: 'Find Used Parts',
             path: '/search',
             icon: (
                 <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +42,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
             )
         },
         {
-            label: 'Sell My Vehicle',
+            label: 'Sell Your Vehicle',
             path: '/sell-your-car',
             icon: (
                 <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,15 +59,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
                 </svg>
             )
         },
-        {
-            label: 'Compare Yards',
-            path: '/junkyards',
-            icon: (
-                <svg className="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            )
-        },
+
         {
             label: 'About Us',
             path: '/about',
@@ -84,15 +80,15 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
         }
     ]
 
-    return (
-        <div className="fixed inset-0 z-[200] lg:hidden flex flex-col bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+    return createPortal(
+        <div className="fixed inset-0 z-[2147483647] lg:hidden flex flex-col bg-slate-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-label="More navigation">
             {/* Backdrop click to close */}
             <div className="flex-1" onClick={onClose} />
 
             {/* Slide-Up / Slide-In Drawer */}
             <div 
-                className="w-full bg-white rounded-t-[2.5rem] shadow-2xl flex flex-col max-h-[88vh] overflow-hidden border-t border-slate-100"
-                style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}
+                className="w-full bg-white rounded-t-[2.5rem] shadow-2xl flex flex-col max-h-[min(88dvh,760px)] overflow-hidden border-t border-slate-100"
+                style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
             >
                 {/* Header: Close Button + "More" Title */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -116,7 +112,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
                 </div>
 
                 {/* Content: Scrollable list */}
-                <div className="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-100/80">
+                <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-3 divide-y divide-slate-100/80">
                     {/* Primary Secondary Navigation List */}
                     <div className="space-y-1 pb-3">
                         {navItems.map((item, idx) => (
@@ -259,6 +255,7 @@ export default function MobileMoreMenu({ isOpen, onClose }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

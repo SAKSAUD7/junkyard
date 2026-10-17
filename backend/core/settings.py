@@ -170,10 +170,11 @@ else:
     EMAIL_HOST_PASSWORD = _sendgrid_key or os.environ.get('EMAIL_HOST_PASSWORD', '')
     EMAIL_TIMEOUT = 10
 
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@example.com')
-LEAD_NOTIFICATION_EMAIL = os.environ.get('LEAD_NOTIFICATION_EMAIL', 'leads@example.com')
-SITE_URL = os.environ.get('SITE_URL', 'http://localhost:3000')
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://junkyardsnearme.com').rstrip('/')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@junkyardsnearme.com')
+LEAD_NOTIFICATION_EMAIL = os.environ.get('LEAD_NOTIFICATION_EMAIL', 'leads@junkyardsnearme.com')
+PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', 86400))
+SITE_URL = os.environ.get('SITE_URL', FRONTEND_URL)
 
 
 

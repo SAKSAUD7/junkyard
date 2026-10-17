@@ -68,9 +68,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const login = async (email, password) => {
+    const login = async (email, password, accountType = '') => {
         try {
-            const response = await authService.login(email, password);
+            const response = await authService.login(email, password, accountType);
             setUser(response.user);
             setToken(response.tokens.access);
             setVendorProfile(response.vendor_profile || null);

@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCMS } from '../../hooks/useCMS';
-import axios from 'axios';
-
-const API_BASE_URL = `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')}/api`;
+import authService from '../../services/authService';
+import { vendorAuth } from '../../services/vendorApi';
 
 const CONTEXTS = {
     customer: { title: 'Reset Your Password', description: "Enter your email and we'll send secure reset instructions.", placeholder: 'your.email@example.com' },
@@ -10,7 +9,12 @@ const CONTEXTS = {
     admin: { title: 'Recover Admin Access', description: "Enter your administrator email and we'll send secure reset instructions.", placeholder: 'admin@example.com' },
 };
 
-const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'customer' }) => {
+export default function ForgotPasswordModal({
+    isOpen,
+    onClose,
+    onBackToLogin,
+    userType = 'customer',
+}) {
     const { get: getGlobal } = useCMS('global');
     const context = CONTEXTS[userType] || CONTEXTS.customer;
     const [email, setEmail] = useState('');
@@ -18,24 +22,29 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'custo
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
+    const resetForm = () => {
+        setEmail('');
+        setError('');
+        setSubmitted(false);
+    };
+
     useEffect(() => {
         if (!isOpen) return undefined;
         const previousOverflow = document.body.style.overflow;
-        const handleEscape = (event) => {
+        const handleKeyDown = (event) => {
             if (event.key === 'Escape' && !loading) {
-                setEmail('');
-                setError('');
-                setSubmitted(false);
-                onClose?.();
+                resetForm();
+                onClose();
             }
         };
         document.body.style.overflow = 'hidden';
-        document.addEventListener('keydown', handleEscape);
+        document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.body.style.overflow = previousOverflow;
-            document.removeEventListener('keydown', handleEscape);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [isOpen, loading, onClose]);
+
 
     const validateEmail = (value) => {
         if (!value.trim()) return 'Please enter your email address.';
@@ -45,18 +54,14 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'custo
 
     const handleClose = () => {
         if (loading) return;
-        setEmail('');
-        setError('');
-        setSubmitted(false);
-        onClose?.();
+        resetForm();
+        onClose();
     };
 
     const handleBackToLogin = () => {
         if (loading) return;
-        setEmail('');
-        setError('');
-        setSubmitted(false);
-        (onBackToLogin || onClose)?.();
+        resetForm();
+        (onBackToLogin || onClose)();
     };
 
     const handleSubmit = async (event) => {
@@ -66,20 +71,11 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'custo
             setError(validationError);
             return;
         }
-
         setLoading(true);
         setError('');
         try {
-            let endpoint;
-            if (userType === 'vendor') {
-                endpoint = `${API_BASE_URL}/vendor/password-reset/`;
-            } else if (userType === 'admin') {
-                endpoint = `${API_BASE_URL}/auth/admin-password-reset/`;
-            } else {
-                endpoint = `${API_BASE_URL}/auth/password-reset/`;
-            }
-
-            await axios.post(endpoint, { email: email.trim().toLowerCase() });
+            if (userType === 'vendor') await vendorAuth.requestPasswordReset(email);
+            else await authService.requestPasswordReset(email, userType);
             setSubmitted(true);
         } catch (requestError) {
             setError(requestError.response?.data?.error || 'We could not send reset instructions right now. Please try again later.');
@@ -127,6 +123,4 @@ const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin, userType = 'custo
             </div>
         </div>
     );
-};
-
-export default ForgotPasswordModal;
+}

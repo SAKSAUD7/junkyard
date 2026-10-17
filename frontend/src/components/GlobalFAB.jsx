@@ -101,7 +101,8 @@ export default function GlobalFAB({ onOpenFeedback }) {
     return (
         <div
             ref={containerRef}
-            className="fixed z-[400]"
+            className="fixed z-[400] hidden lg:block"
+            data-floating-control="quick-contact"
             style={{
                 bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))', // Above bottom nav
                 left: '1rem', // Left side
